@@ -15,8 +15,6 @@
 [![GitHub pull requests](https://img.shields.io/github/issues-pr/Prastiwar/ForgeModGenerator.svg?style=flat-square&longCache=true)](https://github.com/Prastiwar/ForgeModGenerator/pulls)
 [![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/Prastiwar/ForgeModGenerator.svg?style=flat-square&longCache=true)](https://github.com/Prastiwar/ForgeModGenerator/pulls)
 
-[![Made with Unity](https://img.shields.io/badge/Made%20with-Unity-000000.svg?longCache=true&style=for-the-badge&colorA=666677&colorB=222222)](https://unity3d.com/)
-
 ## Before start
 
 See our wiki for [documentation](https://github.com/Prastiwar/ForgeModGenerator/wiki).
