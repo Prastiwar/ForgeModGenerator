@@ -108,15 +108,15 @@
     <Compile Include="View\NavigationMenu.xaml.cs">
       <DependentUpon>NavigationMenu.xaml</DependentUpon>
     </Compile>
-    <Page Include="Controls\AppMenu.xaml">
+    <Page Include="View\Controls\AppMenu.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\DraggableRectangle.xaml">
+    <Page Include="View\Controls\DraggableRectangle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\MenuButton.xaml">
+    <Page Include="View\Controls\MenuButton.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -132,18 +132,18 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Controls\AppMenu.xaml.cs">
+    <Compile Include="View\Controls\AppMenu.xaml.cs">
       <DependentUpon>AppMenu.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\DraggableRectangle.xaml.cs">
+    <Compile Include="View\Controls\DraggableRectangle.xaml.cs">
       <DependentUpon>DraggableRectangle.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\MenuButton.xaml.cs">
+    <Compile Include="View\Controls\MenuButton.xaml.cs">
       <DependentUpon>MenuButton.xaml</DependentUpon>
     </Compile>
     <Compile Include="Animation\GridLengthAnimation.cs" />
-    <Compile Include="Menu\Menu.cs" />
-    <Compile Include="Menu\MenuSettings.cs" />
+    <Compile Include="Components\MenuComponent.cs" />
+    <Compile Include="Components\MenuSettings.cs" />
     <Compile Include="View\DashboardView.xaml.cs">
       <DependentUpon>DashboardView.xaml</DependentUpon>
     </Compile>

@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace ForgeModGenerator.Controls
+namespace ForgeModGenerator.View.Controls
 {
     public partial class DraggableRectangle : UserControl
     {

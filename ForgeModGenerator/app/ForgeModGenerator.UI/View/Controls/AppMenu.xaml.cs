@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace ForgeModGenerator.Controls
+namespace ForgeModGenerator.View.Controls
 {
     public partial class AppMenu : UserControl
     {

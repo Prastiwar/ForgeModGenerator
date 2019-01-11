@@ -8,6 +8,7 @@ using System.Windows.Input;
 
 namespace ForgeModGenerator.ViewModel
 {
+    /// <summary> MainWindow Business ViewModel </summary>
     public class MainViewModel : ViewModelBase
     {
         private readonly INavigationService navigationService;

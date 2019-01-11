@@ -1,8 +1,8 @@
 ﻿using System.Windows.Controls;
 
-namespace ForgeModGenerator
+namespace ForgeModGenerator.Components
 {
-    public class Menu
+    public class MenuComponent
     {
         public bool IsActive { get; set; }
 
@@ -17,7 +17,7 @@ namespace ForgeModGenerator
 
         private Grid grid;
 
-        public Menu(Grid grid, MenuSettings settings)
+        public MenuComponent(Grid grid, MenuSettings settings)
         {
             this.grid = grid;
             this.settings = settings;
