@@ -1,0 +1,65 @@
+﻿<UserControl xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ForgeModGenerator.Controls"
+			 xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+			 xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+			 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+			 xmlns:local1="clr-namespace:ForgeModGenerator.ViewModel" x:Class="ForgeModGenerator.ViewModel.NavigationMenu"
+			 mc:Ignorable="d" d:DesignHeight="450" d:DesignWidth="250"
+			 DataContext="{Binding NavigationMenu, Source={StaticResource Locator}}">
+	<Grid x:Name="MenuGrid" Background="#2c2c2c">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="40"/>
+			<RowDefinition Height="1*"/>
+			<RowDefinition Height="20*"/>
+			<RowDefinition Height="1*"/>
+		</Grid.RowDefinitions>
+
+		<StackPanel>
+			<ToggleButton Style="{StaticResource MaterialDesignActionToggleButton}" Background="#FF3C3C3C" Margin="5" Width="30" Height="30" BorderBrush="#FF232323" HorizontalAlignment="Right"
+				Command="{Binding ToggleMenu, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local1:NavigationMenu}}}">
+				<materialDesign:ToggleButtonAssist.OnContent>
+					<materialDesign:PackIcon Kind="ArrowLeft"/>
+				</materialDesign:ToggleButtonAssist.OnContent>
+				<materialDesign:PackIcon Kind="ArrowRight"/>
+			</ToggleButton>
+		</StackPanel>
+
+		<ScrollViewer x:Name="MenuScroll" Grid.Row="2" VerticalScrollBarVisibility="Hidden">
+			<StackPanel>
+				<local:MenuButton Desc="Dashboard" Kind="ViewDashboard" Command="{Binding OpenDashboard}"/>
+				<local:MenuButton Desc="Build Configuration" Kind="Build" Command="{Binding OpenBuildConfiguration}"/>
+				<local:MenuButton Desc="Mod Generator" Kind="CreateNewFolder" Command="{Binding OpenModGenerator}"/>
+				<local:MenuButton Desc="Block Generator" Kind="CubeOutline" Command="{Binding OpenBlockGenerator}"/>
+				<local:MenuButton Desc="Item Generator" Kind="Pickaxe" Command="{Binding OpenItemGenerator}"/>
+				<local:MenuButton Desc="Sound Generator" Kind="FileMusic" Command="{Binding OpenSoundGenerator}"/>
+				<local:MenuButton Desc="Command Generator" Kind="CodeTags" Command="{Binding OpenCommandGenerator}"/>
+				<local:MenuButton Desc="Achievement Generator" Kind="Achievement" Command="{Binding OpenAchievementGenerator}"/>
+				<local:MenuButton Desc="Recipe Generator" Kind="Group" Command="{Binding OpenRecipeGenerator}"/>
+			</StackPanel>
+		</ScrollViewer>
+
+		<Button Style="{StaticResource MaterialDesignRaisedLightButton}" Grid.Row="1" VerticalAlignment="Center" Background="#FF353535" 
+				 BorderBrush="#FF353535" Foreground="#DDFFFFFF">
+			<materialDesign:PackIcon Kind="ArrowUp"/>
+			<i:Interaction.Triggers>
+				<i:EventTrigger EventName="PreviewMouseDown">
+					<i:InvokeCommandAction Command="{Binding HoldScrollUp, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local1:NavigationMenu}}}"/>
+				</i:EventTrigger>
+			</i:Interaction.Triggers>
+		</Button>
+
+		<Button Style="{StaticResource MaterialDesignRaisedLightButton}" Grid.Row="3" VerticalAlignment="Center" Background="#FF353535" 
+				 BorderBrush="#FF353535" Foreground="#DDFFFFFF">
+			<materialDesign:PackIcon Kind="ArrowDown"/>
+			<i:Interaction.Triggers>
+				<i:EventTrigger EventName="PreviewMouseDown">
+					<i:InvokeCommandAction Command="{Binding HoldScrollDown, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local1:NavigationMenu}}}"/>
+				</i:EventTrigger>
+			</i:Interaction.Triggers>
+		</Button>
+
+	</Grid>
+</UserControl>
