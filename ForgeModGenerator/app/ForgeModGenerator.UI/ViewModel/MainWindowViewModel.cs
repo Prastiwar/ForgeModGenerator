@@ -1,7 +1,9 @@
+using ForgeModGenerator.Model;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
 using System;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -13,13 +15,20 @@ namespace ForgeModGenerator.ViewModel
     {
         private readonly INavigationService navigationService;
 
+        public Uri StartPage { get; protected set; }
+
+        public ObservableCollection<Mod> Mods { get; set; }
+
+        public Mod SelectedMod { get; set; }
+
         public MainWindowViewModel(INavigationService navigationService)
         {
             this.navigationService = navigationService;
+            StartPage = new Uri("DashboardPage.xaml", UriKind.Relative);
         }
 
         private ICommand openSettings;
-        public ICommand OpenSettings { get => openSettings ?? (openSettings = new RelayCommand(()=>{ navigationService.NavigateTo(ViewModelLocator.Pages.Settings); })); }
+        public ICommand OpenSettings { get => openSettings ?? (openSettings = new RelayCommand(() => { navigationService.NavigateTo(ViewModelLocator.Pages.Settings); })); }
 
         private ICommand exitApp;
         public ICommand ExitApp { get => exitApp ?? (exitApp = new RelayCommand(QuitApp)); }

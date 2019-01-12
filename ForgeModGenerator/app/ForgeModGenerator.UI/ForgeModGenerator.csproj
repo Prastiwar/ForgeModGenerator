@@ -100,6 +100,13 @@
     <Compile Include="Miscellaneous\Log.cs" />
     <Compile Include="Miscellaneous\Math.cs" />
     <Compile Include="Miscellaneous\Util.cs" />
+    <Compile Include="Model\Achievement.cs" />
+    <Compile Include="Model\Block.cs" />
+    <Compile Include="Model\Command.cs" />
+    <Compile Include="Model\Item.cs" />
+    <Compile Include="Model\Mod.cs" />
+    <Compile Include="Model\Recipe.cs" />
+    <Compile Include="Model\Sound.cs" />
     <Compile Include="Service\NavigationService.cs" />
     <Compile Include="ViewModel\BuildConfigurationViewModel.cs" />
     <Compile Include="ViewModel\AchievementGenerator\AchievementGeneratorViewModel.cs" />
