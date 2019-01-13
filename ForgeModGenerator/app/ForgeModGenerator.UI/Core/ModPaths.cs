@@ -1,11 +1,13 @@
 ﻿using System.IO;
 
-namespace ForgeModGenerator.Model
+namespace ForgeModGenerator.Core
 {
     public static class ModPaths
     {
-        public static string Resources(string modname) => $"ForgeModGenerator/mods/{modname}/src/main/resources";
-        public static string ModInfo(string modname) => $"{Resources(modname)}/mcmod.info";
+        public static string FmgModInfo(string modname) => $"{AppPaths.Mods}/{modname}/FmgModInfo.json";
+
+        public static string Resources(string modname) => $"{AppPaths.Mods}/{modname}/src/main/resources";
+        public static string McModInfo(string modname) => $"{Resources(modname)}/mcmod.info";
         public static string PackMeta(string modname) => $"{Resources(modname)}/ pack.mcmeta";
         public static string Assets(string modname, string modid) => $"{Resources(modname)}/assets/{modid}";
         public static string Blockstates(string modname, string modid) => $"{Assets(modname, modid)}/blockstates";
@@ -20,7 +22,7 @@ namespace ForgeModGenerator.Model
         public static string TexturesItems(string modname, string modid) => $"{Textures(modname, modid)}/items";
         public static string TexturesModelsArmor(string modname, string modid) => $"{Textures(modname, modid)}/models/armor";
 
-        public static string SourceCodeRoot(string modname, string modid, string organization) => $"ForgeModGenerator/mods/{modname}/src/main/java/com/{organization}/{modid}";
+        public static string SourceCodeRoot(string modname, string modid, string organization) => $"{AppPaths.Mods}/{modname}/src/main/java/com/{organization}/{modid}";
         public static string GeneratedSourceCode(string modname, string modid, string organization) => Path.Combine(SourceCodeRoot(modname, modid, organization), "generated");
         public static string GeneratedModManagerFile(string modname, string modid, string organization) => $"{GeneratedSourceCode(modname, modid, organization)}/{modname}.java";
         public static string GeneratedModHookFile(string modname, string modid, string organization) => $"{GeneratedSourceCode(modname, modid, organization)}/{modname}Hook.java";

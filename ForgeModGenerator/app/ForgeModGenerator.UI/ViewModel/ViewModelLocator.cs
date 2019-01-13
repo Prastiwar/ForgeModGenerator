@@ -86,18 +86,30 @@ namespace ForgeModGenerator.ViewModel
         public ViewModelLocator()
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
+            RegisterServices();
+            RegisterViewModels();
+        }
+
+        private void RegisterViewModels()
+        {
+            SimpleIoc.Default.Register<NavigationMenuViewModel>();
+            SimpleIoc.Default.Register<MainWindowViewModel>();
+        }
+
+        private void RegisterServices()
+        {
+            SimpleIoc.Default.Register<ISessionContextService, SessionContextService>();
+
             if (!SimpleIoc.Default.IsRegistered<INavigationService>())
             {
-                NavigationService navigation = new NavigationService();
+                NavigationService service = new NavigationService();
                 PageInfo[] pages = Pages.GetAllPagesInfo();
                 for (int i = 0; i < pages.Length; i++)
                 {
-                    navigation.Configure(pages[i].key, pages[i].type);
+                    service.Configure(pages[i].key, pages[i].type); // also registers all pages
                 }
-                SimpleIoc.Default.Register<INavigationService>(() => navigation);
+                SimpleIoc.Default.Register<INavigationService>(() => service);
             }
-            SimpleIoc.Default.Register<MainWindowViewModel>();
-            SimpleIoc.Default.Register<NavigationMenuViewModel>();
         }
 
         public static void Cleanup()

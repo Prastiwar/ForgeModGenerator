@@ -35,7 +35,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\..\bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -44,7 +44,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\..\bin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -70,6 +70,9 @@
     </Reference>
     <Reference Include="MaterialDesignThemes.Wpf, Version=2.5.0.1205, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MaterialDesignThemes.2.5.0.1205\lib\net45\MaterialDesignThemes.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -97,6 +100,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Core\AppPaths.cs" />
+    <Compile Include="Core\McModInfo.cs" />
     <Compile Include="Miscellaneous\Log.cs" />
     <Compile Include="Miscellaneous\Math.cs" />
     <Compile Include="Miscellaneous\Util.cs" />
@@ -109,6 +114,7 @@
     <Compile Include="Model\Recipe.cs" />
     <Compile Include="Model\Sound.cs" />
     <Compile Include="Service\NavigationService.cs" />
+    <Compile Include="Service\SessionContextService.cs" />
     <Compile Include="ViewModel\BuildConfigurationViewModel.cs" />
     <Compile Include="ViewModel\AchievementGenerator\AchievementGeneratorViewModel.cs" />
     <Compile Include="ViewModel\BlockGenerator\BlockGeneratorViewModel.cs" />

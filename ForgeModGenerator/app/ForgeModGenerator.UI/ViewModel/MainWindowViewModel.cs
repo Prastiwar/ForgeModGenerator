@@ -1,9 +1,12 @@
+using ForgeModGenerator.Core;
 using ForgeModGenerator.Model;
+using ForgeModGenerator.Service;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -15,25 +18,13 @@ namespace ForgeModGenerator.ViewModel
     {
         private readonly INavigationService navigationService;
 
-        public MainWindowViewModel(INavigationService navigationService)
+        public MainWindowViewModel(INavigationService navigationService, ISessionContextService sessionContext)
         {
             this.navigationService = navigationService;
-            StartPage = new Uri("DashboardPage.xaml", UriKind.Relative);
+            SessionContext = sessionContext;
         }
 
-        public Uri StartPage { get; protected set; }
-
-        private ObservableCollection<Mod> mods;
-        public ObservableCollection<Mod> Mods {
-            get => mods;
-            set => Set(ref mods, value);
-        }
-
-        private Mod selectedMod;
-        public Mod SelectedMod {
-            get => selectedMod;
-            set => Set(ref selectedMod, value);
-        }
+        public ISessionContextService SessionContext { get; }
 
         private ICommand openSettings;
         public ICommand OpenSettings { get => openSettings ?? (openSettings = new RelayCommand(() => { navigationService.NavigateTo(ViewModelLocator.Pages.Settings); })); }
@@ -56,6 +47,17 @@ namespace ForgeModGenerator.ViewModel
         {
             await Task.Delay(150); // wait for click animation
             Environment.Exit(0);
+        }
+
+        protected ObservableCollection<Mod> FindMods()
+        {
+            ObservableCollection<Mod> foundMods = new ObservableCollection<Mod>();
+            string[] modPaths = Directory.GetDirectories(AppPaths.Mods);
+            foreach (string modPath in modPaths)
+            {
+                foundMods.Add(Mod.Import(modPath));
+            }
+            return foundMods;
         }
 
     }

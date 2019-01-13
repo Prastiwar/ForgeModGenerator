@@ -35,7 +35,8 @@
 		<local:DraggableRectangle Grid.Row="2" Grid.Column="0"/>
 		<local:DraggableRectangle Grid.Row="2" Grid.Column="1"/>
 
-		<ComboBox ItemsSource="{Binding Path=Mods}" SelectedItem="{Binding Path=SelectedMod}"
+		<!--Mod Selector-->
+		<ComboBox ItemsSource="{Binding Path=SessionContext.Mods}" SelectedItem="{Binding Path=SessionContext.SelectedMod}"
                   Grid.Column="1" Width="220" Margin="1" Background="#FF404040" Foreground="#FFE8E8E8"
 				  FontSize="11" BorderBrush="Wheat"
                   HorizontalAlignment="Left" VerticalAlignment="Center" HorizontalContentAlignment="Center">
@@ -44,7 +45,7 @@
 					<StackPanel Orientation="Horizontal">
 						<TextBlock Text="{Binding Path=Side}"/>
 						<TextBlock Text=" - "/>
-						<TextBlock Text="{Binding Path=Name}"/>
+						<TextBlock Text="{Binding Path=ModInfo.Name}"/>
 					</StackPanel>
 				</DataTemplate>
 			</ComboBox.ItemTemplate>
@@ -52,13 +53,14 @@
 		
 		<local:AppMenu Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
 
+		<!--Content - nav menu and page frame-->
 		<Grid x:Name="ContentGrid" Grid.Column="1" Grid.Row="1" Background="#FF424242">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="50"/>
 				<ColumnDefinition Width="*"/>
 			</Grid.ColumnDefinitions>
 			<views:NavigationMenu x:Name="GenMenu"/>
-			<Frame x:Name="PageFrame" Grid.Column="1" NavigationUIVisibility="Hidden" Source="{Binding StartPage}"/>
+			<Frame x:Name="PageFrame" Grid.Column="1" NavigationUIVisibility="Hidden" Source="{Binding SessionContext.StartPage}"/>
 		</Grid>
 	</Grid>
 </Window>

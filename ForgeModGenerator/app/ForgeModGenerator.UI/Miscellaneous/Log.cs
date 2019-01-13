@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 
 namespace ForgeModGenerator
 {
@@ -7,6 +8,11 @@ namespace ForgeModGenerator
         public static void Info(object msg)
         {
             Console.WriteLine(msg);
+        }
+
+        public static void InfoBox(object msg)
+        {
+            MessageBox.Show(msg?.ToString());
         }
     }
 }
