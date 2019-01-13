@@ -14,7 +14,7 @@
         TextElement.FontWeight="Regular" TextElement.FontSize="13" FontFamily="Consolas" 
         TextOptions.TextFormattingMode="Ideal"
         TextOptions.TextRenderingMode="Auto"
-		DataContext="{Binding Main, Source={StaticResource Locator}}">
+		views:ViewModelLocator.GetDataContext="ForgeModGenerator.ViewModel.MainWindowViewModel">
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="25"/>

@@ -15,16 +15,24 @@ namespace ForgeModGenerator.ViewModel
     {
         private readonly INavigationService navigationService;
 
-        public Uri StartPage { get; protected set; }
-
-        public ObservableCollection<Mod> Mods { get; set; }
-
-        public Mod SelectedMod { get; set; }
-
         public MainWindowViewModel(INavigationService navigationService)
         {
             this.navigationService = navigationService;
             StartPage = new Uri("DashboardPage.xaml", UriKind.Relative);
+        }
+
+        public Uri StartPage { get; protected set; }
+
+        private ObservableCollection<Mod> mods;
+        public ObservableCollection<Mod> Mods {
+            get => mods;
+            set => Set(ref mods, value);
+        }
+
+        private Mod selectedMod;
+        public Mod SelectedMod {
+            get => selectedMod;
+            set => Set(ref selectedMod, value);
         }
 
         private ICommand openSettings;

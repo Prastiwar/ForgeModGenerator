@@ -4,9 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ForgeModGenerator.Controls"
+             xmlns:views="clr-namespace:ForgeModGenerator.ViewModel"
 			 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 			 mc:Ignorable="d" d:DesignHeight="15" d:DesignWidth="155"
-			 DataContext="{Binding Main, Source={StaticResource Locator}}">
+			 views:ViewModelLocator.GetDataContext="ForgeModGenerator.ViewModel.MainWindowViewModel">
 	<Grid>
 		<StackPanel Orientation="Horizontal">
 			<Button Width="35" Height="15" Background="#FFCD2929" Command="{Binding OpenSettings}" Margin="0,0,5,0" BorderBrush="#FF3C0000">

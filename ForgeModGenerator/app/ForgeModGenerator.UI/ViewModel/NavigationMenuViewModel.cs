@@ -24,6 +24,9 @@ namespace ForgeModGenerator.ViewModel
         private ICommand openBuildConfiguration;
         public ICommand OpenBuildConfiguration { get => openBuildConfiguration ?? (openBuildConfiguration = new RelayCommand(() => { navigationService.NavigateTo(ViewModelLocator.Pages.BuildConfiguration); })); }
 
+        private ICommand openTextureGenerator;
+        public ICommand OpenTextureGenerator { get => openTextureGenerator ?? (openTextureGenerator = new RelayCommand(() => { navigationService.NavigateTo(ViewModelLocator.Pages.TextureGenerator); })); }
+
         private ICommand openBlockGenerator;
         public ICommand OpenBlockGenerator { get => openBlockGenerator ?? (openBlockGenerator = new RelayCommand(() => { navigationService.NavigateTo(ViewModelLocator.Pages.BlockGenerator); })); }
 

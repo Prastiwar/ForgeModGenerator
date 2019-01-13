@@ -4,6 +4,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Views;
 using System;
+using System.Windows;
 
 namespace ForgeModGenerator.ViewModel
 {
@@ -44,6 +45,7 @@ namespace ForgeModGenerator.ViewModel
             public const string Dashboard = "Dashboard";
             public const string BuildConfiguration = "BuildConfiguration";
             public const string ModGenerator = "ModGenerator";
+            public const string TextureGenerator = "TextureGenerator";
             public const string BlockGenerator = "BlockGenerator";
             public const string ItemGenerator = "ItemGenerator";
             public const string SoundGenerator = "SoundGenerator";
@@ -56,6 +58,7 @@ namespace ForgeModGenerator.ViewModel
                 new PageInfo<DashboardViewModel>(Dashboard, typeof(DashboardPage)),
                 new PageInfo<BuildConfigurationViewModel>(BuildConfiguration, typeof(BuildConfigurationPage)),
                 new PageInfo<ModGeneratorViewModel>(ModGenerator, typeof(ModGeneratorPage)),
+                new PageInfo<TextureGeneratorViewModel>(TextureGenerator, typeof(TextureGeneratorPage)),
                 new PageInfo<BlockGeneratorViewModel>(BlockGenerator, typeof(BlockGeneratorPage)),
                 new PageInfo<ItemGeneratorViewModel>(ItemGenerator, typeof(ItemGeneratorPage)),
                 new PageInfo<SoundGeneratorViewModel>(SoundGenerator, typeof(SoundGeneratorPage)),
@@ -66,21 +69,21 @@ namespace ForgeModGenerator.ViewModel
             };
         }
 
-        public MainWindowViewModel Main => ServiceLocator.Current.GetInstance<MainWindowViewModel>();
-        public NavigationMenuViewModel NavigationMenu => ServiceLocator.Current.GetInstance<NavigationMenuViewModel>();
+        public static readonly DependencyProperty GetDataContextProperty
+            = DependencyProperty.RegisterAttached("GetDataContext", typeof(string), typeof(ViewModelLocator), new PropertyMetadata("", GetDataContextChanged));
+        public static string GetGetDataContext(DependencyObject obj) => (string)obj.GetValue(GetDataContextProperty);
+        public static void SetGetDataContext(DependencyObject obj, string value) => obj.SetValue(GetDataContextProperty, value);
+        private static void GetDataContextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            FrameworkElement callOwner = d as FrameworkElement;
+            string className = (string)d.GetValue(GetDataContextProperty);
+            if (className != null)
+            {
+                callOwner.DataContext = ServiceLocator.Current.GetInstance(Type.GetType(className));
+            }
+        }
 
-        public DashboardViewModel Dashboard => ServiceLocator.Current.GetInstance<DashboardViewModel>();
-        public BuildConfigurationViewModel BuildConfiguration => ServiceLocator.Current.GetInstance<BuildConfigurationViewModel>();
-        public ModGeneratorViewModel ModGenerator => ServiceLocator.Current.GetInstance<ModGeneratorViewModel>();
-        public BlockGeneratorViewModel BlockGenerator => ServiceLocator.Current.GetInstance<BlockGeneratorViewModel>();
-        public ItemGeneratorViewModel ItemGenerator => ServiceLocator.Current.GetInstance<ItemGeneratorViewModel>();
-        public SoundGeneratorViewModel SoundGenerator => ServiceLocator.Current.GetInstance<SoundGeneratorViewModel>();
-        public CommandGeneratorViewModel CommandGenerator => ServiceLocator.Current.GetInstance<CommandGeneratorViewModel>();
-        public AchievementGeneratorViewModel AchievementGenerator => ServiceLocator.Current.GetInstance<AchievementGeneratorViewModel>();
-        public RecipeGeneratorViewModel RecipeGenerator => ServiceLocator.Current.GetInstance<RecipeGeneratorViewModel>();
-        public SettingsViewModel Settings => ServiceLocator.Current.GetInstance<SettingsViewModel>();
-
-        static ViewModelLocator()
+        public ViewModelLocator()
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
             if (!SimpleIoc.Default.IsRegistered<INavigationService>())
