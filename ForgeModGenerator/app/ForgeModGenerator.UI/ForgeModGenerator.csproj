@@ -77,6 +77,8 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -101,7 +103,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Core\AppPaths.cs" />
-    <Compile Include="Core\McModInfo.cs" />
+    <Compile Include="Model\ForgeVersion.cs" />
+    <Compile Include="Model\McModInfo.cs" />
     <Compile Include="Miscellaneous\Log.cs" />
     <Compile Include="Miscellaneous\Math.cs" />
     <Compile Include="Miscellaneous\Util.cs" />
@@ -292,6 +295,5 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

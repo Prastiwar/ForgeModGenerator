@@ -1,7 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using ForgeModGenerator.Core;
+using Newtonsoft.Json;
 using System.IO;
 
-namespace ForgeModGenerator.Core
+namespace ForgeModGenerator.Model
 {
     // struct for mcmod.info file
     public class McModInfo
@@ -10,6 +11,7 @@ namespace ForgeModGenerator.Core
         public string Modid { get; set; }
         [JsonProperty(Required = Required.Always)]
         public string Name { get; set; }
+        public string Description { get; set; }
         public string Version { get; set; }
         public string McVersion { get; set; }
         public string Url { get; set; }

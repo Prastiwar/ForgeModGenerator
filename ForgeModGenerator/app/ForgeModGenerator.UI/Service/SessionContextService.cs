@@ -5,12 +5,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
 namespace ForgeModGenerator.Service
 {
     public interface ISessionContextService : INotifyPropertyChanged
     {
+        ObservableCollection<ForgeVersion> ForgeVersions { get; }
         ObservableCollection<Mod> Mods { get; }
         Mod SelectedMod { get; set; }
         Uri StartPage { get; }
@@ -21,6 +23,7 @@ namespace ForgeModGenerator.Service
         public SessionContextService()
         {
             Mods = FindMods();
+            ForgeVersions = FindForgeVersions();
             StartPage = new Uri("DashboardPage.xaml", UriKind.Relative);
         }
 
@@ -38,28 +41,55 @@ namespace ForgeModGenerator.Service
             set => Set(ref selectedMod, value);
         }
 
+        private ObservableCollection<ForgeVersion> forgeVersions;
+        public ObservableCollection<ForgeVersion> ForgeVersions {
+            get => forgeVersions;
+            set => Set(ref forgeVersions, value);
+        }
+
         protected ObservableCollection<Mod> FindMods()
         {
-            string[] modPaths = null;
+            string[] paths = null;
             try
             {
-                modPaths = Directory.GetDirectories(AppPaths.Mods);
+                paths = Directory.GetDirectories(AppPaths.Mods);
             }
             catch (Exception)
             {
                 Log.InfoBox($"Path: {AppPaths.Mods} was not found");
                 throw;
             }
-            List<Mod> foundMods = new List<Mod>(modPaths.Length);
-            foreach (string modPath in modPaths)
+            List<Mod> found = new List<Mod>(paths.Length);
+            foreach (string path in paths)
             {
-                Mod importedMod = Mod.Import(modPath);
-                if (importedMod != null)
+                Mod imported = Mod.Import(path);
+                if (imported != null)
                 {
-                    foundMods.Add(importedMod);
+                    found.Add(imported);
                 }
             }
-            return new ObservableCollection<Mod>(foundMods);
+            return new ObservableCollection<Mod>(found);
+        }
+
+        protected ObservableCollection<ForgeVersion> FindForgeVersions()
+        {
+            string[] paths = null;
+            try
+            {
+                paths = Directory.GetFiles(AppPaths.ForgeVersions);
+            }
+            catch (Exception)
+            {
+                Log.InfoBox($"Path: {AppPaths.ForgeVersions} was not found");
+                throw;
+            }
+            List<ForgeVersion> found = new List<ForgeVersion>(paths.Length);
+            IEnumerable<string> filePaths = paths.Where(x => Path.GetExtension(x) == ".zip");
+            foreach (string path in filePaths)
+            {
+                found.Add(new ForgeVersion(path));
+            }
+            return new ObservableCollection<ForgeVersion>(found);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

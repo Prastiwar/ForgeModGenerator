@@ -18,13 +18,13 @@ namespace ForgeModGenerator.ViewModel
     {
         private readonly INavigationService navigationService;
 
+        public ISessionContextService SessionContext { get; }
+
         public MainWindowViewModel(INavigationService navigationService, ISessionContextService sessionContext)
         {
             this.navigationService = navigationService;
             SessionContext = sessionContext;
         }
-
-        public ISessionContextService SessionContext { get; }
 
         private ICommand openSettings;
         public ICommand OpenSettings { get => openSettings ?? (openSettings = new RelayCommand(() => { navigationService.NavigateTo(ViewModelLocator.Pages.Settings); })); }
