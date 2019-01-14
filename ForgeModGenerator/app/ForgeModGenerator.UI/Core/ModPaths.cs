@@ -23,25 +23,25 @@ namespace ForgeModGenerator.Core
         public static string TexturesModelsArmor(string modname, string modid) => $"{Textures(modname, modid)}/models/armor";
 
         public static string JavaSource(string modname) => $"{AppPaths.Mods}/{modname}/src/main/java/com/";
-        public static string SourceCodeRoot(string modname, string modid, string organization) => Path.Combine(JavaSource(modname), organization, modid);
-        public static string GeneratedSourceCode(string modname, string modid, string organization) => Path.Combine(SourceCodeRoot(modname, modid, organization), "generated");
+        public static string SourceCodeRoot(string modname, string organization) => Path.Combine(JavaSource(modname), organization, modname.ToLower());
+        public static string GeneratedSourceCode(string modname, string organization) => Path.Combine(SourceCodeRoot(modname, organization), "generated");
 
-        public static string GeneratedBlockFolder(string modname, string modid, string organization) => Path.Combine(GeneratedSourceCode(modname, modid, organization), "block");
-        public static string GeneratedItemFolder(string modname, string modid, string organization) => Path.Combine(GeneratedSourceCode(modname, modid, organization), "item");
-        public static string GeneratedProxyFolder(string modname, string modid, string organization) => Path.Combine(GeneratedSourceCode(modname, modid, organization), "proxy");
-        public static string GeneratedInterfaceFolder(string modname, string modid, string organization) => Path.Combine(GeneratedSourceCode(modname, modid, organization), "interface");
-        public static string GeneratedEnchantFolder(string modname, string modid, string organization) => Path.Combine(GeneratedSourceCode(modname, modid, organization), "enchant");
-        public static string GeneratedGuiFolder(string modname, string modid, string organization) => Path.Combine(GeneratedSourceCode(modname, modid, organization), "gui");
-        public static string GeneratedHandlerFolder(string modname, string modid, string organization) => Path.Combine(GeneratedSourceCode(modname, modid, organization), "handler");
-        public static string GeneratedSoundFolder(string modname, string modid, string organization) => Path.Combine(GeneratedSourceCode(modname, modid, organization), "sound");
-        public static string GeneratedWorldFolder(string modname, string modid, string organization) => Path.Combine(GeneratedSourceCode(modname, modid, organization), "world");
+        public static string GeneratedBlockFolder(string modname, string organization) => Path.Combine(GeneratedSourceCode(modname, organization), "block");
+        public static string GeneratedItemFolder(string modname, string organization) => Path.Combine(GeneratedSourceCode(modname, organization), "item");
+        public static string GeneratedProxyFolder(string modname, string organization) => Path.Combine(GeneratedSourceCode(modname, organization), "proxy");
+        public static string GeneratedInterfaceFolder(string modname, string organization) => Path.Combine(GeneratedSourceCode(modname, organization), "interface");
+        public static string GeneratedEnchantFolder(string modname, string organization) => Path.Combine(GeneratedSourceCode(modname, organization), "enchant");
+        public static string GeneratedGuiFolder(string modname, string organization) => Path.Combine(GeneratedSourceCode(modname, organization), "gui");
+        public static string GeneratedHandlerFolder(string modname, string organization) => Path.Combine(GeneratedSourceCode(modname, organization), "handler");
+        public static string GeneratedSoundFolder(string modname, string organization) => Path.Combine(GeneratedSourceCode(modname, organization), "sound");
+        public static string GeneratedWorldFolder(string modname, string organization) => Path.Combine(GeneratedSourceCode(modname, organization), "world");
 
-        public static string GeneratedModManagerFile(string modname, string modid, string organization) => $"{GeneratedSourceCode(modname, modid, organization)}/{modname}.java";
-        public static string GeneratedModHookFile(string modname, string modid, string organization) => $"{GeneratedSourceCode(modname, modid, organization)}/{modname}Hook.java";
-        public static string GeneratedWorldGenFile(string modname, string modid, string organization) => $"{GeneratedWorldFolder(modname, modid, organization)}/{modname}WorldGen.java";
-        public static string GeneratedBlocksFile(string modname, string modid, string organization) => $"{GeneratedSourceCode(modname, modid, organization)}/{modname}Blocks.java";
-        public static string GeneratedItemsFile(string modname, string modid, string organization) => $"{GeneratedSourceCode(modname, modid, organization)}/{modname}Items.java";
-        public static string GeneratedRecipesFile(string modname, string modid, string organization) => $"{GeneratedSourceCode(modname, modid, organization)}/{modname}Recipes.java";
-        public static string GeneratedSoundsFile(string modname, string modid, string organization) => $"{GeneratedSourceCode(modname, modid, organization)}/{modname}Sounds.java";
+        public static string GeneratedModManagerFile(string modname, string organization) => $"{GeneratedSourceCode(modname, organization)}/{modname}.java";
+        public static string GeneratedModHookFile(string modname, string organization) => $"{GeneratedSourceCode(modname, organization)}/{modname}Hook.java";
+        public static string GeneratedWorldGenFile(string modname, string organization) => $"{GeneratedWorldFolder(modname, organization)}/{modname}WorldGen.java";
+        public static string GeneratedBlocksFile(string modname, string organization) => $"{GeneratedSourceCode(modname, organization)}/{modname}Blocks.java";
+        public static string GeneratedItemsFile(string modname, string organization) => $"{GeneratedSourceCode(modname, organization)}/{modname}Items.java";
+        public static string GeneratedRecipesFile(string modname, string organization) => $"{GeneratedSourceCode(modname, organization)}/{modname}Recipes.java";
+        public static string GeneratedSoundsFile(string modname, string organization) => $"{GeneratedSourceCode(modname, organization)}/{modname}Sounds.java";
     }
 }

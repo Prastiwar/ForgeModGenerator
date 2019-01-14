@@ -98,6 +98,7 @@ namespace ForgeModGenerator.ViewModel
 
         private void RegisterServices()
         {
+            SimpleIoc.Default.Register<ModValidationService>();
             SimpleIoc.Default.Register<ISessionContextService, SessionContextService>();
 
             if (!SimpleIoc.Default.IsRegistered<INavigationService>())

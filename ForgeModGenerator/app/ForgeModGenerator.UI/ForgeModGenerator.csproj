@@ -118,6 +118,7 @@
     <Compile Include="Model\Sound.cs" />
     <Compile Include="Service\NavigationService.cs" />
     <Compile Include="Service\SessionContextService.cs" />
+    <Compile Include="Service\ValidationService.cs" />
     <Compile Include="ViewModel\BuildConfigurationViewModel.cs" />
     <Compile Include="ViewModel\AchievementGenerator\AchievementGeneratorViewModel.cs" />
     <Compile Include="ViewModel\BlockGenerator\BlockGeneratorViewModel.cs" />
@@ -276,6 +277,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="Resources\SourceCodeArchive.zip" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

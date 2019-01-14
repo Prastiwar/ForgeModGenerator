@@ -59,5 +59,15 @@ namespace ForgeModGenerator.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] SourceCodeArchive {
+            get {
+                object obj = ResourceManager.GetObject("SourceCodeArchive", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

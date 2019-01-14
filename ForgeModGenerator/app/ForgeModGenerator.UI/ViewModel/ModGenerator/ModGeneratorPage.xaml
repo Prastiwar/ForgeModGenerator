@@ -8,6 +8,6 @@
 	  local:ViewModelLocator.GetDataContext="ForgeModGenerator.ViewModel.ModGeneratorViewModel">
 
 	<Grid Background="DarkGoldenrod">
-		
+		<Button Content="Temp Button - Generate Mod" Command="{Binding CreateMod}"></Button>
 	</Grid>
 </Page>
