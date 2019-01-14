@@ -4,10 +4,150 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:ForgeModGenerator.ViewModel"
+      xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
+	  xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       mc:Ignorable="d" d:DesignHeight="450" d:DesignWidth="800"
 	  local:ViewModelLocator.GetDataContext="ForgeModGenerator.ViewModel.ModGeneratorViewModel">
 
 	<Grid Background="DarkGoldenrod">
-		<Button Content="Temp Button - Generate Mod" Command="{Binding CreateMod}"></Button>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="auto"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+		<ScrollViewer VerticalScrollBarVisibility="Auto">
+			<StackPanel>
+				<Expander  HorizontalAlignment="Stretch" Header="Create new mod" Foreground="Wheat">
+					<Grid Margin="0,-10,0,0">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="125"/>
+							<ColumnDefinition Width="*"/>
+						</Grid.ColumnDefinitions>
+						<StackPanel Grid.Column="0" TextBlock.Foreground="{DynamicResource MaterialDesignBody}" Margin="7">
+							<Label Height="{Binding ActualHeight, ElementName=OrganizationBox, Mode=OneWay}" Content="Organization:"/>
+							<Label Height="{Binding ActualHeight, ElementName=SideBox, Mode=OneWay}" Content="Side:"/>
+							<Label Height="{Binding ActualHeight, ElementName=NameBox, Mode=OneWay}" Content="Name:"/>
+							<Label Height="{Binding ActualHeight, ElementName=ModidBox, Mode=OneWay}" Content="modid:"/>
+							<Label Height="{Binding ActualHeight, ElementName=DescriptionBox, Mode=OneWay}" Content="Description:"/>
+							<Label Height="{Binding ActualHeight, ElementName=VersionBox, Mode=OneWay}" Content="Version:"/>
+							<Label Height="{Binding ActualHeight, ElementName=McVersionBox, Mode=OneWay}" Content="McVersion:"/>
+							<Label Height="{Binding ActualHeight, ElementName=UrlBox, Mode=OneWay}" Content="Url:"/>
+							<Label Height="{Binding ActualHeight, ElementName=UpdateUrlBox, Mode=OneWay}" Content="UpdateUrl:"/>
+							<Label Height="{Binding ActualHeight, ElementName=CreditsBox, Mode=OneWay}" Content="Credits:"/>
+							<Label Height="{Binding ActualHeight, ElementName=LogoFileBox, Mode=OneWay}" Content="LogoFile:"/>
+							<Label Height="{Binding ActualHeight, ElementName=AuthorListBox, Mode=OneWay}" Content="AuthorList:"/>
+							<Label Height="{Binding ActualHeight, ElementName=DependencyListBox, Mode=OneWay}" Content="Dependencies:"/>
+							<Label Height="{Binding ActualHeight, ElementName=ScreenshotListBox, Mode=OneWay}" Content="Screenshots:"/>
+						</StackPanel>
+						<StackPanel Grid.Column="1" TextBlock.Foreground="{DynamicResource MaterialDesignBody}" Margin="7">
+							<TextBox x:Name="OrganizationBox" TextWrapping="Wrap" MinWidth="25" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
+									 Text="{Binding Path=NewMod.Organization, Mode=TwoWay}"/>
+							<TextBox x:Name="SideBox" TextWrapping="Wrap" MinWidth="25" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
+									 Text="{Binding Path=NewMod.Side, Mode=TwoWay}"/>
+							<TextBox x:Name="NameBox" TextWrapping="Wrap" MinWidth="25" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
+									 Text="{Binding Path=NewMod.ModInfo.Name, Mode=TwoWay}"/>
+							<TextBox x:Name="ModidBox" TextWrapping="Wrap" MinWidth="25" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
+									 Text="{Binding Path=NewMod.ModInfo.Modid, Mode=TwoWay}"/>
+							<TextBox x:Name="DescriptionBox" TextWrapping="Wrap" MinWidth="25" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
+									 Text="{Binding Path=NewMod.ModInfo.Description, Mode=TwoWay}"/>
+							<TextBox x:Name="VersionBox" TextWrapping="Wrap" MinWidth="25" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
+									 Text="{Binding Path=NewMod.ModInfo.Version, Mode=TwoWay}"/>
+							<TextBox x:Name="McVersionBox" TextWrapping="Wrap" MinWidth="25" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
+									 Text="{Binding Path=NewMod.ModInfo.McVersion, Mode=TwoWay}"/>
+							<TextBox x:Name="UrlBox" TextWrapping="Wrap" MinWidth="25" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
+									 Text="{Binding Path=NewMod.ModInfo.Url, Mode=TwoWay}"/>
+							<TextBox x:Name="UpdateUrlBox" TextWrapping="Wrap" MinWidth="25" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
+									 Text="{Binding Path=NewMod.ModInfo.UpdateUrl, Mode=TwoWay}"/>
+							<TextBox x:Name="CreditsBox" TextWrapping="Wrap" MinWidth="25" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
+									 Text="{Binding Path=NewMod.ModInfo.Credits, Mode=TwoWay}"/>
+							<TextBox x:Name="LogoFileBox" Text="{Binding Path=NewMod.ModInfo.LogoFile, Mode=TwoWay}"/>
+
+							<!--<controls:HorizontalList x:Name="AuthorList" Command="{Binding AddNewItem2}" CommandArg="{Binding Path=NewMod.ModInfo.AuthorList, Mode=TwoWay}"/>-->
+							
+							<StackPanel Orientation="Horizontal">
+								<Button Command="{Binding AddNewItem}" CommandParameter="{Binding Path=NewMod.ModInfo.AuthorList, Mode=TwoWay}" Height="20" Width="25" Padding="0">
+									<materialDesign:PackIcon Kind="Plus" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+								</Button>
+								<ListBox ItemsSource="{Binding Path=NewMod.ModInfo.AuthorList, Mode=TwoWay}" FontSize="11" MinHeight="25"
+										 x:Name="AuthorListBox">
+									<ListBox.ItemTemplate>
+										<DataTemplate>
+											<TextBox Text="{Binding Path=., Mode=TwoWay}"></TextBox>
+										</DataTemplate>
+									</ListBox.ItemTemplate>
+									<ListBox.ItemsPanel>
+										<ItemsPanelTemplate>
+											<StackPanel Orientation="Horizontal"/>
+										</ItemsPanelTemplate>
+									</ListBox.ItemsPanel>
+								</ListBox>
+							</StackPanel>
+
+							<StackPanel Orientation="Horizontal">
+								<Button Command="{Binding AddNewItem}" CommandParameter="{Binding Path=NewMod.ModInfo.Dependencies, Mode=TwoWay}" Height="20" Width="25" Padding="0">
+									<materialDesign:PackIcon Kind="Plus" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+								</Button>
+								<DataGrid AutoGenerateColumns="False" HeadersVisibility="None" MinHeight="25" x:Name="DependencyListBox" 
+							  FontSize="11" ItemsSource="{Binding Path=NewMod.ModInfo.Dependencies, Mode=TwoWay}">
+									<DataGrid.ItemsPanel>
+										<ItemsPanelTemplate>
+											<StackPanel Orientation="Horizontal"></StackPanel>
+										</ItemsPanelTemplate>
+									</DataGrid.ItemsPanel>
+									<DataGrid.Columns>
+										<DataGridTextColumn Binding="{Binding Path=., Mode=TwoWay}"/>
+									</DataGrid.Columns>
+								</DataGrid>
+							</StackPanel>
+
+							<StackPanel Orientation="Horizontal">
+								<Button Command="{Binding AddNewItem}" CommandParameter="{Binding Path=NewMod.ModInfo.Screenshots, Mode=TwoWay}" Height="20" Width="25" Padding="0">
+									<materialDesign:PackIcon Kind="Plus" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+								</Button>
+								<DataGrid AutoGenerateColumns="False" HeadersVisibility="None" MinHeight="25" x:Name="ScreenshotListBox" 
+							  FontSize="11" ItemsSource="{Binding Path=NewMod.ModInfo.Screenshots, Mode=TwoWay}">
+									<DataGrid.ItemsPanel>
+										<ItemsPanelTemplate>
+											<StackPanel Orientation="Horizontal"></StackPanel>
+										</ItemsPanelTemplate>
+									</DataGrid.ItemsPanel>
+									<DataGrid.Columns>
+										<DataGridTextColumn Binding="{Binding Path=., Mode=TwoWay}"/>
+									</DataGrid.Columns>
+								</DataGrid>
+							</StackPanel>
+							<Button Content="Generate Mod" Command="{Binding CreateMod}"/>
+						</StackPanel>
+					</Grid>
+				</Expander>
+
+				<!--<DataGrid Grid.Row="1" ItemsSource="{Binding SessionContext.Mods}" SelectedItem="{Binding SelectedEditMod}">
+			<DataGridRow Background="Wheat">
+			</DataGridRow>
+			<DataGrid.ItemTemplate>
+				<DataTemplate>
+					<StackPanel>
+						<TextBlock Text="e{Binding Path=Organization}"></TextBlock>
+
+					</StackPanel>
+					-->
+				<!--<Expander HorizontalAlignment="Stretch" Header="Expander Example 2a">
+						<StackPanel Orientation="Vertical" TextBlock.Foreground="{DynamicResource MaterialDesignBody}" Margin="24,8,24,16">
+							<TextBlock Text="Your Content" />
+							<TextBlock Opacity=".68" TextWrapping="Wrap"
+										Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."/>
+						</StackPanel>
+					</Expander>-->
+				<!--<Border Background="{DynamicResource MaterialDesignDivider}"
+							Height="1"
+							HorizontalAlignment="Stretch"
+							SnapsToDevicePixels="True" />-->
+				<!--
+				</DataTemplate>
+			</DataGrid.ItemTemplate>
+		</DataGrid>-->
+
+
+			</StackPanel>
+		</ScrollViewer>
 	</Grid>
 </Page>

@@ -70,14 +70,14 @@ namespace ForgeModGenerator.ViewModel
         }
 
         public static readonly DependencyProperty GetDataContextProperty
-            = DependencyProperty.RegisterAttached("GetDataContext", typeof(string), typeof(ViewModelLocator), new PropertyMetadata("", GetDataContextChanged));
+            = DependencyProperty.RegisterAttached("GetDataContext", typeof(string), typeof(ViewModelLocator), new PropertyMetadata("Default", GetDataContextChanged));
         public static string GetGetDataContext(DependencyObject obj) => (string)obj.GetValue(GetDataContextProperty);
         public static void SetGetDataContext(DependencyObject obj, string value) => obj.SetValue(GetDataContextProperty, value);
         private static void GetDataContextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             FrameworkElement callOwner = d as FrameworkElement;
-            string className = (string)d.GetValue(GetDataContextProperty);
-            if (className != null)
+            string className = GetGetDataContext(d);
+            if (className != null && className != "Default")
             {
                 callOwner.DataContext = ServiceLocator.Current.GetInstance(Type.GetType(className));
             }

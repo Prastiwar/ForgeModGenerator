@@ -10,17 +10,17 @@
 			 views:ViewModelLocator.GetDataContext="ForgeModGenerator.ViewModel.MainWindowViewModel">
 	<Grid>
 		<StackPanel Orientation="Horizontal">
-			<Button Width="35" Height="15" Background="#FFCD2929" Command="{Binding OpenSettings}" Margin="0,0,5,0" BorderBrush="#FF3C0000">
-				<materialDesign:PackIcon Kind="Settings" Margin="-7"/>
+			<Button Width="35" Height="15" Padding="0" Background="#FFCD2929" Command="{Binding OpenSettings}" Margin="0,0,5,0" BorderBrush="#FF3C0000">
+				<materialDesign:PackIcon Kind="Settings"/>
 			</Button>
-			<Button Width="35" Height="15" Background="#FFCD2929" Command="{Binding Minimize}" Margin="0,0,5,0" BorderBrush="#FF3C0000">
-				<materialDesign:PackIcon Kind="WindowMinimize" Margin="-7, -3"/>
+			<Button Width="35" Height="15" Padding="0" Background="#FFCD2929" Command="{Binding Minimize}" Margin="0,0,5,0" BorderBrush="#FF3C0000">
+				<materialDesign:PackIcon Kind="WindowMinimize" Margin="0, 2"/>
 			</Button>
-			<Button Width="35" Height="15" Background="#FFCD2929" Command="{Binding Restore}" Margin="0,0,5,0" BorderBrush="#FF3C0000">
-				<materialDesign:PackIcon Kind="WindowMaximize" Margin="-7"/>
+			<Button Width="35" Height="15" Padding="0" Background="#FFCD2929" Command="{Binding Restore}" Margin="0,0,5,0" BorderBrush="#FF3C0000">
+				<materialDesign:PackIcon Kind="WindowMaximize"/>
 			</Button>
-			<Button Width="35" Height="15" Background="#FFCD2929" Command="{Binding ExitApp}" BorderBrush="#FF3C0000">
-				<materialDesign:PackIcon Kind="Close" Margin="-7"/>
+			<Button Width="35" Height="15" Padding="0" Background="#FFCD2929" Command="{Binding ExitApp}" BorderBrush="#FF3C0000">
+				<materialDesign:PackIcon Kind="Close"/>
 			</Button>
 		</StackPanel>
 	</Grid>

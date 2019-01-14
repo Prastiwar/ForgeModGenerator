@@ -38,7 +38,7 @@
 		<!--Mod Selector-->
 		<ComboBox ItemsSource="{Binding Path=SessionContext.Mods}" SelectedItem="{Binding Path=SessionContext.SelectedMod}"
                   Grid.Column="1" Width="220" Margin="1" Background="#FF404040" Foreground="#FFE8E8E8"
-				  FontSize="11" BorderBrush="Wheat"
+				  FontSize="11" BorderBrush="Wheat" materialDesign:HintAssist.Hint="Selected Mod"
                   HorizontalAlignment="Left" VerticalAlignment="Center" HorizontalContentAlignment="Center">
 			<ComboBox.ItemTemplate>
 				<DataTemplate>

@@ -10,13 +10,27 @@ namespace ForgeModGenerator.Service
 
     public class ModValidationService : IValidationService<Mod>
     {
-        public bool Validate(Mod obj)
+        protected readonly string lowerMatch = "^[a-z]{3,21}$"; // full lowercase letters, length limit 3-21
+        protected readonly string nameMatch = "^[A-Z]+[A-z]{2,20}$"; // first upper letter, next letters case dont matter, length limit 3-21
+
+        public bool Validate(Mod mod)
         {
-            string lowerMatch = "^[a-z]{3,21}$"; // full lowercase, length limit 3-21
-            string nameMatch = "^[A-Z]+[A-z]{2,20}$"; // first upper, next doesnt matter, length limit 3-21
-            return Regex.IsMatch(obj.Organization, lowerMatch)
-                && Regex.IsMatch(obj.ModInfo.Modid, lowerMatch)
-                && Regex.IsMatch(obj.ModInfo.Name, nameMatch);
+            return ValidateName(mod) && ValidateOrganization(mod) && ValidateModid(mod);
+        }
+
+        public bool ValidateName(Mod mod)
+        {
+            return Regex.IsMatch(mod.ModInfo.Name, nameMatch);
+        }
+
+        public bool ValidateOrganization(Mod mod)
+        {
+            return Regex.IsMatch(mod.Organization, lowerMatch);
+        }
+
+        public bool ValidateModid(Mod mod)
+        {
+            return Regex.IsMatch(mod.ModInfo.Modid, lowerMatch);
         }
     }
 }

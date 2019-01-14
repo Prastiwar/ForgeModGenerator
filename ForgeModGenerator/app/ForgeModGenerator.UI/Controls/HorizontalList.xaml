@@ -1,0 +1,46 @@
+﻿<UserControl x:Class="ForgeModGenerator.Controls.HorizontalList"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ForgeModGenerator.Controls"
+             xmlns:views="clr-namespace:ForgeModGenerator.ViewModel"
+			 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+			 mc:Ignorable="d" DataContext="{Binding Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:HorizontalList}}}"
+             d:DesignHeight="200" d:DesignWidth="200">
+	<Grid>
+		<!--<StackPanel Orientation="Horizontal">
+			<Button Command="{Binding Command}" CommandParameter="{Binding CommandArg}" Height="20" Width="25" Padding="0">
+				<materialDesign:PackIcon Kind="Plus" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+			</Button>
+			<DataGrid AutoGenerateColumns="False" HeadersVisibility="None" MinHeight="25" x:Name="AuthorListBox" 
+							  FontSize="11" ItemsSource="{Binding CommandArg}">
+				<DataGrid.ItemsPanel>
+					<ItemsPanelTemplate>
+						<StackPanel Orientation="Horizontal"></StackPanel>
+					</ItemsPanelTemplate>
+				</DataGrid.ItemsPanel>
+				<DataGrid.Columns>
+					<DataGridTextColumn Binding="{Binding Path=., Mode=TwoWay}"/>
+				</DataGrid.Columns>
+			</DataGrid>
+		</StackPanel>-->
+		<StackPanel Orientation="Horizontal">
+			<Button Command="{Binding Command}" CommandParameter="{Binding CommandArg}" Height="20" Width="25" Padding="0">
+				<materialDesign:PackIcon Kind="Plus" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+			</Button>
+			<ListBox ItemsSource="{Binding Path=CommandArg, Mode=TwoWay}" FontSize="11" MinHeight="25">
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<TextBox Text="{Binding Path=., Mode=TwoWay}"></TextBox>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+				<ListBox.ItemsPanel>
+					<ItemsPanelTemplate>
+						<StackPanel Orientation="Horizontal"/>
+					</ItemsPanelTemplate>
+				</ListBox.ItemsPanel>
+			</ListBox>
+		</StackPanel>
+	</Grid>
+</UserControl>
