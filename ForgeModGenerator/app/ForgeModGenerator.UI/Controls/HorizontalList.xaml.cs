@@ -1,5 +1,4 @@
-﻿using GalaSoft.MvvmLight.Command;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -11,11 +10,7 @@ namespace ForgeModGenerator.Controls
         public HorizontalList()
         {
             InitializeComponent();
-            DataContext = this;
-            StringList = new ObservableCollection<string>() { "testcollection"};
         }
-        private ICommand removeItem;
-        public ICommand TestCmd { get => removeItem ?? (removeItem = new RelayCommand(() => { MessageBox.Show("test"); })); }
 
         public static readonly DependencyProperty AddCommandProperty =
             DependencyProperty.Register("AddCommand", typeof(ICommand), typeof(HorizontalList), new PropertyMetadata(null));

@@ -62,116 +62,15 @@
 									 Text="{Binding Path=NewMod.ModInfo.Credits, Mode=TwoWay}"/>
 							<TextBox x:Name="LogoFileBox" Text="{Binding Path=NewMod.ModInfo.LogoFile, Mode=TwoWay}"/>
 
-							<!--<controls:HorizontalList x:Name="AuthorList" AddCommand="{Binding AddNewItem}" RemoveCommand="{Binding RemoveItem}" StringList="{Binding Path=NewMod.ModInfo.AuthorList, Mode=TwoWay}"/>-->
+							<controls:HorizontalList x:Name="AuthorListBox" AddCommand="{Binding Path=AddNewItem}" RemoveCommand="{Binding Path=RemoveItem}" 
+													 StringList="{Binding Path=NewMod.ModInfo.AuthorList, Mode=TwoWay}"/>
 
-							<StackPanel Orientation="Horizontal">
-								<Button Command="{Binding AddNewItem}" CommandParameter="{Binding Path=NewMod.ModInfo.AuthorList, Mode=TwoWay}" Height="20" Width="25" Padding="0">
-									<materialDesign:PackIcon Kind="Plus" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-								</Button>
-								<ListBox ItemsSource="{Binding Path=NewMod.ModInfo.AuthorList, Mode=TwoWay}" FontSize="11" MinHeight="25"
-										 x:Name="AuthorListBox">
-									<ListBox.ItemTemplate>
-										<DataTemplate>
-											<TextBox Text="{Binding Path=., Mode=TwoWay}" Tag="{Binding ElementName=ModGenWindow}">
-												<TextBox.ContextMenu>
-													<ContextMenu>
-														<MenuItem Header="Remove"
-																  Command="{Binding PlacementTarget.Tag.DataContext.RemoveItem, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}">
-															<MenuItem.Resources>
-																<c:ListStringConverter x:Key="ListStringConverter"/>
-															</MenuItem.Resources>
-															<MenuItem.CommandParameter>
-																<MultiBinding Converter="{StaticResource ListStringConverter}">
-																	<Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}" Path="PlacementTarget.Tag.DataContext.NewMod.ModInfo.AuthorList"/>
-																	<Binding Path="."/>
-																</MultiBinding>
-															</MenuItem.CommandParameter>
-														</MenuItem>
-													</ContextMenu>
-												</TextBox.ContextMenu>
-											</TextBox>
-										</DataTemplate>
-									</ListBox.ItemTemplate>
-									<ListBox.ItemsPanel>
-										<ItemsPanelTemplate>
-											<StackPanel Orientation="Horizontal"/>
-										</ItemsPanelTemplate>
-									</ListBox.ItemsPanel>
-								</ListBox>
-							</StackPanel>
+							<controls:HorizontalList x:Name="DependencyListBox" AddCommand="{Binding Path=AddNewItem}" RemoveCommand="{Binding Path=RemoveItem}" 
+													 StringList="{Binding Path=NewMod.ModInfo.Dependencies, Mode=TwoWay}"/>
 
-							<StackPanel Orientation="Horizontal">
-								<Button Command="{Binding AddNewItem}" CommandParameter="{Binding Path=NewMod.ModInfo.Dependencies, Mode=TwoWay}" Height="20" Width="25" Padding="0">
-									<materialDesign:PackIcon Kind="Plus" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-								</Button>
-								<ListBox ItemsSource="{Binding Path=NewMod.ModInfo.Dependencies, Mode=TwoWay}" FontSize="11" MinHeight="25"
-										 x:Name="DependencyListBox">
-									<ListBox.ItemTemplate>
-										<DataTemplate>
-											<TextBox Text="{Binding Path=., Mode=TwoWay}" Tag="{Binding ElementName=ModGenWindow}">
-												<TextBox.ContextMenu>
-													<ContextMenu>
-														<MenuItem Header="Remove"
-																  Command="{Binding PlacementTarget.Tag.DataContext.RemoveItem, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}">
-															<MenuItem.Resources>
-																<c:ListStringConverter x:Key="ListStringConverter"/>
-															</MenuItem.Resources>
-															<MenuItem.CommandParameter>
-																<MultiBinding Converter="{StaticResource ListStringConverter}">
-																	<Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}" Path="PlacementTarget.Tag.DataContext.NewMod.ModInfo.Dependencies"/>
-																	<Binding Path="."/>
-																</MultiBinding>
-															</MenuItem.CommandParameter>
-														</MenuItem>
-													</ContextMenu>
-												</TextBox.ContextMenu>
-											</TextBox>
-										</DataTemplate>
-									</ListBox.ItemTemplate>
-									<ListBox.ItemsPanel>
-										<ItemsPanelTemplate>
-											<StackPanel Orientation="Horizontal"/>
-										</ItemsPanelTemplate>
-									</ListBox.ItemsPanel>
-								</ListBox>
-							</StackPanel>
+							<controls:HorizontalList x:Name="ScreenshotListBox" AddCommand="{Binding Path=AddNewItem}" RemoveCommand="{Binding Path=RemoveItem}" 
+													 StringList="{Binding Path=NewMod.ModInfo.Screenshots, Mode=TwoWay}"/>
 
-							<StackPanel Orientation="Horizontal">
-								<Button Command="{Binding AddNewItem}" CommandParameter="{Binding Path=NewMod.ModInfo.Screenshots, Mode=TwoWay}" Height="20" Width="25" Padding="0">
-									<materialDesign:PackIcon Kind="Plus" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-								</Button>
-								<ListBox ItemsSource="{Binding Path=NewMod.ModInfo.Screenshots, Mode=TwoWay}" FontSize="11" MinHeight="25"
-										 x:Name="ScreenshotListBox">
-									<ListBox.ItemTemplate>
-										<DataTemplate>
-											<TextBox Text="{Binding Path=., Mode=TwoWay}" Tag="{Binding ElementName=ModGenWindow}">
-												<TextBox.ContextMenu>
-													<ContextMenu>
-														<MenuItem Header="Remove"
-																  Command="{Binding PlacementTarget.Tag.DataContext.RemoveItem, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}">
-															<MenuItem.Resources>
-																<c:ListStringConverter x:Key="ListStringConverter"/>
-															</MenuItem.Resources>
-															<MenuItem.CommandParameter>
-																<MultiBinding Converter="{StaticResource ListStringConverter}">
-																	<Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}" Path="PlacementTarget.Tag.DataContext.NewMod.ModInfo.Screenshots"/>
-																	<Binding Path="."/>
-																</MultiBinding>
-															</MenuItem.CommandParameter>
-														</MenuItem>
-													</ContextMenu>
-												</TextBox.ContextMenu>
-											</TextBox>
-										</DataTemplate>
-									</ListBox.ItemTemplate>
-									<ListBox.ItemsPanel>
-										<ItemsPanelTemplate>
-											<StackPanel Orientation="Horizontal"/>
-										</ItemsPanelTemplate>
-									</ListBox.ItemsPanel>
-								</ListBox>
-							</StackPanel>
-							
 							<Button Content="Generate Mod" Command="{Binding CreateMod}"/>
 						</StackPanel>
 					</Grid>

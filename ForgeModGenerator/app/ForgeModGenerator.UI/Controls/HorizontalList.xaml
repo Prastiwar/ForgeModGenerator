@@ -10,41 +10,49 @@
 			 mc:Ignorable="d" d:DesignHeight="200" d:DesignWidth="200"
 			 x:Name="HorizontalListWindow">
 	<Grid>
-		<StackPanel Orientation="Horizontal">
-			<Button Command="{Binding Path=AddCommand}"
-					CommandParameter="{Binding Path=StringListProperty, Mode=TwoWay}" Height="20" Width="25" Padding="0">
-				<materialDesign:PackIcon Kind="Plus" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-			</Button>
-			<ListBox ItemsSource="{Binding Path=StringListProperty, Mode=TwoWay}" FontSize="11" MinHeight="25" Width="100">
-				<ListBox.ItemTemplate>
-					<DataTemplate>
-						<TextBox Text="{Binding Path=., Mode=TwoWay}" Tag="{Binding ElementName=HorizontalListWindow}">
-							<TextBox.ContextMenu>
-								<ContextMenu>
-									<MenuItem Header="Remove"
-											  Command="{Binding PlacementTarget.Tag.DataContext.TestCmd, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}">
-										<MenuItem.Resources>
-											<c:ListStringConverter x:Key="ListStringConverter"/>
-										</MenuItem.Resources>
-										<MenuItem.CommandParameter>
-											<MultiBinding Converter="{StaticResource ListStringConverter}">
-												<Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}"
-														 Path="PlacementTarget.Tag.DataContext.StringList"/>
-												<Binding Path="."/>
-											</MultiBinding>
-										</MenuItem.CommandParameter>
-									</MenuItem>
-								</ContextMenu>
-							</TextBox.ContextMenu>
-						</TextBox>
-					</DataTemplate>
-				</ListBox.ItemTemplate>
-				<ListBox.ItemsPanel>
-					<ItemsPanelTemplate>
-						<StackPanel Orientation="Horizontal"/>
-					</ItemsPanelTemplate>
-				</ListBox.ItemsPanel>
-			</ListBox>
-		</StackPanel>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="25"/>
+			<ColumnDefinition Width="*"/>
+		</Grid.ColumnDefinitions>
+		<Button Grid.Column="0" Command="{Binding Path=AddCommand, RelativeSource={RelativeSource AncestorType=local:HorizontalList}}"
+					CommandParameter="{Binding Path=StringList, RelativeSource={RelativeSource AncestorType=local:HorizontalList}, Mode=TwoWay}" Height="20" Width="25" Padding="0">
+			<materialDesign:PackIcon Kind="Plus" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+		</Button>
+
+		<ScrollViewer Grid.Column="1" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Disabled">
+			<StackPanel Orientation="Horizontal">
+				<ListBox ItemsSource="{Binding Path=StringList, RelativeSource={RelativeSource AncestorType=local:HorizontalList}, Mode=TwoWay}" FontSize="11" MinHeight="25">
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<TextBox Text="{Binding Path=., Mode=TwoWay}" Tag="{Binding ElementName=HorizontalListWindow}">
+								<TextBox.ContextMenu>
+									<ContextMenu>
+										<MenuItem Header="Remove"
+											  Command="{Binding PlacementTarget.Tag.RemoveCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}">
+											<MenuItem.Resources>
+												<c:ListStringConverter x:Key="ListStringConverter"/>
+											</MenuItem.Resources>
+											<MenuItem.CommandParameter>
+												<MultiBinding Converter="{StaticResource ListStringConverter}">
+													<Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}"
+														 Path="PlacementTarget.Tag.StringList"/>
+													<Binding Path="."/>
+												</MultiBinding>
+											</MenuItem.CommandParameter>
+										</MenuItem>
+									</ContextMenu>
+								</TextBox.ContextMenu>
+							</TextBox>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+					<ListBox.ItemsPanel>
+						<ItemsPanelTemplate>
+							<StackPanel Orientation="Horizontal"/>
+						</ItemsPanelTemplate>
+					</ListBox.ItemsPanel>
+				</ListBox>
+			</StackPanel>
+		</ScrollViewer>
+
 	</Grid>
 </UserControl>
