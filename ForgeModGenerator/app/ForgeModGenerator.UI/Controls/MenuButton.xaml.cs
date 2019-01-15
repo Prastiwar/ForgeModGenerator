@@ -6,6 +6,11 @@ namespace ForgeModGenerator.Controls
 {
     public partial class MenuButton : UserControl
     {
+        public MenuButton()
+        {
+            InitializeComponent();
+        }
+
         public static readonly DependencyProperty DescProperty =
             DependencyProperty.Register("Desc", typeof(string), typeof(MenuButton), new PropertyMetadata("Descvalue"));
         public string Desc {
@@ -43,11 +48,6 @@ namespace ForgeModGenerator.Controls
         private void OnClick(object sender, RoutedEventArgs e)
         {
             OnClick();
-        }
-
-        public MenuButton()
-        {
-            InitializeComponent();
         }
     }
 }

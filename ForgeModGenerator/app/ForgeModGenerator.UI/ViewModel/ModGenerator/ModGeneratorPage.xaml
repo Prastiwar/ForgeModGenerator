@@ -5,8 +5,9 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:ForgeModGenerator.ViewModel"
       xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
+      xmlns:c="clr-namespace:ForgeModGenerator.Converter"
 	  xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-      mc:Ignorable="d" d:DesignHeight="450" d:DesignWidth="800"
+      mc:Ignorable="d" d:DesignHeight="450" d:DesignWidth="800" x:Name="ModGenWindow"
 	  local:ViewModelLocator.GetDataContext="ForgeModGenerator.ViewModel.ModGeneratorViewModel">
 
 	<Grid Background="DarkGoldenrod">
@@ -61,8 +62,8 @@
 									 Text="{Binding Path=NewMod.ModInfo.Credits, Mode=TwoWay}"/>
 							<TextBox x:Name="LogoFileBox" Text="{Binding Path=NewMod.ModInfo.LogoFile, Mode=TwoWay}"/>
 
-							<!--<controls:HorizontalList x:Name="AuthorList" Command="{Binding AddNewItem2}" CommandArg="{Binding Path=NewMod.ModInfo.AuthorList, Mode=TwoWay}"/>-->
-							
+							<!--<controls:HorizontalList x:Name="AuthorList" AddCommand="{Binding AddNewItem}" RemoveCommand="{Binding RemoveItem}" StringList="{Binding Path=NewMod.ModInfo.AuthorList, Mode=TwoWay}"/>-->
+
 							<StackPanel Orientation="Horizontal">
 								<Button Command="{Binding AddNewItem}" CommandParameter="{Binding Path=NewMod.ModInfo.AuthorList, Mode=TwoWay}" Height="20" Width="25" Padding="0">
 									<materialDesign:PackIcon Kind="Plus" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -71,7 +72,24 @@
 										 x:Name="AuthorListBox">
 									<ListBox.ItemTemplate>
 										<DataTemplate>
-											<TextBox Text="{Binding Path=., Mode=TwoWay}"></TextBox>
+											<TextBox Text="{Binding Path=., Mode=TwoWay}" Tag="{Binding ElementName=ModGenWindow}">
+												<TextBox.ContextMenu>
+													<ContextMenu>
+														<MenuItem Header="Remove"
+																  Command="{Binding PlacementTarget.Tag.DataContext.RemoveItem, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}">
+															<MenuItem.Resources>
+																<c:ListStringConverter x:Key="ListStringConverter"/>
+															</MenuItem.Resources>
+															<MenuItem.CommandParameter>
+																<MultiBinding Converter="{StaticResource ListStringConverter}">
+																	<Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}" Path="PlacementTarget.Tag.DataContext.NewMod.ModInfo.AuthorList"/>
+																	<Binding Path="."/>
+																</MultiBinding>
+															</MenuItem.CommandParameter>
+														</MenuItem>
+													</ContextMenu>
+												</TextBox.ContextMenu>
+											</TextBox>
 										</DataTemplate>
 									</ListBox.ItemTemplate>
 									<ListBox.ItemsPanel>
@@ -86,65 +104,78 @@
 								<Button Command="{Binding AddNewItem}" CommandParameter="{Binding Path=NewMod.ModInfo.Dependencies, Mode=TwoWay}" Height="20" Width="25" Padding="0">
 									<materialDesign:PackIcon Kind="Plus" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 								</Button>
-								<DataGrid AutoGenerateColumns="False" HeadersVisibility="None" MinHeight="25" x:Name="DependencyListBox" 
-							  FontSize="11" ItemsSource="{Binding Path=NewMod.ModInfo.Dependencies, Mode=TwoWay}">
-									<DataGrid.ItemsPanel>
+								<ListBox ItemsSource="{Binding Path=NewMod.ModInfo.Dependencies, Mode=TwoWay}" FontSize="11" MinHeight="25"
+										 x:Name="DependencyListBox">
+									<ListBox.ItemTemplate>
+										<DataTemplate>
+											<TextBox Text="{Binding Path=., Mode=TwoWay}" Tag="{Binding ElementName=ModGenWindow}">
+												<TextBox.ContextMenu>
+													<ContextMenu>
+														<MenuItem Header="Remove"
+																  Command="{Binding PlacementTarget.Tag.DataContext.RemoveItem, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}">
+															<MenuItem.Resources>
+																<c:ListStringConverter x:Key="ListStringConverter"/>
+															</MenuItem.Resources>
+															<MenuItem.CommandParameter>
+																<MultiBinding Converter="{StaticResource ListStringConverter}">
+																	<Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}" Path="PlacementTarget.Tag.DataContext.NewMod.ModInfo.Dependencies"/>
+																	<Binding Path="."/>
+																</MultiBinding>
+															</MenuItem.CommandParameter>
+														</MenuItem>
+													</ContextMenu>
+												</TextBox.ContextMenu>
+											</TextBox>
+										</DataTemplate>
+									</ListBox.ItemTemplate>
+									<ListBox.ItemsPanel>
 										<ItemsPanelTemplate>
-											<StackPanel Orientation="Horizontal"></StackPanel>
+											<StackPanel Orientation="Horizontal"/>
 										</ItemsPanelTemplate>
-									</DataGrid.ItemsPanel>
-									<DataGrid.Columns>
-										<DataGridTextColumn Binding="{Binding Path=., Mode=TwoWay}"/>
-									</DataGrid.Columns>
-								</DataGrid>
+									</ListBox.ItemsPanel>
+								</ListBox>
 							</StackPanel>
 
 							<StackPanel Orientation="Horizontal">
 								<Button Command="{Binding AddNewItem}" CommandParameter="{Binding Path=NewMod.ModInfo.Screenshots, Mode=TwoWay}" Height="20" Width="25" Padding="0">
 									<materialDesign:PackIcon Kind="Plus" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 								</Button>
-								<DataGrid AutoGenerateColumns="False" HeadersVisibility="None" MinHeight="25" x:Name="ScreenshotListBox" 
-							  FontSize="11" ItemsSource="{Binding Path=NewMod.ModInfo.Screenshots, Mode=TwoWay}">
-									<DataGrid.ItemsPanel>
+								<ListBox ItemsSource="{Binding Path=NewMod.ModInfo.Screenshots, Mode=TwoWay}" FontSize="11" MinHeight="25"
+										 x:Name="ScreenshotListBox">
+									<ListBox.ItemTemplate>
+										<DataTemplate>
+											<TextBox Text="{Binding Path=., Mode=TwoWay}" Tag="{Binding ElementName=ModGenWindow}">
+												<TextBox.ContextMenu>
+													<ContextMenu>
+														<MenuItem Header="Remove"
+																  Command="{Binding PlacementTarget.Tag.DataContext.RemoveItem, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}">
+															<MenuItem.Resources>
+																<c:ListStringConverter x:Key="ListStringConverter"/>
+															</MenuItem.Resources>
+															<MenuItem.CommandParameter>
+																<MultiBinding Converter="{StaticResource ListStringConverter}">
+																	<Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}" Path="PlacementTarget.Tag.DataContext.NewMod.ModInfo.Screenshots"/>
+																	<Binding Path="."/>
+																</MultiBinding>
+															</MenuItem.CommandParameter>
+														</MenuItem>
+													</ContextMenu>
+												</TextBox.ContextMenu>
+											</TextBox>
+										</DataTemplate>
+									</ListBox.ItemTemplate>
+									<ListBox.ItemsPanel>
 										<ItemsPanelTemplate>
-											<StackPanel Orientation="Horizontal"></StackPanel>
+											<StackPanel Orientation="Horizontal"/>
 										</ItemsPanelTemplate>
-									</DataGrid.ItemsPanel>
-									<DataGrid.Columns>
-										<DataGridTextColumn Binding="{Binding Path=., Mode=TwoWay}"/>
-									</DataGrid.Columns>
-								</DataGrid>
+									</ListBox.ItemsPanel>
+								</ListBox>
 							</StackPanel>
+							
 							<Button Content="Generate Mod" Command="{Binding CreateMod}"/>
 						</StackPanel>
 					</Grid>
 				</Expander>
-
-				<!--<DataGrid Grid.Row="1" ItemsSource="{Binding SessionContext.Mods}" SelectedItem="{Binding SelectedEditMod}">
-			<DataGridRow Background="Wheat">
-			</DataGridRow>
-			<DataGrid.ItemTemplate>
-				<DataTemplate>
-					<StackPanel>
-						<TextBlock Text="e{Binding Path=Organization}"></TextBlock>
-
-					</StackPanel>
-					-->
-				<!--<Expander HorizontalAlignment="Stretch" Header="Expander Example 2a">
-						<StackPanel Orientation="Vertical" TextBlock.Foreground="{DynamicResource MaterialDesignBody}" Margin="24,8,24,16">
-							<TextBlock Text="Your Content" />
-							<TextBlock Opacity=".68" TextWrapping="Wrap"
-										Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."/>
-						</StackPanel>
-					</Expander>-->
-				<!--<Border Background="{DynamicResource MaterialDesignDivider}"
-							Height="1"
-							HorizontalAlignment="Stretch"
-							SnapsToDevicePixels="True" />-->
-				<!--
-				</DataTemplate>
-			</DataGrid.ItemTemplate>
-		</DataGrid>-->
 
 
 			</StackPanel>

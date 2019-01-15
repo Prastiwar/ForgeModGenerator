@@ -4,6 +4,7 @@ using ForgeModGenerator.Service;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using Newtonsoft.Json;
+using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.IO.Compression;
@@ -71,15 +72,11 @@ namespace ForgeModGenerator.ViewModel
         private ICommand addNewItem;
         public ICommand AddNewItem { get => addNewItem ?? (addNewItem = new RelayCommand<ObservableCollection<string>>(AddNewItemTo)); }
 
-        private void AddNewItemTo(ObservableCollection<string> collection)
-        {
-            collection.Add("NewItem");
-            System.Windows.MessageBox.Show("som");
-        }
-        private void AddNewItemTo2()
-        {
-            System.Windows.MessageBox.Show("som2");
-        }
+        private ICommand removeItem;
+        public ICommand RemoveItem { get => removeItem ?? (removeItem = new RelayCommand<Tuple<ObservableCollection<string>, string>>(RemoveItemFromList)); }
+
+        private void AddNewItemTo(ObservableCollection<string> collection) => collection.Add("NewItem");
+        private void RemoveItemFromList(Tuple<ObservableCollection<string>, string> param) => param.Item1.Remove(param.Item2);
 
         private void GenerateMod(Mod mod)
         {

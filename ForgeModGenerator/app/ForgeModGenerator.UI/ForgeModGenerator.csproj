@@ -105,6 +105,7 @@
     <Compile Include="Controls\HorizontalList.xaml.cs">
       <DependentUpon>HorizontalList.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converter\ListStringConverter.cs" />
     <Compile Include="Core\AppPaths.cs" />
     <Compile Include="Core\CoreSourceCodeVariables.cs" />
     <Compile Include="Model\ForgeVersion.cs" />

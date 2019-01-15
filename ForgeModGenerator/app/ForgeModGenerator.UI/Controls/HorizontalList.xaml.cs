@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using GalaSoft.MvvmLight.Command;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -10,18 +11,31 @@ namespace ForgeModGenerator.Controls
         public HorizontalList()
         {
             InitializeComponent();
+            DataContext = this;
+            StringList = new ObservableCollection<string>() { "testcollection"};
+        }
+        private ICommand removeItem;
+        public ICommand TestCmd { get => removeItem ?? (removeItem = new RelayCommand(() => { MessageBox.Show("test"); })); }
+
+        public static readonly DependencyProperty AddCommandProperty =
+            DependencyProperty.Register("AddCommand", typeof(ICommand), typeof(HorizontalList), new PropertyMetadata(null));
+        public ICommand AddCommand {
+            get => (ICommand)GetValue(AddCommandProperty);
+            set => SetValue(AddCommandProperty, value);
         }
 
-        public static readonly DependencyProperty CommandProperty = DependencyProperty.Register("Command", typeof(ICommand), typeof(HorizontalList));
-        public ICommand Command {
-            get => (ICommand)GetValue(CommandProperty);
-            set => SetValue(CommandProperty, value);
+        public static readonly DependencyProperty RemoveCommandProperty =
+            DependencyProperty.Register("RemoveCommand", typeof(ICommand), typeof(HorizontalList), new PropertyMetadata(null));
+        public ICommand RemoveCommand {
+            get => (ICommand)GetValue(RemoveCommandProperty);
+            set => SetValue(RemoveCommandProperty, value);
         }
-        
-        public static readonly DependencyProperty CommandArgProperty = DependencyProperty.Register("CommandArg", typeof(ObservableCollection<string>), typeof(HorizontalList));
-        public ObservableCollection<string> CommandArg {
-            get => (ObservableCollection<string>)GetValue(CommandArgProperty);
-            set => SetValue(CommandArgProperty, value);
+
+        public static readonly DependencyProperty StringListProperty =
+            DependencyProperty.Register("StringList", typeof(ObservableCollection<string>), typeof(HorizontalList), new PropertyMetadata(null));
+        public ObservableCollection<string> StringList {
+            get => (ObservableCollection<string>)GetValue(StringListProperty);
+            set => SetValue(StringListProperty, value);
         }
     }
 }
