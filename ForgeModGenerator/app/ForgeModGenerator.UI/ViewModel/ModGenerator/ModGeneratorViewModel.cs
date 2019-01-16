@@ -5,9 +5,11 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Windows.Input;
 
 namespace ForgeModGenerator.ViewModel
@@ -17,18 +19,21 @@ namespace ForgeModGenerator.ViewModel
     {
         public ISessionContextService SessionContext { get; }
         public ModValidationService Validator { get; }
+        public IWorkspaceSetupService WorkspaceService { get; }
 
-        public ModGeneratorViewModel(ISessionContextService sessionContext, ModValidationService validator)
+        public ModGeneratorViewModel(ISessionContextService sessionContext, ModValidationService validator, IWorkspaceSetupService workspaceService)
         {
             SessionContext = sessionContext;
             Validator = validator;
+            WorkspaceService = workspaceService;
+
             if (IsInDesignMode || IsInDesignModeStatic)
             {
                 SessionContextService context = sessionContext as SessionContextService;
                 context.Mods = new ObservableCollection<Mod>() {
-                    new Mod(new McModInfo(){ Name = "ExampleMod", Modid = "examplemod" }, "exampleorg"),
-                    new Mod(new McModInfo(){ Name = "ExampleModTwo", Modid = "examplemodtwo" }, "exampleorg2"),
-                    new Mod(new McModInfo(){ Name = "ExampleModThree", Modid = "examplemodthree" }, "exampleorg3")
+                    new Mod(new McModInfo(){ Name = "ExampleMod", Modid = "examplemod" }, "exampleorg", SessionContext.ForgeVersions[0]),
+                    new Mod(new McModInfo(){ Name = "ExampleModTwo", Modid = "examplemodtwo" }, "exampleorg2", SessionContext.ForgeVersions[0]),
+                    new Mod(new McModInfo(){ Name = "ExampleModThree", Modid = "examplemodthree" }, "exampleorg3", SessionContext.ForgeVersions[0])
                 };
             }
             NewMod = new Mod(new McModInfo() {
@@ -41,12 +46,14 @@ namespace ForgeModGenerator.ViewModel
                 AuthorList = new ObservableCollection<string>() { "Me", "And Him" },
                 Dependencies = new ObservableCollection<string>() { "OtherMod", "EvenOtherMod" },
                 Screenshots = new ObservableCollection<string>() { "url", "otherurl" }
-            }, "newexampleorg");
+            }, "newexampleorg", SessionContext.ForgeVersions[0]);
         }
 
         private readonly string[] assetsFolerToGenerate = new string[] {
             "blockstates", "lang", "recipes", "sounds", "models/item", "textures/blocks", "textures/entity", "textures/items", "textures/models/armor"
         };
+
+        public IEnumerable<ModSide> Sides => Enum.GetValues(typeof(ModSide)).Cast<ModSide>();//.Select(x => x.ToString());
 
         private Mod newMod;
         public Mod NewMod {
@@ -80,7 +87,7 @@ namespace ForgeModGenerator.ViewModel
 
         private void GenerateMod(Mod mod)
         {
-            if (!Validator.Validate(mod))
+            if (!Validator.IsValid(mod))
             {
                 Log.InfoBox($"Selected mod is not valid");
                 return;

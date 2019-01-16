@@ -1,10 +1,13 @@
-﻿using ForgeModGenerator.Core;
+﻿using ForgeModGenerator.Converter;
+using ForgeModGenerator.Core;
 using GalaSoft.MvvmLight;
 using Newtonsoft.Json;
+using System.ComponentModel;
 using System.IO;
 
 namespace ForgeModGenerator.Model
 {
+    [TypeConverter(typeof(EnumDescriptionTypeConverter))]
     public enum ModSide
     {
         ClientServer,
@@ -27,6 +30,12 @@ namespace ForgeModGenerator.Model
             set => Set(ref side, value);
         }
 
+        private WorkspaceSetup workspaceSetup;
+        public WorkspaceSetup WorkspaceSetup {
+            get => workspaceSetup;
+            set => Set(ref workspaceSetup, value);
+        }
+
         private McModInfo modInfo;
         [JsonProperty(Required = Required.Always)]
         public McModInfo ModInfo {
@@ -34,11 +43,20 @@ namespace ForgeModGenerator.Model
             set => Set(ref modInfo, value);
         }
 
-        public Mod(McModInfo modInfo, string organization, ModSide side = ModSide.ClientServer)
+        private ForgeVersion forgeVersion;
+        [JsonProperty(Required = Required.Always)]
+        public ForgeVersion ForgeVersion {
+            get => forgeVersion;
+            set => Set(ref forgeVersion, value);
+        }
+
+        public Mod(McModInfo modInfo, string organization, ForgeVersion forgeVersion, ModSide side = ModSide.ClientServer, WorkspaceSetup workspaceSetup = null)
         {
             ModInfo = modInfo;
             Organization = organization;
+            ForgeVersion = forgeVersion;
             Side = side;
+            WorkspaceSetup = workspaceSetup ?? WorkspaceSetup.NONE;
         }
 
         public static Mod Import(string modPath)
