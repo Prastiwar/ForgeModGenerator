@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -53,7 +54,7 @@ namespace ForgeModGenerator.ViewModel
             "blockstates", "lang", "recipes", "sounds", "models/item", "textures/blocks", "textures/entity", "textures/items", "textures/models/armor"
         };
 
-        public IEnumerable<ModSide> Sides => Enum.GetValues(typeof(ModSide)).Cast<ModSide>();//.Select(x => x.ToString());
+        public IEnumerable<ModSide> Sides => Enum.GetValues(typeof(ModSide)).Cast<ModSide>();
 
         private Mod newMod;
         public Mod NewMod {
@@ -67,11 +68,8 @@ namespace ForgeModGenerator.ViewModel
             set => Set(ref selectedEditMod, value);
         }
 
-        private ForgeVersion selectedForgeVersion;
-        public ForgeVersion SelectedForgeVersion {
-            get => selectedForgeVersion;
-            set => Set(ref selectedForgeVersion, value);
-        }
+        private ICommand addNewForgeVersion;
+        public ICommand AddNewForgeVersion { get => addNewForgeVersion ?? (addNewForgeVersion = new RelayCommand(AddNewForge)); }
 
         private ICommand createMod;
         public ICommand CreateMod { get => createMod ?? (createMod = new RelayCommand(() => GenerateMod(NewMod))); }
@@ -84,6 +82,12 @@ namespace ForgeModGenerator.ViewModel
 
         private void AddNewItemTo(ObservableCollection<string> collection) => collection.Add("NewItem");
         private void RemoveItemFromList(Tuple<ObservableCollection<string>, string> param) => param.Item1.Remove(param.Item2);
+
+        private void AddNewForge()
+        {
+            Process.Start("https://files.minecraftforge.net/"); // to install version
+            Process.Start(AppPaths.ForgeVersions); // paste zip there
+        }
 
         private void GenerateMod(Mod mod)
         {
@@ -98,7 +102,7 @@ namespace ForgeModGenerator.ViewModel
                 Log.InfoBox($"{newModPath} already exists");
                 return;
             }
-            selectedForgeVersion.UnZip(newModPath);
+            mod.ForgeVersion.UnZip(newModPath);
             RemoveDumpExample(mod);
 
             string generatedPath = ModPaths.GeneratedSourceCode(mod.ModInfo.Name, mod.Organization);
@@ -109,6 +113,7 @@ namespace ForgeModGenerator.ViewModel
             File.WriteAllText(ModPaths.FmgModInfo(mod.ModInfo.Name), JsonConvert.SerializeObject(mod)); // create FmgModInfo file for mod detection
 
             SessionContext.Mods.Add(mod);
+            Log.InfoBox($"{mod.ModInfo.Name} was created successfully");
         }
 
         private void RemoveDumpExample(Mod mod)

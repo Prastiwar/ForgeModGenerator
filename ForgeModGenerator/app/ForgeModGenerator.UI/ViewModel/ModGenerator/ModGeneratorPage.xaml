@@ -7,10 +7,16 @@
       xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
       xmlns:model="clr-namespace:ForgeModGenerator.Model"
       xmlns:c="clr-namespace:ForgeModGenerator.Converter"
-      xmlns:misc="clr-namespace:ForgeModGenerator.Miscellaneous.Extension"
+      xmlns:misc="clr-namespace:ForgeModGenerator.Miscellaneous"
 	  xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       mc:Ignorable="d" d:DesignHeight="450" d:DesignWidth="800" x:Name="ModGenWindow"
 	  local:ViewModelLocator.GetDataContext="ForgeModGenerator.ViewModel.ModGeneratorViewModel">
+
+	<Page.Resources>
+		<DataTemplate x:Key="ModExpanderTemplate">
+			
+		</DataTemplate>
+	</Page.Resources>
 
 	<Grid Background="#FF424242">
 		<ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -24,7 +30,7 @@
 									<ColumnDefinition Width="125"/>
 									<ColumnDefinition Width="*"/>
 								</Grid.ColumnDefinitions>
-								
+
 								<StackPanel Grid.Column="0" TextBlock.Foreground="{DynamicResource MaterialDesignBody}" Margin="7">
 									<Label Height="{Binding ActualHeight, ElementName=OrganizationBox, Mode=OneWay}" Content="Organization:"/>
 									<Label Height="{Binding ActualHeight, ElementName=SideBox, Mode=OneWay}" Content="Side:"/>
@@ -43,15 +49,9 @@
 									<Label Height="{Binding ActualHeight, ElementName=DependencyListBox, Mode=OneWay}" Content="Dependencies:"/>
 									<Label Height="{Binding ActualHeight, ElementName=ScreenshotListBox, Mode=OneWay}" Content="Screenshots:"/>
 								</StackPanel>
-								
-								<StackPanel Grid.Column="1" TextBlock.Foreground="{DynamicResource MaterialDesignBody}" Margin="7">
-									<TextBox x:Name="OrganizationBox" Text="{Binding Path=NewMod.Organization, Mode=TwoWay}" TextChanged="ValidateOrganization">
-										<!--<Binding>
-											<Binding.ValidationRules>
 
-											</Binding.ValidationRules>
-										</Binding>-->
-									</TextBox>
+								<StackPanel Grid.Column="1" TextBlock.Foreground="{DynamicResource MaterialDesignBody}" Margin="7">
+									<TextBox x:Name="OrganizationBox" Text="{Binding Path=NewMod.Organization, Mode=TwoWay}" TextChanged="ValidateOrganization"/>
 									<ComboBox x:Name="SideBox" ItemsSource="{Binding Path=Sides}"
 											  SelectedValue="{Binding Path=NewMod.Side}"
 											  Background="#FF404040" Foreground="#FFE8E8E8"
@@ -64,12 +64,17 @@
 											  FontSize="11" BorderBrush="Wheat" materialDesign:HintAssist.Hint="Select setup option"
 											  HorizontalAlignment="Left" VerticalAlignment="Center" HorizontalContentAlignment="Center">
 									</ComboBox>
-									<ComboBox x:Name="ForgeVersionBox" ItemsSource="{Binding Path=SessionContext.ForgeVersions}"
+									<StackPanel Orientation="Horizontal">
+										<ComboBox x:Name="ForgeVersionBox" ItemsSource="{Binding Path=SessionContext.ForgeVersions}"
 											  SelectedValue="{Binding Path=NewMod.ForgeVersion}"
 											  Background="#FF404040" Foreground="#FFE8E8E8" DisplayMemberPath="Name"
 											  FontSize="11" BorderBrush="Wheat" materialDesign:HintAssist.Hint="Select setup option"
 											  HorizontalAlignment="Left" VerticalAlignment="Center" HorizontalContentAlignment="Center">
-									</ComboBox>
+										</ComboBox>
+										<Button Padding="0" Width="25" Height="25" Margin="10,0,0,0" Command="{Binding Path=AddNewForgeVersion}">
+											<materialDesign:PackIcon Kind="Plus" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+										</Button>
+									</StackPanel>
 									<TextBox x:Name="NameBox" Text="{Binding Path=NewMod.ModInfo.Name, Mode=TwoWay}" TextChanged="ValidateNameAndTryFillModif"/>
 									<TextBox x:Name="ModidBox" Text="{Binding Path=NewMod.ModInfo.Modid, Mode=TwoWay}" TextChanged="ValidateModid"/>
 									<TextBox x:Name="DescriptionBox" TextWrapping="Wrap" AcceptsReturn="True" Text="{Binding Path=NewMod.ModInfo.Description, Mode=TwoWay}"/>
@@ -91,10 +96,14 @@
 
 									<Button Content="Generate Mod" Command="{Binding CreateMod}"/>
 								</StackPanel>
-								
+
 							</Grid>
 						</Expander>
-
+						
+						<!--<ListBox ItemsSource="{Binding Path=SessionContext.Mods}" SelectedItem="{Binding Path=SelectedMod}"
+								 ItemTemplate="{StaticResource ModExpanderTemplate}">
+						</ListBox>-->
+						
 					</StackPanel>
 				</materialDesign:Card>
 			</StackPanel>

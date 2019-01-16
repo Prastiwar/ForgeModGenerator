@@ -1,21 +1,11 @@
 ﻿using ForgeModGenerator.Model;
 using System.Text.RegularExpressions;
-using System.Windows.Controls;
 
 namespace ForgeModGenerator.Service
 {
     public interface IValidationService<T>
     {
         bool IsValid(T obj);
-    }
-
-    public class NameValidator : ValidationRule
-    {
-        public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
-        {
-            return new ValidationResult(Regex.IsMatch(value as string, "^[a-z]{3,21}$"), "It's not valid");
-            //return ValidationResult.ValidResult;
-        }
     }
 
     public class ModValidationService : IValidationService<Mod>

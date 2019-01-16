@@ -10,7 +10,7 @@ namespace ForgeModGenerator.Model
 
         public ForgeVersion(string zipPath)
         {
-            ZipPath = zipPath;
+            ZipPath = zipPath ?? throw new System.ArgumentNullException(nameof(zipPath));
             Name = Path.GetFileNameWithoutExtension(zipPath).Replace("-mdk", "");
         }
 
