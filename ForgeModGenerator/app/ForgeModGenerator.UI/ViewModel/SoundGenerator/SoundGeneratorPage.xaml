@@ -4,10 +4,21 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:ForgeModGenerator.ViewModel"
-      mc:Ignorable="d" d:DesignHeight="450" d:DesignWidth="800"
+      xmlns:control="clr-namespace:ForgeModGenerator.Controls"
+	  xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+      mc:Ignorable="d" d:DesignHeight="450" d:DesignWidth="800" x:Name="PageWindow"
 	  local:ViewModelLocator.GetDataContext="ForgeModGenerator.ViewModel.SoundGeneratorViewModel">
 
-    <Grid Background="DarkBlue">
-        
-    </Grid>
+	<Page.Resources>
+		<DataTemplate x:Key="ItemTemplate">
+			<Button Padding="0" Width="32" Height="32" Background="CornflowerBlue" BorderBrush="Black" Tag="{Binding ElementName=ThisWindow}" 
+					ContextMenu="{StaticResource DefaultRemoveFileContext}" Command="{Binding SoundClick}">
+				<materialDesign:PackIcon Kind="Play"/>
+			</Button>
+		</DataTemplate>
+	</Page.Resources>
+
+	<Grid Background="#FF424242">
+		<control:FileListExpanderListView DataContext="{Binding}" ListItemTemplate="{StaticResource ItemTemplate}"/>
+	</Grid>
 </Page>

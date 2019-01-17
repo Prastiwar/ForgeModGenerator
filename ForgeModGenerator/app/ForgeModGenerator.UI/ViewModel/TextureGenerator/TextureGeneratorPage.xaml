@@ -9,27 +9,17 @@
       mc:Ignorable="d" d:DesignHeight="450" d:DesignWidth="800" x:Name="TexturePageWindow"
 	  local:ViewModelLocator.GetDataContext="ForgeModGenerator.ViewModel.TextureGeneratorViewModel">
 
-	<Grid Background="#FF424242">
-		<ScrollViewer VerticalScrollBarVisibility="Auto">
-			<StackPanel>
-				<materialDesign:Card Background="#FF535353" Margin="10">
-					<StackPanel>
-						<ListBox ItemsSource="{Binding Textures}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
-							<ListBox.ItemTemplate>
-								<DataTemplate>
-									<StackPanel>
-										<control:TextureList HeaderText="{Binding Path=HeaderName}" Textures="{Binding}"
-															AddCommand="{Binding Path=DataContext.AddTexture, RelativeSource={RelativeSource AncestorType=ListBox}}"
-															 RemoveCommand="{Binding Path=DataContext.RemoveTexture, RelativeSource={RelativeSource AncestorType=ListBox}}"/>
-										<Border Background="#FF313131" Height="1" HorizontalAlignment="Stretch" SnapsToDevicePixels="True" />
-									</StackPanel>
-								</DataTemplate>
-							</ListBox.ItemTemplate>
-						</ListBox>
-					</StackPanel>
-				</materialDesign:Card>
-			</StackPanel>
-		</ScrollViewer>
+	<Page.Resources>
+		<DataTemplate x:Key="ItemTemplate">
+			<Image Width="32" Height="32" Tag="{Binding ElementName=ThisWindow}" ContextMenu="{StaticResource DefaultRemoveFileContext}">
+				<Image.Source>
+					<BitmapImage UriSource="{Binding}" CacheOption="OnLoad"/>
+				</Image.Source>
+			</Image>
+		</DataTemplate>
+	</Page.Resources>
 
+	<Grid Background="#FF424242">
+		<control:FileListExpanderListView DataContext="{Binding}" ListItemTemplate="{StaticResource ItemTemplate}"/>
 	</Grid>
 </Page>

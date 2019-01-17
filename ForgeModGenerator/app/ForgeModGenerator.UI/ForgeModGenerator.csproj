@@ -106,8 +106,11 @@
     <Compile Include="Controls\HorizontalList.xaml.cs">
       <DependentUpon>HorizontalList.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\TextureList.xaml.cs">
-      <DependentUpon>TextureList.xaml</DependentUpon>
+    <Compile Include="Controls\FileListExpander.xaml.cs">
+      <DependentUpon>FileListExpander.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\FileListExpanderListView.xaml.cs">
+      <DependentUpon>FileListExpanderListView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converter\EnumToCollectionConverter.cs" />
     <Compile Include="Converter\ListStringConverter.cs" />
@@ -126,7 +129,7 @@
     <Compile Include="Core\ModPaths.cs" />
     <Compile Include="Model\Recipe.cs" />
     <Compile Include="Model\Sound.cs" />
-    <Compile Include="Model\TextureCollection.cs" />
+    <Compile Include="Model\FileCollection.cs" />
     <Compile Include="Model\WorkspaceSetup.cs" />
     <Compile Include="Service\NavigationService.cs" />
     <Compile Include="Service\SessionContextService.cs" />
@@ -137,6 +140,7 @@
     <Compile Include="ViewModel\BlockGenerator\BlockGeneratorViewModel.cs" />
     <Compile Include="ViewModel\CommandGenerator\CommandGeneratorViewModel.cs" />
     <Compile Include="ViewModel\ItemGenerator\ItemGeneratorViewModel.cs" />
+    <Compile Include="ViewModel\FileListViewModelBase.cs" />
     <Compile Include="ViewModel\ModGenerator\ModGeneratorViewModel.cs" />
     <Compile Include="ViewModel\RecipeGenerator\RecipeGeneratorViewModel.cs" />
     <Compile Include="ViewModel\SoundGenerator\SoundGeneratorViewModel.cs" />
@@ -183,7 +187,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\TextureList.xaml">
+    <Page Include="Controls\FileListExpander.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\FileListExpanderListView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

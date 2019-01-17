@@ -1,0 +1,40 @@
+﻿<UserControl x:Class="ForgeModGenerator.Controls.FileListExpander"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ForgeModGenerator.Controls"
+			 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+			 xmlns:c="clr-namespace:ForgeModGenerator.Converter"
+			 mc:Ignorable="d" d:DesignHeight="450" d:DesignWidth="800" x:Name="ThisWindow">
+	<Grid>
+		<Expander Foreground="Wheat" Background="#FF424242" HorizontalAlignment="Stretch">
+			<Expander.HeaderTemplate>
+				<DataTemplate>
+					<StackPanel Orientation="Horizontal">
+						<Button Padding="0" Width="20" Height="20"
+								CommandParameter="{Binding Path=Files, RelativeSource={RelativeSource AncestorType=local:FileListExpander}}"
+								Command="{Binding Path=AddCommand, RelativeSource={RelativeSource AncestorType=local:FileListExpander}}">
+							<materialDesign:PackIcon Kind="Plus"/>
+						</Button>
+						<Button Padding="0" Width="20" Height="20" Margin="8,0" Click="ShowContainer">
+							<materialDesign:PackIcon Kind="FolderOpen"/>
+						</Button>
+						<TextBlock Margin="12,0" Text="{Binding Path=HeaderText, RelativeSource={RelativeSource AncestorType=local:FileListExpander}}"/>
+					</StackPanel>
+				</DataTemplate>
+			</Expander.HeaderTemplate>
+
+			<ListBox ItemsSource="{Binding Path=Files.Paths, RelativeSource={RelativeSource AncestorType=local:FileListExpander}}"
+					 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+					 ItemTemplate="{Binding Path=ItemTemplate, RelativeSource={RelativeSource AncestorType=local:FileListExpander}}">
+				<ListBox.ItemsPanel>
+					<ItemsPanelTemplate>
+						<WrapPanel IsItemsHost="True" />
+					</ItemsPanelTemplate>
+				</ListBox.ItemsPanel>
+			</ListBox>
+		</Expander>
+
+	</Grid>
+</UserControl>
