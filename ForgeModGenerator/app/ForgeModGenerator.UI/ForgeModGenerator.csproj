@@ -71,6 +71,7 @@
     <Reference Include="MaterialDesignThemes.Wpf, Version=2.5.0.1205, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MaterialDesignThemes.2.5.0.1205\lib\net45\MaterialDesignThemes.Wpf.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -105,8 +106,8 @@
     <Compile Include="Controls\HorizontalList.xaml.cs">
       <DependentUpon>HorizontalList.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ImageList.xaml.cs">
-      <DependentUpon>ImageList.xaml</DependentUpon>
+    <Compile Include="Controls\TextureList.xaml.cs">
+      <DependentUpon>TextureList.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converter\EnumToCollectionConverter.cs" />
     <Compile Include="Converter\ListStringConverter.cs" />
@@ -125,6 +126,7 @@
     <Compile Include="Core\ModPaths.cs" />
     <Compile Include="Model\Recipe.cs" />
     <Compile Include="Model\Sound.cs" />
+    <Compile Include="Model\TextureCollection.cs" />
     <Compile Include="Model\WorkspaceSetup.cs" />
     <Compile Include="Service\NavigationService.cs" />
     <Compile Include="Service\SessionContextService.cs" />
@@ -181,7 +183,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\ImageList.xaml">
+    <Page Include="Controls\TextureList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

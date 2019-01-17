@@ -6,26 +6,26 @@
       xmlns:local="clr-namespace:ForgeModGenerator.ViewModel"
       xmlns:control="clr-namespace:ForgeModGenerator.Controls"
 	  xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-      mc:Ignorable="d" d:DesignHeight="450" d:DesignWidth="800"
+      mc:Ignorable="d" d:DesignHeight="450" d:DesignWidth="800" x:Name="TexturePageWindow"
 	  local:ViewModelLocator.GetDataContext="ForgeModGenerator.ViewModel.TextureGeneratorViewModel">
 
 	<Grid Background="#FF424242">
-
 		<ScrollViewer VerticalScrollBarVisibility="Auto">
 			<StackPanel>
-				<materialDesign:Card Background="{DynamicResource MaterialDesignBackground}" Margin="10">
+				<materialDesign:Card Background="#FF535353" Margin="10">
 					<StackPanel>
-						<control:ImageList HeaderText="Blocks" Images="{Binding Blocks}" AddCommand="{Binding AddTexture}"/>
-						<Border Background="{DynamicResource MaterialDesignDivider}" Height="1" HorizontalAlignment="Stretch" SnapsToDevicePixels="True" />
-
-						<control:ImageList HeaderText="Entity" Images="{Binding Entity}" AddCommand="{Binding AddTexture}"/>
-						<Border Background="{DynamicResource MaterialDesignDivider}" Height="1" HorizontalAlignment="Stretch" SnapsToDevicePixels="True" />
-
-						<control:ImageList HeaderText="Items" Images="{Binding Items}" AddCommand="{Binding AddTexture}"/>
-						<Border Background="{DynamicResource MaterialDesignDivider}" Height="1" HorizontalAlignment="Stretch" SnapsToDevicePixels="True" />
-
-						<control:ImageList HeaderText="Armor" Images="{Binding Armor}" AddCommand="{Binding AddTexture}"/>
-						<Border Background="{DynamicResource MaterialDesignDivider}" Height="1" HorizontalAlignment="Stretch" SnapsToDevicePixels="True" />
+						<ListBox ItemsSource="{Binding Textures}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+							<ListBox.ItemTemplate>
+								<DataTemplate>
+									<StackPanel>
+										<control:TextureList HeaderText="{Binding Path=HeaderName}" Textures="{Binding}"
+															AddCommand="{Binding Path=DataContext.AddTexture, RelativeSource={RelativeSource AncestorType=ListBox}}"
+															 RemoveCommand="{Binding Path=DataContext.RemoveTexture, RelativeSource={RelativeSource AncestorType=ListBox}}"/>
+										<Border Background="#FF313131" Height="1" HorizontalAlignment="Stretch" SnapsToDevicePixels="True" />
+									</StackPanel>
+								</DataTemplate>
+							</ListBox.ItemTemplate>
+						</ListBox>
 					</StackPanel>
 				</materialDesign:Card>
 			</StackPanel>
