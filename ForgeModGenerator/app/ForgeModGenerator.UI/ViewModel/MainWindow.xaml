@@ -36,21 +36,27 @@
 		<local:DraggableRectangle Grid.Row="2" Grid.Column="1"/>
 
 		<!--Mod Selector-->
-		<ComboBox ItemsSource="{Binding Path=SessionContext.Mods}" SelectedItem="{Binding Path=SessionContext.SelectedMod}"
-                  Grid.Column="1" Width="220" Margin="1" Background="#FF404040" Foreground="#FFE8E8E8"
+		<StackPanel Grid.Column="1" Margin="1" Orientation="Horizontal">
+			<ComboBox ItemsSource="{Binding Path=SessionContext.Mods}" SelectedItem="{Binding Path=SessionContext.SelectedMod}"
+                  Width="220" Background="#FF404040" Foreground="#FFE8E8E8"
 				  FontSize="11" BorderBrush="Wheat" materialDesign:HintAssist.Hint="Selected Mod"
                   HorizontalAlignment="Left" VerticalAlignment="Center" HorizontalContentAlignment="Center">
-			<ComboBox.ItemTemplate>
-				<DataTemplate>
-					<StackPanel Orientation="Horizontal">
-						<TextBlock Text="{Binding Path=Side}"/>
-						<TextBlock Text=" - "/>
-						<TextBlock Text="{Binding Path=ModInfo.Name}"/>
-					</StackPanel>
-				</DataTemplate>
-			</ComboBox.ItemTemplate>
-		</ComboBox>
-		
+				<ComboBox.ItemTemplate>
+					<DataTemplate>
+						<StackPanel Orientation="Horizontal">
+							<TextBlock Text="{Binding Path=Side}"/>
+							<TextBlock Text=" - "/>
+							<TextBlock Text="{Binding Path=ModInfo.Name}"/>
+						</StackPanel>
+					</DataTemplate>
+				</ComboBox.ItemTemplate>
+			</ComboBox>
+
+			<Button Width="15" Height="15" Padding="0" Margin="10,0" Command="{Binding Refresh}">
+				<materialDesign:PackIcon Kind="Refresh"/>
+			</Button>
+		</StackPanel>
+
 		<local:AppMenu Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
 
 		<!--Content - nav menu and page frame-->

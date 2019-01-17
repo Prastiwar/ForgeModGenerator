@@ -20,6 +20,6 @@
 	</Page.Resources>
 
 	<Grid Background="#FF424242">
-		<control:FileListExpanderListView DataContext="{Binding}" ListItemTemplate="{StaticResource ItemTemplate}"/>
+		<control:FileListExpanderListBox DataContext="{Binding}" ListItemTemplate="{StaticResource ItemTemplate}"/>
 	</Grid>
 </Page>

@@ -6,19 +6,19 @@
       xmlns:local="clr-namespace:ForgeModGenerator.ViewModel"
       xmlns:control="clr-namespace:ForgeModGenerator.Controls"
 	  xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-      mc:Ignorable="d" d:DesignHeight="450" d:DesignWidth="800" x:Name="PageWindow"
+      mc:Ignorable="d" d:DesignHeight="450" d:DesignWidth="800" x:Name="ThisWindow"
 	  local:ViewModelLocator.GetDataContext="ForgeModGenerator.ViewModel.SoundGeneratorViewModel">
 
 	<Page.Resources>
 		<DataTemplate x:Key="ItemTemplate">
 			<Button Padding="0" Width="32" Height="32" Background="CornflowerBlue" BorderBrush="Black" Tag="{Binding ElementName=ThisWindow}" 
-					ContextMenu="{StaticResource DefaultRemoveFileContext}" Command="{Binding SoundClick}">
+					ContextMenu="{StaticResource DefaultRemoveFileContext}" Click="BindedClick" CommandParameter="{Binding}">
 				<materialDesign:PackIcon Kind="Play"/>
 			</Button>
 		</DataTemplate>
 	</Page.Resources>
 
 	<Grid Background="#FF424242">
-		<control:FileListExpanderListView DataContext="{Binding}" ListItemTemplate="{StaticResource ItemTemplate}"/>
+		<control:FileListExpanderListBox DataContext="{Binding}" ListItemTemplate="{StaticResource ItemTemplate}"/>
 	</Grid>
 </Page>

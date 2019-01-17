@@ -26,6 +26,9 @@ namespace ForgeModGenerator.ViewModel
             SessionContext = sessionContext;
         }
 
+        private ICommand refresh;
+        public ICommand Refresh { get => refresh ?? (refresh = new RelayCommand(ForceRefresh)); }
+
         private ICommand openSettings;
         public ICommand OpenSettings { get => openSettings ?? (openSettings = new RelayCommand(() => { navigationService.NavigateTo(ViewModelLocator.Pages.Settings); })); }
 
@@ -41,6 +44,13 @@ namespace ForgeModGenerator.ViewModel
             {
                 Application.Current.MainWindow.WindowState = Application.Current.MainWindow.WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
             }));
+        }
+
+        private void ForceRefresh()
+        {
+            Mod mod = SessionContext.SelectedMod;
+            SessionContext.SelectedMod = null;
+            SessionContext.SelectedMod = mod;
         }
 
         private async void QuitApp()

@@ -1,6 +1,7 @@
 ﻿using ForgeModGenerator.Core;
 using ForgeModGenerator.Service;
 using GalaSoft.MvvmLight.Command;
+using System.Windows.Forms;
 using System.Windows.Input;
 
 namespace ForgeModGenerator.ViewModel
@@ -21,7 +22,7 @@ namespace ForgeModGenerator.ViewModel
 
         private void OnSoundClick(string soundPath)
         {
-
+            System.Diagnostics.Process.Start(soundPath);
         }
     }
 }

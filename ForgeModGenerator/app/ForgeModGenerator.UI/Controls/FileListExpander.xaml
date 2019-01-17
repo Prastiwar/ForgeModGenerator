@@ -26,8 +26,9 @@
 			</Expander.HeaderTemplate>
 
 			<ListBox ItemsSource="{Binding Path=Files.Paths, RelativeSource={RelativeSource AncestorType=local:FileListExpander}}"
-					 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-					 ItemTemplate="{Binding Path=ItemTemplate, RelativeSource={RelativeSource AncestorType=local:FileListExpander}}">
+					 SelectedItem="{Binding Path=SelectedFilePath, RelativeSource={RelativeSource AncestorType=local:FileListExpander}}"
+					 ItemTemplate="{Binding Path=ItemTemplate, RelativeSource={RelativeSource AncestorType=local:FileListExpander}}"
+					 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
 				<ListBox.ItemsPanel>
 					<ItemsPanelTemplate>
 						<WrapPanel IsItemsHost="True" />

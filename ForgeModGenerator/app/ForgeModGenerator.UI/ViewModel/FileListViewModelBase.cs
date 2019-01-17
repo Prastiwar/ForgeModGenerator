@@ -38,6 +38,12 @@ namespace ForgeModGenerator.ViewModel
             set => Set(ref files, value);
         }
 
+        private FileCollection selectedFiles;
+        public FileCollection SelectedFiles {
+            get => selectedFiles;
+            set => Set(ref selectedFiles, value);
+        }
+
         private ICommand addCommand;
         public ICommand AddCommand => addCommand ?? (addCommand = new RelayCommand<FileCollection>(AddNew));
 

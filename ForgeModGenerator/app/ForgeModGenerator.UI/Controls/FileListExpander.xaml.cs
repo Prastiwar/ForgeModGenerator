@@ -26,6 +26,13 @@ namespace ForgeModGenerator.Controls
             set => SetValue(FilesProperty, value);
         }
 
+        public static readonly DependencyProperty SelectedFilePathProperty =
+            DependencyProperty.Register("SelectedFilePath", typeof(string), typeof(FileListExpander), new PropertyMetadata(null));
+        public string SelectedFilePath {
+            get => (string)GetValue(SelectedFilePathProperty);
+            set => SetValue(SelectedFilePathProperty, value);
+        }
+
         public static readonly DependencyProperty AddCommandProperty =
             DependencyProperty.Register("AddCommand", typeof(ICommand), typeof(FileListExpander), new PropertyMetadata(null));
         public ICommand AddCommand {
