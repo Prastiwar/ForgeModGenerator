@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace ForgeModGenerator.Controls
+namespace ForgeModGenerator.UserControls
 {
     public partial class FileListExpander : UserControl
     {

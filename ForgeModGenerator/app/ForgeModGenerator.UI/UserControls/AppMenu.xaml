@@ -1,0 +1,50 @@
+﻿<UserControl x:Class="ForgeModGenerator.UserControls.AppMenu"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:ForgeModGenerator.UserControls"
+			 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+			 mc:Ignorable="d"
+			 d:DesignHeight="15" d:DesignWidth="155">
+	<Grid>
+		<StackPanel Orientation="Horizontal">
+			<Button Width="{Binding Path=ItemWidth, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
+					Height="{Binding Path=ItemHeight, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
+					Command="{Binding OpenSettingsCommand, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
+					Padding="0"
+					Margin="{Binding Path=ItemMargin, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
+					Background="{Binding Path=ItemBackground, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
+					BorderBrush="{Binding Path=ItemBorderBrush, RelativeSource={RelativeSource AncestorType=local:AppMenu}}">
+				<materialDesign:PackIcon Kind="{Binding Path=SettingsIcon, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"/>
+			</Button>
+			<Button Width="{Binding Path=ItemWidth, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
+					Height="{Binding Path=ItemHeight, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
+					Command="{Binding Path=MinimizeCommand, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
+					Padding="0"
+					Margin="{Binding Path=ItemMargin, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
+					Background="{Binding Path=ItemBackground, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
+					BorderBrush="{Binding Path=ItemBorderBrush, RelativeSource={RelativeSource AncestorType=local:AppMenu}}">
+				<materialDesign:PackIcon Kind="{Binding Path=MinimizeIcon, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"/>
+			</Button>
+			<Button Width="{Binding Path=ItemWidth, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
+					Height="{Binding Path=ItemHeight, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
+					Command="{Binding Path=RestoreCommand, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
+					Padding="0"
+					Margin="{Binding Path=ItemMargin, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
+					Background="{Binding Path=ItemBackground, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
+					BorderBrush="{Binding Path=ItemBorderBrush, RelativeSource={RelativeSource AncestorType=local:AppMenu}}">
+				<materialDesign:PackIcon Kind="{Binding Path=RestoreIcon, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"/>
+			</Button>
+			<Button Width="{Binding Path=ItemWidth, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
+					Height="{Binding Path=ItemHeight, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
+					Command="{Binding Path=CloseCommand, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
+					Padding="0"
+					Margin="{Binding Path=ItemMargin, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
+					Background="{Binding Path=ItemBackground, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
+					BorderBrush="{Binding Path=ItemBorderBrush, RelativeSource={RelativeSource AncestorType=local:AppMenu}}">
+				<materialDesign:PackIcon Kind="{Binding Path=CloseIcon, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"/>
+			</Button>
+		</StackPanel>
+	</Grid>
+</UserControl>

@@ -112,16 +112,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Controls\HorizontalList.xaml.cs">
+    <Compile Include="UserControls\HorizontalList.xaml.cs">
       <DependentUpon>HorizontalList.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\FileListExpander.xaml.cs">
+    <Compile Include="UserControls\FileListExpander.xaml.cs">
       <DependentUpon>FileListExpander.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\FileListExpanderListBox.xaml.cs">
+    <Compile Include="UserControls\FileListExpanderListBox.xaml.cs">
       <DependentUpon>FileListExpanderListBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ModForm.xaml.cs">
+    <Compile Include="UserControls\ModForm.xaml.cs">
       <DependentUpon>ModForm.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converter\EnumToCollectionConverter.cs" />
@@ -149,7 +149,7 @@
     <Compile Include="Service\SessionContextService.cs" />
     <Compile Include="Service\ValidationService.cs" />
     <Compile Include="Service\WorkspaceSetupService.cs" />
-    <Compile Include="ViewModel\BuildConfigurationViewModel.cs" />
+    <Compile Include="ViewModel\BuildConfiguration\BuildConfigurationViewModel.cs" />
     <Compile Include="ViewModel\AchievementGenerator\AchievementGeneratorViewModel.cs" />
     <Compile Include="ViewModel\BlockGenerator\BlockGeneratorViewModel.cs" />
     <Compile Include="ViewModel\CommandGenerator\CommandGeneratorViewModel.cs" />
@@ -158,10 +158,10 @@
     <Compile Include="ViewModel\ModGenerator\ModGeneratorViewModel.cs" />
     <Compile Include="ViewModel\RecipeGenerator\RecipeGeneratorViewModel.cs" />
     <Compile Include="ViewModel\SoundGenerator\SoundGeneratorViewModel.cs" />
-    <Compile Include="ViewModel\SettingsViewModel.cs" />
-    <Compile Include="ViewModel\DashboardViewModel.cs" />
-    <Compile Include="ViewModel\MainWindowViewModel.cs" />
-    <Compile Include="ViewModel\NavigationMenuViewModel.cs" />
+    <Compile Include="ViewModel\Main\SettingsViewModel.cs" />
+    <Compile Include="ViewModel\Dashboard\DashboardViewModel.cs" />
+    <Compile Include="ViewModel\Main\MainWindowViewModel.cs" />
+    <Compile Include="ViewModel\Main\NavigationMenuViewModel.cs" />
     <Compile Include="ViewModel\TextureGenerator\TextureGeneratorPage.xaml.cs">
       <DependentUpon>TextureGeneratorPage.xaml</DependentUpon>
     </Compile>
@@ -170,7 +170,7 @@
     <Compile Include="ViewModel\RecipeGenerator\RecipeGeneratorPage.xaml.cs">
       <DependentUpon>RecipeGeneratorPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModel\SettingsPage.xaml.cs">
+    <Compile Include="ViewModel\Main\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\AchievementGenerator\AchievementGeneratorPage.xaml.cs">
@@ -191,25 +191,25 @@
     <Compile Include="ViewModel\ModGenerator\ModGeneratorPage.xaml.cs">
       <DependentUpon>ModGeneratorPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModel\BuildConfigurationPage.xaml.cs">
+    <Compile Include="ViewModel\BuildConfiguration\BuildConfigurationPage.xaml.cs">
       <DependentUpon>BuildConfigurationPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModel\NavigationMenu.xaml.cs">
+    <Compile Include="ViewModel\Main\NavigationMenu.xaml.cs">
       <DependentUpon>NavigationMenu.xaml</DependentUpon>
     </Compile>
-    <Page Include="Controls\HorizontalList.xaml">
+    <Page Include="UserControls\HorizontalList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\FileListExpander.xaml">
+    <Page Include="UserControls\FileListExpander.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\FileListExpanderListBox.xaml">
+    <Page Include="UserControls\FileListExpanderListBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\ModForm.xaml">
+    <Page Include="UserControls\ModForm.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -217,7 +217,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ViewModel\SettingsPage.xaml">
+    <Page Include="ViewModel\Main\SettingsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -245,27 +245,27 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\AppMenu.xaml">
+    <Page Include="UserControls\AppMenu.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\DraggableRectangle.xaml">
+    <Page Include="UserControls\DraggableRectangle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\MenuButton.xaml">
+    <Page Include="UserControls\MenuButton.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ViewModel\BuildConfigurationPage.xaml">
+    <Page Include="ViewModel\BuildConfiguration\BuildConfigurationPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ViewModel\DashboardPage.xaml">
+    <Page Include="ViewModel\Dashboard\DashboardPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ViewModel\MainWindow.xaml">
+    <Page Include="ViewModel\Main\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -273,26 +273,26 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Controls\AppMenu.xaml.cs">
+    <Compile Include="UserControls\AppMenu.xaml.cs">
       <DependentUpon>AppMenu.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\DraggableRectangle.xaml.cs">
+    <Compile Include="UserControls\DraggableRectangle.xaml.cs">
       <DependentUpon>DraggableRectangle.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\MenuButton.xaml.cs">
+    <Compile Include="UserControls\MenuButton.xaml.cs">
       <DependentUpon>MenuButton.xaml</DependentUpon>
     </Compile>
     <Compile Include="Animation\GridLengthAnimation.cs" />
     <Compile Include="Components\MenuComponent.cs" />
     <Compile Include="Components\MenuSettings.cs" />
-    <Compile Include="ViewModel\DashboardPage.xaml.cs">
+    <Compile Include="ViewModel\Dashboard\DashboardPage.xaml.cs">
       <DependentUpon>DashboardPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModel\MainWindow.xaml.cs">
+    <Compile Include="ViewModel\Main\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="ViewModel\NavigationMenu.xaml">
+    <Page Include="ViewModel\Main\NavigationMenu.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -3,17 +3,17 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ForgeModGenerator.Controls"
+        xmlns:local="clr-namespace:ForgeModGenerator.UserControls"
         xmlns:views="clr-namespace:ForgeModGenerator.ViewModel"
         mc:Ignorable="d"
 		xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        Height="450" Width="800" MinWidth="760" MinHeight="500"
+		Height="450" Width="800"
+		MinWidth="760" MinHeight="500"
 		WindowStyle="None" AllowsTransparency="True" ResizeMode="CanResizeWithGrip"
-		Foreground="{DynamicResource MaterialDesignBody}"
-        Background="{DynamicResource MaterialDesignPaper}"
-        TextElement.FontWeight="Regular" TextElement.FontSize="13" FontFamily="Consolas" 
-        TextOptions.TextFormattingMode="Ideal"
-        TextOptions.TextRenderingMode="Auto"
+		Foreground="{DynamicResource MaterialDesignBody}" Background="{DynamicResource MaterialDesignPaper}"
+		FontFamily="Consolas" 
+        TextElement.FontWeight="Regular" TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal" TextOptions.TextRenderingMode="Auto"
 		views:ViewModelLocator.GetDataContext="ForgeModGenerator.ViewModel.MainWindowViewModel">
 	<Grid>
 		<Grid.RowDefinitions>
@@ -37,10 +37,15 @@
 
 		<!--Mod Selector-->
 		<StackPanel Grid.Column="1" Margin="1" Orientation="Horizontal">
-			<ComboBox ItemsSource="{Binding Path=SessionContext.Mods}" SelectedItem="{Binding Path=SessionContext.SelectedMod}"
-                  Width="220" Background="#FF404040" Foreground="#FFE8E8E8"
-				  FontSize="11" BorderBrush="Wheat" materialDesign:HintAssist.Hint="Selected Mod"
-                  HorizontalAlignment="Left" VerticalAlignment="Center" HorizontalContentAlignment="Center">
+			<ComboBox ItemsSource="{Binding Path=SessionContext.Mods}"
+					  SelectedItem="{Binding Path=SessionContext.SelectedMod}"
+					  Background="#FF404040" Foreground="#FFE8E8E8"
+					  BorderBrush="Wheat"
+					  HorizontalAlignment="Left" VerticalAlignment="Center"
+					  HorizontalContentAlignment="Center"
+					  Width="220"
+					  FontSize="11"
+					  materialDesign:HintAssist.Hint="Selected Mod">
 				<ComboBox.ItemTemplate>
 					<DataTemplate>
 						<StackPanel Orientation="Horizontal">
@@ -52,21 +57,31 @@
 				</ComboBox.ItemTemplate>
 			</ComboBox>
 
-			<Button Width="15" Height="15" Padding="0" Margin="10,0" Command="{Binding Refresh}">
+			<Button Width="15" Height="15"
+					Padding="0" Margin="10,0"
+					Command="{Binding Refresh}">
 				<materialDesign:PackIcon Kind="Refresh"/>
 			</Button>
 		</StackPanel>
 
-		<local:AppMenu Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
+		<local:AppMenu Grid.Column="1"
+					   VerticalAlignment="Bottom" HorizontalAlignment="Right"
+					   OpenSettingsCommand="{Binding OpenSettingsCommand}"/>
 
 		<!--Content - nav menu and page frame-->
-		<Grid x:Name="ContentGrid" Grid.Column="1" Grid.Row="1" Background="#FF424242">
+		<Grid x:Name="ContentGrid"
+			  Grid.Column="1" Grid.Row="1"
+			  Background="#FF424242">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="50"/>
 				<ColumnDefinition Width="*"/>
 			</Grid.ColumnDefinitions>
 			<views:NavigationMenu x:Name="GenMenu"/>
-			<Frame x:Name="PageFrame" Grid.Column="1" NavigationUIVisibility="Hidden" Source="{Binding SessionContext.StartPage}"/>
+			<Frame x:Name="PageFrame"
+				   Grid.Column="1"
+				   NavigationUIVisibility="Hidden"
+				   Source="{Binding SessionContext.StartPage}"/>
 		</Grid>
+
 	</Grid>
 </Window>

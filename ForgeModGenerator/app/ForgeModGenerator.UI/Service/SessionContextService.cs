@@ -26,7 +26,7 @@ namespace ForgeModGenerator.Service
         {
             Mods = FindMods();
             ForgeVersions = FindForgeVersions();
-            StartPage = new Uri("DashboardPage.xaml", UriKind.Relative);
+            StartPage = new Uri("../Dashboard/DashboardPage.xaml", UriKind.Relative);
         }
 
         public Uri StartPage { get; }

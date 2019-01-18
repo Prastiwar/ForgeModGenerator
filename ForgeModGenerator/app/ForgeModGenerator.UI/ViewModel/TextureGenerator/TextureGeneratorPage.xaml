@@ -4,17 +4,20 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:ForgeModGenerator.ViewModel"
-      xmlns:control="clr-namespace:ForgeModGenerator.Controls"
-	  xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-      mc:Ignorable="d" d:DesignHeight="450" d:DesignWidth="800" x:Name="TexturePageWindow"
+      xmlns:control="clr-namespace:ForgeModGenerator.UserControls"
+      mc:Ignorable="d"
+	  d:DesignHeight="450" d:DesignWidth="800"
 	  local:ViewModelLocator.GetDataContext="ForgeModGenerator.ViewModel.TextureGeneratorViewModel">
 
 	<Page.Resources>
 		<DataTemplate x:Key="ItemTemplate">
 			<StackPanel>
-				<Image Width="32" Height="32" Tag="{Binding ElementName=ThisWindow}" ContextMenu="{StaticResource DefaultRemoveFileContext}">
+				<Image Tag="{Binding ElementName=ThisWindow}"
+					   ContextMenu="{StaticResource DefaultRemoveFileContext}"
+					   Width="32" Height="32">
 					<Image.Source>
-						<BitmapImage UriSource="{Binding}" CacheOption="OnLoad"/>
+						<BitmapImage UriSource="{Binding}"
+									 CacheOption="OnLoad"/>
 					</Image.Source>
 				</Image>
 				<TextBlock Text="{Binding Converter={StaticResource PathToNameConverter}}"/>
@@ -22,7 +25,8 @@
 		</DataTemplate>
 	</Page.Resources>
 
-	<Grid Background="#FF424242">
-		<control:FileListExpanderListBox DataContext="{Binding}" FileListExpanderItemTemplate="{StaticResource ItemTemplate}"/>
+	<Grid Background="{StaticResource PageBackground}">
+		<control:FileListExpanderListBox DataContext="{Binding}"
+										 FileListExpanderItemTemplate="{StaticResource ItemTemplate}"/>
 	</Grid>
 </Page>

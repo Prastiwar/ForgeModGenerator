@@ -28,7 +28,7 @@ namespace ForgeModGenerator.Service
 
         public NavigationService(Frame frame = null)
         {
-            this.NavFrame = frame;
+            NavFrame = frame;
         }
 
         public void GoBack() => NavFrame.GoBack();
@@ -65,8 +65,7 @@ namespace ForgeModGenerator.Service
             ConstructorInfo constructor;
             if (parameterCount > 0)
             {
-                constructor = type.GetTypeInfo().DeclaredConstructors.SingleOrDefault(c =>
-                {
+                constructor = type.GetTypeInfo().DeclaredConstructors.SingleOrDefault(c => {
                     ParameterInfo[] p = c.GetParameters();
                     return p.Count() == parameterCount && p[parameterCount - 1].ParameterType == parameters[parameterCount - 1].GetType();
                 });
@@ -84,14 +83,7 @@ namespace ForgeModGenerator.Service
         {
             lock (_pagesByKey)
             {
-                if (_pagesByKey.ContainsKey(pageKey))
-                {
-                    _pagesByKey[pageKey] = pageType;
-                }
-                else
-                {
-                    _pagesByKey.Add(pageKey, pageType);
-                }
+                _pagesByKey[pageKey] = pageType;
             }
         }
     }

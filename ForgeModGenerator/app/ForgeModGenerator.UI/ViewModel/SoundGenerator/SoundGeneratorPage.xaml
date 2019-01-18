@@ -4,16 +4,22 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:ForgeModGenerator.ViewModel"
-      xmlns:control="clr-namespace:ForgeModGenerator.Controls"
+      xmlns:control="clr-namespace:ForgeModGenerator.UserControls"
 	  xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-      mc:Ignorable="d" d:DesignHeight="450" d:DesignWidth="800" x:Name="ThisWindow"
+      mc:Ignorable="d"
+	  d:DesignHeight="450" d:DesignWidth="800"
 	  local:ViewModelLocator.GetDataContext="ForgeModGenerator.ViewModel.SoundGeneratorViewModel">
 
 	<Page.Resources>
 		<DataTemplate x:Key="ItemTemplate">
 			<StackPanel>
-				<Button Padding="0" Width="32" Height="32" Background="CornflowerBlue" BorderBrush="Black" Tag="{Binding ElementName=ThisWindow}" 
-					ContextMenu="{StaticResource DefaultRemoveFileContext}" Click="BindedClick" CommandParameter="{Binding}">
+				<Button Tag="{Binding ElementName=ThisWindow}"
+						Width="32" Height="32"
+						Padding="0"
+						Background="CornflowerBlue" BorderBrush="Black"
+						ContextMenu="{StaticResource DefaultRemoveFileContext}"
+						Click="BindedClick"
+						CommandParameter="{Binding}">
 					<materialDesign:PackIcon Kind="Play"/>
 				</Button>
 				<TextBlock Text="{Binding Converter={StaticResource PathToNameConverter}}"/>
@@ -21,7 +27,8 @@
 		</DataTemplate>
 	</Page.Resources>
 
-	<Grid Background="#FF424242">
-		<control:FileListExpanderListBox DataContext="{Binding}" FileListExpanderItemTemplate="{StaticResource ItemTemplate}"/>
+	<Grid Background="{StaticResource PageBackground}">
+		<control:FileListExpanderListBox DataContext="{Binding}"
+										 FileListExpanderItemTemplate="{StaticResource ItemTemplate}"/>
 	</Grid>
 </Page>
