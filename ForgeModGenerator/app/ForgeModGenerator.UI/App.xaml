@@ -20,6 +20,14 @@
 				<ResourceDictionary>
 					<vm:ViewModelLocator x:Key="Locator" d:IsDataSource="True"/>
 				</ResourceDictionary>
+
+				<ResourceDictionary>
+					<c:ListStringConverter x:Key="StringListStringConverter"/>
+				</ResourceDictionary>
+
+				<ResourceDictionary>
+					<c:PathNameConverter x:Key="PathToNameConverter"/>
+				</ResourceDictionary>
 				
 				<ResourceDictionary>
 					<ContextMenu x:Key="DefaultRemoveFileContext">
@@ -43,7 +51,7 @@
 							<controls:FileListExpander HeaderText="{Binding Path=HeaderName}" Files="{Binding}"
 								  AddCommand="{Binding Path=DataContext.AddCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
 								  RemoveCommand="{Binding Path=DataContext.RemoveCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
-								  ItemTemplate="{Binding Path=ListItemTemplate, ElementName=ThisWindow}"/>
+								  ItemTemplate="{Binding Path=FileListExpanderItemTemplate, ElementName=ThisWindow}"/>
 							<Border Background="#FF313131" Height="1" HorizontalAlignment="Stretch" SnapsToDevicePixels="True" />
 						</StackPanel>
 					</DataTemplate>

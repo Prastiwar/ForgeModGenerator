@@ -8,8 +8,8 @@
              mc:Ignorable="d"  d:DesignHeight="450" d:DesignWidth="800" x:Name="ThisWindow">
 	<Grid>
 
-		<Label Content="Select mod" Foreground="DarkGray" Visibility="{Binding Path=DataContext.SessionContext.IsModSelectedVisibility, RelativeSource={RelativeSource AncestorType=local:FileListExpanderListBox}}"
-			   HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="50" />
+		<Label Content="Select mod" Foreground="DarkGray" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="50"
+			   Visibility="{Binding Path=DataContext.SessionContext.IsModSelectedVisibility, RelativeSource={RelativeSource AncestorType=local:FileListExpanderListBox}}"/>
 		<ScrollViewer VerticalScrollBarVisibility="Auto">
 			<StackPanel>
 				<materialDesign:Card Background="#FF535353" Margin="10">

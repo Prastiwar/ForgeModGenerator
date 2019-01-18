@@ -11,14 +11,17 @@
 
 	<Page.Resources>
 		<DataTemplate x:Key="ItemTemplate">
-			<Button Padding="0" Width="32" Height="32" Background="CornflowerBlue" BorderBrush="Black" Tag="{Binding ElementName=ThisWindow}" 
+			<StackPanel>
+				<Button Padding="0" Width="32" Height="32" Background="CornflowerBlue" BorderBrush="Black" Tag="{Binding ElementName=ThisWindow}" 
 					ContextMenu="{StaticResource DefaultRemoveFileContext}" Click="BindedClick" CommandParameter="{Binding}">
-				<materialDesign:PackIcon Kind="Play"/>
-			</Button>
+					<materialDesign:PackIcon Kind="Play"/>
+				</Button>
+				<TextBlock Text="{Binding Converter={StaticResource PathToNameConverter}}"/>
+			</StackPanel>
 		</DataTemplate>
 	</Page.Resources>
 
 	<Grid Background="#FF424242">
-		<control:FileListExpanderListBox DataContext="{Binding}" ListItemTemplate="{StaticResource ItemTemplate}"/>
+		<control:FileListExpanderListBox DataContext="{Binding}" FileListExpanderItemTemplate="{StaticResource ItemTemplate}"/>
 	</Grid>
 </Page>

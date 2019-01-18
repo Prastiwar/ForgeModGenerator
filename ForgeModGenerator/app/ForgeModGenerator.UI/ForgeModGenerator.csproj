@@ -123,6 +123,7 @@
     </Compile>
     <Compile Include="Converter\EnumToCollectionConverter.cs" />
     <Compile Include="Converter\ListStringConverter.cs" />
+    <Compile Include="Converter\PathNameConverter.cs" />
     <Compile Include="Core\AppPaths.cs" />
     <Compile Include="Core\CoreSourceCodeVariables.cs" />
     <Compile Include="Model\ForgeVersion.cs" />
