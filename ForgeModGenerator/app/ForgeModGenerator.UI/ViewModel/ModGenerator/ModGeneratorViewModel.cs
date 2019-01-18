@@ -69,16 +69,19 @@ namespace ForgeModGenerator.ViewModel
         }
 
         private ICommand addNewForgeVersion;
-        public ICommand AddNewForgeVersion { get => addNewForgeVersion ?? (addNewForgeVersion = new RelayCommand(AddNewForge)); }
+        public ICommand AddNewForgeVersion => addNewForgeVersion ?? (addNewForgeVersion = new RelayCommand(AddNewForge));
 
         private ICommand createMod;
-        public ICommand CreateMod { get => createMod ?? (createMod = new RelayCommand(() => GenerateMod(NewMod))); }
+        public ICommand CreateMod => createMod ?? (createMod = new RelayCommand(() => GenerateMod(NewMod)));
 
         private ICommand addNewItem;
-        public ICommand AddNewItem { get => addNewItem ?? (addNewItem = new RelayCommand<ObservableCollection<string>>(AddNewItemTo)); }
+        public ICommand AddNewItem => addNewItem ?? (addNewItem = new RelayCommand<ObservableCollection<string>>(AddNewItemTo));
 
         private ICommand removeItem;
-        public ICommand RemoveItem { get => removeItem ?? (removeItem = new RelayCommand<Tuple<ObservableCollection<string>, string>>(RemoveItemFromList)); }
+        public ICommand RemoveItem => removeItem ?? (removeItem = new RelayCommand<Tuple<ObservableCollection<string>, string>>(RemoveItemFromList));
+
+        private ICommand saveChanges;
+        public ICommand SaveChanges => saveChanges ?? (saveChanges = new RelayCommand<Mod>(SaveModChanges));
 
         private void AddNewItemTo(ObservableCollection<string> collection) => collection.Add("NewItem");
         private void RemoveItemFromList(Tuple<ObservableCollection<string>, string> param) => param.Item1.Remove(param.Item2);
@@ -164,6 +167,11 @@ namespace ForgeModGenerator.ViewModel
                     File.Move(file, file.Replace(CoreSourceCodeVariables.Modname, mod.ModInfo.Name));
                 }
             }
+        }
+
+        private void SaveModChanges(Mod mod)
+        {
+            Log.InfoBox("?");
         }
     }
 }

@@ -121,11 +121,15 @@
     <Compile Include="Controls\FileListExpanderListBox.xaml.cs">
       <DependentUpon>FileListExpanderListBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ModForm.xaml.cs">
+      <DependentUpon>ModForm.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Converter\EnumToCollectionConverter.cs" />
     <Compile Include="Converter\ListStringConverter.cs" />
     <Compile Include="Converter\PathNameConverter.cs" />
     <Compile Include="Core\AppPaths.cs" />
     <Compile Include="Core\CoreSourceCodeVariables.cs" />
+    <Compile Include="Miscellaneous\TextBoxValidVisual.cs" />
     <Compile Include="Model\ForgeVersion.cs" />
     <Compile Include="Model\McModInfo.cs" />
     <Compile Include="Miscellaneous\Log.cs" />
@@ -202,6 +206,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\FileListExpanderListBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ModForm.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

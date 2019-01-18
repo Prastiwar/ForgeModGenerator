@@ -9,101 +9,44 @@
       xmlns:c="clr-namespace:ForgeModGenerator.Converter"
       xmlns:misc="clr-namespace:ForgeModGenerator.Miscellaneous"
 	  xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-      mc:Ignorable="d" d:DesignHeight="450" d:DesignWidth="800" x:Name="ModGenWindow"
+      mc:Ignorable="d" d:DesignHeight="450" d:DesignWidth="800" x:Name="ThisWindow"
 	  local:ViewModelLocator.GetDataContext="ForgeModGenerator.ViewModel.ModGeneratorViewModel">
-
-	<Page.Resources>
-		<DataTemplate x:Key="ModExpanderTemplate">
-			
-		</DataTemplate>
-	</Page.Resources>
 
 	<Grid Background="#FF424242">
 		<ScrollViewer VerticalScrollBarVisibility="Auto">
 			<StackPanel>
-				<materialDesign:Card Background="{DynamicResource MaterialDesignBackground}" Margin="10">
+				<materialDesign:Card Background="#FF535353" Margin="10">
 					<StackPanel>
 
-						<Expander  HorizontalAlignment="Stretch" Header="Create new mod" Foreground="Wheat" Background="#FF424242">
-							<Grid Margin="0,-10,0,0">
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="125"/>
-									<ColumnDefinition Width="*"/>
-								</Grid.ColumnDefinitions>
+						<TextBlock Text="Generate New Mod" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Foreground="Wheat"/>
+						<controls:ModForm DataContext="{Binding NewMod}" Margin="10"
+										  Validator="{Binding DataContext.Validator, ElementName=ThisWindow}"
+										  SaveCommand="{Binding DataContext.CreateMod, ElementName=ThisWindow}"
+										  SaveButtonText="Generate Mod"
+										  AddForgeVersionCommand="{Binding DataContext.AddNewForgeVersion, ElementName=ThisWindow}"
+										  RemoveStringItemCommand="{Binding DataContext.RemoveItem, ElementName=ThisWindow}"
+										  AddStringItemCommand="{Binding DataContext.AddNewItem, ElementName=ThisWindow}"
+										  Setups="{Binding DataContext.WorkspaceService.Setups, ElementName=ThisWindow}"
+										  ForgeVersions="{Binding DataContext.SessionContext.ForgeVersions, ElementName=ThisWindow}"
+										  Sides="{Binding DataContext.Sides, ElementName=ThisWindow}"/>
 
-								<StackPanel Grid.Column="0" TextBlock.Foreground="{DynamicResource MaterialDesignBody}" Margin="7">
-									<Label Height="{Binding ActualHeight, ElementName=OrganizationBox, Mode=OneWay}" Content="Organization:"/>
-									<Label Height="{Binding ActualHeight, ElementName=SideBox, Mode=OneWay}" Content="Side:"/>
-									<Label Height="{Binding ActualHeight, ElementName=WorkspaceBox, Mode=OneWay}" Content="Workspace Setup:"/>
-									<Label Height="{Binding ActualHeight, ElementName=ForgeVersionBox, Mode=OneWay}" Content="Forge Version:"/>
-									<Label Height="{Binding ActualHeight, ElementName=NameBox, Mode=OneWay}" Content="Name:"/>
-									<Label Height="{Binding ActualHeight, ElementName=ModidBox, Mode=OneWay}" Content="modid:"/>
-									<Label Height="{Binding ActualHeight, ElementName=DescriptionBox, Mode=OneWay}" Content="Description:"/>
-									<Label Height="{Binding ActualHeight, ElementName=VersionBox, Mode=OneWay}" Content="Version:"/>
-									<Label Height="{Binding ActualHeight, ElementName=McVersionBox, Mode=OneWay}" Content="McVersion:"/>
-									<Label Height="{Binding ActualHeight, ElementName=UrlBox, Mode=OneWay}" Content="Url:"/>
-									<Label Height="{Binding ActualHeight, ElementName=UpdateUrlBox, Mode=OneWay}" Content="UpdateUrl:"/>
-									<Label Height="{Binding ActualHeight, ElementName=CreditsBox, Mode=OneWay}" Content="Credits:"/>
-									<Label Height="{Binding ActualHeight, ElementName=LogoFileBox, Mode=OneWay}" Content="LogoFile:"/>
-									<Label Height="{Binding ActualHeight, ElementName=AuthorListBox, Mode=OneWay}" Content="AuthorList:"/>
-									<Label Height="{Binding ActualHeight, ElementName=DependencyListBox, Mode=OneWay}" Content="Dependencies:"/>
-									<Label Height="{Binding ActualHeight, ElementName=ScreenshotListBox, Mode=OneWay}" Content="Screenshots:"/>
-								</StackPanel>
+						<TextBlock Text="Edit Mod" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Foreground="Wheat"/>
+						<ListBox ItemsSource="{Binding Path=SessionContext.Mods}" SelectedItem="{Binding Path=SelectedEditMod}"
+								 HorizontalContentAlignment="Stretch">
+							<ListBox.ItemTemplate>
+								<DataTemplate>
+									<controls:ModForm DataContext="{Binding}" Validator="{Binding DataContext.Validator, ElementName=ThisWindow}"
+													  SaveCommand="{Binding DataContext.SaveChanges, ElementName=ThisWindow}"
+													  AddForgeVersionCommand="{Binding DataContext.AddNewForgeVersion, ElementName=ThisWindow}"
+													  RemoveStringItemCommand="{Binding DataContext.RemoveItem, ElementName=ThisWindow}"
+													  AddStringItemCommand="{Binding DataContext.AddNewItem, ElementName=ThisWindow}"
+													  Setups="{Binding DataContext.WorkspaceService.Setups, ElementName=ThisWindow}"
+													  ForgeVersions="{Binding DataContext.SessionContext.ForgeVersions, ElementName=ThisWindow}"
+													  Sides="{Binding DataContext.Sides, ElementName=ThisWindow}"/>
+								</DataTemplate>
+							</ListBox.ItemTemplate>
+						</ListBox>
 
-								<StackPanel Grid.Column="1" TextBlock.Foreground="{DynamicResource MaterialDesignBody}" Margin="7">
-									<TextBox x:Name="OrganizationBox" Text="{Binding Path=NewMod.Organization, Mode=TwoWay}" TextChanged="ValidateOrganization"/>
-									<ComboBox x:Name="SideBox" ItemsSource="{Binding Path=Sides}"
-											  SelectedValue="{Binding Path=NewMod.Side}"
-											  Background="#FF404040" Foreground="#FFE8E8E8"
-											  FontSize="11" BorderBrush="Wheat" materialDesign:HintAssist.Hint="Select setup option"
-											  HorizontalAlignment="Left" VerticalAlignment="Center" HorizontalContentAlignment="Center">
-									</ComboBox>
-									<ComboBox x:Name="WorkspaceBox" ItemsSource="{Binding Path=WorkspaceService.Setups}"
-											  SelectedValue="{Binding Path=NewMod.WorkspaceSetup}"
-											  Background="#FF404040" Foreground="#FFE8E8E8" DisplayMemberPath="Name"
-											  FontSize="11" BorderBrush="Wheat" materialDesign:HintAssist.Hint="Select setup option"
-											  HorizontalAlignment="Left" VerticalAlignment="Center" HorizontalContentAlignment="Center">
-									</ComboBox>
-									<StackPanel Orientation="Horizontal">
-										<ComboBox x:Name="ForgeVersionBox" ItemsSource="{Binding Path=SessionContext.ForgeVersions}"
-											  SelectedValue="{Binding Path=NewMod.ForgeVersion}"
-											  Background="#FF404040" Foreground="#FFE8E8E8" DisplayMemberPath="Name"
-											  FontSize="11" BorderBrush="Wheat" materialDesign:HintAssist.Hint="Select setup option"
-											  HorizontalAlignment="Left" VerticalAlignment="Center" HorizontalContentAlignment="Center">
-										</ComboBox>
-										<Button Padding="0" Width="25" Height="25" Margin="10,0,0,0" Command="{Binding Path=AddNewForgeVersion}">
-											<materialDesign:PackIcon Kind="Plus" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-										</Button>
-									</StackPanel>
-									<TextBox x:Name="NameBox" Text="{Binding Path=NewMod.ModInfo.Name, Mode=TwoWay}" TextChanged="ValidateNameAndTryFillModif"/>
-									<TextBox x:Name="ModidBox" Text="{Binding Path=NewMod.ModInfo.Modid, Mode=TwoWay}" TextChanged="ValidateModid"/>
-									<TextBox x:Name="DescriptionBox" TextWrapping="Wrap" AcceptsReturn="True" Text="{Binding Path=NewMod.ModInfo.Description, Mode=TwoWay}"/>
-									<TextBox x:Name="VersionBox" Text="{Binding Path=NewMod.ModInfo.Version, Mode=TwoWay}"/>
-									<TextBox x:Name="McVersionBox" Text="{Binding Path=NewMod.ModInfo.McVersion, Mode=TwoWay}"/>
-									<TextBox x:Name="UrlBox" TextWrapping="Wrap" AcceptsReturn="True" Text="{Binding Path=NewMod.ModInfo.Url, Mode=TwoWay}"/>
-									<TextBox x:Name="UpdateUrlBox" TextWrapping="Wrap" AcceptsReturn="True" Text="{Binding Path=NewMod.ModInfo.UpdateUrl, Mode=TwoWay}"/>
-									<TextBox x:Name="CreditsBox" TextWrapping="Wrap" AcceptsReturn="True" Text="{Binding Path=NewMod.ModInfo.Credits, Mode=TwoWay}"/>
-									<TextBox x:Name="LogoFileBox" Text="{Binding Path=NewMod.ModInfo.LogoFile, Mode=TwoWay}"/>
-
-									<controls:HorizontalList x:Name="AuthorListBox" AddCommand="{Binding Path=AddNewItem}" RemoveCommand="{Binding Path=RemoveItem}" 
-													 StringList="{Binding Path=NewMod.ModInfo.AuthorList, Mode=TwoWay}"/>
-
-									<controls:HorizontalList x:Name="DependencyListBox" AddCommand="{Binding Path=AddNewItem}" RemoveCommand="{Binding Path=RemoveItem}" 
-													 StringList="{Binding Path=NewMod.ModInfo.Dependencies, Mode=TwoWay}"/>
-
-									<controls:HorizontalList x:Name="ScreenshotListBox" AddCommand="{Binding Path=AddNewItem}" RemoveCommand="{Binding Path=RemoveItem}" 
-													 StringList="{Binding Path=NewMod.ModInfo.Screenshots, Mode=TwoWay}"/>
-
-									<Button Content="Generate Mod" Command="{Binding CreateMod}"/>
-								</StackPanel>
-
-							</Grid>
-						</Expander>
-						
-						<!--<ListBox ItemsSource="{Binding Path=SessionContext.Mods}" SelectedItem="{Binding Path=SelectedMod}"
-								 ItemTemplate="{StaticResource ModExpanderTemplate}">
-						</ListBox>-->
-						
 					</StackPanel>
 				</materialDesign:Card>
 			</StackPanel>
