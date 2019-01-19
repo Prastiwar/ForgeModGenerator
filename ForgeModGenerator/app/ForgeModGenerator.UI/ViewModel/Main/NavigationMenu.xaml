@@ -70,29 +70,14 @@
 			</StackPanel>
 		</ScrollViewer>
 
-		<Button Style="{StaticResource MaterialDesignRaisedLightButton}"
-				Grid.Row="1"
-				Background="#FF353535" Foreground="#DDFFFFFF" BorderBrush="#FF353535"
-				VerticalAlignment="Center">
-			<materialDesign:PackIcon Kind="ArrowUp"/>
-			<i:Interaction.Triggers>
-				<i:EventTrigger EventName="PreviewMouseDown">
-					<i:InvokeCommandAction Command="{Binding HoldScrollUp, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:NavigationMenu}}}"/>
-				</i:EventTrigger>
-			</i:Interaction.Triggers>
-		</Button>
+		<local:ScrollButton Grid.Row="1"
+							ArrowIcon="ArrowUp"
+							ScrollTarget="{Binding ElementName=MenuScroll}"
+							Direction="Top"/>
 
-		<Button Style="{StaticResource MaterialDesignRaisedLightButton}"
-				Grid.Row="3"
-				Background="#FF353535" Foreground="#DDFFFFFF" BorderBrush="#FF353535"
-				VerticalAlignment="Center">
-			<materialDesign:PackIcon Kind="ArrowDown"/>
-			<i:Interaction.Triggers>
-				<i:EventTrigger EventName="PreviewMouseDown">
-					<i:InvokeCommandAction Command="{Binding HoldScrollDown, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:NavigationMenu}}}"/>
-				</i:EventTrigger>
-			</i:Interaction.Triggers>
-		</Button>
+		<local:ScrollButton Grid.Row="3"
+							ArrowIcon="ArrowDown"
+							ScrollTarget="{Binding ElementName=MenuScroll}"/>
 
 	</Grid>
 </UserControl>

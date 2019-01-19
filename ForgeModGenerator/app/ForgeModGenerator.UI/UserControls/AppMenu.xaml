@@ -9,40 +9,24 @@
 			 d:DesignHeight="15" d:DesignWidth="155">
 	<Grid>
 		<StackPanel Orientation="Horizontal">
-			<Button Width="{Binding Path=ItemWidth, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
-					Height="{Binding Path=ItemHeight, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
+			<Button x:Name="SettingsButton"
 					Command="{Binding OpenSettingsCommand, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
-					Padding="0"
-					Margin="{Binding Path=ItemMargin, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
-					Background="{Binding Path=ItemBackground, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
-					BorderBrush="{Binding Path=ItemBorderBrush, RelativeSource={RelativeSource AncestorType=local:AppMenu}}">
+					Padding="0">
 				<materialDesign:PackIcon Kind="{Binding Path=SettingsIcon, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"/>
 			</Button>
-			<Button Width="{Binding Path=ItemWidth, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
-					Height="{Binding Path=ItemHeight, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
+			<Button x:Name="MinimizeButton"
 					Command="{Binding Path=MinimizeCommand, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
-					Padding="0"
-					Margin="{Binding Path=ItemMargin, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
-					Background="{Binding Path=ItemBackground, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
-					BorderBrush="{Binding Path=ItemBorderBrush, RelativeSource={RelativeSource AncestorType=local:AppMenu}}">
+					Padding="0">
 				<materialDesign:PackIcon Kind="{Binding Path=MinimizeIcon, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"/>
 			</Button>
-			<Button Width="{Binding Path=ItemWidth, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
-					Height="{Binding Path=ItemHeight, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
+			<Button x:Name="RestoreButton"
 					Command="{Binding Path=RestoreCommand, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
-					Padding="0"
-					Margin="{Binding Path=ItemMargin, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
-					Background="{Binding Path=ItemBackground, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
-					BorderBrush="{Binding Path=ItemBorderBrush, RelativeSource={RelativeSource AncestorType=local:AppMenu}}">
+					Padding="0">
 				<materialDesign:PackIcon Kind="{Binding Path=RestoreIcon, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"/>
 			</Button>
-			<Button Width="{Binding Path=ItemWidth, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
-					Height="{Binding Path=ItemHeight, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
+			<Button x:Name="CloseButton"
 					Command="{Binding Path=CloseCommand, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
-					Padding="0"
-					Margin="{Binding Path=ItemMargin, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
-					Background="{Binding Path=ItemBackground, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"
-					BorderBrush="{Binding Path=ItemBorderBrush, RelativeSource={RelativeSource AncestorType=local:AppMenu}}">
+					Padding="0">
 				<materialDesign:PackIcon Kind="{Binding Path=CloseIcon, RelativeSource={RelativeSource AncestorType=local:AppMenu}}"/>
 			</Button>
 		</StackPanel>

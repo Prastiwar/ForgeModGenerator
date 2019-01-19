@@ -36,13 +36,15 @@
 
 				<ResourceDictionary>
 					<ContextMenu x:Key="DefaultRemoveFileContext">
-						<MenuItem Header="Remove" Command="{Binding PlacementTarget.Tag.RemoveCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}">
+						<MenuItem Header="Remove"
+								  Command="{Binding PlacementTarget.Tag.RemoveCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}">
 							<MenuItem.Resources>
 								<c:ListStringConverter x:Key="ListStringConverter"/>
 							</MenuItem.Resources>
 							<MenuItem.CommandParameter>
 								<MultiBinding Converter="{StaticResource ListStringConverter}">
-									<Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}" Path="PlacementTarget.Tag.Files.Paths"/>
+									<Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}"
+											 Path="PlacementTarget.Tag.Files.Paths"/>
 									<Binding Path="."/>
 								</MultiBinding>
 							</MenuItem.CommandParameter>
@@ -53,11 +55,15 @@
 				<ResourceDictionary>
 					<DataTemplate x:Key="DefaultFileListTemplate">
 						<StackPanel>
-							<controls:FileListExpander HeaderText="{Binding Path=HeaderName}" Files="{Binding}"
-								  AddCommand="{Binding Path=DataContext.AddCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
-								  RemoveCommand="{Binding Path=DataContext.RemoveCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
-								  ItemTemplate="{Binding Path=FileListExpanderItemTemplate, ElementName=ThisWindow}"/>
-							<Border Background="#FF313131" Height="1" HorizontalAlignment="Stretch" SnapsToDevicePixels="True" />
+							<controls:FileListExpander HeaderText="{Binding Path=HeaderName}"
+													   Files="{Binding}"
+													   AddCommand="{Binding Path=DataContext.AddCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+													   RemoveCommand="{Binding Path=DataContext.RemoveCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+													   ItemTemplate="{Binding Path=FileListExpanderItemTemplate, ElementName=ThisWindow}"/>
+							<Border Background="#FF313131"
+									Height="1"
+									HorizontalAlignment="Stretch"
+									SnapsToDevicePixels="True" />
 						</StackPanel>
 					</DataTemplate>
 				</ResourceDictionary>

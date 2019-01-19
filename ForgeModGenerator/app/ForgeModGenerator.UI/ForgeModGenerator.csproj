@@ -149,6 +149,9 @@
     <Compile Include="Service\SessionContextService.cs" />
     <Compile Include="Service\ValidationService.cs" />
     <Compile Include="Service\WorkspaceSetupService.cs" />
+    <Compile Include="UserControls\Navigation\ScrollButton.xaml.cs">
+      <DependentUpon>ScrollButton.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModel\BuildConfiguration\BuildConfigurationViewModel.cs" />
     <Compile Include="ViewModel\AchievementGenerator\AchievementGeneratorViewModel.cs" />
     <Compile Include="ViewModel\BlockGenerator\BlockGeneratorViewModel.cs" />
@@ -213,6 +216,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UserControls\Navigation\ScrollButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ViewModel\RecipeGenerator\RecipeGeneratorPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -253,7 +260,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\MenuButton.xaml">
+    <Page Include="UserControls\Navigation\MenuButton.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -279,7 +286,7 @@
     <Compile Include="UserControls\DraggableRectangle.xaml.cs">
       <DependentUpon>DraggableRectangle.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\MenuButton.xaml.cs">
+    <Compile Include="UserControls\Navigation\MenuButton.xaml.cs">
       <DependentUpon>MenuButton.xaml</DependentUpon>
     </Compile>
     <Compile Include="Animation\GridLengthAnimation.cs" />

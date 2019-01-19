@@ -13,6 +13,12 @@ namespace ForgeModGenerator.UserControls
         public AppMenu()
         {
             InitializeComponent();
+
+            SettingsButton.Width = MinimizeButton.Width = RestoreButton.Width = CloseButton.Width = ItemWidth;
+            SettingsButton.Height = MinimizeButton.Height = RestoreButton.Height = CloseButton.Height = ItemHeight;
+            SettingsButton.Background = MinimizeButton.Background = RestoreButton.Background = CloseButton.Background = ItemBackground;
+            SettingsButton.BorderBrush = MinimizeButton.BorderBrush = RestoreButton.BorderBrush = CloseButton.BorderBrush = ItemBorderBrush;
+            SettingsButton.Margin = MinimizeButton.Margin = RestoreButton.Margin = CloseButton.Margin = ItemMargin;
         }
 
         public static readonly DependencyProperty ItemHeightProperty =
