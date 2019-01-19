@@ -15,6 +15,7 @@ namespace ForgeModGenerator.Service
     {
         ObservableCollection<ForgeVersion> ForgeVersions { get; }
         ObservableCollection<Mod> Mods { get; }
+        ObservableCollection<Mod> SelectedMods { get; }
         Mod SelectedMod { get; set; }
         Uri StartPage { get; }
         Visibility IsModSelectedVisibility { get; }
@@ -25,18 +26,30 @@ namespace ForgeModGenerator.Service
         public SessionContextService()
         {
             Mods = FindMods();
+            SelectedMod = Mods.Count > 0 ? Mods[0] : null;
+            SelectedMods = new ObservableCollection<Mod>();
+            if (SelectedMod != null)
+            {
+                SelectedMods.Add(SelectedMod);
+            }
             ForgeVersions = FindForgeVersions();
             StartPage = new Uri("../Dashboard/DashboardPage.xaml", UriKind.Relative);
         }
 
         public Uri StartPage { get; }
-        
+
         public Visibility IsModSelectedVisibility => SelectedMod != null ? Visibility.Hidden : Visibility.Visible;
 
         private ObservableCollection<Mod> mods;
         public ObservableCollection<Mod> Mods {
             get => mods;
             set => Set(ref mods, value);
+        }
+
+        private ObservableCollection<Mod> selectedMods;
+        public ObservableCollection<Mod> SelectedMods {
+            get => selectedMods;
+            set => Set(ref selectedMods, value);
         }
 
         private Mod selectedMod;

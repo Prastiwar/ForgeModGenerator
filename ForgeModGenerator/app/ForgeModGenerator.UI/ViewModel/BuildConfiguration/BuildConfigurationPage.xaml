@@ -4,11 +4,30 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:ForgeModGenerator.ViewModel"
-      mc:Ignorable="d"
+	  xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+	  xmlns:controls="clr-namespace:ForgeModGenerator.UserControls"
+	  mc:Ignorable="d"
 	  d:DesignHeight="450" d:DesignWidth="800"
 	  local:ViewModelLocator.GetDataContext="ForgeModGenerator.ViewModel.BuildConfigurationViewModel">
 
 	<Grid Background="{StaticResource PageBackground}">
-        
-    </Grid>
+
+		<ScrollViewer VerticalScrollBarVisibility="Auto">
+			<StackPanel>
+				<materialDesign:Card Background="#FF535353" Margin="10">
+					<StackPanel>
+						<ListBox ItemsSource="{Binding SessionContext.Mods}"
+								 HorizontalContentAlignment="Stretch">
+							<ListBox.ItemTemplate>
+								<DataTemplate>
+									<controls:ModBuildForm DataContext="{Binding}"/>
+								</DataTemplate>
+							</ListBox.ItemTemplate>
+						</ListBox>
+					</StackPanel>
+				</materialDesign:Card>
+			</StackPanel>
+		</ScrollViewer>
+
+	</Grid>
 </Page>

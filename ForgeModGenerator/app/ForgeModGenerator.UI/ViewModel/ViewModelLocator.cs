@@ -101,6 +101,7 @@ namespace ForgeModGenerator.ViewModel
             SimpleIoc.Default.Register<ModValidationService>();
             SimpleIoc.Default.Register<ISessionContextService, SessionContextService>();
             SimpleIoc.Default.Register<IWorkspaceSetupService, WorkspaceSetupService>();
+            SimpleIoc.Default.Register<IModBuildService, ModBuildService>();
 
             if (!SimpleIoc.Default.IsRegistered<INavigationService>())
             {

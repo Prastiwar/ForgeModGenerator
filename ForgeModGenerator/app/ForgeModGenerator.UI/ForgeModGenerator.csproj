@@ -112,6 +112,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Service\ModBuildService.cs" />
     <Compile Include="UserControls\HorizontalList.xaml.cs">
       <DependentUpon>HorizontalList.xaml</DependentUpon>
     </Compile>
@@ -120,6 +121,9 @@
     </Compile>
     <Compile Include="UserControls\FileListExpanderListBox.xaml.cs">
       <DependentUpon>FileListExpanderListBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\ModBuildForm.xaml.cs">
+      <DependentUpon>ModBuildForm.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\ModForm.xaml.cs">
       <DependentUpon>ModForm.xaml</DependentUpon>
@@ -209,6 +213,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\FileListExpanderListBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\ModBuildForm.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

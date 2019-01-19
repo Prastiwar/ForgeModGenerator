@@ -36,7 +36,9 @@
 		<local:DraggableRectangle Grid.Row="2" Grid.Column="1"/>
 
 		<!--Mod Selector-->
-		<StackPanel Grid.Column="1" Margin="1" Orientation="Horizontal">
+		<StackPanel Grid.Column="1"
+					Margin="1"
+					Orientation="Horizontal">
 			<ComboBox ItemsSource="{Binding Path=SessionContext.Mods}"
 					  SelectedItem="{Binding Path=SessionContext.SelectedMod}"
 					  Background="#FF404040" Foreground="#FFE8E8E8"
@@ -57,10 +59,24 @@
 				</ComboBox.ItemTemplate>
 			</ComboBox>
 
-			<Button Width="15" Height="15"
-					Padding="0" Margin="10,0"
-					Command="{Binding Refresh}">
+			<Button Width="20" Height="20"
+					Padding="0" Margin="15,0,5,0"
+					Command="{Binding RefreshCommand}">
 				<materialDesign:PackIcon Kind="Refresh"/>
+			</Button>
+
+			<Button Width="20" Height="20"
+					Padding="0" Margin="5,0,5,0"
+					Command="{Binding RunModCommand}"
+					CommandParameter="{Binding SessionContext.SelectedMod}">
+				<materialDesign:PackIcon Kind="PlayCircleOutline"/>
+			</Button>
+
+			<Button Width="20" Height="20"
+					Padding="0" Margin="10,0,5,0"
+					Command="{Binding RunModsCommand}"
+					CommandParameter="{Binding SessionContext.SelectedMods}">
+				<materialDesign:PackIcon Kind="PlayBoxOutline"/>
 			</Button>
 		</StackPanel>
 
