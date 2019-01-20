@@ -9,7 +9,7 @@
 			 xmlns:c="clr-namespace:ForgeModGenerator.Converter"
 			 xmlns:vm="clr-namespace:ForgeModGenerator.ViewModel"
 			 xmlns:controls="clr-namespace:ForgeModGenerator.UserControls">
-	
+
 	<Application.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>

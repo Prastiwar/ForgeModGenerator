@@ -11,27 +11,18 @@ namespace ForgeModGenerator.UserControls
             InitializeComponent();
         }
 
-        protected bool IsSelected { get; set; }
-
-        public static readonly DependencyProperty SelectCommandProperty =
-            DependencyProperty.Register("SelectCommand", typeof(ICommand), typeof(ModBuildForm), new PropertyMetadata(null));
-        public ICommand SelectCommand {
-            get => (ICommand)GetValue(SelectCommandProperty);
-            set => SetValue(SelectCommandProperty, value);
+        public static readonly DependencyProperty ToggleSelectCommandProperty =
+            DependencyProperty.Register("ToggleSelectCommand", typeof(ICommand), typeof(ModBuildForm), new PropertyMetadata(null));
+        public ICommand ToggleSelectCommand {
+            get => (ICommand)GetValue(ToggleSelectCommandProperty);
+            set => SetValue(ToggleSelectCommandProperty, value);
         }
 
-        public static readonly DependencyProperty SelectClientCommandProperty =
-            DependencyProperty.Register("SelectClientCommand", typeof(ICommand), typeof(ModBuildForm), new PropertyMetadata(null));
-        public ICommand SelectClientCommand {
-            get => (ICommand)GetValue(SelectClientCommandProperty);
-            set => SetValue(SelectClientCommandProperty, value);
-        }
-
-        public static readonly DependencyProperty SelectServerCommandProperty =
-            DependencyProperty.Register("SelectServerCommand", typeof(ICommand), typeof(ModBuildForm), new PropertyMetadata(null));
-        public ICommand SelectServerCommand {
-            get => (ICommand)GetValue(SelectServerCommandProperty);
-            set => SetValue(SelectServerCommandProperty, value);
+        public static readonly DependencyProperty CompileCommandProperty =
+            DependencyProperty.Register("CompileCommand", typeof(ICommand), typeof(ModBuildForm), new PropertyMetadata(null));
+        public ICommand CompileCommand {
+            get => (ICommand)GetValue(CompileCommandProperty);
+            set => SetValue(CompileCommandProperty, value);
         }
 
         public static readonly DependencyProperty RunServerCommandProperty =

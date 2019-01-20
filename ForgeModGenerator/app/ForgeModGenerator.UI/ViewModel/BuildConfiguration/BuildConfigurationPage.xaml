@@ -20,7 +20,12 @@
 								 HorizontalContentAlignment="Stretch">
 							<ListBox.ItemTemplate>
 								<DataTemplate>
-									<controls:ModBuildForm DataContext="{Binding}"/>
+									<controls:ModBuildForm DataContext="{Binding}"
+														   RunClientCommand="{Binding DataContext.RunClientCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+														   RunServerCommand="{Binding DataContext.RunServerCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+														   RunBothCommand="{Binding DataContext.RunBothCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+														   CompileCommand="{Binding DataContext.CompileCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+														   ToggleSelectCommand="{Binding DataContext.ToggleSelectCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"/>
 								</DataTemplate>
 							</ListBox.ItemTemplate>
 						</ListBox>

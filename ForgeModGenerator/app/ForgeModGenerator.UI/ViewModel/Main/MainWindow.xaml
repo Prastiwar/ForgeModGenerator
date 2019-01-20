@@ -61,19 +61,22 @@
 
 			<Button Width="20" Height="20"
 					Padding="0" Margin="15,0,5,0"
+					ToolTip="Force Refresh"
 					Command="{Binding RefreshCommand}">
 				<materialDesign:PackIcon Kind="Refresh"/>
 			</Button>
 
 			<Button Width="20" Height="20"
 					Padding="0" Margin="5,0,5,0"
+					ToolTip="Run main selected"
 					Command="{Binding RunModCommand}"
 					CommandParameter="{Binding SessionContext.SelectedMod}">
 				<materialDesign:PackIcon Kind="PlayCircleOutline"/>
 			</Button>
 
 			<Button Width="20" Height="20"
-					Padding="0" Margin="10,0,5,0"
+					Padding="0" Margin="5,0,5,0"
+					ToolTip="Run all selected"
 					Command="{Binding RunModsCommand}"
 					CommandParameter="{Binding SessionContext.SelectedMods}">
 				<materialDesign:PackIcon Kind="PlayBoxOutline"/>
