@@ -18,7 +18,6 @@
 								   Padding="5" Margin="5"/>
 
 					<ToggleButton x:Name="Includer"
-								  IsChecked="True"
 								  Style="{StaticResource MaterialDesignSwitchLightToggleButton}"
 								  ToolTip="Include in Run shortcut"
 								  Command="{Binding Path=ToggleSelectCommand, RelativeSource={RelativeSource AncestorType=local:ModBuildForm}}"

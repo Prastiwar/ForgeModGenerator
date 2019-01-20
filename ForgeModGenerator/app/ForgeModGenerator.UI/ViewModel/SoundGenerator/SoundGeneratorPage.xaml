@@ -28,7 +28,21 @@
 	</Page.Resources>
 
 	<Grid Background="{StaticResource PageBackground}">
-		<control:FileListExpanderListBox DataContext="{Binding}"
+		<StackPanel>
+			<StackPanel Orientation="Horizontal" Visibility="{Binding ShouldUpdate, Converter={StaticResource BooleanToVisibilityConverter}}">
+				<TextBlock Text="Sounds.json doesn't have all occurencies, do you want to update it?"
+						   Padding="7" Margin="15,0,0,0"
+						   FontSize="11" FontStyle="Normal"
+						   HorizontalAlignment="Left"
+						   Foreground="Red" FontWeight="Bold"/>
+				<Button Content="Update"
+						Width="100" Height="20"
+						Margin="5" Padding="0"
+						VerticalAlignment="Top"
+						Command="{Binding UpdateSoundsJson}"/>
+			</StackPanel>
+			<control:FileListExpanderListBox DataContext="{Binding}"
 										 FileListExpanderItemTemplate="{StaticResource ItemTemplate}"/>
+		</StackPanel>
 	</Grid>
 </Page>

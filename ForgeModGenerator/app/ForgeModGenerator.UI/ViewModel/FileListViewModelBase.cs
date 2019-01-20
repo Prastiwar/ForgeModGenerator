@@ -90,7 +90,7 @@ namespace ForgeModGenerator.ViewModel
                     FileCollection fileCollection = new FileCollection(directory);
                     foreach (string filePath in Directory.EnumerateFiles(directory))
                     {
-                        fileCollection.Paths.Add(filePath);
+                        fileCollection.Paths.Add(Path.GetFullPath(filePath).Replace('\\', '/'));
                     }
                     initCollection.Add(fileCollection);
                 }
