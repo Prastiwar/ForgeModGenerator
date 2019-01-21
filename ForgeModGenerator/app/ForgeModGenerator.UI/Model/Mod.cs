@@ -1,9 +1,11 @@
 ﻿using ForgeModGenerator.Converter;
 using ForgeModGenerator.Core;
+using ForgeModGenerator.Miscellaneous;
 using GalaSoft.MvvmLight;
 using Newtonsoft.Json;
 using System.ComponentModel;
 using System.IO;
+using System.Windows;
 
 namespace ForgeModGenerator.Model
 {
@@ -98,9 +100,11 @@ namespace ForgeModGenerator.Model
             {
                 return JsonConvert.DeserializeObject<Mod>(File.ReadAllText(fmgModInfoPath));
             }
-            catch (System.Exception)
+            catch (System.Exception ex)
             {
-                Log.InfoBox($"Failed to load: {fmgModInfoPath}");
+                string msg = $"Failed to load: {fmgModInfoPath}";
+                MessageBox.Show(msg);
+                Log.Warning(ex, msg);
             }
             return null;
         }

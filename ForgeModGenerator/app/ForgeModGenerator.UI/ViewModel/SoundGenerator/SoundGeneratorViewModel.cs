@@ -15,9 +15,13 @@ namespace ForgeModGenerator.ViewModel
     public class SoundGeneratorViewModel : FileListViewModelBase
     {
         public override string CollectionRootPath => SessionContext.SelectedMod != null ? ModPaths.SoundsFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid) : null;
+
+        public SoundsGeneratorPreferences Preferences { get; }
+
         public SoundGeneratorViewModel(ISessionContextService sessionContext) : base(sessionContext)
         {
             OpenFileDialog.Filter = "Sound file (*.ogg) | *.ogg";
+            Preferences = sessionContext.GetPreferences<SoundsGeneratorPreferences>();
             Refresh();
             ShouldUpdate = IsUpdateAvailable();
         }
@@ -89,10 +93,10 @@ namespace ForgeModGenerator.ViewModel
                     writer.Write(prettyPrint ? "}" : "\n}");
                 };
             }
-            File.Delete(jsonPath);
-            File.Move(tempJsonPath, jsonPath);
-            ShouldUpdate = false;
-            MessageBox.Show("Updated successfully");
+            //File.Delete(jsonPath);
+            //File.Move(tempJsonPath, jsonPath);
+            //ShouldUpdate = false;
+            Log.Info("sounds.json Updated successfully", true);
         }
 
         private static void PrepareJsonForAddElements(StreamWriter writer, StreamReader reader, bool prettyPrint)
@@ -176,6 +180,7 @@ namespace ForgeModGenerator.ViewModel
                         string formatName = FormatSoundName(SessionContext.SelectedMod.ModInfo.Modid, path);
                         if (!File.ReadLines(jsonPath).Any(line => line.Contains(formatName)))
                         {
+                            Log.Info($"Detected update available to sounds.json for {SessionContext.SelectedMod.ModInfo.Name}");
                             return true;
                         }
                     }

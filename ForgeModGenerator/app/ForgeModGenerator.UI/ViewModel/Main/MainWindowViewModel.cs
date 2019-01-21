@@ -1,3 +1,4 @@
+using ForgeModGenerator.Miscellaneous;
 using ForgeModGenerator.Model;
 using ForgeModGenerator.Service;
 using GalaSoft.MvvmLight;
@@ -53,6 +54,7 @@ namespace ForgeModGenerator.ViewModel
             Mod mod = SessionContext.SelectedMod;
             SessionContext.SelectedMod = null;
             SessionContext.SelectedMod = mod;
+            Log.Info("Force Refresh called");
         }
     }
 }

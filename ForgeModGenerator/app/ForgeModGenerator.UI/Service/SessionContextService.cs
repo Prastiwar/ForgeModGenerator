@@ -1,5 +1,7 @@
 ﻿using ForgeModGenerator.Core;
+using ForgeModGenerator.Miscellaneous;
 using ForgeModGenerator.Model;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,8 +14,6 @@ namespace ForgeModGenerator.Service
 {
     public interface ISessionContextService : INotifyPropertyChanged
     {
-        ObservableCollection<PreferenceData> Preferences { get; }
-
         ObservableCollection<ForgeVersion> ForgeVersions { get; }
 
         ObservableCollection<Mod> Mods { get; }
@@ -22,12 +22,15 @@ namespace ForgeModGenerator.Service
 
         Uri StartPage { get; }
         bool IsModSelected { get; }
+
+        T GetPreferences<T>() where T : PreferenceData;
     }
 
     public class SessionContextService : ISessionContextService
     {
         public SessionContextService()
         {
+            Log.Info("Session loading..");
             Mods = FindMods();
             SelectedMod = Mods.Count > 0 ? Mods[0] : null;
             SelectedMods = new ObservableCollection<Mod>();
@@ -37,16 +40,25 @@ namespace ForgeModGenerator.Service
             }
             ForgeVersions = FindForgeVersions();
             StartPage = new Uri("../Dashboard/DashboardPage.xaml", UriKind.Relative);
+
+            Preferences = FindPreferences();
+            Log.Info("Session loaded");
         }
 
         public Uri StartPage { get; }
 
         public bool IsModSelected => SelectedMod != null;
 
-        private ObservableCollection<PreferenceData> preferences;
-        public ObservableCollection<PreferenceData> Preferences {
-            get => preferences;
-            set => Set(ref preferences, value);
+        protected Dictionary<Type, PreferenceData> Preferences { get; set; }
+
+        public T GetPreferences<T>() where T : PreferenceData
+        {
+            Type type = typeof(T);
+            if (Preferences.TryGetValue(type, out PreferenceData data))
+            {
+                return (T)data;
+            }
+            return null;
         }
 
         private ObservableCollection<Mod> mods;
@@ -78,16 +90,7 @@ namespace ForgeModGenerator.Service
 
         protected ObservableCollection<Mod> FindMods()
         {
-            string[] paths = null;
-            try
-            {
-                paths = Directory.GetDirectories(AppPaths.Mods);
-            }
-            catch (Exception)
-            {
-                Log.InfoBox($"Path: {AppPaths.Mods} was not found");
-                throw;
-            }
+            string[] paths = Directory.GetDirectories(AppPaths.Mods);
             List<Mod> found = new List<Mod>(paths.Length);
             foreach (string path in paths)
             {
@@ -95,6 +98,7 @@ namespace ForgeModGenerator.Service
                 if (imported != null)
                 {
                     found.Add(imported);
+                    Log.Info($"Mod {imported.ModInfo.Name} loaded");
                 }
             }
             return new ObservableCollection<Mod>(found);
@@ -102,23 +106,38 @@ namespace ForgeModGenerator.Service
 
         protected ObservableCollection<ForgeVersion> FindForgeVersions()
         {
-            string[] paths = null;
-            try
-            {
-                paths = Directory.GetFiles(AppPaths.ForgeVersions);
-            }
-            catch (Exception)
-            {
-                Log.InfoBox($"Path: {AppPaths.ForgeVersions} was not found");
-                throw;
-            }
+            string[] paths = Directory.GetFiles(AppPaths.ForgeVersions);
             List<ForgeVersion> found = new List<ForgeVersion>(paths.Length);
             IEnumerable<string> filePaths = paths.Where(x => Path.GetExtension(x) == ".zip");
             foreach (string path in filePaths)
             {
-                found.Add(new ForgeVersion(path));
+                ForgeVersion version = new ForgeVersion(path);
+                found.Add(version);
+                Log.Info($"Forge version {version.Name} detected");
             }
             return new ObservableCollection<ForgeVersion>(found);
+        }
+
+        private Dictionary<Type, PreferenceData> FindPreferences()
+        {
+            Dictionary<Type, PreferenceData> dictionary = new Dictionary<Type, PreferenceData>();
+            string[] filePaths = Directory.GetFiles(AppPaths.Preferences);
+            foreach (string filePath in filePaths)
+            {
+                string typeName = Path.GetFileNameWithoutExtension(filePath);
+                string jsonText = File.ReadAllText(filePath);
+                Type type = Type.GetType(typeName);
+                try
+                {
+                    dictionary.Add(type, (PreferenceData)JsonConvert.DeserializeObject(jsonText, type));
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, $"Failed to load preferences for {type}");
+                    throw;
+                }
+            }
+            return dictionary;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

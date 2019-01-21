@@ -1,4 +1,5 @@
 ﻿using ForgeModGenerator.Core;
+using ForgeModGenerator.Miscellaneous;
 using ForgeModGenerator.Model;
 using ForgeModGenerator.Service;
 using GalaSoft.MvvmLight;
@@ -11,6 +12,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 
 namespace ForgeModGenerator.ViewModel
@@ -96,13 +98,13 @@ namespace ForgeModGenerator.ViewModel
         {
             if (!Validator.IsValid(mod))
             {
-                Log.InfoBox($"Selected mod is not valid");
+                MessageBox.Show($"Selected mod is not valid");
                 return;
             }
             string newModPath = Path.Combine(AppPaths.Mods, mod.ModInfo.Name);
             if (Directory.Exists(newModPath))
             {
-                Log.InfoBox($"{newModPath} already exists");
+                Log.Warning($"{newModPath} already exists", true);
                 return;
             }
             mod.ForgeVersion.UnZip(newModPath);
@@ -116,7 +118,7 @@ namespace ForgeModGenerator.ViewModel
             File.WriteAllText(ModPaths.FmgModInfo(mod.ModInfo.Name), JsonConvert.SerializeObject(mod)); // create FmgModInfo file for mod detection
 
             SessionContext.Mods.Add(mod);
-            Log.InfoBox($"{mod.ModInfo.Name} was created successfully");
+            Log.Info($"{mod.ModInfo.Name} was created successfully", true);
         }
 
         private void RemoveDumpExample(Mod mod)
@@ -171,7 +173,8 @@ namespace ForgeModGenerator.ViewModel
 
         private void SaveModChanges(Mod mod)
         {
-            Log.InfoBox("?");
+            throw new NotImplementedException();
+            Log.Info($"Changes to {mod.ModInfo.Name} saved successfully");
         }
     }
 }

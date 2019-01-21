@@ -1,18 +1,44 @@
-﻿using System;
+﻿using NLog;
+using System;
 using System.Windows;
 
-namespace ForgeModGenerator
+namespace ForgeModGenerator.Miscellaneous
 {
     public static class Log
     {
-        public static void Info(object msg)
+        public static readonly ILogger CrashLogger = LogManager.GetLogger("CrashLog");
+        public static readonly ILogger InfoLogger = LogManager.GetLogger("InfoLog");
+
+        public static void Error(Exception ex, string message, bool messageClient = false)
         {
-            Console.WriteLine(msg);
+            MessageClientIfNeeded(message, messageClient);
+            CrashLogger.Error(ex, message);
         }
 
-        public static void InfoBox(object msg)
+        public static void Info(string message, bool messageClient = false)
         {
-            MessageBox.Show(msg?.ToString());
+            MessageClientIfNeeded(message, messageClient);
+            InfoLogger.Info(message);
+        }
+
+        public static void Warning(string message, bool messageClient = false)
+        {
+            MessageClientIfNeeded(message, messageClient);
+            InfoLogger.Warn(message);
+        }
+
+        public static void Warning(Exception ex, string message, bool messageClient = false)
+        {
+            MessageClientIfNeeded(message, messageClient);
+            InfoLogger.Warn(ex, message);
+        }
+
+        private static void MessageClientIfNeeded(string message, bool show)
+        {
+            if (show)
+            {
+                MessageBox.Show(message);
+            }
         }
     }
 }

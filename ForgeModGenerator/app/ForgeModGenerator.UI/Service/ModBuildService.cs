@@ -1,4 +1,5 @@
-﻿using ForgeModGenerator.Model;
+﻿using ForgeModGenerator.Miscellaneous;
+using ForgeModGenerator.Model;
 
 namespace ForgeModGenerator.Service
 {
@@ -34,12 +35,14 @@ namespace ForgeModGenerator.Service
         public void RunClient(Mod mod)
         {
             throw new System.NotImplementedException();
+            Log.Info($"Running client for {mod.ModInfo.Name}...");
         }
 
         // Ignore LanuchSetup and run server for this mod
         public void RunServer(Mod mod)
         {
             throw new System.NotImplementedException();
+            Log.Info($"Running server for {mod.ModInfo.Name}...");
         }
     }
 }
