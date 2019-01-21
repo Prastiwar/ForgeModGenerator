@@ -112,6 +112,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Miscellaneous\IOExtensions.cs" />
     <Compile Include="Model\LaunchSetup.cs" />
     <Compile Include="Service\ModBuildService.cs" />
     <Compile Include="UserControls\HorizontalList.xaml.cs">

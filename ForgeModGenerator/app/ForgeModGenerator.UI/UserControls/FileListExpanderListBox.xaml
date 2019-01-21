@@ -14,7 +14,7 @@
 			   Foreground="DarkGray"
 			   HorizontalAlignment="Center" VerticalAlignment="Center"
 			   FontSize="50"
-			   Visibility="{Binding Path=DataContext.SessionContext.IsModSelectedVisibility, RelativeSource={RelativeSource AncestorType=local:FileListExpanderListBox}}"/>
+			   Visibility="{Binding Path=DataContext.SessionContext.IsModSelected, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource AncestorType=local:FileListExpanderListBox}}"/>
 		<ScrollViewer VerticalScrollBarVisibility="Auto">
 			<StackPanel>
 				<materialDesign:Card Background="#FF535353"

@@ -1,7 +1,9 @@
 ﻿using ForgeModGenerator.Core;
+using ForgeModGenerator.Miscellaneous;
 using ForgeModGenerator.Model;
 using ForgeModGenerator.Service;
 using GalaSoft.MvvmLight.Command;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -12,6 +14,24 @@ namespace ForgeModGenerator.ViewModel
     /// <summary> SoundGenerator Business ViewModel </summary>
     public class SoundGeneratorViewModel : FileListViewModelBase
     {
+        public override string CollectionRootPath => SessionContext.SelectedMod != null ? ModPaths.SoundsFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid) : null;
+        public SoundGeneratorViewModel(ISessionContextService sessionContext) : base(sessionContext)
+        {
+            OpenFileDialog.Filter = "Sound file (*.ogg) | *.ogg";
+            Refresh();
+            ShouldUpdate = IsUpdateAvailable();
+        }
+
+        protected override bool Refresh()
+        {
+            bool canRefresh = base.Refresh();
+            if (canRefresh)
+            {
+                ShouldUpdate = IsUpdateAvailable();
+            }
+            return canRefresh;
+        }
+
         public static string FormatDottedSoundName(string modid, string path) => FormatSoundName(modid, path).Replace('/', '.');
         public static string FormatSoundName(string modid, string path)
         {
@@ -23,14 +43,6 @@ namespace ForgeModGenerator.ViewModel
             string shortPath = Path.ChangeExtension(path.Substring(startIndex, path.Length - startIndex), null);
             return $"{modid}:{shortPath}";
         }
-        public SoundGeneratorViewModel(ISessionContextService sessionContext) : base(sessionContext)
-        {
-            OpenFileDialog.Filter = "Sound file (*.ogg) | *.ogg";
-            Refresh();
-            ShouldUpdate = IsUpdateAvailable();
-        }
-
-        public override string CollectionRootPath => SessionContext.SelectedMod != null ? ModPaths.SoundsFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid) : null;
 
         private bool shouldUpdate;
         public bool ShouldUpdate {
@@ -51,16 +63,105 @@ namespace ForgeModGenerator.ViewModel
 
         private void ForceJsonUpdate()
         {
-            foreach (FileCollection file in Files)
+            string jsonPath = ModPaths.SoundsJson(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
+            string tempJsonPath = jsonPath.Replace("sounds.json", "temp.json");
+
+            if (!File.Exists(jsonPath))
             {
-                foreach (string path in file.Paths)
+                using (StreamWriter json = File.CreateText(jsonPath))
                 {
-                    string formatName = FormatSoundName(SessionContext.SelectedMod.ModInfo.Modid, path);
-                    string dotformatName = formatName.Replace('/', '.');
+                    json.WriteLine("{");
+                    json.WriteLine("}");
                 }
             }
-            //ShouldUpdate = false;
+
+            using (StreamWriter writer = new StreamWriter(tempJsonPath))
+            {
+                using (StreamReader reader = new StreamReader(jsonPath))
+                {
+                    long length = reader.BaseStream.GetLineCount();
+                    bool prettyPrint = length > 1;
+
+                    PrepareJsonForAddElements(writer, reader, prettyPrint);
+
+                    IEnumerable<IEnumerable<string>> missingFiles = Files.Select(file => file.Paths.Where(path => !File.ReadLines(jsonPath).Any(x => x.Contains(FormatSoundName(SessionContext.SelectedMod.ModInfo.Modid, path)))));
+                    WriteFilesToJson(prettyPrint, writer, missingFiles);
+                    writer.Write(prettyPrint ? "}" : "\n}");
+                };
+            }
+            File.Delete(jsonPath);
+            File.Move(tempJsonPath, jsonPath);
+            ShouldUpdate = false;
             MessageBox.Show("Updated successfully");
+        }
+
+        private static void PrepareJsonForAddElements(StreamWriter writer, StreamReader reader, bool prettyPrint)
+        {
+            if (prettyPrint)
+            {
+                long index = 0L;
+                long length = reader.BaseStream.GetLineCount();
+                string line = null;
+
+                while ((line = reader.ReadLine()) != null)
+                {
+                    if (index < length - 2)
+                    {
+                        writer.WriteLine(line);
+                    }
+                    else
+                    {
+                        writer.Write(line + ",");
+                        break;
+                    }
+                    index++;
+                }
+            }
+            else
+            {
+                for (int i = 0; i < reader.BaseStream.Length - 1; i++)
+                {
+                    char currentChar = (char)reader.Read();
+                    writer.Write(currentChar);
+                }
+                writer.Write(',');
+            }
+        }
+
+        private void WriteFilesToJson(bool prettyPrint, StreamWriter writer, IEnumerable<IEnumerable<string>> missingFiles)
+        {
+            if (prettyPrint)
+            {
+
+            }
+            else
+            {
+                foreach (IEnumerable<string> files in missingFiles)
+                {
+                    int filesCount = missingFiles.Count();
+                    int filesIndex = 0;
+                    bool isLastFiles = filesIndex == filesCount - 1;
+
+                    int pathIndex = 0;
+                    int pathCount = files.Count();
+
+                    foreach (string path in files)
+                    {
+                        bool isLastPath = pathIndex == pathCount - 1;
+                        string formatName = FormatSoundName(SessionContext.SelectedMod.ModInfo.Modid, path);
+                        string dotformatName = formatName.Replace('/', '.');
+                        writer.WriteLine("");
+                        writer.Write('"');
+                        writer.Write(dotformatName);
+                        writer.Write("\": {");
+                        writer.WriteLine("\"sounds\": [");
+                        writer.WriteLine("{{ \"name\": \"{0}:{1}\" }}", SessionContext.SelectedMod.ModInfo.Modid, formatName);
+                        writer.WriteLine("]");
+                        writer.WriteLine(isLastFiles && isLastPath ? "}" : "},");
+                        pathIndex++;
+                    }
+                }
+            }
         }
 
         private bool IsUpdateAvailable()

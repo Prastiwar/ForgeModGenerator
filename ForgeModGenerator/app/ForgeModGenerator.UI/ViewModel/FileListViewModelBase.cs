@@ -50,12 +50,14 @@ namespace ForgeModGenerator.ViewModel
         private ICommand removeCommand;
         public ICommand RemoveCommand => removeCommand ?? (removeCommand = new RelayCommand<Tuple<ObservableCollection<string>, string>>(Remove));
 
-        protected virtual void Refresh()
+        protected virtual bool Refresh()
         {
             if (SessionContext.SelectedMod != null && Directory.Exists(CollectionRootPath))
             {
                 Files = FindCollection(CollectionRootPath);
+                return true;
             }
+            return false;
         }
 
         protected virtual void Remove(Tuple<ObservableCollection<string>, string> param)

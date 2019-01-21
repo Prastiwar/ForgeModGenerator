@@ -7,18 +7,21 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Windows;
 
 namespace ForgeModGenerator.Service
 {
     public interface ISessionContextService : INotifyPropertyChanged
     {
+        ObservableCollection<PreferenceData> Preferences { get; }
+
         ObservableCollection<ForgeVersion> ForgeVersions { get; }
+
         ObservableCollection<Mod> Mods { get; }
         ObservableCollection<Mod> SelectedMods { get; }
         Mod SelectedMod { get; set; }
+
         Uri StartPage { get; }
-        Visibility IsModSelectedVisibility { get; }
+        bool IsModSelected { get; }
     }
 
     public class SessionContextService : ISessionContextService
@@ -38,7 +41,13 @@ namespace ForgeModGenerator.Service
 
         public Uri StartPage { get; }
 
-        public Visibility IsModSelectedVisibility => SelectedMod != null ? Visibility.Hidden : Visibility.Visible;
+        public bool IsModSelected => SelectedMod != null;
+
+        private ObservableCollection<PreferenceData> preferences;
+        public ObservableCollection<PreferenceData> Preferences {
+            get => preferences;
+            set => Set(ref preferences, value);
+        }
 
         private ObservableCollection<Mod> mods;
         public ObservableCollection<Mod> Mods {
@@ -57,7 +66,7 @@ namespace ForgeModGenerator.Service
             get => selectedMod;
             set {
                 Set(ref selectedMod, value);
-                OnPropertyChanged(nameof(IsModSelectedVisibility));
+                OnPropertyChanged(nameof(IsModSelected));
             }
         }
 
