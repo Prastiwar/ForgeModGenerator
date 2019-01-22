@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 
 namespace ForgeModGenerator.Miscellaneous
 {
@@ -7,6 +8,9 @@ namespace ForgeModGenerator.Miscellaneous
         private const char CR = '\r';
         private const char LF = '\n';
         private const char NULLCHAR = (char)0;
+
+        public static IEnumerable<string> EnumerateAllFiles(string path) => Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories);
+        public static IEnumerable<string> EnumerateAllDirectories(string path) => Directory.EnumerateDirectories(path, "*", SearchOption.AllDirectories);
 
         public static long GetLineCount(this Stream stream)
         {

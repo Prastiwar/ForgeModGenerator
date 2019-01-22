@@ -4,8 +4,10 @@ namespace ForgeModGenerator.Core
 {
     public static class ModPaths
     {
+        public static readonly string FmgInfoFileName = "FmgModInfo.json";
+
         public static string ModRoot(string modname) => $"{AppPaths.Mods}/{modname}";
-        public static string FmgModInfo(string modname) => $"{ModRoot(modname)}/FmgModInfo.json";
+        public static string FmgModInfo(string modname) => $"{ModRoot(modname)}/{FmgInfoFileName}";
 
         public static string Resources(string modname) => $"{ModRoot(modname)}/src/main/resources";
         public static string McModInfo(string modname) => $"{Resources(modname)}/mcmod.info";
