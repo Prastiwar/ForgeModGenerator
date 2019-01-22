@@ -4,9 +4,10 @@ namespace ForgeModGenerator.Core
 {
     public static class ModPaths
     {
-        public static string FmgModInfo(string modname) => $"{AppPaths.Mods}/{modname}/FmgModInfo.json";
+        public static string ModRoot(string modname) => $"{AppPaths.Mods}/{modname}";
+        public static string FmgModInfo(string modname) => $"{ModRoot(modname)}/FmgModInfo.json";
 
-        public static string Resources(string modname) => $"{AppPaths.Mods}/{modname}/src/main/resources";
+        public static string Resources(string modname) => $"{ModRoot(modname)}/src/main/resources";
         public static string McModInfo(string modname) => $"{Resources(modname)}/mcmod.info";
         public static string PackMeta(string modname) => $"{Resources(modname)}/pack.mcmeta";
         public static string Assets(string modname, string modid) => $"{Resources(modname)}/assets/{modid}";
@@ -22,7 +23,7 @@ namespace ForgeModGenerator.Core
         public static string TexturesItems(string modname, string modid) => $"{Textures(modname, modid)}/items";
         public static string TexturesModelsArmor(string modname, string modid) => $"{Textures(modname, modid)}/models/armor";
 
-        public static string JavaSource(string modname) => $"{AppPaths.Mods}/{modname}/src/main/java/com/";
+        public static string JavaSource(string modname) => $"{ModRoot(modname)}/src/main/java/com/";
         public static string SourceCodeRoot(string modname, string organization) => Path.Combine(JavaSource(modname), organization, modname.ToLower());
         public static string GeneratedSourceCode(string modname, string organization) => Path.Combine(SourceCodeRoot(modname, organization), "generated");
 

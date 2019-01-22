@@ -4,7 +4,6 @@ using ForgeModGenerator.Model;
 using ForgeModGenerator.Service;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -115,7 +114,7 @@ namespace ForgeModGenerator.ViewModel
             GenerateFolders(assetsPath, assetsFolerToGenerate);
             ExtractCore(generatedPath);
             ReplaceTemplateVariables(mod, generatedPath);
-            File.WriteAllText(ModPaths.FmgModInfo(mod.ModInfo.Name), JsonConvert.SerializeObject(mod)); // create FmgModInfo file for mod detection
+            Mod.Export(mod);
 
             SessionContext.Mods.Add(mod);
             Log.Info($"{mod.ModInfo.Name} was created successfully", true);
@@ -173,8 +172,47 @@ namespace ForgeModGenerator.ViewModel
 
         private void SaveModChanges(Mod mod)
         {
-            throw new NotImplementedException();
-            Log.Info($"Changes to {mod.ModInfo.Name} saved successfully");
+            if (!Validator.IsValid(mod))
+            {
+                MessageBox.Show($"Selected mod is not valid");
+                return;
+            }
+
+            Mod oldValues = Mod.Import(ModPaths.ModRoot(mod.ModInfo.Name));
+
+            if (mod.Organization != oldValues.Organization)
+            {
+                // change all scripts
+            }
+            if (mod.WorkspaceSetup != oldValues.WorkspaceSetup)
+            {
+                // install new workspace
+            }
+            if (mod.ForgeVersion != oldValues.ForgeVersion)
+            {
+                // install new forge
+            }
+            if (mod.ModInfo.Name != oldValues.ModInfo.Name)
+            {
+                // change all scripts
+            }
+            if (mod.ModInfo.Modid != oldValues.ModInfo.Modid)
+            {
+                // change all scripts, folders, resource files
+            }
+            if (mod.ModInfo.Version != oldValues.ModInfo.Version)
+            {
+                // change modhook
+            }
+            if (mod.ModInfo.McVersion != oldValues.ModInfo.McVersion)
+            {
+                // change modhook
+            }
+
+            McModInfo.Export(mod.ModInfo);
+            Mod.Export(mod);
+
+            Log.Info($"Changes to {mod.ModInfo.Name} saved successfully", true);
         }
     }
 }

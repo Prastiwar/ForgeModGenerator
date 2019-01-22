@@ -93,18 +93,21 @@ namespace ForgeModGenerator.Model
             return this;
         }
 
+        public static void Export(Mod mod)
+        {
+            File.WriteAllText(ModPaths.FmgModInfo(mod.ModInfo.Name), JsonConvert.SerializeObject(mod, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All }));
+        }
+
         public static Mod Import(string modPath)
         {
             string fmgModInfoPath = ModPaths.FmgModInfo(new DirectoryInfo(modPath).Name);
             try
             {
-                return JsonConvert.DeserializeObject<Mod>(File.ReadAllText(fmgModInfoPath));
+                return JsonConvert.DeserializeObject<Mod>(File.ReadAllText(fmgModInfoPath), new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All });
             }
             catch (System.Exception ex)
             {
-                string msg = $"Failed to load: {fmgModInfoPath}";
-                MessageBox.Show(msg);
-                Log.Warning(ex, msg);
+                Log.Error(ex, $"Failed to load: {fmgModInfoPath}", true);
             }
             return null;
         }

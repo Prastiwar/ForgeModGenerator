@@ -3,7 +3,7 @@ using System.IO.Compression;
 
 namespace ForgeModGenerator.Model
 {
-    public struct ForgeVersion
+    public class ForgeVersion
     {
         public string Name { get; set; }
         public string ZipPath { get; set; }

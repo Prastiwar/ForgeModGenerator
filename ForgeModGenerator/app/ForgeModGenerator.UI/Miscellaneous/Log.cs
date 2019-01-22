@@ -6,13 +6,13 @@ namespace ForgeModGenerator.Miscellaneous
 {
     public static class Log
     {
-        public static readonly ILogger CrashLogger = LogManager.GetLogger("CrashLog");
+        public static readonly ILogger ErrorLogger = LogManager.GetLogger("ErrorLog");
         public static readonly ILogger InfoLogger = LogManager.GetLogger("InfoLog");
 
         public static void Error(Exception ex, string message, bool messageClient = false)
         {
             MessageClientIfNeeded(message, messageClient);
-            CrashLogger.Error(ex, message);
+            ErrorLogger.Error(ex, message);
         }
 
         public static void Info(string message, bool messageClient = false)
