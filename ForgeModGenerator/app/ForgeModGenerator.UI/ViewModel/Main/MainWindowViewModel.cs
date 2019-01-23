@@ -54,6 +54,7 @@ namespace ForgeModGenerator.ViewModel
             Mod mod = SessionContext.SelectedMod;
             SessionContext.SelectedMod = null;
             SessionContext.SelectedMod = mod;
+            SessionContext.Refresh();
             Log.Info("Force Refresh called");
         }
     }

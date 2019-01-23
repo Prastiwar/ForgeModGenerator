@@ -27,7 +27,7 @@ namespace ForgeModGenerator.ViewModel
                 CheckFileExists = true,
                 ValidateNames = true
             };
-            SessionContext.PropertyChanged += OnSessionContexPropertyChaged;
+            SessionContext.PropertyChanged += OnSessionContexPropertyChanged;
         }
 
         public abstract string CollectionRootPath { get; }
@@ -100,7 +100,7 @@ namespace ForgeModGenerator.ViewModel
             return new ObservableCollection<FileCollection>(initCollection);
         }
 
-        protected virtual void OnSessionContexPropertyChaged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        protected virtual void OnSessionContexPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(SessionContext.SelectedMod))
             {

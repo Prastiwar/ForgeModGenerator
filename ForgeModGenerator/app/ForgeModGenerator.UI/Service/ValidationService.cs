@@ -15,6 +15,10 @@ namespace ForgeModGenerator.Service
 
         public bool IsValid(Mod mod)
         {
+            if (mod == null || mod.ForgeVersion == null)
+            {
+                return false;
+            }
             return IsValidName(mod.ModInfo.Name) && IsValidOrganization(mod.Organization) && IsValidModid(mod.ModInfo.Modid);
         }
 

@@ -14,6 +14,8 @@ namespace ForgeModGenerator.Service
 {
     public interface ISessionContextService : INotifyPropertyChanged
     {
+        void Refresh();
+
         ObservableCollection<ForgeVersion> ForgeVersions { get; }
 
         ObservableCollection<Mod> Mods { get; }
@@ -31,18 +33,33 @@ namespace ForgeModGenerator.Service
         public SessionContextService()
         {
             Log.Info("Session loading..");
-            Mods = FindMods();
-            SelectedMod = Mods.Count > 0 ? Mods[0] : null;
-            SelectedMods = new ObservableCollection<Mod>();
-            if (SelectedMod != null)
-            {
-                SelectedMods.Add(SelectedMod);
-            }
-            ForgeVersions = FindForgeVersions();
             StartPage = new Uri("../Dashboard/DashboardPage.xaml", UriKind.Relative);
 
-            Preferences = FindPreferences();
+            Refresh();
+
             Log.Info("Session loaded");
+        }
+
+        public void Refresh()
+        {
+            Log.Info("Session refreshing..");
+            Mods = FindMods();
+            ForgeVersions = FindForgeVersions();
+            Preferences = FindPreferences();
+
+            if (SelectedMod == null)
+            {
+                SelectedMod = Mods.Count > 0 ? Mods[0] : null;
+            }
+            if (SelectedMods == null)
+            {
+                SelectedMods = new ObservableCollection<Mod>();
+                if (SelectedMod != null)
+                {
+                    SelectedMods.Add(SelectedMod);
+                }
+            }
+            Log.Info("Session refreshed");
         }
 
         public Uri StartPage { get; }

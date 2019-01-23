@@ -30,15 +30,6 @@ namespace ForgeModGenerator.ViewModel
             Validator = validator;
             WorkspaceService = workspaceService;
 
-            if (IsInDesignMode || IsInDesignModeStatic)
-            {
-                SessionContextService context = sessionContext as SessionContextService;
-                context.Mods = new ObservableCollection<Mod>() {
-                    new Mod(new McModInfo(){ Name = "ExampleMod", Modid = "examplemod" }, "exampleorg", SessionContext.ForgeVersions[0]),
-                    new Mod(new McModInfo(){ Name = "ExampleModTwo", Modid = "examplemodtwo" }, "exampleorg2", SessionContext.ForgeVersions[0]),
-                    new Mod(new McModInfo(){ Name = "ExampleModThree", Modid = "examplemodthree" }, "exampleorg3", SessionContext.ForgeVersions[0])
-                };
-            }
             NewMod = new Mod(new McModInfo() {
                 Name = "NewExampleMod",
                 Modid = "newexamplemod",
