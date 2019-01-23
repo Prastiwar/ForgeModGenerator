@@ -26,6 +26,7 @@ namespace ForgeModGenerator.Core
         public static string TexturesModelsArmor(string modname, string modid) => $"{Textures(modname, modid)}/models/armor";
 
         public static string JavaSource(string modname) => $"{ModRoot(modname)}/src/main/java/com/";
+        public static string OrganizationRoot(string modname, string organization) => Path.Combine(JavaSource(modname), organization);
         public static string SourceCodeRoot(string modname, string organization) => Path.Combine(JavaSource(modname), organization, modname.ToLower());
         public static string GeneratedSourceCode(string modname, string organization) => Path.Combine(SourceCodeRoot(modname, organization), "generated");
 

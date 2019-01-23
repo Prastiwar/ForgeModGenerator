@@ -118,6 +118,7 @@ namespace ForgeModGenerator.ViewModel
             ReplaceTemplateVariables(mod, generatedPath);
             mod.WorkspaceSetup.Setup(mod);
             Mod.Export(mod);
+            McModInfo.Export(mod.ModInfo);
 
             SessionContext.Mods.Add(mod);
             Log.Info($"{mod.ModInfo.Name} was created successfully", true);
@@ -179,7 +180,7 @@ namespace ForgeModGenerator.ViewModel
                 return;
             }
 
-            Mod oldValues = Mod.Import(ModPaths.ModRoot(mod.ModInfo.Name));
+            Mod oldValues = Mod.Import(ModPaths.ModRoot(mod.CachedName));
 
             if (mod.Organization != oldValues.Organization)
             {
@@ -206,12 +207,12 @@ namespace ForgeModGenerator.ViewModel
                 ChangeMcVersion(mod, oldValues);
             }
 
-            if (mod.ForgeVersion != oldValues.ForgeVersion)
+            if (mod.ForgeVersion.Name != oldValues.ForgeVersion.Name)
             {
                 ChangeForgeVersion(mod);
             }
 
-            if (mod.WorkspaceSetup != oldValues.WorkspaceSetup)
+            if (mod.WorkspaceSetup.Name != oldValues.WorkspaceSetup.Name)
             {
                 mod.WorkspaceSetup.Setup(mod);
             }
@@ -226,6 +227,7 @@ namespace ForgeModGenerator.ViewModel
         {
             string modRoot = ModPaths.ModRoot(mod.ModInfo.Name);
 
+            // remove every folder except 'src'
             foreach (string directory in Directory.EnumerateDirectories(modRoot))
             {
                 DirectoryInfo info = new DirectoryInfo(directory);
@@ -235,6 +237,7 @@ namespace ForgeModGenerator.ViewModel
                 }
             }
 
+            // remove every file except FmgModInfo
             foreach (string file in Directory.EnumerateFiles(modRoot))
             {
                 FileInfo info = new FileInfo(file);
@@ -244,17 +247,21 @@ namespace ForgeModGenerator.ViewModel
                 }
             }
 
+            // unzip forgeversion to temp path
             string tempDirPath = Path.Combine(modRoot, "temp");
             DirectoryInfo tempDir = Directory.CreateDirectory(tempDirPath);
             mod.ForgeVersion.UnZip(tempDirPath);
+
             Directory.Delete(Path.Combine(tempDirPath, "src"), true);
+            IOExtensions.MoveDirectoriesAndFiles(tempDirPath, modRoot);
+            Directory.Delete(tempDirPath);
         }
 
         private void ChangeMcVersion(Mod mod, Mod oldValues)
         {
             string modHook = ModPaths.GeneratedModHookFile(mod.ModInfo.Name, mod.Organization);
             string content = File.ReadAllText(modHook);
-            string newContent = content.Replace(oldValues.ModInfo.McVersion, mod.ModInfo.McVersion);
+            string newContent = content.Replace($"\"{oldValues.ModInfo.McVersion}\"", $"\"{mod.ModInfo.McVersion}\"");
             File.WriteAllText(modHook, newContent);
         }
 
@@ -262,19 +269,17 @@ namespace ForgeModGenerator.ViewModel
         {
             string modHook = ModPaths.GeneratedModHookFile(mod.ModInfo.Name, mod.Organization);
             string content = File.ReadAllText(modHook);
-            string newContent = content.Replace(oldValues.ModInfo.Version, mod.ModInfo.Version);
+            string newContent = content.Replace($"\"{oldValues.ModInfo.Version}\"", $"\"{mod.ModInfo.Version}\"");
             File.WriteAllText(modHook, newContent);
         }
 
         private void ChangeModid(Mod mod, Mod oldValues)
         {
-            string sourcePath = ModPaths.SourceCodeRoot(mod.ModInfo.Name, mod.Organization);
-            foreach (string file in IOExtensions.EnumerateAllFiles(sourcePath))
-            {
-                string content = File.ReadAllText(file);
-                string newContent = content.Replace(oldValues.ModInfo.Modid, mod.ModInfo.Modid);
-                File.WriteAllText(file, newContent);
-            }
+            string hookPath = ModPaths.GeneratedModHookFile(mod.ModInfo.Name, mod.Organization);
+            string hookContent = File.ReadAllText(hookPath);
+            string newHookContent = hookContent.Replace($"\"{oldValues.ModInfo.Modid}\"", $"\"{mod.ModInfo.Modid}\"");
+            File.WriteAllText(hookPath, newHookContent);
+
             string assetsPath = ModPaths.Assets(mod.ModInfo.Name, oldValues.ModInfo.Modid);
             string newAssetsPath = ModPaths.Assets(mod.ModInfo.Name, mod.ModInfo.Modid);
             Directory.Move(assetsPath, newAssetsPath);
@@ -289,31 +294,54 @@ namespace ForgeModGenerator.ViewModel
 
         private void ChangeModName(Mod mod, Mod oldValues)
         {
-            string scriptsPath = ModPaths.SourceCodeRoot(mod.ModInfo.Name, oldValues.Organization);
-            string sourceNamePath = Directory.GetDirectories(scriptsPath)[0];
-            string newSourceNamePath = sourceNamePath.Replace(oldValues.ModInfo.Name.ToLower(), mod.ModInfo.Name.ToLower());
-            Directory.Move(sourceNamePath, newSourceNamePath);
+            string oldRootPath = ModPaths.ModRoot(oldValues.ModInfo.Name);
+            string newRootPath = ModPaths.ModRoot(mod.ModInfo.Name);
+
+            string oldSourceNamePath = Path.Combine(ModPaths.JavaSource(mod.ModInfo.Name), mod.Organization, oldValues.ModInfo.Name.ToLower());
+            string newSourceNamePath = ModPaths.SourceCodeRoot(mod.ModInfo.Name, mod.Organization);
+            if (Directory.Exists(newSourceNamePath))
+            {
+                Log.Warning($"Can't change mod name, {newSourceNamePath} already exists", true);
+                return;
+            }
+            Directory.Move(oldRootPath, newRootPath);
+            Directory.Move(oldSourceNamePath, newSourceNamePath);
+            string hookPath = ModPaths.GeneratedModHookFile(mod.ModInfo.Name, mod.Organization).Replace('\\', '/');
             foreach (string file in IOExtensions.EnumerateAllFiles(newSourceNamePath))
             {
-                string content = File.ReadAllText(file);
-                string newContent = content.Replace(oldValues.ModInfo.Name, mod.ModInfo.Name)
-                                            .Replace(oldValues.ModInfo.Name.ToLower(), mod.ModInfo.Name.ToLower());
-                File.WriteAllText(file, newContent);
-
+                string correctFilePath = file;
                 FileInfo fileInfo = new FileInfo(file);
                 if (fileInfo.Name.Contains(oldValues.ModInfo.Name))
                 {
-                    File.Move(file, file.Replace(oldValues.ModInfo.Name, mod.ModInfo.Name));
+                    correctFilePath = Path.Combine(file.Substring(0, file.IndexOf(fileInfo.Name)),
+                        fileInfo.Name.Replace(oldValues.ModInfo.Name, mod.ModInfo.Name)
+                    );
+                    File.Move(file, correctFilePath);
                 }
+
+                string content = File.ReadAllText(correctFilePath);
+                string newContent = null;
+                if (correctFilePath.Replace('\\', '/') != hookPath)
+                {
+                    newContent = content.Replace(oldValues.ModInfo.Name, mod.ModInfo.Name)
+                                        .Replace(oldValues.ModInfo.Name.ToLower(), mod.ModInfo.Name.ToLower());
+                }
+                else
+                {
+                    // replace correct modname.ToLower() since moid can be equal to modname.ToLower()
+                    newContent = content.Replace(oldValues.ModInfo.Name, mod.ModInfo.Name)
+                                        .Replace($".{oldValues.ModInfo.Name.ToLower()}", $".{mod.ModInfo.Name.ToLower()}");
+                }
+                File.WriteAllText(correctFilePath, newContent);
             }
         }
 
         private void ChangeOrganization(Mod mod, Mod oldValues)
         {
-            string scriptsPath = ModPaths.SourceCodeRoot(oldValues.ModInfo.Name, oldValues.Organization);
-            string newScriptsPath = ModPaths.SourceCodeRoot(mod.ModInfo.Name, mod.Organization);
-            Directory.Move(scriptsPath, newScriptsPath);
-            foreach (string file in IOExtensions.EnumerateAllFiles(newScriptsPath))
+            string oldOrgPath = ModPaths.OrganizationRoot(oldValues.ModInfo.Name, oldValues.Organization);
+            string newOrgPath = ModPaths.OrganizationRoot(mod.ModInfo.Name, mod.Organization);
+            Directory.Move(oldOrgPath, newOrgPath);
+            foreach (string file in IOExtensions.EnumerateAllFiles(newOrgPath))
             {
                 string content = File.ReadAllText(file);
                 string newContent = content.Replace(oldValues.Organization, mod.Organization);

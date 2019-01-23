@@ -12,6 +12,18 @@ namespace ForgeModGenerator.Miscellaneous
         public static IEnumerable<string> EnumerateAllFiles(string path) => Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories);
         public static IEnumerable<string> EnumerateAllDirectories(string path) => Directory.EnumerateDirectories(path, "*", SearchOption.AllDirectories);
 
+        public static void MoveDirectoriesAndFiles(string from, string destination)
+        {
+            foreach (string folder in Directory.EnumerateDirectories(from))
+            {
+                Directory.Move(folder, Path.Combine(destination, new DirectoryInfo(folder).Name));
+            }
+            foreach (string file in Directory.EnumerateFiles(from))
+            {
+                File.Move(file, Path.Combine(destination, new FileInfo(file).Name));
+            }
+        }
+
         public static long GetLineCount(this Stream stream)
         {
             long lineCount = 0L;

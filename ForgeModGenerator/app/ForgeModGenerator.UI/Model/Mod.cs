@@ -5,7 +5,6 @@ using GalaSoft.MvvmLight;
 using Newtonsoft.Json;
 using System.ComponentModel;
 using System.IO;
-using System.Windows;
 
 namespace ForgeModGenerator.Model
 {
@@ -59,6 +58,9 @@ namespace ForgeModGenerator.Model
             set => Set(ref launchSetup, value);
         }
 
+        [JsonProperty(Required = Required.Always)]
+        internal string CachedName { get; private set; }
+
         public Mod(McModInfo modInfo, string organization, ForgeVersion forgeVersion)
         {
             ModInfo = modInfo;
@@ -73,6 +75,7 @@ namespace ForgeModGenerator.Model
                         : new LaunchSetup(true, true)
             );
             WorkspaceSetup = workspaceSetup ?? WorkspaceSetup.NONE;
+            CachedName = ModInfo.Name;
         }
 
         public Mod SetSide(ModSide side)
@@ -93,6 +96,7 @@ namespace ForgeModGenerator.Model
             return this;
         }
 
+        // Writes to FmgModInfo file
         public static void Export(Mod mod)
         {
             File.WriteAllText(ModPaths.FmgModInfo(mod.ModInfo.Name), JsonConvert.SerializeObject(mod, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All }));
