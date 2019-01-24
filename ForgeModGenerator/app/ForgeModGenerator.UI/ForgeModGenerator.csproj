@@ -110,6 +110,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Core\CodeOperation.cs" />
     <Compile Include="Miscellaneous\IOExtensions.cs" />
     <Compile Include="Miscellaneous\Log.cs" />
     <Compile Include="Model\LaunchSetup.cs" />

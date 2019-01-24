@@ -8,6 +8,13 @@ namespace ForgeModGenerator.Model
         public string Name { get; set; }
         public string ZipPath { get; set; }
 
+        [Newtonsoft.Json.JsonConstructor]
+        public ForgeVersion(string name, string zipPath)
+        {
+            Name = name;
+            ZipPath = zipPath;
+        }
+
         public ForgeVersion(string zipPath)
         {
             ZipPath = zipPath ?? throw new System.ArgumentNullException(nameof(zipPath));
@@ -18,5 +25,8 @@ namespace ForgeModGenerator.Model
         {
             ZipFile.ExtractToDirectory(ZipPath, destination);
         }
+
+        public override bool Equals(object obj) => obj is ForgeVersion objForgeVersion && (objForgeVersion.Name == Name && objForgeVersion.ZipPath == ZipPath);
+        public override int GetHashCode() => base.GetHashCode();
     }
 }

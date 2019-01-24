@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.VisualBasic.FileIO;
+using System.Collections.Generic;
 using System.IO;
+using SearchOption = System.IO.SearchOption;
 
 namespace ForgeModGenerator.Miscellaneous
 {
@@ -11,6 +13,9 @@ namespace ForgeModGenerator.Miscellaneous
 
         public static IEnumerable<string> EnumerateAllFiles(string path) => Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories);
         public static IEnumerable<string> EnumerateAllDirectories(string path) => Directory.EnumerateDirectories(path, "*", SearchOption.AllDirectories);
+
+        public static void DeleteFileToBin(string filePath) => FileSystem.DeleteDirectory(filePath, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
+        public static void DeleteDirectoryToBin(string directoryPath) => FileSystem.DeleteFile(directoryPath, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
 
         public static void MoveDirectoriesAndFiles(string from, string destination)
         {

@@ -16,6 +16,9 @@ namespace ForgeModGenerator.Model
         }
 
         public abstract void Setup(Mod mod);
+
+        public override bool Equals(object obj) => obj is WorkspaceSetup objSetup && objSetup.Name == Name;
+        public override int GetHashCode() => base.GetHashCode();
     }
 
     public class EmptyWorkspace : WorkspaceSetup

@@ -75,6 +75,7 @@ namespace ForgeModGenerator.Service
             {
                 return (T)data;
             }
+            Log.Info($"Tried to get {type} preferences, but it doesn't exist");
             return null;
         }
 
