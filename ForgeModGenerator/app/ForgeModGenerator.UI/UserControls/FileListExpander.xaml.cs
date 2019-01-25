@@ -12,20 +12,18 @@ namespace ForgeModGenerator.UserControls
             InitializeComponent();
         }
 
-        //public string GetFormattedHeaderText => $"({Files.Paths.Count}) {HeaderText}";
-
         public static readonly DependencyProperty HeaderTextProperty =
-            DependencyProperty.Register("HeaderText", typeof(string), typeof(FileListExpander), new PropertyMetadata("Files:"));
+            DependencyProperty.Register("HeaderText", typeof(string), typeof(FileListExpander), new PropertyMetadata("Files"));
         public string HeaderText {
-            get => $"({Files.Paths.Count}) {GetValue(HeaderTextProperty)}";
+            get => $"({FileCollection.Paths.Count}) {GetValue(HeaderTextProperty)}";
             set => SetValue(HeaderTextProperty, value);
         }
 
-        public static readonly DependencyProperty FilesProperty =
-            DependencyProperty.Register("Files", typeof(FileCollection), typeof(FileListExpander), new PropertyMetadata(default(FileCollection)));
-        public FileCollection Files {
-            get => (FileCollection)GetValue(FilesProperty);
-            set => SetValue(FilesProperty, value);
+        public static readonly DependencyProperty FileCollectionProperty =
+            DependencyProperty.Register("FileCollection", typeof(FileCollection), typeof(FileListExpander), new PropertyMetadata(default(FileCollection)));
+        public FileCollection FileCollection {
+            get => (FileCollection)GetValue(FileCollectionProperty);
+            set => SetValue(FileCollectionProperty, value);
         }
 
         public static readonly DependencyProperty SelectedFilePathProperty =
@@ -56,7 +54,16 @@ namespace ForgeModGenerator.UserControls
             set => SetValue(ItemTemplateProperty, value);
         }
 
-        private void ShowContainer(object sender, RoutedEventArgs e) => System.Diagnostics.Process.Start(Files.DestinationPath);
-
+        private void ShowContainer(object sender, RoutedEventArgs e)
+        {
+            if (FileCollection != null)
+            {
+                System.Diagnostics.Process.Start(FileCollection.DestinationPath);
+            }
+            else
+            {
+                MessageBox.Show(null);
+            }
+        }
     }
 }

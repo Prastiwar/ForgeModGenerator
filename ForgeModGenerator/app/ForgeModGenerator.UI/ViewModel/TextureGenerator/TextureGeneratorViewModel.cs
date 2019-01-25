@@ -10,6 +10,7 @@ namespace ForgeModGenerator.ViewModel
         public TextureGeneratorViewModel(ISessionContextService sessionContext) : base(sessionContext)
         {
             OpenFileDialog.Filter = "Image (*.png) | *.png";
+            AllowedExtensions = new string[] { ".png" };
             Refresh();
         }
 

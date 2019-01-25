@@ -1,4 +1,5 @@
-﻿using ForgeModGenerator.Model;
+﻿using ForgeModGenerator.Miscellaneous;
+using ForgeModGenerator.Model;
 using ForgeModGenerator.Service;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -28,14 +29,13 @@ namespace ForgeModGenerator.ViewModel
                 CheckFileExists = true,
                 ValidateNames = true
             };
+            AllowedExtensions = new string[] { OpenFileDialog.DefaultExt };
             SessionContext.PropertyChanged += OnSessionContexPropertyChanged;
         }
 
         public Visibility EmptyMessageVisibility => SessionContext.IsModSelected ? Visibility.Collapsed : Visibility.Visible;
 
         public abstract string CollectionRootPath { get; }
-
-        public int FilesCount => Files.Count;
 
         private ObservableCollection<FileCollection> files;
         public ObservableCollection<FileCollection> Files {
@@ -50,16 +50,24 @@ namespace ForgeModGenerator.ViewModel
         }
 
         private ICommand addCommand;
-        public ICommand AddCommand => addCommand ?? (addCommand = new RelayCommand<FileCollection>(AddNew));
+        public ICommand AddCommand => addCommand ?? (addCommand = new RelayCommand<FileCollection>(AddNewFile));
 
         private ICommand removeCommand;
         public ICommand RemoveCommand => removeCommand ?? (removeCommand = new RelayCommand<Tuple<ObservableCollection<string>, string>>(Remove));
 
+        public string[] AllowedExtensions { get; protected set; }
+
+        protected virtual bool CanRefresh() => SessionContext.SelectedMod != null && Directory.Exists(CollectionRootPath);
+
         protected virtual bool Refresh()
         {
-            if (SessionContext.SelectedMod != null && Directory.Exists(CollectionRootPath))
+            if (CanRefresh())
             {
                 Files = FindCollection(CollectionRootPath);
+                if (Files.Count <= 0)
+                {
+                    Files.Add(new FileCollection(CollectionRootPath));
+                }
                 return true;
             }
             return false;
@@ -67,12 +75,39 @@ namespace ForgeModGenerator.ViewModel
 
         protected virtual void Remove(Tuple<ObservableCollection<string>, string> param)
         {
-            param.Item1.Remove(param.Item2);
-            FileSystem.DeleteFile(param.Item2, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+            if (param == null)
+            {
+                Log.Warning("Remove item called with null parameter");
+                return;
+            }
+            else if (param.Item1 == null)
+            {
+                Log.Warning("Remove item called with null collection", true);
+                return;
+            }
+
+            if (param.Item1.Remove(param.Item2))
+            {
+                try
+                {
+                    FileSystem.DeleteFile(param.Item2, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, $"Couldn't delete {param.Item2}. Make sure it's not used by any process", true);
+                    param.Item1.Add(param.Item2); // delete failed, so get item back to collection
+                    return;
+                }
+            }
         }
 
-        protected virtual void AddNew(FileCollection collection)
+        protected virtual void AddNewFile(FileCollection collection)
         {
+            if (collection == null || collection.Paths == null)
+            {
+                Log.Warning("Can't add new file to null collection", true);
+                return;
+            }
             DialogResult result = OpenFileDialog.ShowDialog();
             if (result == DialogResult.OK)
             {
@@ -80,7 +115,15 @@ namespace ForgeModGenerator.ViewModel
                 {
                     string fileName = new FileInfo(filePath).Name;
                     string newFilePath = Path.Combine(collection.DestinationPath, fileName);
-                    File.Copy(filePath, newFilePath);
+                    try
+                    {
+                        File.Copy(filePath, newFilePath);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, $"Couldn't add {fileName} to {collection.HeaderName}. Make sure the file is not opened by any process.", true);
+                        continue;
+                    }
                     collection.Paths.Add(newFilePath);
                 }
             }
@@ -89,15 +132,24 @@ namespace ForgeModGenerator.ViewModel
         protected virtual ObservableCollection<FileCollection> FindCollection(string path)
         {
             List<FileCollection> initCollection = new List<FileCollection>(10);
+
+            AddFilesToCollection(path);
             foreach (string directory in Directory.EnumerateDirectories(path, "*", System.IO.SearchOption.AllDirectories))
             {
-                bool hasAnyFile = Directory.EnumerateFiles(directory).Any();
-                if (hasAnyFile)
+                AddFilesToCollection(directory);
+            }
+            void AddFilesToCollection(string directoryPath)
+            {
+                IEnumerable<string> files = Directory.EnumerateFiles(directoryPath).Where(filePath => AllowedExtensions.Any(ext => ext == Path.GetExtension(filePath)));
+                if (files.Any())
                 {
-                    FileCollection fileCollection = new FileCollection(directory);
-                    foreach (string filePath in Directory.EnumerateFiles(directory))
+                    FileCollection fileCollection = new FileCollection(directoryPath);
+                    foreach (string filePath in files)
                     {
-                        fileCollection.Paths.Add(Path.GetFullPath(filePath).Replace('\\', '/'));
+                        if (AllowedExtensions.Any(x => x == Path.GetExtension(filePath)))
+                        {
+                            fileCollection.Paths.Add(Path.GetFullPath(filePath).Replace('\\', '/'));
+                        }
                     }
                     initCollection.Add(fileCollection);
                 }

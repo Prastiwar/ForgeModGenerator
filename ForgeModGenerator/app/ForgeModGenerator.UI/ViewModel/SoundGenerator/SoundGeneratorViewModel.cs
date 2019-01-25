@@ -21,6 +21,7 @@ namespace ForgeModGenerator.ViewModel
         public SoundGeneratorViewModel(ISessionContextService sessionContext) : base(sessionContext)
         {
             OpenFileDialog.Filter = "Sound file (*.ogg) | *.ogg";
+            AllowedExtensions = new string[] { ".ogg" };
             Preferences = sessionContext.GetPreferences<SoundsGeneratorPreferences>();
             Refresh();
         }
@@ -89,9 +90,9 @@ namespace ForgeModGenerator.ViewModel
                     writer.Write(prettyPrint ? "}" : "\n}");
                 };
             }
-            //File.Delete(jsonPath);
-            //File.Move(tempJsonPath, jsonPath);
-            //ShouldUpdate = false;
+            File.Delete(jsonPath);
+            File.Move(tempJsonPath, jsonPath);
+            ShouldUpdate = false;
             Log.Info("sounds.json Updated successfully", true);
         }
 

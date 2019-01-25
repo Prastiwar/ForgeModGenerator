@@ -26,8 +26,11 @@
 	</Page.Resources>
 
 	<Grid Background="{StaticResource PageBackground}">
-		<control:FileListExpanderListBox DataContext="{Binding}"
-										 EmptyMessageVisibility="{Binding EmptyMessageVisibility}"
-										 FileListExpanderItemTemplate="{StaticResource ItemTemplate}"/>
+		<control:FileCollectionListBox FilesSource="{Binding Files}"
+									   SelectedFilesItem="{Binding SelectedFiles}"
+									   FileItemTemplate="{StaticResource ItemTemplate}"
+									   AddCommand="{Binding AddCommand}"
+									   RemoveCommand="{Binding RemoveCommand}"
+									   EmptyMessageVisibility="{Binding EmptyMessageVisibility}"/>
 	</Grid>
 </Page>

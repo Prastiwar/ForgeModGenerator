@@ -28,22 +28,30 @@
 	</Page.Resources>
 
 	<Grid Background="{StaticResource PageBackground}">
-		<StackPanel>
-			<StackPanel Orientation="Horizontal"
-						Visibility="{Binding ShouldUpdate, Converter={StaticResource BooleanToVisibilityConverter}}">
-				<TextBlock Text="Sounds.json doesn't have all occurencies, do you want to update it?"
-						   Padding="7" Margin="15,0,0,0"
-						   FontSize="11" FontStyle="Normal"
-						   HorizontalAlignment="Left"
-						   Foreground="Red" FontWeight="Bold"/>
-				<Button Content="Update"
-						Width="100" Height="20"
-						Margin="5" Padding="0"
-						VerticalAlignment="Top"
-						Command="{Binding UpdateSoundsJson}"/>
-			</StackPanel>
-			<control:FileListExpanderListBox DataContext="{Binding}"
-										 FileListExpanderItemTemplate="{StaticResource ItemTemplate}"/>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="auto"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+		<StackPanel Grid.Row="0"
+					Orientation="Horizontal"
+					Visibility="{Binding ShouldUpdate, Converter={StaticResource BooleanToVisibilityConverter}}">
+			<TextBlock Text="Sounds.json doesn't match found occurencies, do you want to update it?"
+					   Padding="7" Margin="15,0,0,0"
+					   FontSize="11" FontStyle="Normal"
+					   HorizontalAlignment="Left"
+					   Foreground="Red" FontWeight="Bold"/>
+			<Button Content="Update"
+				    Width="100" Height="20"
+				    Margin="5" Padding="0"
+				    VerticalAlignment="Top"
+				    Command="{Binding UpdateSoundsJson}"/>
 		</StackPanel>
+		<control:FileCollectionListBox Grid.Row="1"
+									   FilesSource="{Binding Files}"
+									   SelectedFilesItem="{Binding SelectedFiles}"
+									   FileItemTemplate="{StaticResource ItemTemplate}"
+									   AddCommand="{Binding AddCommand}"
+									   RemoveCommand="{Binding RemoveCommand}"
+									   EmptyMessageVisibility="{Binding EmptyMessageVisibility}"/>
 	</Grid>
 </Page>

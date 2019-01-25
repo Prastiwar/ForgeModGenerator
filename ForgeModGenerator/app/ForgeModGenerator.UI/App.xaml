@@ -36,6 +36,10 @@
 				</ResourceDictionary>
 
 				<ResourceDictionary>
+					<c:InvertIntToVisibilityConverter x:Key="InvertIntToVisibilityConverter"/>
+				</ResourceDictionary>
+
+				<ResourceDictionary>
 					<c:ListStringConverter x:Key="StringListStringConverter"/>
 				</ResourceDictionary>
 
@@ -53,28 +57,12 @@
 							<MenuItem.CommandParameter>
 								<MultiBinding Converter="{StaticResource ListStringConverter}">
 									<Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}"
-											 Path="PlacementTarget.Tag.Files.Paths"/>
+											 Path="PlacementTarget.Tag.FileCollection.Paths"/>
 									<Binding Path="."/>
 								</MultiBinding>
 							</MenuItem.CommandParameter>
 						</MenuItem>
 					</ContextMenu>
-				</ResourceDictionary>
-
-				<ResourceDictionary>
-					<DataTemplate x:Key="DefaultFileListTemplate">
-						<StackPanel>
-							<controls:FileListExpander HeaderText="{Binding Path=HeaderName}"
-													   Files="{Binding}"
-													   AddCommand="{Binding Path=DataContext.AddCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
-													   RemoveCommand="{Binding Path=DataContext.RemoveCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
-													   ItemTemplate="{Binding Path=FileListExpanderItemTemplate, ElementName=ThisWindow}"/>
-							<Border Background="#FF313131"
-									Height="1"
-									HorizontalAlignment="Stretch"
-									SnapsToDevicePixels="True" />
-						</StackPanel>
-					</DataTemplate>
 				</ResourceDictionary>
 
 			</ResourceDictionary.MergedDictionaries>

@@ -13,8 +13,7 @@ namespace ForgeModGenerator.ViewModel
 
         private void BindedClick(object sender, RoutedEventArgs e)
         {
-            SoundGeneratorViewModel data = DataContext as SoundGeneratorViewModel;
-            if (data != null)
+            if (DataContext is SoundGeneratorViewModel data)
             {
                 Button btn = (Button)sender;
                 data.SoundClick.Execute(btn.CommandParameter);
