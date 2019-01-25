@@ -32,7 +32,7 @@
 				</DataTemplate>
 			</Expander.HeaderTemplate>
 
-			<ListBox ItemsSource="{Binding Path=FileCollection.Paths, RelativeSource={RelativeSource AncestorType=local:FileListExpander}}"
+			<ListBox ItemsSource="{Binding Path=FileCollection, RelativeSource={RelativeSource AncestorType=local:FileListExpander}}"
 					 SelectedItem="{Binding Path=SelectedFilePath, RelativeSource={RelativeSource AncestorType=local:FileListExpander}}"
 					 ItemTemplate="{Binding Path=ItemTemplate, RelativeSource={RelativeSource AncestorType=local:FileListExpander}}"
 					 ScrollViewer.HorizontalScrollBarVisibility="Disabled">

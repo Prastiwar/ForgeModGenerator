@@ -66,7 +66,9 @@ namespace ForgeModGenerator.ViewModel
                 Files = FindCollection(CollectionRootPath);
                 if (Files.Count <= 0)
                 {
-                    Files.Add(new FileCollection(CollectionRootPath));
+                    FileCollection root = new FileCollection(CollectionRootPath);
+                    root.CollectionChanged += FileCollection_CollectionChanged;
+                    Files.Add(root);
                 }
                 return true;
             }
@@ -103,7 +105,7 @@ namespace ForgeModGenerator.ViewModel
 
         protected virtual void AddNewFile(FileCollection collection)
         {
-            if (collection == null || collection.Paths == null)
+            if (collection == null)
             {
                 Log.Warning("Can't add new file to null collection", true);
                 return;
@@ -124,7 +126,7 @@ namespace ForgeModGenerator.ViewModel
                         Log.Error(ex, $"Couldn't add {fileName} to {collection.HeaderName}. Make sure the file is not opened by any process.", true);
                         continue;
                     }
-                    collection.Paths.Add(newFilePath);
+                    collection.Add(newFilePath);
                 }
             }
         }
@@ -148,14 +150,17 @@ namespace ForgeModGenerator.ViewModel
                     {
                         if (AllowedExtensions.Any(x => x == Path.GetExtension(filePath)))
                         {
-                            fileCollection.Paths.Add(Path.GetFullPath(filePath).Replace('\\', '/'));
+                            fileCollection.Add(Path.GetFullPath(filePath).Replace('\\', '/'));
                         }
                     }
+                    fileCollection.CollectionChanged += FileCollection_CollectionChanged;
                     initCollection.Add(fileCollection);
                 }
             }
             return new ObservableCollection<FileCollection>(initCollection);
         }
+
+        protected virtual void FileCollection_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e) { }
 
         protected virtual void OnSessionContexPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {

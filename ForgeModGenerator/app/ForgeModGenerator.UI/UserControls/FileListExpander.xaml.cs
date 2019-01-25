@@ -15,7 +15,7 @@ namespace ForgeModGenerator.UserControls
         public static readonly DependencyProperty HeaderTextProperty =
             DependencyProperty.Register("HeaderText", typeof(string), typeof(FileListExpander), new PropertyMetadata("Files"));
         public string HeaderText {
-            get => $"({FileCollection.Paths.Count}) {GetValue(HeaderTextProperty)}";
+            get => $"({FileCollection.Count}) {GetValue(HeaderTextProperty)}";
             set => SetValue(HeaderTextProperty, value);
         }
 
@@ -59,10 +59,6 @@ namespace ForgeModGenerator.UserControls
             if (FileCollection != null)
             {
                 System.Diagnostics.Process.Start(FileCollection.DestinationPath);
-            }
-            else
-            {
-                MessageBox.Show(null);
             }
         }
     }

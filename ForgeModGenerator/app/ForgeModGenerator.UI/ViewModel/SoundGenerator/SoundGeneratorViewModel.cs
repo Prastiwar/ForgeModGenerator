@@ -4,6 +4,7 @@ using ForgeModGenerator.Model;
 using ForgeModGenerator.Service;
 using GalaSoft.MvvmLight.Command;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -24,6 +25,11 @@ namespace ForgeModGenerator.ViewModel
             AllowedExtensions = new string[] { ".ogg" };
             Preferences = sessionContext.GetPreferences<SoundsGeneratorPreferences>();
             Refresh();
+        }
+
+        protected override void FileCollection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            ShouldUpdate = CanRefresh() ? IsUpdateAvailable() : false;
         }
 
         protected override bool Refresh()
@@ -85,7 +91,7 @@ namespace ForgeModGenerator.ViewModel
 
                     PrepareJsonForAddElements(writer, reader, prettyPrint);
 
-                    IEnumerable<IEnumerable<string>> missingFiles = Files.Select(file => file.Paths.Where(path => !File.ReadLines(jsonPath).Any(x => x.Contains(FormatSoundName(SessionContext.SelectedMod.ModInfo.Modid, path)))));
+                    IEnumerable<IEnumerable<string>> missingFiles = Files.Select(file => file.Where(path => !File.ReadLines(jsonPath).Any(x => x.Contains(FormatSoundName(SessionContext.SelectedMod.ModInfo.Modid, path)))));
                     WriteFilesToJson(prettyPrint, writer, missingFiles);
                     writer.Write(prettyPrint ? "}" : "\n}");
                 };
@@ -172,7 +178,7 @@ namespace ForgeModGenerator.ViewModel
             {
                 foreach (FileCollection file in Files)
                 {
-                    foreach (string path in file.Paths)
+                    foreach (string path in file)
                     {
                         string formatName = FormatSoundName(SessionContext.SelectedMod.ModInfo.Modid, path);
                         if (!File.ReadLines(jsonPath).Any(line => line.Contains(formatName)))
