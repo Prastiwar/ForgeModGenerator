@@ -23,16 +23,12 @@ namespace ForgeModGenerator.ViewModel
             OpenFileDialog.Filter = "Sound file (*.ogg) | *.ogg";
             Preferences = sessionContext.GetPreferences<SoundsGeneratorPreferences>();
             Refresh();
-            ShouldUpdate = IsUpdateAvailable();
         }
 
         protected override bool Refresh()
         {
             bool canRefresh = base.Refresh();
-            if (canRefresh)
-            {
-                ShouldUpdate = IsUpdateAvailable();
-            }
+            ShouldUpdate = canRefresh ? IsUpdateAvailable() : false;
             return canRefresh;
         }
 

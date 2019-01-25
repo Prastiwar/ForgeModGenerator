@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 
@@ -30,7 +31,11 @@ namespace ForgeModGenerator.ViewModel
             SessionContext.PropertyChanged += OnSessionContexPropertyChanged;
         }
 
+        public Visibility EmptyMessageVisibility => SessionContext.IsModSelected ? Visibility.Collapsed : Visibility.Visible;
+
         public abstract string CollectionRootPath { get; }
+
+        public int FilesCount => Files.Count;
 
         private ObservableCollection<FileCollection> files;
         public ObservableCollection<FileCollection> Files {

@@ -110,6 +110,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converter\IntToVisibilityConverter.cs" />
+    <Compile Include="Converter\InvertBooleanConverter.cs" />
     <Compile Include="Core\CodeOperation.cs" />
     <Compile Include="Miscellaneous\IOExtensions.cs" />
     <Compile Include="Miscellaneous\Log.cs" />

@@ -19,6 +19,11 @@ namespace ForgeModGenerator.UserControls
             SettingsButton.Background = MinimizeButton.Background = RestoreButton.Background = CloseButton.Background = ItemBackground;
             SettingsButton.BorderBrush = MinimizeButton.BorderBrush = RestoreButton.BorderBrush = CloseButton.BorderBrush = ItemBorderBrush;
             SettingsButton.Margin = MinimizeButton.Margin = RestoreButton.Margin = CloseButton.Margin = ItemMargin;
+
+            if (CloseCommand == null)
+            {
+                CloseCommand = new RelayCommand(Quit);
+            }
         }
 
         public static readonly DependencyProperty ItemHeightProperty =
@@ -113,20 +118,43 @@ namespace ForgeModGenerator.UserControls
         }
 
         public static readonly DependencyProperty CloseCommandProperty =
-            DependencyProperty.Register("CloseCommand", typeof(ICommand), typeof(AppMenu), new PropertyMetadata(new RelayCommand(Quit)));
+            DependencyProperty.Register("CloseCommand", typeof(ICommand), typeof(AppMenu), new PropertyMetadata(null));
         public ICommand CloseCommand {
             get => (ICommand)GetValue(CloseCommandProperty);
             set => SetValue(CloseCommandProperty, value);
+        }
+
+        public static readonly DependencyProperty AskToCloseProperty =
+            DependencyProperty.Register("AskToClose", typeof(bool), typeof(AppMenu), new PropertyMetadata(false));
+        public bool AskToClose {
+            get => (bool)GetValue(AskToCloseProperty);
+            set => SetValue(AskToCloseProperty, value);
         }
 
         private static void Minimize() => Application.Current.MainWindow.WindowState = WindowState.Minimized;
 
         private static void Restore() => Application.Current.MainWindow.WindowState = Application.Current.MainWindow.WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
 
-        private static async void Quit()
+        private async void Quit()
         {
-            await Task.Delay(150); // to show click effect
-            Environment.Exit(0);
+            if (CanQuit())
+            {
+                await Task.Delay(150); // to show click effect
+                Environment.Exit(0);
+            }
+        }
+
+        public bool CanQuit()
+        {
+            if (AskToClose)
+            {
+                MessageBoxResult result = MessageBox.Show("You have unsaved changes, are you sure you want to quit? Changes will be lost.", "Are you sure you want to exit?", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (result == MessageBoxResult.No)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }

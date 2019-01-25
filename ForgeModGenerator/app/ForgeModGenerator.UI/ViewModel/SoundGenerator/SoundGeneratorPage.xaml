@@ -29,7 +29,8 @@
 
 	<Grid Background="{StaticResource PageBackground}">
 		<StackPanel>
-			<StackPanel Orientation="Horizontal" Visibility="{Binding ShouldUpdate, Converter={StaticResource BooleanToVisibilityConverter}}">
+			<StackPanel Orientation="Horizontal"
+						Visibility="{Binding ShouldUpdate, Converter={StaticResource BooleanToVisibilityConverter}}">
 				<TextBlock Text="Sounds.json doesn't have all occurencies, do you want to update it?"
 						   Padding="7" Margin="15,0,0,0"
 						   FontSize="11" FontStyle="Normal"

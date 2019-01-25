@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using ForgeModGenerator.Model;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace ForgeModGenerator.UserControls
@@ -24,6 +25,20 @@ namespace ForgeModGenerator.UserControls
         public DataTemplate FileListExpanderItemTemplate {
             get => (DataTemplate)GetValue(FileListExpanderItemTemplateProperty);
             set => SetValue(FileListExpanderItemTemplateProperty, value);
+        }
+
+        public static readonly DependencyProperty EmptyMessageProperty =
+            DependencyProperty.Register("EmptyMessage", typeof(string), typeof(FileListExpanderListBox), new PropertyMetadata("Select Mod"));
+        public string EmptyMessage {
+            get => (string)GetValue(EmptyMessageProperty);
+            set => SetValue(EmptyMessageProperty, value);
+        }
+        
+        public static readonly DependencyProperty EmptyMessageVisibilityProperty =
+            DependencyProperty.Register("EmptyMessageVisibility", typeof(Visibility), typeof(FileListExpanderListBox), new PropertyMetadata(Visibility.Visible));
+        public Visibility EmptyMessageVisibility {
+            get => (Visibility)GetValue(EmptyMessageVisibilityProperty);
+            set => SetValue(EmptyMessageVisibilityProperty, value);
         }
     }
 }

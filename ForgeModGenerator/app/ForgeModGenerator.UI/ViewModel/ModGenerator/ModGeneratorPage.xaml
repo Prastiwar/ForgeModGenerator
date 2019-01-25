@@ -17,7 +17,10 @@
 				<materialDesign:Card Background="#FF535353" Margin="10">
 					<StackPanel>
 
-						<TextBlock Text="Generate New Mod" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Foreground="Wheat"/>
+						<TextBlock Text="Generate New Mod"
+								   HorizontalAlignment="Center" VerticalAlignment="Center"
+								   FontSize="20"
+								   Foreground="Wheat"/>
 						<controls:ModForm DataContext="{Binding NewMod}" Margin="10"
 										  Validator="{Binding DataContext.Validator, ElementName=ThisWindow}"
 										  SaveCommand="{Binding DataContext.CreateMod, ElementName=ThisWindow}"
@@ -29,8 +32,13 @@
 										  ForgeVersions="{Binding DataContext.SessionContext.ForgeVersions, ElementName=ThisWindow}"
 										  Sides="{Binding DataContext.Sides, ElementName=ThisWindow}"/>
 
-						<TextBlock Text="Edit Mod" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Foreground="Wheat"/>
-						<ListBox ItemsSource="{Binding Path=SessionContext.Mods}" SelectedItem="{Binding Path=SelectedEditMod}"
+						<TextBlock Text="Edit Mod"
+								   HorizontalAlignment="Center" VerticalAlignment="Center"
+								   FontSize="20"
+								   Foreground="Wheat"
+								   Visibility="{Binding Path=SessionContext.Mods.Count, Converter={StaticResource IntToVisibilityConverter}}"/>
+						<ListBox ItemsSource="{Binding Path=SessionContext.Mods}"
+								 SelectedItem="{Binding Path=SelectedEditMod}"
 								 HorizontalContentAlignment="Stretch">
 							<ListBox.ItemTemplate>
 								<DataTemplate>

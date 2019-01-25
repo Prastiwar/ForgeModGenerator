@@ -25,6 +25,8 @@ namespace ForgeModGenerator.Service
         Uri StartPage { get; }
         bool IsModSelected { get; }
 
+        bool AskBeforeClose { get; set; }
+
         T GetPreferences<T>() where T : PreferenceData;
     }
 
@@ -68,15 +70,10 @@ namespace ForgeModGenerator.Service
 
         protected Dictionary<Type, PreferenceData> Preferences { get; set; }
 
-        public T GetPreferences<T>() where T : PreferenceData
-        {
-            Type type = typeof(T);
-            if (Preferences.TryGetValue(type, out PreferenceData data))
-            {
-                return (T)data;
-            }
-            Log.Info($"Tried to get {type} preferences, but it doesn't exist");
-            return null;
+        private bool askBeforeClose;
+        public bool AskBeforeClose {
+            get => askBeforeClose;
+            set => Set(ref askBeforeClose, value);
         }
 
         private ObservableCollection<Mod> mods;
@@ -104,6 +101,17 @@ namespace ForgeModGenerator.Service
         public ObservableCollection<ForgeVersion> ForgeVersions {
             get => forgeVersions;
             set => Set(ref forgeVersions, value);
+        }
+
+        public T GetPreferences<T>() where T : PreferenceData
+        {
+            Type type = typeof(T);
+            if (Preferences.TryGetValue(type, out PreferenceData data))
+            {
+                return (T)data;
+            }
+            Log.Info($"Tried to get {type} preferences, but it doesn't exist");
+            return null;
         }
 
         protected ObservableCollection<Mod> FindMods()
@@ -139,8 +147,7 @@ namespace ForgeModGenerator.Service
         private Dictionary<Type, PreferenceData> FindPreferences()
         {
             Dictionary<Type, PreferenceData> dictionary = new Dictionary<Type, PreferenceData>();
-            string[] filePaths = Directory.GetFiles(AppPaths.Preferences);
-            foreach (string filePath in filePaths)
+            foreach (string filePath in Directory.EnumerateFiles(AppPaths.Preferences))
             {
                 string typeName = Path.GetFileNameWithoutExtension(filePath);
                 string jsonText = File.ReadAllText(filePath);

@@ -8,7 +8,8 @@
 			 xmlns:d1p1="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:c="clr-namespace:ForgeModGenerator.Converter"
 			 xmlns:vm="clr-namespace:ForgeModGenerator.ViewModel"
-			 xmlns:controls="clr-namespace:ForgeModGenerator.UserControls">
+			 xmlns:controls="clr-namespace:ForgeModGenerator.UserControls"
+			 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
 
 	<Application.Resources>
 		<ResourceDictionary>
@@ -24,6 +25,14 @@
 
 				<ResourceDictionary>
 					<vm:ViewModelLocator x:Key="Locator" d:IsDataSource="True"/>
+				</ResourceDictionary>
+
+				<ResourceDictionary>
+					<c:InvertBooleanConverter x:Key="InvertBooleanConverter"/>
+				</ResourceDictionary>
+
+				<ResourceDictionary>
+					<c:IntToVisibilityConverter x:Key="IntToVisibilityConverter"/>
 				</ResourceDictionary>
 
 				<ResourceDictionary>

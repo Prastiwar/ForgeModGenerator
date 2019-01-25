@@ -27,6 +27,7 @@
 
 	<Grid Background="{StaticResource PageBackground}">
 		<control:FileListExpanderListBox DataContext="{Binding}"
+										 EmptyMessageVisibility="{Binding EmptyMessageVisibility}"
 										 FileListExpanderItemTemplate="{StaticResource ItemTemplate}"/>
 	</Grid>
 </Page>

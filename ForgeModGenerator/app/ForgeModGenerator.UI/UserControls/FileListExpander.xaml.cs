@@ -12,10 +12,12 @@ namespace ForgeModGenerator.UserControls
             InitializeComponent();
         }
 
+        //public string GetFormattedHeaderText => $"({Files.Paths.Count}) {HeaderText}";
+
         public static readonly DependencyProperty HeaderTextProperty =
             DependencyProperty.Register("HeaderText", typeof(string), typeof(FileListExpander), new PropertyMetadata("Files:"));
         public string HeaderText {
-            get => (string)GetValue(HeaderTextProperty);
+            get => $"({Files.Paths.Count}) {GetValue(HeaderTextProperty)}";
             set => SetValue(HeaderTextProperty, value);
         }
 
