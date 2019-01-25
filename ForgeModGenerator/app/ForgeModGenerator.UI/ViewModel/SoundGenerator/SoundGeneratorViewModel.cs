@@ -25,21 +25,14 @@ namespace ForgeModGenerator.ViewModel
             AllowedExtensions = new string[] { ".ogg" };
             Preferences = sessionContext.GetPreferences<SoundsGeneratorPreferences>();
             Refresh();
+            OnFileAdded += AddSoundToJson;
+            OnFileRemoved += RemoveSoundFromJson;
         }
 
-        protected override void FileCollection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            ShouldUpdate = CanRefresh() ? IsUpdateAvailable() : false;
-        }
+        // Get formatted sound from full path, "shorten.path.toFile"
+        public static string FormatDottedSoundName(string modid, string path) => FormatSoundName(modid, path).Replace('/', '.').Remove(0, modid.Length + 1);
 
-        protected override bool Refresh()
-        {
-            bool canRefresh = base.Refresh();
-            ShouldUpdate = canRefresh ? IsUpdateAvailable() : false;
-            return canRefresh;
-        }
-
-        public static string FormatDottedSoundName(string modid, string path) => FormatSoundName(modid, path).Replace('/', '.');
+        // Get formatted sound from full path, "modid:shorten/path/toFile"
         public static string FormatSoundName(string modid, string path)
         {
             int startIndex = path.IndexOf("sounds") + 7;
@@ -49,6 +42,38 @@ namespace ForgeModGenerator.ViewModel
             }
             string shortPath = Path.ChangeExtension(path.Substring(startIndex, path.Length - startIndex), null);
             return $"{modid}:{shortPath}";
+        }
+
+        private void AddSoundToJson(object sound)
+        {
+            string soundPath = (string)sound;
+            if (!HasSoundWritten(soundPath))
+            {
+                // TODO: Add sound
+                //WriteFilsToJson(soundPath, Preferences.ShouldGeneratePrettyJson);
+            }
+        }
+
+        private void RemoveSoundFromJson(object sound)
+        {
+            string soundPath = (string)sound;
+            if (HasSoundWritten(soundPath))
+            {
+                // TODO: Remove sound
+            }
+        }
+
+        protected override void FileCollection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            base.FileCollection_CollectionChanged(sender, e);
+            ShouldUpdate = CanRefresh() ? IsUpdateAvailable() : false;
+        }
+
+        protected override bool Refresh()
+        {
+            bool canRefresh = base.Refresh();
+            ShouldUpdate = canRefresh ? IsUpdateAvailable() : false;
+            return canRefresh;
         }
 
         private bool shouldUpdate;
@@ -72,29 +97,20 @@ namespace ForgeModGenerator.ViewModel
         {
             string jsonPath = ModPaths.SoundsJson(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
             string tempJsonPath = jsonPath.Replace("sounds.json", "temp.json");
+            bool prettyPrint = Preferences.ShouldGeneratePrettyJson;
 
             if (!File.Exists(jsonPath))
             {
-                using (StreamWriter json = File.CreateText(jsonPath))
-                {
-                    json.WriteLine("{");
-                    json.WriteLine("}");
-                }
+                File.AppendAllText(jsonPath, prettyPrint ? "{\n}" : "{}");
             }
 
             using (StreamWriter writer = new StreamWriter(tempJsonPath))
             {
                 using (StreamReader reader = new StreamReader(jsonPath))
                 {
-                    long length = reader.BaseStream.GetLineCount();
-                    bool prettyPrint = length > 1;
-
-                    PrepareJsonForAddElements(writer, reader, prettyPrint);
-
-                    IEnumerable<IEnumerable<string>> missingFiles = Files.Select(file => file.Where(path => !File.ReadLines(jsonPath).Any(x => x.Contains(FormatSoundName(SessionContext.SelectedMod.ModInfo.Modid, path)))));
-                    WriteFilesToJson(prettyPrint, writer, missingFiles);
-                    writer.Write(prettyPrint ? "}" : "\n}");
-                };
+                    IEnumerable<IEnumerable<string>> missingFiles = Files.Select(file => file.Where(path => !HasSoundWritten(path)));
+                    WriteFilesToJson(missingFiles, prettyPrint, writer, reader);
+                }
             }
             File.Delete(jsonPath);
             File.Move(tempJsonPath, jsonPath);
@@ -102,6 +118,7 @@ namespace ForgeModGenerator.ViewModel
             Log.Info("sounds.json Updated successfully", true);
         }
 
+        // Removes close line and adds new comma
         private static void PrepareJsonForAddElements(StreamWriter writer, StreamReader reader, bool prettyPrint)
         {
             if (prettyPrint)
@@ -135,40 +152,52 @@ namespace ForgeModGenerator.ViewModel
             }
         }
 
-        private void WriteFilesToJson(bool prettyPrint, StreamWriter writer, IEnumerable<IEnumerable<string>> missingFiles)
+        private bool HasSoundWritten(string sound)
         {
-            if (prettyPrint)
-            {
+            string jsonPath = ModPaths.SoundsJson(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
+            string formattedName = FormatSoundName(SessionContext.SelectedMod.ModInfo.Modid, sound);
+            return File.ReadLines(jsonPath).Any(x => x.Contains(formattedName));
+        }
 
-            }
-            else
+        private void WriteFilesToJson(IEnumerable<IEnumerable<string>> missingFiles, bool prettyPrint, StreamWriter writer, StreamReader reader)
+        {
+            PrepareJsonForAddElements(writer, reader, prettyPrint);
+
+            int filesCount = missingFiles.Count();
+            int filesIndex = 0;
+            foreach (IEnumerable<string> files in missingFiles)
             {
-                foreach (IEnumerable<string> files in missingFiles)
+                bool isLastFiles = filesIndex == filesCount - 1;
+
+                int pathIndex = 0;
+                int pathCount = files.Count();
+
+                foreach (string path in files)
                 {
-                    int filesCount = missingFiles.Count();
-                    int filesIndex = 0;
-                    bool isLastFiles = filesIndex == filesCount - 1;
-
-                    int pathIndex = 0;
-                    int pathCount = files.Count();
-
-                    foreach (string path in files)
+                    bool isLastPath = pathIndex == pathCount - 1;
+                    string formatName = FormatSoundName(SessionContext.SelectedMod.ModInfo.Modid, path);
+                    string dotformatName = formatName.Replace('/', '.').Remove(0, SessionContext.SelectedMod.ModInfo.Modid.Length + 1);
+                    string template = Preferences.SoundTemplate;
+                    if (!prettyPrint)
                     {
-                        bool isLastPath = pathIndex == pathCount - 1;
-                        string formatName = FormatSoundName(SessionContext.SelectedMod.ModInfo.Modid, path);
-                        string dotformatName = formatName.Replace('/', '.');
-                        writer.WriteLine("");
-                        writer.Write('"');
-                        writer.Write(dotformatName);
-                        writer.Write("\": {");
-                        writer.WriteLine("\"sounds\": [");
-                        writer.WriteLine("{{ \"name\": \"{0}:{1}\" }}", SessionContext.SelectedMod.ModInfo.Modid, formatName);
-                        writer.WriteLine("]");
-                        writer.WriteLine(isLastFiles && isLastPath ? "}" : "},");
-                        pathIndex++;
+                        template.Replace(" ", "").Replace("\n", "").Replace("\r", "");
                     }
+                    // TODO: Write template from preferences
+                    //template.Replace();
+                    //writer.Write(template);
+                    writer.WriteLine("");
+                    writer.Write('"');
+                    writer.Write(dotformatName);
+                    writer.Write("\": {\n");
+                    writer.Write("\"sounds\": [\n");
+                    writer.WriteLine("{{ \"name\": \"{0}\" }}", formatName);
+                    writer.WriteLine("]");
+                    writer.WriteLine(isLastFiles && isLastPath ? "}" : "},");
+                    pathIndex++;
                 }
+                filesIndex++;
             }
+            writer.Write(prettyPrint ? "\n}" : "}"); // close json
         }
 
         private bool IsUpdateAvailable()

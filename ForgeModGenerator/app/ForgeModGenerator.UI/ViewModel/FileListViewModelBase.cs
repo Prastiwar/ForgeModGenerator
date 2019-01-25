@@ -18,8 +18,13 @@ namespace ForgeModGenerator.ViewModel
     /// <summary> Business ViewModel Base class for making file list </summary>
     public abstract class FileListViewModelBase : ViewModelBase
     {
+        public delegate void OnFileChangedEventHandler(object itemChanged);
+
         public ISessionContextService SessionContext { get; }
         protected OpenFileDialog OpenFileDialog { get; }
+
+        protected event OnFileChangedEventHandler OnFileAdded;
+        protected event OnFileChangedEventHandler OnFileRemoved;
 
         public FileListViewModelBase(ISessionContextService sessionContext)
         {
@@ -160,7 +165,23 @@ namespace ForgeModGenerator.ViewModel
             return new ObservableCollection<FileCollection>(initCollection);
         }
 
-        protected virtual void FileCollection_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e) { }
+        protected virtual void FileCollection_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+            {
+                foreach (object item in e.NewItems)
+                {
+                    OnFileAdded?.Invoke(item);
+                }
+            }
+            else if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
+            {
+                foreach (object item in e.OldItems)
+                {
+                    OnFileRemoved?.Invoke(item);
+                }
+            }
+        }
 
         protected virtual void OnSessionContexPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
