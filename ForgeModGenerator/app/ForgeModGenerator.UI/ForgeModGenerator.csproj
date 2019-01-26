@@ -116,14 +116,13 @@
     <Compile Include="Core\CodeOperation.cs" />
     <Compile Include="Miscellaneous\IOExtensions.cs" />
     <Compile Include="Miscellaneous\Log.cs" />
+    <Compile Include="Model\FileItem.cs" />
+    <Compile Include="Model\FileList.cs" />
     <Compile Include="Model\Mod\LaunchSetup.cs" />
     <Compile Include="Model\Preferences\PreferenceData.cs" />
     <Compile Include="Model\Preferences\SoundsGeneratorPreferences.cs" />
     <Compile Include="Model\Sound\SoundEvent.cs" />
     <Compile Include="Service\ModBuildService.cs" />
-    <Compile Include="UserControls\DarkenDialogHost.xaml.cs">
-      <DependentUpon>DarkenDialogHost.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UserControls\FileCollectionListBox.xaml.cs">
       <DependentUpon>FileCollectionListBox.xaml</DependentUpon>
     </Compile>
@@ -140,7 +139,7 @@
       <DependentUpon>ModForm.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converter\EnumToCollectionConverter.cs" />
-    <Compile Include="Converter\ListStringConverter.cs" />
+    <Compile Include="Converter\FileFolderFileItemConverter.cs" />
     <Compile Include="Converter\PathNameConverter.cs" />
     <Compile Include="Core\AppPaths.cs" />
     <Compile Include="Core\CoreSourceCodeVariables.cs" />
@@ -157,7 +156,6 @@
     <Compile Include="Core\ModPaths.cs" />
     <Compile Include="Model\Recipe.cs" />
     <Compile Include="Model\Sound\Sound.cs" />
-    <Compile Include="Model\FileCollection.cs" />
     <Compile Include="Model\Mod\WorkspaceSetup.cs" />
     <Compile Include="Service\NavigationService.cs" />
     <Compile Include="Service\SessionContextService.cs" />
@@ -217,10 +215,6 @@
     <Compile Include="ViewModel\Main\NavigationMenu.xaml.cs">
       <DependentUpon>NavigationMenu.xaml</DependentUpon>
     </Compile>
-    <Page Include="UserControls\DarkenDialogHost.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="UserControls\FileCollectionListBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

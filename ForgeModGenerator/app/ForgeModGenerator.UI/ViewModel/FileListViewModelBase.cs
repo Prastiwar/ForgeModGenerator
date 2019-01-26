@@ -17,7 +17,7 @@ using System.Windows.Input;
 namespace ForgeModGenerator.ViewModel
 {
     /// <summary> Business ViewModel Base class for making file list </summary>
-    public abstract class FileListViewModelBase : ViewModelBase
+    public abstract class FileListViewModelBase<T> : ViewModelBase where T : IFileItem
     {
         public delegate void OnFileChangedEventHandler(object itemChanged);
 
@@ -47,26 +47,26 @@ namespace ForgeModGenerator.ViewModel
 
         protected object FileEditForm { get; set; }
 
-        private ObservableCollection<FileCollection> files;
-        public ObservableCollection<FileCollection> Files {
+        private ObservableCollection<FileList<T>> files;
+        public ObservableCollection<FileList<T>> Files {
             get => files;
             set => Set(ref files, value);
         }
 
-        private FileCollection selectedFiles;
-        public FileCollection SelectedFiles {
+        private FileList<T> selectedFiles;
+        public FileList<T> SelectedFiles {
             get => selectedFiles;
             set => Set(ref selectedFiles, value);
         }
 
         private ICommand editCommand;
-        public ICommand EditCommand => editCommand ?? (editCommand = new RelayCommand<string>(Edit));
+        public ICommand EditCommand => editCommand ?? (editCommand = new RelayCommand<IFileItem>(Edit));
 
         private ICommand addCommand;
-        public ICommand AddCommand => addCommand ?? (addCommand = new RelayCommand<FileCollection>(AddNewFile));
+        public ICommand AddCommand => addCommand ?? (addCommand = new RelayCommand<FileList<T>>(AddNewFile));
 
         private ICommand removeCommand;
-        public ICommand RemoveCommand => removeCommand ?? (removeCommand = new RelayCommand<Tuple<ObservableCollection<string>, string>>(Remove));
+        public ICommand RemoveCommand => removeCommand ?? (removeCommand = new RelayCommand<Tuple<IFileFolder, IFileItem>>(Remove));
 
         protected virtual bool CanRefresh() => SessionContext.SelectedMod != null && Directory.Exists(CollectionRootPath);
 
@@ -77,7 +77,7 @@ namespace ForgeModGenerator.ViewModel
                 Files = FindCollection(CollectionRootPath);
                 if (Files.Count <= 0)
                 {
-                    FileCollection root = new FileCollection(CollectionRootPath);
+                    FileList<T> root = new FileList<T>(CollectionRootPath);
                     root.CollectionChanged += FileCollection_CollectionChanged;
                     Files.Add(root);
                 }
@@ -86,7 +86,7 @@ namespace ForgeModGenerator.ViewModel
             return false;
         }
 
-        protected virtual async void Edit(string file)
+        protected virtual async void Edit(IFileItem file)
         {
             bool result = false;
             try
@@ -95,16 +95,16 @@ namespace ForgeModGenerator.ViewModel
             }
             catch (Exception ex)
             {
-                Log.Error(ex, $"Couldn't open edit form for {file}", true);
+                Log.Error(ex, $"Couldn't open edit form for {file.FileName}", true);
                 return;
             }
             OnEdited(result, file);
         }
-        protected virtual void OnEdited(bool result, string file) { }
+        protected virtual void OnEdited(bool result, IFileItem file) { }
         protected virtual void OpenedEventHandler(object sender, DialogOpenedEventArgs eventArgs) { }
         protected virtual void ClosingEventHandler(object sender, DialogClosingEventArgs eventArgs) { }
 
-        protected virtual void Remove(Tuple<ObservableCollection<string>, string> param)
+        protected virtual void Remove(Tuple<IFileFolder, IFileItem> param)
         {
             if (param == null)
             {
@@ -116,23 +116,28 @@ namespace ForgeModGenerator.ViewModel
                 Log.Warning("Remove item called with null collection", true);
                 return;
             }
+            else if(param.Item2 == null)
+            {
+                Log.Warning("Remove item called with null file item", true);
+                return;
+            }
 
-            if (param.Item1.Remove(param.Item2))
+            if (param.Item1.RemoveFile(param.Item2))
             {
                 try
                 {
-                    FileSystem.DeleteFile(param.Item2, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+                    FileSystem.DeleteFile(param.Item2.FilePath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(ex, $"Couldn't delete {param.Item2}. Make sure it's not used by any process", true);
+                    Log.Error(ex, $"Couldn't delete {param.Item2.FilePath}. Make sure it's not used by any process", true);
                     param.Item1.Add(param.Item2); // delete failed, so get item back to collection
                     return;
                 }
             }
         }
 
-        protected virtual void AddNewFile(FileCollection collection)
+        protected virtual void AddNewFile(FileList<T> collection)
         {
             if (collection == null)
             {
@@ -160,9 +165,9 @@ namespace ForgeModGenerator.ViewModel
             }
         }
 
-        protected virtual ObservableCollection<FileCollection> FindCollection(string path)
+        protected virtual ObservableCollection<FileList<T>> FindCollection(string path)
         {
-            List<FileCollection> initCollection = new List<FileCollection>(10);
+            List<FileList<T>> initCollection = new List<FileList<T>>(10);
 
             AddFilesToCollection(path);
             foreach (string directory in Directory.EnumerateDirectories(path, "*", System.IO.SearchOption.AllDirectories))
@@ -174,7 +179,7 @@ namespace ForgeModGenerator.ViewModel
                 IEnumerable<string> files = Directory.EnumerateFiles(directoryPath).Where(filePath => AllowedExtensions.Any(ext => ext == Path.GetExtension(filePath)));
                 if (files.Any())
                 {
-                    FileCollection fileCollection = new FileCollection(directoryPath);
+                    FileList<T> fileCollection = new FileList<T>(directoryPath);
                     foreach (string filePath in files)
                     {
                         if (AllowedExtensions.Any(x => x == Path.GetExtension(filePath)))
@@ -186,7 +191,7 @@ namespace ForgeModGenerator.ViewModel
                     initCollection.Add(fileCollection);
                 }
             }
-            return new ObservableCollection<FileCollection>(initCollection);
+            return new ObservableCollection<FileList<T>>(initCollection);
         }
 
         protected virtual void FileCollection_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

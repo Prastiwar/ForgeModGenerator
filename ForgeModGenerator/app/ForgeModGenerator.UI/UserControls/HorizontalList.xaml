@@ -38,7 +38,7 @@
 										<MenuItem Header="Remove"
 											      Command="{Binding PlacementTarget.Tag.RemoveCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}">
 											<MenuItem.Resources>
-												<c:ListStringConverter x:Key="ListStringConverter"/>
+												<c:FileFolderFileItemConverter x:Key="ListStringConverter"/>
 											</MenuItem.Resources>
 											<MenuItem.CommandParameter>
 												<MultiBinding Converter="{StaticResource ListStringConverter}">

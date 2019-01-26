@@ -1,11 +1,12 @@
 ﻿using ForgeModGenerator.Core;
+using ForgeModGenerator.Model;
 using ForgeModGenerator.Service;
 using System.Windows.Forms;
 
 namespace ForgeModGenerator.ViewModel
 {
     /// <summary> TextureGenerator Business ViewModel </summary>
-    public class TextureGeneratorViewModel : FileListViewModelBase
+    public class TextureGeneratorViewModel : FileListViewModelBase<FileItem>
     {
         public TextureGeneratorViewModel(ISessionContextService sessionContext) : base(sessionContext)
         {

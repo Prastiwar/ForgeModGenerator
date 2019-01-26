@@ -18,19 +18,17 @@
 						Width="32" Height="32"
 						Padding="0"
 						Background="CornflowerBlue" BorderBrush="Black"
-						ContextMenu="{StaticResource DefaultRemoveFileContext}"
+						ContextMenu="{StaticResource DefaultFileItemContext}"
 						Command="{Binding ClickCommand, ElementName=ThisWindow}"
 						CommandParameter="{Binding}">
 					<materialDesign:PackIcon Kind="Play"/>
 				</Button>
-				<TextBlock Text="{Binding Converter={StaticResource PathToNameConverter}}"/>
+				<TextBlock Text="{Binding FileName}"/>
 			</StackPanel>
 		</DataTemplate>
 	</Page.Resources>
 
-	<Grid>
-		<control:DarkenDialogHost Panel.ZIndex="1"/>
-
+	<materialDesign:DialogHost>
 		<Grid Background="{StaticResource PageBackground}">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="auto"/>
@@ -60,5 +58,5 @@
 										   EditCommand="{Binding EditCommand}"
 										   EmptyMessageVisibility="{Binding EmptyMessageVisibility}"/>
 		</Grid>
-	</Grid>
+	</materialDesign:DialogHost>
 </Page>

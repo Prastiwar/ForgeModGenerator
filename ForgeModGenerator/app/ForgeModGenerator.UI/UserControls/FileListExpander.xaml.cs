@@ -13,29 +13,29 @@ namespace ForgeModGenerator.UserControls
             InitializeComponent();
             if (ClickCommand == null)
             {
-                ClickCommand = new RelayCommand<string>(OpenFile);
+                ClickCommand = new RelayCommand<IFileItem>(OpenFile);
             }
         }
 
         public static readonly DependencyProperty HeaderTextProperty =
             DependencyProperty.Register("HeaderText", typeof(string), typeof(FileListExpander), new PropertyMetadata("Files"));
         public string HeaderText {
-            get => $"({FileCollection.Count}) {GetValue(HeaderTextProperty)}";
+            get => (string)GetValue(HeaderTextProperty);
             set => SetValue(HeaderTextProperty, value);
         }
 
         public static readonly DependencyProperty FileCollectionProperty =
-            DependencyProperty.Register("FileCollection", typeof(FileCollection), typeof(FileListExpander), new PropertyMetadata(default(FileCollection)));
-        public FileCollection FileCollection {
-            get => (FileCollection)GetValue(FileCollectionProperty);
+                DependencyProperty.Register("FileCollection", typeof(IFileFolder), typeof(FileListExpander), new PropertyMetadata(null));
+        public IFileFolder FileCollection {
+            get => (IFileFolder)GetValue(FileCollectionProperty);
             set => SetValue(FileCollectionProperty, value);
         }
 
-        public static readonly DependencyProperty SelectedFilePathProperty =
-            DependencyProperty.Register("SelectedFilePath", typeof(string), typeof(FileListExpander), new PropertyMetadata(null));
-        public string SelectedFilePath {
-            get => (string)GetValue(SelectedFilePathProperty);
-            set => SetValue(SelectedFilePathProperty, value);
+        public static readonly DependencyProperty SelectedFileProperty =
+            DependencyProperty.Register("SelectedFile", typeof(object), typeof(FileListExpander), new PropertyMetadata(null));
+        public object SelectedFile {
+            get => GetValue(SelectedFileProperty);
+            set => SetValue(SelectedFileProperty, value);
         }
 
         public static readonly DependencyProperty ItemTemplateProperty =
@@ -68,12 +68,13 @@ namespace ForgeModGenerator.UserControls
 
         public static readonly DependencyProperty ClickCommandProperty =
             DependencyProperty.Register("ClickCommand", typeof(ICommand), typeof(FileListExpander), new PropertyMetadata(null));
+
         public ICommand ClickCommand {
             get => (ICommand)GetValue(ClickCommandProperty);
             set => SetValue(ClickCommandProperty, value);
         }
 
-        private void OpenFile(string filePath) => System.Diagnostics.Process.Start(filePath);
+        private void OpenFile(IFileItem fileItem) => System.Diagnostics.Process.Start(fileItem.FilePath);
 
         private void ShowContainer(object sender, RoutedEventArgs e)
         {

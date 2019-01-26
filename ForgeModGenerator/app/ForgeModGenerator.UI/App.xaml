@@ -40,7 +40,7 @@
 				</ResourceDictionary>
 
 				<ResourceDictionary>
-					<c:ListStringConverter x:Key="StringListStringConverter"/>
+					<c:FileFolderFileItemConverter x:Key="FileFolderFileItemConverter"/>
 				</ResourceDictionary>
 
 				<ResourceDictionary>
@@ -48,11 +48,11 @@
 				</ResourceDictionary>
 
 				<ResourceDictionary>
-					<ContextMenu x:Key="DefaultRemoveFileContext">
+					<ContextMenu x:Key="DefaultFileItemContext">
 						<MenuItem Header="Remove"
 								  Command="{Binding PlacementTarget.Tag.RemoveCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}">
 							<MenuItem.CommandParameter>
-								<MultiBinding Converter="{StaticResource StringListStringConverter}">
+								<MultiBinding Converter="{StaticResource FileFolderFileItemConverter}">
 									<Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}"
 											 Path="PlacementTarget.Tag.FileCollection"/>
 									<Binding Path="."/> <!--ContextMenuItemName-->

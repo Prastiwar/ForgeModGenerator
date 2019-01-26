@@ -9,7 +9,7 @@
 			 d:DesignHeight="450" d:DesignWidth="800"
 			 x:Name="ThisWindow">
 	<Grid>
-		
+
 		<Expander Foreground="Wheat" Background="#FF424242"
 				  HorizontalAlignment="Stretch">
 			<Expander.HeaderTemplate>
@@ -26,14 +26,20 @@
 								Click="ShowContainer">
 							<materialDesign:PackIcon Kind="FolderOpen"/>
 						</Button>
-						<TextBlock Text="{Binding Path=HeaderText, RelativeSource={RelativeSource AncestorType=local:FileListExpander}}"
-								   Margin="12,0"/>
+						<TextBlock Margin="12,0">
+							<TextBlock.Text>
+								<MultiBinding StringFormat="({0}) {1}">
+									<Binding Path="FileCollection.Count" RelativeSource="{RelativeSource AncestorType=local:FileListExpander}"/>
+									<Binding Path="HeaderText" RelativeSource="{RelativeSource AncestorType=local:FileListExpander}"/>
+								</MultiBinding>
+							</TextBlock.Text>
+						</TextBlock>
 					</StackPanel>
 				</DataTemplate>
 			</Expander.HeaderTemplate>
 
 			<ListBox ItemsSource="{Binding Path=FileCollection, RelativeSource={RelativeSource AncestorType=local:FileListExpander}}"
-					 SelectedItem="{Binding Path=SelectedFilePath, RelativeSource={RelativeSource AncestorType=local:FileListExpander}}"
+					 SelectedItem="{Binding Path=SelectedFile, RelativeSource={RelativeSource AncestorType=local:FileListExpander}}"
 					 ItemTemplate="{Binding Path=ItemTemplate, RelativeSource={RelativeSource AncestorType=local:FileListExpander}}"
 					 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
 				<ListBox.ItemsPanel>

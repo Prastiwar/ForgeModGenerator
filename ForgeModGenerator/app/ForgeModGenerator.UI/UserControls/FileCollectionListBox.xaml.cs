@@ -1,6 +1,4 @@
-﻿using ForgeModGenerator.Model;
-using System.Collections.ObjectModel;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -21,16 +19,16 @@ namespace ForgeModGenerator.UserControls
         }
 
         public static readonly DependencyProperty FilesSourceProperty =
-            DependencyProperty.Register("FilesSource", typeof(ObservableCollection<FileCollection>), typeof(FileCollectionListBox), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
-        public ObservableCollection<FileCollection> FilesSource {
-            get => (ObservableCollection<FileCollection>)GetValue(FilesSourceProperty);
+            DependencyProperty.Register("FilesSource", typeof(object), typeof(FileCollectionListBox), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+        public object FilesSource {
+            get => GetValue(FilesSourceProperty);
             set => SetValue(FilesSourceProperty, value);
         }
 
         public static readonly DependencyProperty SelectedFilesItemProperty =
-            DependencyProperty.Register("SelectedFilesItem", typeof(FileCollection), typeof(FileCollectionListBox), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
-        public FileCollection SelectedFilesItem {
-            get => (FileCollection)GetValue(SelectedFilesItemProperty);
+            DependencyProperty.Register("SelectedFilesItem", typeof(object), typeof(FileCollectionListBox), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+        public object SelectedFilesItem {
+            get => GetValue(SelectedFilesItemProperty);
             set => SetValue(SelectedFilesItemProperty, value);
         }
 
