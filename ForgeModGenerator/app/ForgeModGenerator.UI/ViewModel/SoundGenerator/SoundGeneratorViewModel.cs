@@ -23,7 +23,12 @@ namespace ForgeModGenerator.ViewModel
         {
             OpenFileDialog.Filter = "Sound file (*.ogg) | *.ogg";
             AllowedExtensions = new string[] { ".ogg" };
+            FileEditForm = new UserControls.SoundEditForm();
             Preferences = sessionContext.GetPreferences<SoundsGeneratorPreferences>();
+            if (Preferences == null)
+            {
+                Preferences = SoundsGeneratorPreferences.Default;
+            }
             Refresh();
             OnFileAdded += AddSoundToJson;
             OnFileRemoved += RemoveSoundFromJson;
@@ -82,16 +87,16 @@ namespace ForgeModGenerator.ViewModel
             set => Set(ref shouldUpdate, value);
         }
 
-        private ICommand soundClick;
-        public ICommand SoundClick => soundClick ?? (soundClick = new RelayCommand<string>(OnSoundClick));
-
-        private void OnSoundClick(string soundPath)
-        {
-            System.Diagnostics.Process.Start(soundPath);
-        }
-
         private ICommand updateSoundsJson;
         public ICommand UpdateSoundsJson => updateSoundsJson ?? (updateSoundsJson = new RelayCommand(ForceJsonUpdate));
+
+        protected override void OnEdited(bool result, string file)
+        {
+            if (result)
+            {
+                // TODO: Save changes
+            }
+        }
 
         private void ForceJsonUpdate()
         {

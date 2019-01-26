@@ -3,6 +3,7 @@ using ForgeModGenerator.Model;
 using ForgeModGenerator.Service;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using MaterialDesignThemes.Wpf;
 using Microsoft.VisualBasic.FileIO;
 using System;
 using System.Collections.Generic;
@@ -42,6 +43,10 @@ namespace ForgeModGenerator.ViewModel
 
         public abstract string CollectionRootPath { get; }
 
+        public string[] AllowedExtensions { get; protected set; }
+
+        protected object FileEditForm { get; set; }
+
         private ObservableCollection<FileCollection> files;
         public ObservableCollection<FileCollection> Files {
             get => files;
@@ -54,13 +59,14 @@ namespace ForgeModGenerator.ViewModel
             set => Set(ref selectedFiles, value);
         }
 
+        private ICommand editCommand;
+        public ICommand EditCommand => editCommand ?? (editCommand = new RelayCommand<string>(Edit));
+
         private ICommand addCommand;
         public ICommand AddCommand => addCommand ?? (addCommand = new RelayCommand<FileCollection>(AddNewFile));
 
         private ICommand removeCommand;
         public ICommand RemoveCommand => removeCommand ?? (removeCommand = new RelayCommand<Tuple<ObservableCollection<string>, string>>(Remove));
-
-        public string[] AllowedExtensions { get; protected set; }
 
         protected virtual bool CanRefresh() => SessionContext.SelectedMod != null && Directory.Exists(CollectionRootPath);
 
@@ -79,6 +85,24 @@ namespace ForgeModGenerator.ViewModel
             }
             return false;
         }
+
+        protected virtual async void Edit(string file)
+        {
+            bool result = false;
+            try
+            {
+                result = (bool)await DialogHost.Show(FileEditForm, OpenedEventHandler, ClosingEventHandler);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, $"Couldn't open edit form for {file}", true);
+                return;
+            }
+            OnEdited(result, file);
+        }
+        protected virtual void OnEdited(bool result, string file) { }
+        protected virtual void OpenedEventHandler(object sender, DialogOpenedEventArgs eventArgs) { }
+        protected virtual void ClosingEventHandler(object sender, DialogClosingEventArgs eventArgs) { }
 
         protected virtual void Remove(Tuple<ObservableCollection<string>, string> param)
         {

@@ -116,10 +116,14 @@
     <Compile Include="Core\CodeOperation.cs" />
     <Compile Include="Miscellaneous\IOExtensions.cs" />
     <Compile Include="Miscellaneous\Log.cs" />
-    <Compile Include="Model\LaunchSetup.cs" />
+    <Compile Include="Model\Mod\LaunchSetup.cs" />
     <Compile Include="Model\Preferences\PreferenceData.cs" />
     <Compile Include="Model\Preferences\SoundsGeneratorPreferences.cs" />
+    <Compile Include="Model\Sound\SoundEvent.cs" />
     <Compile Include="Service\ModBuildService.cs" />
+    <Compile Include="UserControls\DarkenDialogHost.xaml.cs">
+      <DependentUpon>DarkenDialogHost.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\FileCollectionListBox.xaml.cs">
       <DependentUpon>FileCollectionListBox.xaml</DependentUpon>
     </Compile>
@@ -129,10 +133,10 @@
     <Compile Include="UserControls\FileListExpander.xaml.cs">
       <DependentUpon>FileListExpander.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\ModBuildForm.xaml.cs">
+    <Compile Include="UserControls\Forms\ModBuildForm.xaml.cs">
       <DependentUpon>ModBuildForm.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\ModForm.xaml.cs">
+    <Compile Include="UserControls\Forms\ModForm.xaml.cs">
       <DependentUpon>ModForm.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converter\EnumToCollectionConverter.cs" />
@@ -141,26 +145,29 @@
     <Compile Include="Core\AppPaths.cs" />
     <Compile Include="Core\CoreSourceCodeVariables.cs" />
     <Compile Include="Miscellaneous\TextBoxValidVisual.cs" />
-    <Compile Include="Model\ForgeVersion.cs" />
-    <Compile Include="Model\McModInfo.cs" />
+    <Compile Include="Model\Mod\ForgeVersion.cs" />
+    <Compile Include="Model\Mod\McModInfo.cs" />
     <Compile Include="Miscellaneous\Math.cs" />
     <Compile Include="Miscellaneous\Util.cs" />
     <Compile Include="Model\Achievement.cs" />
     <Compile Include="Model\Block.cs" />
     <Compile Include="Model\Command.cs" />
     <Compile Include="Model\Item.cs" />
-    <Compile Include="Model\Mod.cs" />
+    <Compile Include="Model\Mod\Mod.cs" />
     <Compile Include="Core\ModPaths.cs" />
     <Compile Include="Model\Recipe.cs" />
-    <Compile Include="Model\Sound.cs" />
+    <Compile Include="Model\Sound\Sound.cs" />
     <Compile Include="Model\FileCollection.cs" />
-    <Compile Include="Model\WorkspaceSetup.cs" />
+    <Compile Include="Model\Mod\WorkspaceSetup.cs" />
     <Compile Include="Service\NavigationService.cs" />
     <Compile Include="Service\SessionContextService.cs" />
     <Compile Include="Service\ValidationService.cs" />
     <Compile Include="Service\WorkspaceSetupService.cs" />
     <Compile Include="UserControls\Navigation\ScrollButton.xaml.cs">
       <DependentUpon>ScrollButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\Forms\SoundEditForm.xaml.cs">
+      <DependentUpon>SoundEditForm.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\BuildConfiguration\BuildConfigurationViewModel.cs" />
     <Compile Include="ViewModel\AchievementGenerator\AchievementGeneratorViewModel.cs" />
@@ -210,6 +217,10 @@
     <Compile Include="ViewModel\Main\NavigationMenu.xaml.cs">
       <DependentUpon>NavigationMenu.xaml</DependentUpon>
     </Compile>
+    <Page Include="UserControls\DarkenDialogHost.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControls\FileCollectionListBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -222,15 +233,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\ModBuildForm.xaml">
+    <Page Include="UserControls\Forms\ModBuildForm.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\ModForm.xaml">
+    <Page Include="UserControls\Forms\ModForm.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\Navigation\ScrollButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\Forms\SoundEditForm.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

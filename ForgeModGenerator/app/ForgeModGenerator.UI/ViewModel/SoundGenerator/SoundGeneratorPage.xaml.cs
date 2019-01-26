@@ -1,5 +1,4 @@
-﻿using System.Windows;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 
 namespace ForgeModGenerator.ViewModel
 {
@@ -9,15 +8,6 @@ namespace ForgeModGenerator.ViewModel
         public SoundGeneratorPage()
         {
             InitializeComponent();
-        }
-
-        private void BindedClick(object sender, RoutedEventArgs e)
-        {
-            if (DataContext is SoundGeneratorViewModel data)
-            {
-                Button btn = (Button)sender;
-                data.SoundClick.Execute(btn.CommandParameter);
-            }
         }
     }
 }

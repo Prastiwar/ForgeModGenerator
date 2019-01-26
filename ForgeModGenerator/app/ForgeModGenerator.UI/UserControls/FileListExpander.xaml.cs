@@ -1,4 +1,5 @@
 ﻿using ForgeModGenerator.Model;
+using GalaSoft.MvvmLight.CommandWpf;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -10,6 +11,10 @@ namespace ForgeModGenerator.UserControls
         public FileListExpander()
         {
             InitializeComponent();
+            if (ClickCommand == null)
+            {
+                ClickCommand = new RelayCommand<string>(OpenFile);
+            }
         }
 
         public static readonly DependencyProperty HeaderTextProperty =
@@ -33,6 +38,13 @@ namespace ForgeModGenerator.UserControls
             set => SetValue(SelectedFilePathProperty, value);
         }
 
+        public static readonly DependencyProperty ItemTemplateProperty =
+            DependencyProperty.Register("ItemTemplate", typeof(DataTemplate), typeof(FileListExpander), new PropertyMetadata(null));
+        public DataTemplate ItemTemplate {
+            get => (DataTemplate)GetValue(ItemTemplateProperty);
+            set => SetValue(ItemTemplateProperty, value);
+        }
+
         public static readonly DependencyProperty AddCommandProperty =
             DependencyProperty.Register("AddCommand", typeof(ICommand), typeof(FileListExpander), new PropertyMetadata(null));
         public ICommand AddCommand {
@@ -47,12 +59,21 @@ namespace ForgeModGenerator.UserControls
             set => SetValue(RemoveCommandProperty, value);
         }
 
-        public static readonly DependencyProperty ItemTemplateProperty =
-            DependencyProperty.Register("ItemTemplate", typeof(DataTemplate), typeof(FileListExpander), new PropertyMetadata(null));
-        public DataTemplate ItemTemplate {
-            get => (DataTemplate)GetValue(ItemTemplateProperty);
-            set => SetValue(ItemTemplateProperty, value);
+        public static readonly DependencyProperty EditCommandProperty =
+            DependencyProperty.Register("EditCommand", typeof(ICommand), typeof(FileListExpander), new PropertyMetadata(null));
+        public ICommand EditCommand {
+            get => (ICommand)GetValue(EditCommandProperty);
+            set => SetValue(EditCommandProperty, value);
         }
+
+        public static readonly DependencyProperty ClickCommandProperty =
+            DependencyProperty.Register("ClickCommand", typeof(ICommand), typeof(FileListExpander), new PropertyMetadata(null));
+        public ICommand ClickCommand {
+            get => (ICommand)GetValue(ClickCommandProperty);
+            set => SetValue(ClickCommandProperty, value);
+        }
+
+        private void OpenFile(string filePath) => System.Diagnostics.Process.Start(filePath);
 
         private void ShowContainer(object sender, RoutedEventArgs e)
         {

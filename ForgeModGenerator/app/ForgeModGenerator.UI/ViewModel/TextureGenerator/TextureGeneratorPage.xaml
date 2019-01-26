@@ -31,6 +31,7 @@
 									   FileItemTemplate="{StaticResource ItemTemplate}"
 									   AddCommand="{Binding AddCommand}"
 									   RemoveCommand="{Binding RemoveCommand}"
+									   EditCommand="{Binding EditCommand}"
 									   EmptyMessageVisibility="{Binding EmptyMessageVisibility}"/>
 	</Grid>
 </Page>

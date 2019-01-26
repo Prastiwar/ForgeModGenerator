@@ -10,7 +10,7 @@ namespace ForgeModGenerator.Model
             set => Set(ref name, value);
         }
 
-        private bool replace;
+        private bool replace = false;
         public bool Replace {
             get => replace;
             set => Set(ref replace, value);

@@ -4,6 +4,8 @@ namespace ForgeModGenerator.Model
 {
     public class SoundsGeneratorPreferences : PreferenceData
     {
+        public static SoundsGeneratorPreferences Default => new SoundsGeneratorPreferences() { shouldGeneratePrettyJson = true, SoundTemplate = ""};
+
         private bool shouldGeneratePrettyJson;
         public bool ShouldGeneratePrettyJson {
             get => shouldGeneratePrettyJson;

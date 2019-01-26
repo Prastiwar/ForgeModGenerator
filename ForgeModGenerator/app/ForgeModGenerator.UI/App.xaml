@@ -51,16 +51,17 @@
 					<ContextMenu x:Key="DefaultRemoveFileContext">
 						<MenuItem Header="Remove"
 								  Command="{Binding PlacementTarget.Tag.RemoveCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}">
-							<MenuItem.Resources>
-								<c:ListStringConverter x:Key="ListStringConverter"/>
-							</MenuItem.Resources>
 							<MenuItem.CommandParameter>
-								<MultiBinding Converter="{StaticResource ListStringConverter}">
+								<MultiBinding Converter="{StaticResource StringListStringConverter}">
 									<Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}"
 											 Path="PlacementTarget.Tag.FileCollection"/>
 									<Binding Path="."/> <!--ContextMenuItemName-->
 								</MultiBinding>
 							</MenuItem.CommandParameter>
+						</MenuItem>
+						<MenuItem Header="Edit"
+								  Command="{Binding PlacementTarget.Tag.EditCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}"
+								  CommandParameter="{Binding}">
 						</MenuItem>
 					</ContextMenu>
 				</ResourceDictionary>

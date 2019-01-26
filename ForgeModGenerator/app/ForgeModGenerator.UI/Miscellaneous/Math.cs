@@ -11,5 +11,18 @@
         {
             return time * (to - from) + from;
         }
+
+        public static float Clamp(float value, float min = 0.0f, float max = 1.0f)
+        {
+            if (value >= max)
+            {
+                return min;
+            }
+            else if (value <= min)
+            {
+                return max;
+            }
+            return value;
+        }
     }
 }

@@ -61,5 +61,12 @@ namespace ForgeModGenerator.UserControls
             get => (ICommand)GetValue(RemoveCommandProperty);
             set => SetValue(RemoveCommandProperty, value);
         }
+
+        public static readonly DependencyProperty EditCommandProperty =
+            DependencyProperty.Register("EditCommand", typeof(ICommand), typeof(FileCollectionListBox), new PropertyMetadata(null));
+        public ICommand EditCommand {
+            get => (ICommand)GetValue(EditCommandProperty);
+            set => SetValue(EditCommandProperty, value);
+        }
     }
 }

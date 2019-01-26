@@ -52,8 +52,7 @@
 							  FontSize="11"
 							  materialDesign:HintAssist.Hint="Select side"
 							  HorizontalAlignment="Left" VerticalAlignment="Center"
-							  HorizontalContentAlignment="Center">
-					</ComboBox>
+							  HorizontalContentAlignment="Center"/>
 					<ComboBox x:Name="WorkspaceBox"
 							  ItemsSource="{Binding Path=Setups, RelativeSource={RelativeSource AncestorType=controls:ModForm}}"
 							  SelectedValue="{Binding Path=WorkspaceSetup}"
@@ -62,8 +61,7 @@
 							  FontSize="11"
 							  materialDesign:HintAssist.Hint="Select setup option"
 							  HorizontalAlignment="Left" VerticalAlignment="Center"
-							  HorizontalContentAlignment="Center">
-					</ComboBox>
+							  HorizontalContentAlignment="Center"/>
 					<StackPanel Orientation="Horizontal">
 						<ComboBox x:Name="ForgeVersionBox"
 								  ItemsSource="{Binding Path=ForgeVersions, RelativeSource={RelativeSource AncestorType=controls:ModForm}}"
@@ -73,8 +71,7 @@
 								  FontSize="11" 
 								  materialDesign:HintAssist.Hint="Select version"
 								  HorizontalAlignment="Left" VerticalAlignment="Center"
-								  HorizontalContentAlignment="Center">
-						</ComboBox>
+								  HorizontalContentAlignment="Center"/>
 						<Button Width="25" Height="25"
 								Padding="0" Margin="10,0,0,0"
 								Command="{Binding Path=AddForgeVersionCommand, RelativeSource={RelativeSource AncestorType=controls:ModForm}}">
