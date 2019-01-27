@@ -1,11 +1,38 @@
 ﻿using GalaSoft.MvvmLight;
 using Newtonsoft.Json;
+using System.IO;
 
 namespace ForgeModGenerator.Model
 {
-    public class Sound : ObservableObject
+    public class Sound : ObservableObject, IFileItem
     {
         public enum SoundType { sound, @event }
+
+        public Sound(string name)
+        {
+            if (File.Exists(name))
+            {
+                Name = ViewModel.SoundGeneratorViewModel.FormatSoundName("temp", name);
+                FileName = Path.GetFileName(name);
+                FilePath = name;
+            }
+            else
+            {
+                Name = name;
+            }
+        }
+
+        [JsonIgnore]
+        public string FileName { get; protected set; }
+
+        [JsonIgnore]
+        public string FilePath { get; protected set; }
+
+        public void SetFileItem(string filePath)
+        {
+            FilePath = filePath;
+            FileName = Path.GetFileName(name);
+        }
 
         private string name;
         public string Name {

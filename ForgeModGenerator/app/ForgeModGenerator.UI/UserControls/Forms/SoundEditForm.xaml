@@ -10,85 +10,93 @@
              d:DesignHeight="450" d:DesignWidth="800">
 	<Grid Margin="16">
 		<StackPanel>
+			<TextBlock Text="{Binding FileName}"/>
+			<ListBox ItemsSource="{Binding Sounds}">
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<StackPanel>
+							<TextBlock Text="{Binding FileName}" Width="100"/>
 
-			<TextBlock Text="{Binding}"/>
-
-			<TextBox wpf:HintAssist.Hint="Name"
-					 Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
-					 Margin="0,6,0,0"
-					 FontSize="18"
-					 Text="{Binding Path=Name}"/>
-			<Grid Margin="0,6,0,0">
-				<TextBlock Text="Volume"
-						   Margin="0,8,0,0"
-						   FontSize="18"/>
-				<Slider Style="{StaticResource MaterialDesignDiscreteSlider}"
-						TickFrequency="0.05"
-						Minimum="0.0"
-						Maximum="1.0"
-						Value="{Binding Path=Volume}"/>
-			</Grid>
-			<Grid Margin="0,6,0,0">
-				<TextBlock Text="Pitch"
-						   Margin="0,8,0,0"
-						   FontSize="18"/>
-				<Slider Style="{StaticResource MaterialDesignDiscreteSlider}"
-						TickFrequency="0.05"
-						Minimum="-10.0"
-						Maximum="10.0"
-						Value="{Binding Path=Pitch}"/>
-			</Grid>
-			<Grid Margin="0,6,0,0">
-				<TextBlock Text="Weight"
-						   Margin="0,8,0,0"
-						   FontSize="18"/>
-				<Slider Style="{StaticResource MaterialDesignDiscreteSlider}"
-						TickFrequency="1"
-						Minimum="1"
-						Maximum="100"
-						Value="{Binding Path=Weight}"/>
-			</Grid>
-			<Grid Margin="0,6,0,0">
-				<TextBlock Text="Attenuation Distance"
-						   Margin="0,8,0,0"
-						   FontSize="18"/>
-				<Slider Style="{StaticResource MaterialDesignDiscreteSlider}"
-						TickFrequency="1"
-						Minimum="-100"
-						Maximum="100"
-						Value="{Binding Path=AttenuationDistance}"/>
-			</Grid>
-			<CheckBox Content="Stream"
-					  FontSize="18"
-					  Margin="0,8,0,0"
-					  IsChecked="{Binding Path=Stream}"/>
-			<CheckBox Content="Preload"
-					  FontSize="18"
-					  Margin="0,8,0,0"
-					  IsChecked="{Binding Path=Preload}"/>
-			<ComboBox SelectedValue="{Binding Path=Type}"
-					  Background="#FF404040" Foreground="#FFE8E8E8" BorderBrush="Wheat"
-					  Margin="0,8,0,0"
-					  FontSize="17"
-					  wpf:HintAssist.Hint="Select Type"
-					  HorizontalContentAlignment="Center"/>
-			<!--ItemsSource="{Binding Path=Types, RelativeSource={RelativeSource AncestorType=controls:ModForm}}"-->
+							<TextBox wpf:HintAssist.Hint="Name"
+									Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+									Margin="0,6,0,0"
+									FontSize="18"
+									Text="{Binding Path=Name}"/>
+							<Grid Margin="0,6,0,0">
+								<TextBlock Text="Volume"
+										   Margin="0,8,0,0"
+										   FontSize="18"/>
+								<Slider Style="{StaticResource MaterialDesignDiscreteSlider}"
+										TickFrequency="0.05"
+										Minimum="0.0"
+										Maximum="1.0"
+										Value="{Binding Path=Volume}"/>
+							</Grid>
+							<Grid Margin="0,6,0,0">
+								<TextBlock Text="Pitch"
+										  Margin="0,8,0,0"
+										  FontSize="18"/>
+								<Slider Style="{StaticResource MaterialDesignDiscreteSlider}"
+										TickFrequency="0.05"
+										Minimum="-10.0"
+										Maximum="10.0"
+										Value="{Binding Path=Pitch}"/>
+							</Grid>
+							<Grid Margin="0,6,0,0">
+								<TextBlock Text="Weight"
+										  Margin="0,8,0,0"
+										  FontSize="18"/>
+								<Slider Style="{StaticResource MaterialDesignDiscreteSlider}"
+										TickFrequency="1"
+										Minimum="1"
+										Maximum="100"
+										Value="{Binding Path=Weight}"/>
+							</Grid>
+							<Grid Margin="0,6,0,0">
+								<TextBlock Text="Attenuation Distance"
+										   Margin="0,8,0,0"
+										   FontSize="18"/>
+								<Slider Style="{StaticResource MaterialDesignDiscreteSlider}"
+										TickFrequency="1"
+										Minimum="-100"
+										Maximum="100"
+										Value="{Binding Path=AttenuationDistance}"/>
+							</Grid>
+							<CheckBox Content="Stream"
+									  FontSize="18"
+									  Margin="0,8,0,0"
+									  IsChecked="{Binding Path=Stream}"/>
+							<CheckBox Content="Preload"
+									  FontSize="18"
+									  Margin="0,8,0,0"
+									  IsChecked="{Binding Path=Preload}"/>
+							<ComboBox SelectedValue="{Binding Path=Type}"
+									  Background="#FF404040" Foreground="#FFE8E8E8" BorderBrush="Wheat"
+									  Margin="0,8,0,0"
+									  FontSize="17"
+									  wpf:HintAssist.Hint="Select Type"
+									  HorizontalContentAlignment="Center"/>
+							<!--ItemsSource="{Binding Path=Types, RelativeSource={RelativeSource AncestorType=controls:ModForm}}"-->
+						</StackPanel>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
 
 			<StackPanel Orientation="Horizontal"
-					Grid.Row="3"
-                    Margin="0,16,0,0">
+						Grid.Row="3"
+						Margin="0,16,0,0">
 				<Button IsDefault="True"
-					Style="{DynamicResource MaterialDesignFlatButton}"
-                    Command="{x:Static wpf:DialogHost.CloseDialogCommand}">
+						Style="{DynamicResource MaterialDesignFlatButton}"
+						Command="{x:Static wpf:DialogHost.CloseDialogCommand}">
 					<Button.CommandParameter>
 						<system:Boolean>True</system:Boolean>
 					</Button.CommandParameter>
 					SAVE
 				</Button>
 				<Button IsCancel="True"
-					Style="{DynamicResource MaterialDesignFlatButton}"
-                    Margin="8,0,0,0"
-					Command="{x:Static wpf:DialogHost.CloseDialogCommand}">
+						Style="{DynamicResource MaterialDesignFlatButton}"
+						Margin="8,0,0,0"
+						Command="{x:Static wpf:DialogHost.CloseDialogCommand}">
 					<Button.CommandParameter>
 						<system:Boolean>False</system:Boolean>
 					</Button.CommandParameter>

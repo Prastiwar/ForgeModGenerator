@@ -2,7 +2,9 @@
 using ForgeModGenerator.Model;
 using ForgeModGenerator.Service;
 using GalaSoft.MvvmLight.Command;
+using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
 using System.Windows.Forms;
@@ -13,7 +15,8 @@ namespace ForgeModGenerator.ViewModel
     /// <summary> SoundGenerator Business ViewModel </summary>
     public class SoundGeneratorViewModel : FileListViewModelBase<SoundEvent>
     {
-        public override string CollectionRootPath => SessionContext.SelectedMod != null ? ModPaths.SoundsFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid) : null;
+        //public override string CollectionRootPath => SessionContext.SelectedMod != null ? ModPaths.SoundsFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid) : null;
+        public override string CollectionRootPath => SessionContext.SelectedMod != null ? ModPaths.SoundsJson(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid) : null;
 
         public SoundsGeneratorPreferences Preferences { get; }
 
@@ -33,7 +36,16 @@ namespace ForgeModGenerator.ViewModel
         }
 
         // Get formatted sound from full path, "shorten.path.toFile"
-        public static string FormatDottedSoundName(string modid, string path) => FormatSoundName(modid, path).Replace('/', '.').Remove(0, modid.Length + 1);
+        public static string FormatDottedSoundName(string path)
+        {
+            int startIndex = path.IndexOf("sounds") + 7;
+            if (startIndex == -1)
+            {
+                return null;
+            }
+            return Path.ChangeExtension(path.Substring(startIndex, path.Length - startIndex), null);
+            //return FormatSoundName(modid, path).Replace('/', '.').Remove(0, modid.Length + 1);
+        }
 
         // Get formatted sound from full path, "modid:shorten/path/toFile"
         public static string FormatSoundName(string modid, string path)
@@ -224,5 +236,30 @@ namespace ForgeModGenerator.ViewModel
             //}
             return false;
         }
+
+        protected override ObservableCollection<FileList<SoundEvent>> FindCollection(string path)
+        {
+            if (!File.Exists(path))
+            {
+                File.AppendAllText(path, "{}");
+                return new ObservableCollection<FileList<SoundEvent>>();
+            }
+            Converter.SoundCollectionConverter converter = new Converter.SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
+            ObservableCollection<FileList<SoundEvent>> foundCollection = new ObservableCollection<FileList<SoundEvent>>();
+
+            // TODO: find collections
+
+            return foundCollection;
+        }
+    }
+}
+
+internal struct SoundsRoot
+{
+    public SoundEvent[] SoundEvents;
+
+    public SoundsRoot(SoundEvent[] ev)
+    {
+        SoundEvents = ev;
     }
 }

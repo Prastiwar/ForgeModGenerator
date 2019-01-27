@@ -45,7 +45,7 @@ namespace ForgeModGenerator.ViewModel
 
         public string[] AllowedExtensions { get; protected set; }
 
-        protected object FileEditForm { get; set; }
+        protected FrameworkElement FileEditForm { get; set; }
 
         private ObservableCollection<FileList<T>> files;
         public ObservableCollection<FileList<T>> Files {
@@ -59,6 +59,12 @@ namespace ForgeModGenerator.ViewModel
             set => Set(ref selectedFiles, value);
         }
 
+        private T selectedFileItem;
+        public T SelectedFileItem {
+            get => selectedFileItem;
+            set => Set(ref selectedFileItem, value);
+        }
+
         private ICommand editCommand;
         public ICommand EditCommand => editCommand ?? (editCommand = new RelayCommand<IFileItem>(Edit));
 
@@ -68,7 +74,7 @@ namespace ForgeModGenerator.ViewModel
         private ICommand removeCommand;
         public ICommand RemoveCommand => removeCommand ?? (removeCommand = new RelayCommand<Tuple<IFileFolder, IFileItem>>(Remove));
 
-        protected virtual bool CanRefresh() => SessionContext.SelectedMod != null && Directory.Exists(CollectionRootPath);
+        protected virtual bool CanRefresh() => SessionContext.SelectedMod != null && (Directory.Exists(CollectionRootPath) || File.Exists(CollectionRootPath));
 
         protected virtual bool Refresh()
         {
@@ -88,9 +94,11 @@ namespace ForgeModGenerator.ViewModel
 
         protected virtual async void Edit(IFileItem file)
         {
+            SelectedFileItem = (T)file;
             bool result = false;
             try
             {
+                FileEditForm.DataContext = SelectedFileItem;
                 result = (bool)await DialogHost.Show(FileEditForm, OpenedEventHandler, ClosingEventHandler);
             }
             catch (Exception ex)

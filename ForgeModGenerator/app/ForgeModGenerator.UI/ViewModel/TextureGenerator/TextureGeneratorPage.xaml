@@ -17,11 +17,11 @@
 					   ContextMenu="{StaticResource DefaultFileItemContext}"
 					   Width="32" Height="32">
 					<Image.Source>
-						<BitmapImage UriSource="{Binding}"
+						<BitmapImage UriSource="{Binding FilePath}"
 									 CacheOption="OnLoad"/>
 					</Image.Source>
 				</Image>
-				<TextBlock Text="{Binding Converter={StaticResource PathToNameConverter}}"/>
+				<TextBlock Text="{Binding FileName}"/>
 			</StackPanel>
 		</DataTemplate>
 	</Page.Resources>
