@@ -1,11 +1,13 @@
 ﻿using GalaSoft.MvvmLight;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System.IO;
 
 namespace ForgeModGenerator.Model
 {
     public class Sound : ObservableObject, IFileItem
     {
+        [JsonConverter(typeof(StringEnumConverter))]
         public enum SoundType { sound, @event }
 
         public Sound(string name)
@@ -49,7 +51,7 @@ namespace ForgeModGenerator.Model
         private float pitch = 1.0f;
         public float Pitch {
             get => pitch;
-            set => Set(ref pitch, Math.Clamp(value));
+            set => Set(ref pitch, value);
         }
 
         private int weight = 1;

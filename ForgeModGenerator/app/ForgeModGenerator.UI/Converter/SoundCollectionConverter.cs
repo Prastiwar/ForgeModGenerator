@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using System.Windows;
 
 namespace ForgeModGenerator.Converter
 {
@@ -28,10 +27,9 @@ namespace ForgeModGenerator.Converter
         public override FileList<SoundEvent> ReadJson(JsonReader reader, Type objectType, FileList<SoundEvent> existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
             string soundsPath = ModPaths.SoundsFolder(ModName, Modid);
-            JObject item = JObject.Load(reader);
-            string json = item.ToString();
-
             FileList<SoundEvent> fileList = new FileList<SoundEvent>(soundsPath);
+            JObject item = JObject.Load(reader);
+
             foreach (KeyValuePair<string, JToken> property in item)
             {
                 SoundEvent soundEvent = item.GetValue(property.Key).ToObject<SoundEvent>();

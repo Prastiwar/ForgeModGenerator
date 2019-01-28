@@ -23,7 +23,7 @@
 						CommandParameter="{Binding}">
 					<materialDesign:PackIcon Kind="Play"/>
 				</Button>
-				<TextBlock Text="{Binding FileName}"/>
+				<TextBlock Text="{Binding EventName}"/>
 			</StackPanel>
 		</DataTemplate>
 	</Page.Resources>

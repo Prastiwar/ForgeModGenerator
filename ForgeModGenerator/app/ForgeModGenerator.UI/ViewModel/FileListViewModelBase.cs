@@ -5,6 +5,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using MaterialDesignThemes.Wpf;
 using Microsoft.VisualBasic.FileIO;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -80,18 +81,15 @@ namespace ForgeModGenerator.ViewModel
         {
             if (CanRefresh())
             {
-                Files = FindCollection(CollectionRootPath);
-                if (Files.Count <= 0)
-                {
-                    FileList<T> root = new FileList<T>(CollectionRootPath);
-                    root.CollectionChanged += FileCollection_CollectionChanged;
-                    Files.Add(root);
-                }
+                Files = FindCollection(CollectionRootPath, true);
                 return true;
             }
             return false;
         }
 
+        protected virtual void OnEdited(bool result, IFileItem file) { }
+        protected virtual void OpenedEventHandler(object sender, DialogOpenedEventArgs eventArgs) { }
+        protected virtual void ClosingEventHandler(object sender, DialogClosingEventArgs eventArgs) { }
         protected virtual async void Edit(IFileItem file)
         {
             SelectedFileItem = (T)file;
@@ -108,9 +106,6 @@ namespace ForgeModGenerator.ViewModel
             }
             OnEdited(result, file);
         }
-        protected virtual void OnEdited(bool result, IFileItem file) { }
-        protected virtual void OpenedEventHandler(object sender, DialogOpenedEventArgs eventArgs) { }
-        protected virtual void ClosingEventHandler(object sender, DialogClosingEventArgs eventArgs) { }
 
         protected virtual void Remove(Tuple<IFileFolder, IFileItem> param)
         {
@@ -124,7 +119,7 @@ namespace ForgeModGenerator.ViewModel
                 Log.Warning("Remove item called with null collection", true);
                 return;
             }
-            else if(param.Item2 == null)
+            else if (param.Item2 == null)
             {
                 Log.Warning("Remove item called with null file item", true);
                 return;
@@ -173,10 +168,59 @@ namespace ForgeModGenerator.ViewModel
             }
         }
 
-        protected virtual ObservableCollection<FileList<T>> FindCollection(string path)
+        protected virtual ObservableCollection<FileList<T>> FindCollection(string path, bool createRootIfEmpty = false)
+        {
+            ObservableCollection<FileList<T>> found = null;
+            if (Directory.Exists(path))
+            {
+                found = FindCollectionFromDirectory(path);
+            }
+            else if (File.Exists(path))
+            {
+                found = DeserializeCollectionFromFile(path);
+            }
+            bool isEmpty = found == null || found.Count <= 0;
+            if (createRootIfEmpty && isEmpty)
+            {
+                found = CreateEmptyRoot(path);
+            }
+            return found;
+        }
+
+        private ObservableCollection<FileList<T>> CreateEmptyRoot(string path)
+        {
+            FileList<T> root = new FileList<T>(path);
+            root.CollectionChanged += FileCollection_CollectionChanged;
+            return new ObservableCollection<FileList<T>>() { root };
+        }
+
+        private static ObservableCollection<FileList<T>> DeserializeCollectionFromFile(string path)
+        {
+            string json = File.ReadAllText(path);
+            try
+            {
+                return JsonConvert.DeserializeObject<ObservableCollection<FileList<T>>>(json);
+            }
+            catch (Exception ex)
+            {
+                Type loadType = typeof(ObservableCollection<FileList<T>>);
+                Log.Error(ex, $"Couldnt load {loadType} from {json}");
+                try
+                {
+                    return new ObservableCollection<FileList<T>>() { JsonConvert.DeserializeObject<FileList<T>>(json) };
+                }
+                catch (Exception ex2)
+                {
+                    loadType = typeof(FileList<T>);
+                    Log.Error(ex2, $"Couldnt load {loadType} from {json}");
+                }
+            }
+            return null;
+        }
+
+        protected ObservableCollection<FileList<T>> FindCollectionFromDirectory(string path)
         {
             List<FileList<T>> initCollection = new List<FileList<T>>(10);
-
             AddFilesToCollection(path);
             foreach (string directory in Directory.EnumerateDirectories(path, "*", System.IO.SearchOption.AllDirectories))
             {

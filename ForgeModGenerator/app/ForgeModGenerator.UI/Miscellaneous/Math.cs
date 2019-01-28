@@ -16,11 +16,11 @@
         {
             if (value >= max)
             {
-                return min;
+                return max;
             }
             else if (value <= min)
             {
-                return max;
+                return min;
             }
             return value;
         }
