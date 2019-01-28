@@ -39,11 +39,11 @@ namespace ForgeModGenerator.UserControls
             set => SetValue(EmptyMessageProperty, value);
         }
 
-        public static readonly DependencyProperty EmptyMessageVisibilityProperty =
-            DependencyProperty.Register("EmptyMessageVisibility", typeof(Visibility), typeof(FileCollectionListBox), new PropertyMetadata(Visibility.Visible));
-        public Visibility EmptyMessageVisibility {
-            get => (Visibility)GetValue(EmptyMessageVisibilityProperty);
-            set => SetValue(EmptyMessageVisibilityProperty, value);
+        public static readonly DependencyProperty ShowEmptyMessageProperty =
+            DependencyProperty.Register("ShowEmptyMessage", typeof(bool), typeof(FileCollectionListBox), new PropertyMetadata(true));
+        public bool ShowEmptyMessage {
+            get => (bool)GetValue(ShowEmptyMessageProperty);
+            set => SetValue(ShowEmptyMessageProperty, value);
         }
 
         public static readonly DependencyProperty AddCommandProperty =

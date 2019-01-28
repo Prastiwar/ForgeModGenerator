@@ -72,18 +72,21 @@ namespace ForgeModGenerator.Model
         }
 
         private bool replace = false;
+        [JsonProperty(PropertyName = "replace")]
         public bool Replace {
             get => replace;
             set => Set(ref replace, value);
         }
 
         private string subtitle;
+        [JsonProperty(PropertyName = "subtitle")]
         public string Subtitle {
             get => subtitle;
             set => Set(ref subtitle, value);
         }
 
         private ObservableCollection<Sound> sounds;
+        [JsonProperty(PropertyName = "sounds")]
         public ObservableCollection<Sound> Sounds {
             get => sounds;
             set => Set(ref sounds, value);

@@ -5,12 +5,13 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
 
 namespace ForgeModGenerator.Converter
 {
-    public class SoundCollectionConverter : JsonConverter<FileList<SoundEvent>>
+    public class SoundCollectionConverter : JsonConverter
     {
         public string ModName { get; set; }
         public string Modid { get; set; }
@@ -24,7 +25,9 @@ namespace ForgeModGenerator.Converter
             Modid = modid;
         }
 
-        public override FileList<SoundEvent> ReadJson(JsonReader reader, Type objectType, FileList<SoundEvent> existingValue, bool hasExistingValue, JsonSerializer serializer)
+        public override bool CanConvert(Type objectType) => typeof(ObservableCollection<FileList<SoundEvent>>).IsAssignableFrom(objectType) || typeof(FileList<SoundEvent>).IsAssignableFrom(objectType);
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             string soundsPath = ModPaths.SoundsFolder(ModName, Modid);
             FileList<SoundEvent> fileList = new FileList<SoundEvent>(soundsPath);
@@ -33,6 +36,7 @@ namespace ForgeModGenerator.Converter
             foreach (KeyValuePair<string, JToken> property in item)
             {
                 SoundEvent soundEvent = item.GetValue(property.Key).ToObject<SoundEvent>();
+                soundEvent.EventName = property.Key;
                 soundEvent.SetFileItem(soundsPath);
                 foreach (Sound sound in soundEvent.Sounds)
                 {
@@ -46,25 +50,58 @@ namespace ForgeModGenerator.Converter
                 }
                 fileList.Add(soundEvent);
             }
-            return fileList;
+            if (typeof(ObservableCollection<FileList<SoundEvent>>).IsAssignableFrom(objectType))
+            {
+                return new ObservableCollection<FileList<SoundEvent>>() { fileList };
+            }
+            else if (typeof(FileList<SoundEvent>).IsAssignableFrom(objectType))
+            {
+                return fileList;
+            }
+            throw new JsonReaderException($"Object type is not neither assignable from {typeof(ObservableCollection<FileList<SoundEvent>>)} or {typeof(FileList<SoundEvent>)}");
         }
 
-        public override void WriteJson(JsonWriter writer, FileList<SoundEvent> value, JsonSerializer serializer)
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             builder.Clear();
             builder.Append("{\n");
 
-            for (int i = 0; i < value.Count; i++)
+            if (value is FileList<SoundEvent> fileList)
             {
-                SoundEvent item = value[i];
-                itemBuilder.Clear();
-                string json = JsonConvert.SerializeObject(item, Formatting.Indented);
-                itemBuilder.Append(json).Replace($"\"{nameof(item.EventName)}\":", "").ReplaceN(",", ": {", 1).Remove(0, 1);
-                if (i < value.Count - 1)
+                AppendFileListSoundEvent(fileList, true);
+            }
+            else if (value is ObservableCollection<FileList<SoundEvent>> observable)
+            {
+                for (int i = 0; i < observable.Count; i++)
                 {
-                    itemBuilder.Append(',');
+                    bool isLastElement = i < observable.Count - 1;
+                    AppendFileListSoundEvent(observable[i], !isLastElement);
                 }
-                builder.Append(itemBuilder);
+            }
+            else
+            {
+                throw new JsonWriterException($"Object type was null, or neither type, {typeof(ObservableCollection<FileList<SoundEvent>>)} or {typeof(FileList<SoundEvent>)}");
+            }
+
+            void AppendFileListSoundEvent(FileList<SoundEvent> val, bool removeCommaFromEnd)
+            {
+                for (int i = 0; i < val.Count; i++)
+                {
+                    SoundEvent item = val[i];
+                    itemBuilder.Clear();
+                    string json = JsonConvert.SerializeObject(item, Formatting.Indented);
+                    itemBuilder.Append(json).Replace($"\"{nameof(item.EventName)}\":", "")
+                        .ReplaceN(",", ": {", 1)
+                        .Remove(0, 1)
+                        .Replace("null", "\"\"");
+
+                    bool isLastElement = i < val.Count - 1;
+                    if (removeCommaFromEnd && isLastElement)
+                    {
+                        itemBuilder.Append(',');
+                    }
+                    builder.Append(itemBuilder);
+                }
             }
 
             builder.Append("\n}");

@@ -8,7 +8,7 @@ namespace ForgeModGenerator.Model
     public class Sound : ObservableObject, IFileItem
     {
         [JsonConverter(typeof(StringEnumConverter))]
-        public enum SoundType { sound, @event }
+        public enum SoundType { file, @event }
 
         public Sound(string name)
         {
@@ -49,30 +49,35 @@ namespace ForgeModGenerator.Model
         }
 
         private string name;
+        [JsonProperty(PropertyName = "name")]
         public string Name {
             get => name;
             set => Set(ref name, value);
         }
 
         private float volume = 1.0f;
+        [JsonProperty(PropertyName = "volume")]
         public float Volume {
             get => volume;
             set => Set(ref volume, Math.Clamp(value));
         }
 
         private float pitch = 1.0f;
+        [JsonProperty(PropertyName = "pitch")]
         public float Pitch {
             get => pitch;
             set => Set(ref pitch, value);
         }
 
         private int weight = 1;
+        [JsonProperty(PropertyName = "weight")]
         public int Weight {
             get => weight;
             set => Set(ref weight, value);
         }
 
         private bool stream = false;
+        [JsonProperty(PropertyName = "stream")]
         public bool Stream {
             get => stream;
             set => Set(ref stream, value);
@@ -86,12 +91,14 @@ namespace ForgeModGenerator.Model
         }
 
         private bool preload = false;
+        [JsonProperty(PropertyName = "preload")]
         public bool Preload {
             get => preload;
             set => Set(ref preload, value);
         }
 
-        private SoundType type = SoundType.sound;
+        private SoundType type = SoundType.file;
+        [JsonProperty(PropertyName = "type")]
         public SoundType Type {
             get => type;
             set => Set(ref type, value);

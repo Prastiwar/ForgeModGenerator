@@ -40,8 +40,6 @@ namespace ForgeModGenerator.ViewModel
             SessionContext.PropertyChanged += OnSessionContexPropertyChanged;
         }
 
-        public Visibility EmptyMessageVisibility => SessionContext.IsModSelected ? Visibility.Collapsed : Visibility.Visible;
-
         public abstract string CollectionRootPath { get; }
 
         public string[] AllowedExtensions { get; protected set; }
@@ -187,14 +185,14 @@ namespace ForgeModGenerator.ViewModel
             return found;
         }
 
-        private ObservableCollection<FileList<T>> CreateEmptyRoot(string path)
+        protected ObservableCollection<FileList<T>> CreateEmptyRoot(string path)
         {
             FileList<T> root = new FileList<T>(path);
             root.CollectionChanged += FileCollection_CollectionChanged;
             return new ObservableCollection<FileList<T>>() { root };
         }
 
-        private static ObservableCollection<FileList<T>> DeserializeCollectionFromFile(string path)
+        protected static ObservableCollection<FileList<T>> DeserializeCollectionFromFile(string path)
         {
             string json = File.ReadAllText(path);
             try

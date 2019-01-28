@@ -14,7 +14,7 @@
 			   HorizontalAlignment="Center"
 			   VerticalAlignment="Center"
 			   FontSize="50"
-			   Visibility="{Binding Path=EmptyMessageVisibility, RelativeSource={RelativeSource AncestorType=local:FileCollectionListBox}}" />
+			   Visibility="{Binding Path=ShowEmptyMessage, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource AncestorType=local:FileCollectionListBox}}" />
 		<ScrollViewer VerticalScrollBarVisibility="Auto">
 			<StackPanel>
 				<materialDesign:Card Background="#FF535353"

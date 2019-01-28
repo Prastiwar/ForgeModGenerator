@@ -34,7 +34,7 @@
 										   AddCommand="{Binding AddCommand}"
 										   RemoveCommand="{Binding RemoveCommand}"
 										   EditCommand="{Binding EditCommand}"
-										   EmptyMessageVisibility="{Binding EmptyMessageVisibility}" />
+										   ShowEmptyMessage="{Binding SessionContext.IsModSelected, Converter={StaticResource InvertBooleanConverter}}" />
 		</Grid>
 	</materialDesign:DialogHost>
 </Page>
