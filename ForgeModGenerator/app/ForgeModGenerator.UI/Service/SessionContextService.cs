@@ -28,6 +28,7 @@ namespace ForgeModGenerator.Service
         bool AskBeforeClose { get; set; }
 
         T GetPreferences<T>() where T : PreferenceData;
+        IEnumerable<Formatting> FormattingTypes { get; }
     }
 
     public class SessionContextService : ISessionContextService
@@ -69,6 +70,8 @@ namespace ForgeModGenerator.Service
         public bool IsModSelected => SelectedMod != null;
 
         protected Dictionary<Type, PreferenceData> Preferences { get; set; }
+
+        public IEnumerable<Formatting> FormattingTypes => Enum.GetValues(typeof(Formatting)).Cast<Formatting>();
 
         private bool askBeforeClose;
         public bool AskBeforeClose {

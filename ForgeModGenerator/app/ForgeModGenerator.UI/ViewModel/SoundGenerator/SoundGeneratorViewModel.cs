@@ -89,7 +89,7 @@ namespace ForgeModGenerator.ViewModel
         private void ForceJsonUpdate()
         {
             Converter.SoundCollectionConverter converter = new Converter.SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
-            string json = JsonConvert.SerializeObject(Files, Formatting.Indented, converter);
+            string json = JsonConvert.SerializeObject(Files, Preferences.JsonFormatting, converter);
             File.WriteAllText(CollectionRootPath, json);
         }
 
@@ -101,8 +101,13 @@ namespace ForgeModGenerator.ViewModel
         private bool IsUpdateAvailable()
         {
             Converter.SoundCollectionConverter converter = new Converter.SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
-            FileList<SoundEvent> allSounds = JsonConvert.DeserializeObject<FileList<SoundEvent>>(File.ReadAllText(CollectionRootPath), converter);
-            return false;
+            string newJson = JsonConvert.SerializeObject(Files, Preferences.JsonFormatting);
+            string savedJson = File.ReadAllText(CollectionRootPath);
+            if (newJson == savedJson)
+            {
+                newJson = JsonConvert.SerializeObject(Files, Preferences.JsonFormatting == Formatting.Indented ? Formatting.None : Formatting.Indented);
+            }
+            return newJson == savedJson;
         }
 
         protected override bool CanRefresh() => SessionContext.SelectedMod != null;

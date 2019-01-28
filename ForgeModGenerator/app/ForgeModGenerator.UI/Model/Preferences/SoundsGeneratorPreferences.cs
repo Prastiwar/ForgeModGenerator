@@ -1,21 +1,15 @@
-﻿using System;
+﻿using Newtonsoft.Json;
 
 namespace ForgeModGenerator.Model
 {
     public class SoundsGeneratorPreferences : PreferenceData
     {
-        public static SoundsGeneratorPreferences Default => new SoundsGeneratorPreferences() { shouldGeneratePrettyJson = true, SoundTemplate = ""};
+        public static SoundsGeneratorPreferences Default => new SoundsGeneratorPreferences() { JsonFormatting = Formatting.None };
 
-        private bool shouldGeneratePrettyJson;
-        public bool ShouldGeneratePrettyJson {
-            get => shouldGeneratePrettyJson;
-            set => Set(ref shouldGeneratePrettyJson, value);
-        }
-
-        private string soundTemplate;
-        public string SoundTemplate {
-            get => soundTemplate;
-            set => Set(ref soundTemplate, value);
+        private Formatting jsonFormatting;
+        public Formatting JsonFormatting {
+            get => jsonFormatting;
+            set => DirtSet(ref jsonFormatting, value);
         }
     }
 }
