@@ -14,39 +14,42 @@
 	<Application.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
-				<ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Dark.xaml"/>
-				<ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml"/>
-				<ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.DeepPurple.xaml"/>
-				<ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml"/>
-				<ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.MahApps;component/Themes/MaterialDesignTheme.MahApps.NumericUpDown.xaml"/>
+
+				<ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Dark.xaml" />
+				<ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+				<ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.DeepPurple.xaml" />
+				<ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml" />
+				<ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.MahApps;component/Themes/MaterialDesignTheme.MahApps.NumericUpDown.xaml" />
 				<ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.MahApps;component/Themes/MaterialDesignTheme.MahApps.RangeSlider.xaml" />
 
 				<ResourceDictionary>
-					<SolidColorBrush x:Key="PageBackground" Color="#FF424242"/>
+					<SolidColorBrush x:Key="PageBackground"
+									 Color="#FF424242" />
 				</ResourceDictionary>
 
 				<ResourceDictionary>
-					<vm:ViewModelLocator x:Key="Locator" d:IsDataSource="True"/>
+					<vm:ViewModelLocator x:Key="Locator"
+										 d:IsDataSource="True" />
 				</ResourceDictionary>
 
 				<ResourceDictionary>
-					<c:InvertBooleanConverter x:Key="InvertBooleanConverter"/>
+					<c:InvertBooleanConverter x:Key="InvertBooleanConverter" />
 				</ResourceDictionary>
 
 				<ResourceDictionary>
-					<c:IntToVisibilityConverter x:Key="IntToVisibilityConverter"/>
+					<c:IntToVisibilityConverter x:Key="IntToVisibilityConverter" />
 				</ResourceDictionary>
 
 				<ResourceDictionary>
-					<c:InvertIntToVisibilityConverter x:Key="InvertIntToVisibilityConverter"/>
+					<c:InvertIntToVisibilityConverter x:Key="InvertIntToVisibilityConverter" />
 				</ResourceDictionary>
 
 				<ResourceDictionary>
-					<c:FileFolderFileItemConverter x:Key="FileFolderFileItemConverter"/>
+					<c:FileFolderFileItemConverter x:Key="FileFolderFileItemConverter" />
 				</ResourceDictionary>
 
 				<ResourceDictionary>
-					<c:PathNameConverter x:Key="PathToNameConverter"/>
+					<c:PathNameConverter x:Key="PathToNameConverter" />
 				</ResourceDictionary>
 
 				<ResourceDictionary>
@@ -56,8 +59,9 @@
 							<MenuItem.CommandParameter>
 								<MultiBinding Converter="{StaticResource FileFolderFileItemConverter}">
 									<Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}"
-											 Path="PlacementTarget.Tag.FileCollection"/>
-									<Binding Path="."/> <!--ContextMenuItemName-->
+											 Path="PlacementTarget.Tag.FileCollection" />
+									<Binding Path="." />
+									<!--ContextMenuItemName-->
 								</MultiBinding>
 							</MenuItem.CommandParameter>
 						</MenuItem>

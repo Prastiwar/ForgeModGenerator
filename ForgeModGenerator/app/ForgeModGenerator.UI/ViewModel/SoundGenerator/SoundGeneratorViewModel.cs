@@ -34,29 +34,6 @@ namespace ForgeModGenerator.ViewModel
             OnFileRemoved += RemoveSoundFromJson;
         }
 
-        // Get formatted sound from full path, "shorten.path.toFile"
-        public static string FormatDottedSoundName(string path)
-        {
-            int startIndex = path.IndexOf("sounds") + 7;
-            if (startIndex == -1)
-            {
-                return null;
-            }
-            return Path.ChangeExtension(path.Substring(startIndex, path.Length - startIndex), null);
-        }
-
-        // Get formatted sound from full path, "modid:shorten/path/toFile"
-        public static string FormatSoundName(string modid, string path)
-        {
-            int startIndex = path.IndexOf("sounds") + 7;
-            if (startIndex == -1)
-            {
-                return null;
-            }
-            string shortPath = Path.ChangeExtension(path.Substring(startIndex, path.Length - startIndex), null);
-            return $"{modid}:{shortPath}";
-        }
-
         private void AddSoundToJson(object item)
         {
             SoundEvent sound = (SoundEvent)item;

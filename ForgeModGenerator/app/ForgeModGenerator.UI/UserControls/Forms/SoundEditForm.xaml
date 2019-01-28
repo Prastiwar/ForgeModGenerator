@@ -12,16 +12,21 @@
 			 d:DesignWidth="800">
 	<Grid Margin="16">
 		<StackPanel>
-			<TextBlock Text="{Binding FileName}" />
-			<Button Content="{wpf:PackIcon Kind=Add}"
-					Width="25"
-					Height="25"
-					Padding="0"
-					Margin="5,0,5,5"
-					HorizontalAlignment="Left"
-					Command="{Binding AddSound}"
-					CommandParameter="{Binding}" />
-
+			<StackPanel Orientation="Horizontal"
+						Margin="0,0,0,5">
+				<Button Content="{wpf:PackIcon Kind=Add}"
+						Width="25"
+						Height="25"
+						Padding="0"
+						Margin="5,0,5,0"
+						HorizontalAlignment="Left"
+						Command="{Binding AddSound}"
+						CommandParameter="{Binding}" />
+				<TextBox Text="{Binding EventName}"
+						 MinWidth="100"
+						 Margin="5,0,5,0"
+						 MaxLength="40" />
+			</StackPanel>
 			<ItemsControl ItemsSource="{Binding Sounds}">
 				<ItemsControl.ItemTemplate>
 					<DataTemplate>
@@ -34,20 +39,19 @@
 											Height="25"
 											Padding="0"
 											Margin="5,0,5,0"
-											Command="{Binding DeleteSound}"
+											Command="{Binding DeleteSound, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
 											CommandParameter="{Binding}" />
 									<Button Content="{wpf:PackIcon Kind=Edit}"
 											Width="25"
 											Height="25"
 											Padding="0"
 											Margin="5,0,5,0"
-											Command="{Binding ChangeSound}"
+											Command="{Binding ChangeSound, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
 											CommandParameter="{Binding}" />
 									<TextBlock Text="{Binding Name}"
 											   VerticalAlignment="Center" />
 								</StackPanel>
 								<Separator MinWidth="350" />
-
 								<Grid Margin="0,10,0,0">
 									<Grid.ColumnDefinitions>
 										<ColumnDefinition Width="auto" />
@@ -165,7 +169,6 @@
 					</DataTemplate>
 				</ItemsControl.ItemTemplate>
 			</ItemsControl>
-
 			<StackPanel Orientation="Horizontal"
 						HorizontalAlignment="Center"
 						Margin="0,16,0,0">
@@ -174,8 +177,7 @@
 						Command="{x:Static wpf:DialogHost.CloseDialogCommand}">
 					<Button.CommandParameter>
 						<system:Boolean>True</system:Boolean>
-					</Button.CommandParameter>
-					SAVE
+					</Button.CommandParameter> SAVE
 				</Button>
 				<Button IsCancel="True"
 						Style="{DynamicResource MaterialDesignFlatButton}"
@@ -183,8 +185,7 @@
 						Command="{x:Static wpf:DialogHost.CloseDialogCommand}">
 					<Button.CommandParameter>
 						<system:Boolean>False</system:Boolean>
-					</Button.CommandParameter>
-					CANCEL
+					</Button.CommandParameter> CANCEL
 				</Button>
 			</StackPanel>
 		</StackPanel>

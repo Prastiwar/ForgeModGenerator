@@ -9,6 +9,17 @@ namespace ForgeModGenerator.Model
 {
     public class SoundEvent : ObservableObject, IFileItem
     {
+        // Get formatted sound from full path, "shorten.path.toFile"
+        public static string FormatDottedSoundName(string path)
+        {
+            int startIndex = path.IndexOf("sounds") + 7;
+            if (startIndex == -1)
+            {
+                return null;
+            }
+            return Path.ChangeExtension(path.Substring(startIndex, path.Length - startIndex), null);
+        }
+
         public SoundEvent(string name) : this(name, new List<Sound>()) { }
 
         [JsonConstructor]
@@ -17,7 +28,7 @@ namespace ForgeModGenerator.Model
             Sounds = new ObservableCollection<Sound>(sounds);
             if (File.Exists(name))
             {
-                EventName = ViewModel.SoundGeneratorViewModel.FormatDottedSoundName(name);
+                EventName = FormatDottedSoundName(name);
                 SetFileItem(name);
             }
             else
@@ -33,7 +44,7 @@ namespace ForgeModGenerator.Model
             Sounds = new ObservableCollection<Sound>(sounds.ToList());
             if (File.Exists(name))
             {
-                EventName = ViewModel.SoundGeneratorViewModel.FormatDottedSoundName(name);
+                EventName = FormatDottedSoundName(name);
                 SetFileItem(name);
             }
             else
@@ -57,7 +68,7 @@ namespace ForgeModGenerator.Model
         private string eventName;
         public string EventName {
             get => eventName;
-            protected set => Set(ref eventName, value);
+            set => Set(ref eventName, value);
         }
 
         private bool replace = false;

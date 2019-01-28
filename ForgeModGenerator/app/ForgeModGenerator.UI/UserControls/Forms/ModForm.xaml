@@ -1,135 +1,156 @@
 ﻿<UserControl x:Class="ForgeModGenerator.UserControls.ModForm"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:controls="clr-namespace:ForgeModGenerator.UserControls"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:controls="clr-namespace:ForgeModGenerator.UserControls"
 			 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 			 mc:Ignorable="d"
-			 d:DesignHeight="500" d:DesignWidth="800">
+			 d:DesignHeight="500"
+			 d:DesignWidth="800">
 	<Grid>
-
 		<Expander Header="{Binding ModInfo.Name}"
 				  HorizontalAlignment="Stretch"
-				  Foreground="Wheat" Background="#FF424242">
+				  Foreground="Wheat"
+				  Background="#FF424242">
 			<Grid Margin="0,-10,0,0">
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="125"/>
-					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="125" />
+					<ColumnDefinition Width="*" />
 				</Grid.ColumnDefinitions>
-
 				<StackPanel Grid.Column="0"
 							TextBlock.Foreground="{DynamicResource MaterialDesignBody}"
 							Margin="7">
-					<Label Height="{Binding ActualHeight, ElementName=OrganizationBox, Mode=OneWay}" Content="Organization:"/>
-					<Label Height="{Binding ActualHeight, ElementName=SideBox, Mode=OneWay}" Content="Side:"/>
-					<Label Height="{Binding ActualHeight, ElementName=WorkspaceBox, Mode=OneWay}" Content="Workspace Setup:"/>
-					<Label Height="{Binding ActualHeight, ElementName=ForgeVersionBox, Mode=OneWay}" Content="Forge Version:"/>
-					<Label Height="{Binding ActualHeight, ElementName=NameBox, Mode=OneWay}" Content="Name:"/>
-					<Label Height="{Binding ActualHeight, ElementName=ModidBox, Mode=OneWay}" Content="modid:"/>
-					<Label Height="{Binding ActualHeight, ElementName=DescriptionBox, Mode=OneWay}" Content="Description:"/>
-					<Label Height="{Binding ActualHeight, ElementName=VersionBox, Mode=OneWay}" Content="Version:"/>
-					<Label Height="{Binding ActualHeight, ElementName=McVersionBox, Mode=OneWay}" Content="McVersion:"/>
-					<Label Height="{Binding ActualHeight, ElementName=UrlBox, Mode=OneWay}" Content="Url:"/>
-					<Label Height="{Binding ActualHeight, ElementName=UpdateUrlBox, Mode=OneWay}" Content="UpdateUrl:"/>
-					<Label Height="{Binding ActualHeight, ElementName=CreditsBox, Mode=OneWay}" Content="Credits:"/>
-					<Label Height="{Binding ActualHeight, ElementName=LogoFileBox, Mode=OneWay}" Content="LogoFile:"/>
-					<Label Height="{Binding ActualHeight, ElementName=AuthorListBox, Mode=OneWay}" Content="AuthorList:"/>
-					<Label Height="{Binding ActualHeight, ElementName=DependencyListBox, Mode=OneWay}" Content="Dependencies:"/>
-					<Label Height="{Binding ActualHeight, ElementName=ScreenshotListBox, Mode=OneWay}" Content="Screenshots:"/>
+					<Label Height="{Binding ActualHeight, ElementName=OrganizationBox, Mode=OneWay}"
+						   Content="Organization:" />
+					<Label Height="{Binding ActualHeight, ElementName=SideBox, Mode=OneWay}"
+						   Content="Side:" />
+					<Label Height="{Binding ActualHeight, ElementName=WorkspaceBox, Mode=OneWay}"
+						   Content="Workspace Setup:" />
+					<Label Height="{Binding ActualHeight, ElementName=ForgeVersionBox, Mode=OneWay}"
+						   Content="Forge Version:" />
+					<Label Height="{Binding ActualHeight, ElementName=NameBox, Mode=OneWay}"
+						   Content="Name:" />
+					<Label Height="{Binding ActualHeight, ElementName=ModidBox, Mode=OneWay}"
+						   Content="modid:" />
+					<Label Height="{Binding ActualHeight, ElementName=DescriptionBox, Mode=OneWay}"
+						   Content="Description:" />
+					<Label Height="{Binding ActualHeight, ElementName=VersionBox, Mode=OneWay}"
+						   Content="Version:" />
+					<Label Height="{Binding ActualHeight, ElementName=McVersionBox, Mode=OneWay}"
+						   Content="McVersion:" />
+					<Label Height="{Binding ActualHeight, ElementName=UrlBox, Mode=OneWay}"
+						   Content="Url:" />
+					<Label Height="{Binding ActualHeight, ElementName=UpdateUrlBox, Mode=OneWay}"
+						   Content="UpdateUrl:" />
+					<Label Height="{Binding ActualHeight, ElementName=CreditsBox, Mode=OneWay}"
+						   Content="Credits:" />
+					<Label Height="{Binding ActualHeight, ElementName=LogoFileBox, Mode=OneWay}"
+						   Content="LogoFile:" />
+					<Label Height="{Binding ActualHeight, ElementName=AuthorListBox, Mode=OneWay}"
+						   Content="AuthorList:" />
+					<Label Height="{Binding ActualHeight, ElementName=DependencyListBox, Mode=OneWay}"
+						   Content="Dependencies:" />
+					<Label Height="{Binding ActualHeight, ElementName=ScreenshotListBox, Mode=OneWay}"
+						   Content="Screenshots:" />
 				</StackPanel>
-
 				<StackPanel Grid.Column="1"
 							TextBlock.Foreground="{DynamicResource MaterialDesignBody}"
 							Margin="7">
 					<TextBox x:Name="OrganizationBox"
 							 Text="{Binding Path=Organization, Mode=TwoWay}"
-							 TextChanged="ValidateOrganization"/>
+							 TextChanged="ValidateOrganization" />
 					<ComboBox x:Name="SideBox"
 							  ItemsSource="{Binding Path=Sides, RelativeSource={RelativeSource AncestorType=controls:ModForm}}"
 							  SelectedValue="{Binding Path=Side}"
-							  Background="#FF404040" Foreground="#FFE8E8E8" BorderBrush="Wheat" 
+							  Background="#FF404040"
+							  Foreground="#FFE8E8E8"
+							  BorderBrush="Wheat"
 							  FontSize="11"
 							  materialDesign:HintAssist.Hint="Select side"
-							  HorizontalAlignment="Left" VerticalAlignment="Center"
-							  HorizontalContentAlignment="Center"/>
+							  HorizontalAlignment="Left"
+							  VerticalAlignment="Center"
+							  HorizontalContentAlignment="Center" />
 					<ComboBox x:Name="WorkspaceBox"
 							  ItemsSource="{Binding Path=Setups, RelativeSource={RelativeSource AncestorType=controls:ModForm}}"
 							  SelectedValue="{Binding Path=WorkspaceSetup}"
-							  Background="#FF404040" Foreground="#FFE8E8E8"
-							  DisplayMemberPath="Name" BorderBrush="Wheat"
+							  Background="#FF404040"
+							  Foreground="#FFE8E8E8"
+							  DisplayMemberPath="Name"
+							  BorderBrush="Wheat"
 							  FontSize="11"
 							  materialDesign:HintAssist.Hint="Select setup option"
-							  HorizontalAlignment="Left" VerticalAlignment="Center"
-							  HorizontalContentAlignment="Center"/>
+							  HorizontalAlignment="Left"
+							  VerticalAlignment="Center"
+							  HorizontalContentAlignment="Center" />
 					<StackPanel Orientation="Horizontal">
 						<ComboBox x:Name="ForgeVersionBox"
 								  ItemsSource="{Binding Path=ForgeVersions, RelativeSource={RelativeSource AncestorType=controls:ModForm}}"
 								  SelectedValue="{Binding Path=ForgeVersion}"
-								  Background="#FF404040" Foreground="#FFE8E8E8" BorderBrush="Wheat"
+								  Background="#FF404040"
+								  Foreground="#FFE8E8E8"
+								  BorderBrush="Wheat"
 								  DisplayMemberPath="Name"
-								  FontSize="11" 
+								  FontSize="11"
 								  materialDesign:HintAssist.Hint="Select version"
-								  HorizontalAlignment="Left" VerticalAlignment="Center"
-								  HorizontalContentAlignment="Center"/>
-						<Button Width="25" Height="25"
-								Padding="0" Margin="10,0,0,0"
+								  HorizontalAlignment="Left"
+								  VerticalAlignment="Center"
+								  HorizontalContentAlignment="Center" />
+						<Button Width="25"
+								Height="25"
+								Padding="0"
+								Margin="10,0,0,0"
 								Command="{Binding Path=AddForgeVersionCommand, RelativeSource={RelativeSource AncestorType=controls:ModForm}}">
 							<materialDesign:PackIcon Kind="Plus"
-													 HorizontalAlignment="Center" VerticalAlignment="Center"/>
+													 HorizontalAlignment="Center"
+													 VerticalAlignment="Center" />
 						</Button>
 					</StackPanel>
 					<TextBox x:Name="NameBox"
 							 Text="{Binding Path=ModInfo.Name, Mode=TwoWay}"
-							 TextChanged="ValidateNameAndTryFillModif"/>
+							 TextChanged="ValidateNameAndTryFillModif" />
 					<TextBox x:Name="ModidBox"
 							 Text="{Binding Path=ModInfo.Modid, Mode=TwoWay}"
-							 TextChanged="ValidateModid"/>
+							 TextChanged="ValidateModid" />
 					<TextBox x:Name="DescriptionBox"
 							 Text="{Binding Path=ModInfo.Description, Mode=TwoWay}"
 							 TextWrapping="Wrap"
-							 AcceptsReturn="True"/>
+							 AcceptsReturn="True" />
 					<TextBox x:Name="VersionBox"
-							 Text="{Binding Path=ModInfo.Version, Mode=TwoWay}"/>
+							 Text="{Binding Path=ModInfo.Version, Mode=TwoWay}" />
 					<TextBox x:Name="McVersionBox"
-							 Text="{Binding Path=ModInfo.McVersion, Mode=TwoWay}"/>
+							 Text="{Binding Path=ModInfo.McVersion, Mode=TwoWay}" />
 					<TextBox x:Name="UrlBox"
 							 Text="{Binding Path=ModInfo.Url, Mode=TwoWay}"
 							 TextWrapping="Wrap"
-							 AcceptsReturn="True"/>
+							 AcceptsReturn="True" />
 					<TextBox x:Name="UpdateUrlBox"
 							 Text="{Binding Path=ModInfo.UpdateUrl, Mode=TwoWay}"
 							 TextWrapping="Wrap"
-							 AcceptsReturn="True"/>
+							 AcceptsReturn="True" />
 					<TextBox x:Name="CreditsBox"
 							 Text="{Binding Path=ModInfo.Credits, Mode=TwoWay}"
 							 TextWrapping="Wrap"
-							 AcceptsReturn="True"/>
+							 AcceptsReturn="True" />
 					<TextBox x:Name="LogoFileBox"
-							 Text="{Binding Path=ModInfo.LogoFile, Mode=TwoWay}"/>
-
+							 Text="{Binding Path=ModInfo.LogoFile, Mode=TwoWay}" />
 					<controls:HorizontalList x:Name="AuthorListBox"
 											 AddCommand="{Binding Path=AddStringItemCommand, RelativeSource={RelativeSource AncestorType=controls:ModForm}}"
 											 RemoveCommand="{Binding Path=RemoveStringItemCommand, RelativeSource={RelativeSource AncestorType=controls:ModForm}}"
-											 StringList="{Binding Path=ModInfo.AuthorList, Mode=TwoWay}"/>
-
+											 StringList="{Binding Path=ModInfo.AuthorList, Mode=TwoWay}" />
 					<controls:HorizontalList x:Name="DependencyListBox"
 											 AddCommand="{Binding Path=AddStringItemCommand, RelativeSource={RelativeSource AncestorType=controls:ModForm}}"
 											 RemoveCommand="{Binding Path=RemoveStringItemCommand, RelativeSource={RelativeSource AncestorType=controls:ModForm}}"
-											 StringList="{Binding Path=ModInfo.Dependencies, Mode=TwoWay}"/>
-
+											 StringList="{Binding Path=ModInfo.Dependencies, Mode=TwoWay}" />
 					<controls:HorizontalList x:Name="ScreenshotListBox"
 											 AddCommand="{Binding Path=AddStringItemCommand, RelativeSource={RelativeSource AncestorType=controls:ModForm}}"
 											 RemoveCommand="{Binding Path=RemoveStringItemCommand, RelativeSource={RelativeSource AncestorType=controls:ModForm}}"
-											 StringList="{Binding Path=ModInfo.Screenshots, Mode=TwoWay}"/>
-
+											 StringList="{Binding Path=ModInfo.Screenshots, Mode=TwoWay}" />
 					<Button Content="{Binding Path=SaveButtonText, RelativeSource={RelativeSource AncestorType=controls:ModForm}}"
 							Command="{Binding Path=SaveCommand, RelativeSource={RelativeSource AncestorType=controls:ModForm}}"
-							CommandParameter="{Binding}"/>
+							CommandParameter="{Binding}" />
 				</StackPanel>
-
 			</Grid>
 		</Expander>
-
 	</Grid>
 </UserControl>

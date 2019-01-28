@@ -14,7 +14,7 @@ namespace ForgeModGenerator.Model
         {
             if (File.Exists(name))
             {
-                Name = ViewModel.SoundGeneratorViewModel.FormatSoundName("temp", name);
+                Name = FormatSoundName("temp", name);
                 FileName = Path.GetFileName(name);
                 FilePath = name;
             }
@@ -22,6 +22,18 @@ namespace ForgeModGenerator.Model
             {
                 Name = name;
             }
+        }
+
+        // Get formatted sound from full path, "modid:shorten/path/toFile"
+        public static string FormatSoundName(string modid, string path)
+        {
+            int startIndex = path.IndexOf("sounds") + 7;
+            if (startIndex == -1)
+            {
+                return null;
+            }
+            string shortPath = Path.ChangeExtension(path.Substring(startIndex, path.Length - startIndex), null);
+            return $"{modid}:{shortPath}";
         }
 
         [JsonIgnore]
