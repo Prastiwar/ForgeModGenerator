@@ -7,7 +7,6 @@ using MaterialDesignThemes.Wpf;
 using Microsoft.VisualBasic.FileIO;
 using Newtonsoft.Json;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -108,62 +107,55 @@ namespace ForgeModGenerator.ViewModel
 
         protected virtual void Remove(Tuple<IFileFolder, IFileItem> param)
         {
-            if (param == null)
+            try
             {
-                Log.Warning("Remove item called with null parameter");
-                return;
-            }
-            else if (param.Item1 == null)
-            {
-                Log.Warning("Remove item called with null collection", true);
-                return;
-            }
-            else if (param.Item2 == null)
-            {
-                Log.Warning("Remove item called with null file item", true);
-                return;
-            }
-
-            if (param.Item1.RemoveFile(param.Item2))
-            {
-                try
+                if (param.Item1.RemoveFile(param.Item2))
                 {
-                    FileSystem.DeleteFile(param.Item2.FilePath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+                    try
+                    {
+                        FileSystem.DeleteFile(param.Item2.FilePath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, $"Couldn't delete {param.Item2.FilePath}. Make sure it's not used by any process", true);
+                        param.Item1.Add(param.Item2); // delete failed, so get item back to collection
+                        return;
+                    }
                 }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, $"Couldn't delete {param.Item2.FilePath}. Make sure it's not used by any process", true);
-                    param.Item1.Add(param.Item2); // delete failed, so get item back to collection
-                    return;
-                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Something went wrong while trying to remove file", true);
             }
         }
 
         protected virtual void AddNewFile(FileList<T> collection)
         {
-            if (collection == null)
+            try
             {
-                Log.Warning("Can't add new file to null collection", true);
-                return;
-            }
-            DialogResult result = OpenFileDialog.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-                foreach (string filePath in OpenFileDialog.FileNames)
+                DialogResult result = OpenFileDialog.ShowDialog();
+                if (result == DialogResult.OK)
                 {
-                    string fileName = new FileInfo(filePath).Name;
-                    string newFilePath = Path.Combine(collection.DestinationPath, fileName);
-                    try
+                    foreach (string filePath in OpenFileDialog.FileNames)
                     {
-                        File.Copy(filePath, newFilePath);
+                        string fileName = new FileInfo(filePath).Name;
+                        string newFilePath = Path.Combine(collection.DestinationPath, fileName);
+                        try
+                        {
+                            File.Copy(filePath, newFilePath);
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error(ex, $"Couldn't add {fileName} to {collection.HeaderName}. Make sure the file is not opened by any process.", true);
+                            continue;
+                        }
+                        collection.Add(newFilePath);
                     }
-                    catch (Exception ex)
-                    {
-                        Log.Error(ex, $"Couldn't add {fileName} to {collection.HeaderName}. Make sure the file is not opened by any process.", true);
-                        continue;
-                    }
-                    collection.Add(newFilePath);
                 }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Something went wrong while adding new file", true);
             }
         }
 

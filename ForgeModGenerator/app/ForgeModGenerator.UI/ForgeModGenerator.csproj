@@ -125,6 +125,7 @@
     <Compile Include="Converter\Json\SoundCollectionConverter.cs" />
     <Compile Include="Converter\Json\SoundConverter.cs" />
     <Compile Include="Converter\Json\SoundEventConverter.cs" />
+    <Compile Include="Converter\MultiValues\SoundEventSoundConverter.cs" />
     <Compile Include="Core\CodeOperation.cs" />
     <Compile Include="Miscellaneous\IOExtensions.cs" />
     <Compile Include="Miscellaneous\Log.cs" />
@@ -152,7 +153,7 @@
       <DependentUpon>ModForm.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converter\EnumToCollectionConverter.cs" />
-    <Compile Include="Converter\FileFolderFileItemConverter.cs" />
+    <Compile Include="Converter\MultiValues\FileFolderFileItemConverter.cs" />
     <Compile Include="Converter\PathNameConverter.cs" />
     <Compile Include="Core\AppPaths.cs" />
     <Compile Include="Core\CoreSourceCodeVariables.cs" />

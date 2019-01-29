@@ -20,6 +20,8 @@ namespace ForgeModGenerator.Model
             return Path.ChangeExtension(path.Substring(startIndex, path.Length - startIndex), null);
         }
 
+        public SoundEvent(string name) : this(name, new List<Sound>() { new Sound(Mod.GetModidFromPath(name), name) }) { }
+
         public SoundEvent(string modid, string name) : this(name, new List<Sound>() { new Sound(modid, name) }) { }
 
         [JsonConstructor]

@@ -12,7 +12,8 @@ namespace ForgeModGenerator.Core
         public static string Resources(string modname) => Path.Combine(ModRoot(modname), "src", "main", "resources");
         public static string McModInfo(string modname) => Path.Combine(Resources(modname), "mcmod.info");
         public static string PackMeta(string modname) => Path.Combine(Resources(modname), "pack.mcmeta");
-        public static string Assets(string modname, string modid) => Path.Combine(Resources(modname), "assets", modid);
+        public static string Assets(string modname) => Path.Combine(Resources(modname), "assets");
+        public static string Assets(string modname, string modid) => Path.Combine(Assets(modname), modid);
         public static string Blockstates(string modname, string modid) => Path.Combine(Assets(modname, modid), "blockstates");
         public static string Lang(string modname, string modid) => Path.Combine(Assets(modname, modid), "lang");
         public static string ModelsItem(string modname, string modid) => Path.Combine(Assets(modname, modid), "models", "item");

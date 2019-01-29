@@ -3,7 +3,9 @@ using ForgeModGenerator.Miscellaneous;
 using ForgeModGenerator.Model;
 using ForgeModGenerator.Service;
 using GalaSoft.MvvmLight.Command;
+using Microsoft.VisualBasic.FileIO;
 using Newtonsoft.Json;
+using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
@@ -24,7 +26,11 @@ namespace ForgeModGenerator.ViewModel
         {
             OpenFileDialog.Filter = "Sound file (*.ogg) | *.ogg";
             AllowedExtensions = new string[] { ".ogg" };
-            FileEditForm = new UserControls.SoundEditForm();
+            FileEditForm = new UserControls.SoundEditForm() {
+                AddSoundCommand = AddSoundCommand,
+                DeleteSoundCommand = DeleteSoundCommand,
+                ChangeSoundCommand = ChangeSoundCommand
+            };
             Preferences = sessionContext.GetOrCreatePreferences<SoundsGeneratorPreferences>();
             Refresh();
             OnFileAdded += AddSoundToJson;
@@ -39,6 +45,74 @@ namespace ForgeModGenerator.ViewModel
 
         private ICommand updateSoundsJson;
         public ICommand UpdateSoundsJson => updateSoundsJson ?? (updateSoundsJson = new RelayCommand(ForceJsonUpdate));
+
+        private ICommand addSoundCommand;
+        public ICommand AddSoundCommand => addSoundCommand ?? (addSoundCommand = new RelayCommand<SoundEvent>(AddSound));
+
+        private ICommand deleteSoundCommand;
+        public ICommand DeleteSoundCommand => deleteSoundCommand ?? (deleteSoundCommand = new RelayCommand<Tuple<SoundEvent, Sound>>(DeleteSound));
+
+        private ICommand changeSoundCommand;
+        public ICommand ChangeSoundCommand => changeSoundCommand ?? (changeSoundCommand = new RelayCommand<Sound>(ChangeSound));
+
+        private void ChangeSound(Sound obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void DeleteSound(Tuple<SoundEvent, Sound> param)
+        {
+            try
+            {
+                if (param.Item1.Sounds.Remove(param.Item2))
+                {
+                    try
+                    {
+                        FileSystem.DeleteFile(param.Item2.FilePath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, $"Couldn't delete {param.Item2.FilePath}. Make sure it's not used by any process", true);
+                        param.Item1.Sounds.Add(param.Item2); // delete failed, so get item back to collection
+                        return;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Something went wrong while trying to remove sound", true);
+            }
+        }
+
+        private void AddSound(SoundEvent soundEvent)
+        {
+            try
+            {
+                DialogResult result = OpenFileDialog.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    foreach (string filePath in OpenFileDialog.FileNames)
+                    {
+                        string fileName = new FileInfo(filePath).Name;
+                        string newFilePath = Path.Combine(soundEvent.FilePath, fileName);
+                        try
+                        {
+                            File.Copy(filePath, newFilePath);
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error(ex, $"Couldn't add {fileName} to {soundEvent.EventName}. Make sure the file is not opened by any process.", true);
+                            continue;
+                        }
+                        soundEvent.Sounds.Add(new Sound(SessionContext.SelectedMod.ModInfo.Modid, newFilePath));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Something went wrong while adding new sound", true);
+            }
+        }
 
         protected override bool CanRefresh() => SessionContext.SelectedMod != null;
 
@@ -66,16 +140,17 @@ namespace ForgeModGenerator.ViewModel
 
         protected override ObservableCollection<FileList<SoundEvent>> FindCollection(string path, bool createRootIfEmpty)
         {
-            string soundsFolder = ModPaths.SoundsFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
-            ObservableCollection<FileList<SoundEvent>> rootCollection = null;
-            if (!File.Exists(path))
-            {
-                File.AppendAllText(path, "{}");
-                return createRootIfEmpty ? CreateEmptyRoot(soundsFolder) : rootCollection;
-            }
-            Converter.SoundCollectionConverter converter = new Converter.SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
             try
             {
+                string soundsFolder = ModPaths.SoundsFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
+                ObservableCollection<FileList<SoundEvent>> rootCollection = null;
+                if (!File.Exists(path))
+                {
+                    File.AppendAllText(path, "{}");
+                    return createRootIfEmpty ? CreateEmptyRoot(soundsFolder) : rootCollection;
+                }
+                Converter.SoundCollectionConverter converter = new Converter.SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
+
                 rootCollection = JsonConvert.DeserializeObject<ObservableCollection<FileList<SoundEvent>>>(File.ReadAllText(path), converter);
                 if (createRootIfEmpty && (rootCollection == null || rootCollection.Count <= 0))
                 {
@@ -83,10 +158,10 @@ namespace ForgeModGenerator.ViewModel
                 }
                 return rootCollection;
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
-                Log.Error(ex, "Couldn't load sounds.json");
-                throw;
+                Log.Error(ex, "Couldn't load sounds.json. Should never happened. Report a bug");
+                return null;
             }
         }
 
@@ -112,9 +187,16 @@ namespace ForgeModGenerator.ViewModel
 
         protected void ForceJsonUpdate()
         {
-            Converter.SoundCollectionConverter converter = new Converter.SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
-            string json = JsonConvert.SerializeObject(Files, Preferences.JsonFormatting, converter);
-            File.WriteAllText(CollectionRootPath, json);
+            try
+            {
+                Converter.SoundCollectionConverter converter = new Converter.SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
+                string json = JsonConvert.SerializeObject(Files, Preferences.JsonFormatting, converter);
+                File.WriteAllText(CollectionRootPath, json);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Couldn't update json, this should not happened. Report a bug", true);
+            }
         }
 
         protected bool HasSoundWritten(string soundEventName)
@@ -124,14 +206,22 @@ namespace ForgeModGenerator.ViewModel
 
         protected bool IsUpdateAvailable()
         {
-            Converter.SoundCollectionConverter converter = new Converter.SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
-            string newJson = JsonConvert.SerializeObject(Files, Preferences.JsonFormatting);
-            string savedJson = File.ReadAllText(CollectionRootPath);
-            if (newJson == savedJson)
+            try
             {
-                newJson = JsonConvert.SerializeObject(Files, Preferences.JsonFormatting == Formatting.Indented ? Formatting.None : Formatting.Indented);
+                Converter.SoundCollectionConverter converter = new Converter.SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
+                string newJson = JsonConvert.SerializeObject(Files, Preferences.JsonFormatting);
+                string savedJson = File.ReadAllText(CollectionRootPath);
+                if (newJson == savedJson)
+                {
+                    newJson = JsonConvert.SerializeObject(Files, Preferences.JsonFormatting == Formatting.Indented ? Formatting.None : Formatting.Indented);
+                }
+                return newJson == savedJson;
             }
-            return newJson == savedJson;
+            catch (Exception ex)
+            {
+                Log.Error(ex, "");
+                return false;
+            }
         }
     }
 }

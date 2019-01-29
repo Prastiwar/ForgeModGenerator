@@ -9,7 +9,7 @@ namespace ForgeModGenerator.Miscellaneous
         public static readonly ILogger ErrorLogger = LogManager.GetLogger("ErrorLog");
         public static readonly ILogger InfoLogger = LogManager.GetLogger("InfoLog");
 
-        public static void Error(Exception ex, string message, bool messageClient = false)
+        public static void Error(Exception ex, string message = "", bool messageClient = false)
         {
             MessageClientIfNeeded(message, messageClient);
             ErrorLogger.Error(ex, message);
@@ -27,7 +27,7 @@ namespace ForgeModGenerator.Miscellaneous
             InfoLogger.Warn(message);
         }
 
-        public static void Warning(Exception ex, string message, bool messageClient = false)
+        public static void Warning(Exception ex, string message = "", bool messageClient = false)
         {
             MessageClientIfNeeded(message, messageClient);
             InfoLogger.Warn(ex, message);

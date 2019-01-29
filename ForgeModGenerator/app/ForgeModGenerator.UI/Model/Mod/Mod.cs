@@ -96,6 +96,52 @@ namespace ForgeModGenerator.Model
             return this;
         }
 
+        public static string GetModidFromPath(string path)
+        {
+            string modname = GetModnameFromPath(path);
+            if (modname != null)
+            {
+                string assetsPath = ModPaths.Assets(modname); // in assets folder there should be always folder with modid
+                int assetsPathLength = assetsPath.Length;
+                try
+                {
+                    foreach (string directory in Directory.EnumerateDirectories(assetsPath))
+                    {
+                        string dir = directory.Replace("\\", "/");
+                        return dir.Remove(0, assetsPathLength + 1);
+                    }
+                }
+                catch (System.Exception ex)
+                {
+                    Log.Error(ex);
+                }
+            }
+            return null;
+        }
+
+        public static string GetModnameFromPath(string path)
+        {
+            bool invalidPath = path == null || (!File.Exists(path) && !Directory.Exists(path));
+            if (invalidPath)
+            {
+                return null;
+            }
+            path = path.Replace("\\", "/");
+            int length = AppPaths.Mods.Length;
+            try
+            {
+                string sub = path.Remove(0, length + 1);
+                int index = sub.IndexOf("/");
+                return index >= 1 ? sub.Substring(0, index) : null;
+
+            }
+            catch (System.Exception ex)
+            {
+                Log.Error(ex);
+                return null;
+            }
+        }
+
         // Writes to FmgModInfo file
         public static void Export(Mod mod)
         {

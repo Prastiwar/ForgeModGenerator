@@ -43,13 +43,17 @@
 				<ResourceDictionary>
 					<c:InvertIntToVisibilityConverter x:Key="InvertIntToVisibilityConverter" />
 				</ResourceDictionary>
-
+				
 				<ResourceDictionary>
-					<c:FileFolderFileItemConverter x:Key="FileFolderFileItemConverter" />
+					<c:PathNameConverter x:Key="PathToNameConverter" />
+				</ResourceDictionary>
+				
+				<ResourceDictionary>
+					<c:SoundEventSoundConverter x:Key="SoundEventSoundConverter" />
 				</ResourceDictionary>
 
 				<ResourceDictionary>
-					<c:PathNameConverter x:Key="PathToNameConverter" />
+					<c:FileFolderFileItemConverter x:Key="FileFolderFileItemConverter" />
 				</ResourceDictionary>
 
 				<ResourceDictionary>
