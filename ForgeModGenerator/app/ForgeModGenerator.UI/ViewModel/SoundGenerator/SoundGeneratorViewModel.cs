@@ -64,6 +64,11 @@ namespace ForgeModGenerator.ViewModel
         {
             try
             {
+                if (param.Item1.Sounds.Count == 1)
+                {
+                    Log.Warning("SoundEvent must have at least 1 sound", true);
+                    return;
+                }
                 if (param.Item1.Sounds.Remove(param.Item2))
                 {
                     try

@@ -11,34 +11,38 @@ namespace ForgeModGenerator.Miscellaneous
 
         public static void Error(Exception ex, string message = "", bool messageClient = false)
         {
-            MessageClientIfNeeded(message, messageClient);
+            if (messageClient)
+            {
+                MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
             ErrorLogger.Error(ex, message);
         }
 
         public static void Info(string message, bool messageClient = false)
         {
-            MessageClientIfNeeded(message, messageClient);
+            if (messageClient)
+            {
+                MessageBox.Show(message, "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
             InfoLogger.Info(message);
         }
 
         public static void Warning(string message, bool messageClient = false)
         {
-            MessageClientIfNeeded(message, messageClient);
+            if (messageClient)
+            {
+                MessageBox.Show(message, "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
             InfoLogger.Warn(message);
         }
 
         public static void Warning(Exception ex, string message = "", bool messageClient = false)
         {
-            MessageClientIfNeeded(message, messageClient);
-            InfoLogger.Warn(ex, message);
-        }
-
-        private static void MessageClientIfNeeded(string message, bool show)
-        {
-            if (show)
+            if (messageClient)
             {
-                MessageBox.Show(message);
+                MessageBox.Show(message, "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
+            ErrorLogger.Warn(ex, message);
         }
     }
 }
