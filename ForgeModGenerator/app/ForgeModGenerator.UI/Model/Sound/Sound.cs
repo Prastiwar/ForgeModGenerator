@@ -10,13 +10,17 @@ namespace ForgeModGenerator.Model
         [JsonConverter(typeof(StringEnumConverter))]
         public enum SoundType { file, @event }
 
-        public Sound(string name)
+        public Sound(string modid, string name)
         {
+            if (modid == null)
+            {
+                throw new System.ArgumentNullException(nameof(modid));
+            }
+
             if (File.Exists(name))
             {
-                Name = FormatSoundName("temp", name);
-                FileName = Path.GetFileName(name);
-                FilePath = name;
+                Name = FormatSoundName(modid, name);
+                SetFileItem(name);
             }
             else
             {

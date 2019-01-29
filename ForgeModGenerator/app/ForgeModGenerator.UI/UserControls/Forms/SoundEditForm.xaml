@@ -20,7 +20,7 @@
 						Padding="0"
 						Margin="5,0,5,0"
 						HorizontalAlignment="Left"
-						Command="{Binding AddSound}"
+						Command="{Binding AddSoundCommand}"
 						CommandParameter="{Binding}" />
 				<TextBox Text="{Binding EventName}"
 						 MinWidth="100"
@@ -39,14 +39,14 @@
 											Height="25"
 											Padding="0"
 											Margin="5,0,5,0"
-											Command="{Binding DeleteSound, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+											Command="{Binding DeleteSoundCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
 											CommandParameter="{Binding}" />
 									<Button Content="{wpf:PackIcon Kind=Edit}"
 											Width="25"
 											Height="25"
 											Padding="0"
 											Margin="5,0,5,0"
-											Command="{Binding ChangeSound, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+											Command="{Binding ChangeSoundCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
 											CommandParameter="{Binding}" />
 									<TextBlock Text="{Binding Name}"
 											   VerticalAlignment="Center" />

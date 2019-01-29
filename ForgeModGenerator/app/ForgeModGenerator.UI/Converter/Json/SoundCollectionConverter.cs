@@ -35,7 +35,9 @@ namespace ForgeModGenerator.Converter
 
             foreach (KeyValuePair<string, JToken> property in item)
             {
-                SoundEvent soundEvent = item.GetValue(property.Key).ToObject<SoundEvent>();
+                JsonSerializer eventSerializer = new JsonSerializer();
+                eventSerializer.Converters.Add(new SoundEventConverter());
+                SoundEvent soundEvent = item.GetValue(property.Key).ToObject<SoundEvent>(eventSerializer);
                 soundEvent.EventName = property.Key;
                 soundEvent.SetFileItem(soundsPath);
                 foreach (Sound sound in soundEvent.Sounds)

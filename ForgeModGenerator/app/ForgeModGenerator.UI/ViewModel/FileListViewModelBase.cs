@@ -7,6 +7,7 @@ using MaterialDesignThemes.Wpf;
 using Microsoft.VisualBasic.FileIO;
 using Newtonsoft.Json;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;

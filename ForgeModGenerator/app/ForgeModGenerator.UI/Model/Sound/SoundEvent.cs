@@ -20,28 +20,21 @@ namespace ForgeModGenerator.Model
             return Path.ChangeExtension(path.Substring(startIndex, path.Length - startIndex), null);
         }
 
-        public SoundEvent(string name) : this(name, new List<Sound>()) { }
+        public SoundEvent(string modid, string name) : this(name, new List<Sound>() { new Sound(modid, name) }) { }
 
         [JsonConstructor]
         public SoundEvent(string name, IEnumerable<Sound> sounds)
         {
-            Sounds = new ObservableCollection<Sound>(sounds);
-            if (File.Exists(name))
+            if (sounds == null)
             {
-                EventName = FormatDottedSoundName(name);
-                SetFileItem(name);
+                throw new System.ArgumentNullException(nameof(sounds));
             }
-            else
+            else if (sounds.Count() <= 0)
             {
-                EventName = name;
+                throw new System.Exception($"{nameof(sounds)} must have at least one occurency.");
             }
-        }
 
-        public SoundEvent(string name, bool replace, string subtitle, Sound[] sounds)
-        {
-            Replace = replace;
-            Subtitle = subtitle;
-            Sounds = new ObservableCollection<Sound>(sounds.ToList());
+            Sounds = new ObservableCollection<Sound>(sounds);
             if (File.Exists(name))
             {
                 EventName = FormatDottedSoundName(name);

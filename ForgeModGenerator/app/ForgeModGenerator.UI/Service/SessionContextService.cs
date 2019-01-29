@@ -28,6 +28,7 @@ namespace ForgeModGenerator.Service
         bool AskBeforeClose { get; set; }
 
         T GetPreferences<T>() where T : PreferenceData;
+        T GetOrCreatePreferences<T>() where T : PreferenceData;
         IEnumerable<Formatting> FormattingTypes { get; }
     }
 
@@ -117,6 +118,12 @@ namespace ForgeModGenerator.Service
             return null;
         }
 
+        public T GetOrCreatePreferences<T>() where T : PreferenceData
+        {
+            T preferences = GetPreferences<T>();
+            return preferences ?? Activator.CreateInstance<T>();
+        }
+
         protected ObservableCollection<Mod> FindMods()
         {
             string[] paths = Directory.GetDirectories(AppPaths.Mods);
@@ -169,6 +176,9 @@ namespace ForgeModGenerator.Service
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
         protected bool Set<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
         {
             if ((field != null && field.Equals(newValue))
@@ -179,11 +189,6 @@ namespace ForgeModGenerator.Service
             field = newValue;
             OnPropertyChanged(propertyName);
             return true;
-        }
-
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

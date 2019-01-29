@@ -25,47 +25,10 @@ namespace ForgeModGenerator.ViewModel
             OpenFileDialog.Filter = "Sound file (*.ogg) | *.ogg";
             AllowedExtensions = new string[] { ".ogg" };
             FileEditForm = new UserControls.SoundEditForm();
-            Preferences = sessionContext.GetPreferences<SoundsGeneratorPreferences>();
-            if (Preferences == null)
-            {
-                Preferences = SoundsGeneratorPreferences.Default;
-            }
+            Preferences = sessionContext.GetOrCreatePreferences<SoundsGeneratorPreferences>();
             Refresh();
             OnFileAdded += AddSoundToJson;
             OnFileRemoved += RemoveSoundFromJson;
-        }
-
-        private void AddSoundToJson(object item)
-        {
-            SoundEvent sound = (SoundEvent)item;
-            if (!HasSoundWritten(sound.EventName))
-            {
-                // TODO: Add sound
-            }
-            ForceJsonUpdate();
-        }
-
-        private void RemoveSoundFromJson(object item)
-        {
-            SoundEvent sound = (SoundEvent)item;
-            if (HasSoundWritten(sound.EventName))
-            {
-                // TODO: Remove sound
-            }
-            ForceJsonUpdate();
-        }
-
-        protected override void FileCollection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            base.FileCollection_CollectionChanged(sender, e);
-            ShouldUpdate = CanRefresh() ? IsUpdateAvailable() : false;
-        }
-
-        protected override bool Refresh()
-        {
-            bool canRefresh = base.Refresh();
-            ShouldUpdate = canRefresh ? IsUpdateAvailable() : false;
-            return canRefresh;
         }
 
         private bool shouldUpdate;
@@ -77,40 +40,29 @@ namespace ForgeModGenerator.ViewModel
         private ICommand updateSoundsJson;
         public ICommand UpdateSoundsJson => updateSoundsJson ?? (updateSoundsJson = new RelayCommand(ForceJsonUpdate));
 
+        protected override bool CanRefresh() => SessionContext.SelectedMod != null;
+
+        protected override bool Refresh()
+        {
+            bool canRefresh = base.Refresh();
+            ShouldUpdate = canRefresh ? IsUpdateAvailable() : false;
+            return canRefresh;
+        }
+
+        protected override void FileCollection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            base.FileCollection_CollectionChanged(sender, e);
+            ShouldUpdate = CanRefresh() ? IsUpdateAvailable() : false;
+        }
+
         protected override void OnEdited(bool result, IFileItem file)
         {
             if (result)
             {
                 // TODO: Save changes
-                ForceJsonUpdate();
+                ForceJsonUpdate(); // temporary solution
             }
         }
-
-        private void ForceJsonUpdate()
-        {
-            Converter.SoundCollectionConverter converter = new Converter.SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
-            string json = JsonConvert.SerializeObject(Files, Preferences.JsonFormatting, converter);
-            File.WriteAllText(CollectionRootPath, json);
-        }
-
-        private bool HasSoundWritten(string soundEventName)
-        {
-            return File.ReadLines(CollectionRootPath).Any(x => x.Contains(soundEventName));
-        }
-
-        private bool IsUpdateAvailable()
-        {
-            Converter.SoundCollectionConverter converter = new Converter.SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
-            string newJson = JsonConvert.SerializeObject(Files, Preferences.JsonFormatting);
-            string savedJson = File.ReadAllText(CollectionRootPath);
-            if (newJson == savedJson)
-            {
-                newJson = JsonConvert.SerializeObject(Files, Preferences.JsonFormatting == Formatting.Indented ? Formatting.None : Formatting.Indented);
-            }
-            return newJson == savedJson;
-        }
-
-        protected override bool CanRefresh() => SessionContext.SelectedMod != null;
 
         protected override ObservableCollection<FileList<SoundEvent>> FindCollection(string path, bool createRootIfEmpty)
         {
@@ -136,6 +88,50 @@ namespace ForgeModGenerator.ViewModel
                 Log.Error(ex, "Couldn't load sounds.json");
                 throw;
             }
+        }
+
+        protected void AddSoundToJson(object item)
+        {
+            SoundEvent sound = (SoundEvent)item;
+            if (!HasSoundWritten(sound.EventName))
+            {
+                // TODO: Add sound
+            }
+            ForceJsonUpdate(); // temporary solution
+        }
+
+        protected void RemoveSoundFromJson(object item)
+        {
+            SoundEvent sound = (SoundEvent)item;
+            if (HasSoundWritten(sound.EventName))
+            {
+                // TODO: Remove sound
+            }
+            ForceJsonUpdate(); // temporary solution
+        }
+
+        protected void ForceJsonUpdate()
+        {
+            Converter.SoundCollectionConverter converter = new Converter.SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
+            string json = JsonConvert.SerializeObject(Files, Preferences.JsonFormatting, converter);
+            File.WriteAllText(CollectionRootPath, json);
+        }
+
+        protected bool HasSoundWritten(string soundEventName)
+        {
+            return File.ReadLines(CollectionRootPath).Any(x => x.Contains(soundEventName));
+        }
+
+        protected bool IsUpdateAvailable()
+        {
+            Converter.SoundCollectionConverter converter = new Converter.SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
+            string newJson = JsonConvert.SerializeObject(Files, Preferences.JsonFormatting);
+            string savedJson = File.ReadAllText(CollectionRootPath);
+            if (newJson == savedJson)
+            {
+                newJson = JsonConvert.SerializeObject(Files, Preferences.JsonFormatting == Formatting.Indented ? Formatting.None : Formatting.Indented);
+            }
+            return newJson == savedJson;
         }
     }
 }

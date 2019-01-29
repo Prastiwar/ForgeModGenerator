@@ -122,7 +122,9 @@
     <Compile Include="Converter\InvertIntToVisibilityConverter.cs" />
     <Compile Include="Converter\IntToVisibilityConverter.cs" />
     <Compile Include="Converter\InvertBooleanConverter.cs" />
-    <Compile Include="Converter\SoundCollectionConverter.cs" />
+    <Compile Include="Converter\Json\SoundCollectionConverter.cs" />
+    <Compile Include="Converter\Json\SoundConverter.cs" />
+    <Compile Include="Converter\Json\SoundEventConverter.cs" />
     <Compile Include="Core\CodeOperation.cs" />
     <Compile Include="Miscellaneous\IOExtensions.cs" />
     <Compile Include="Miscellaneous\Log.cs" />
