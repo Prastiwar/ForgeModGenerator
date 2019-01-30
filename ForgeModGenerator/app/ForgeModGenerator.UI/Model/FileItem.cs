@@ -1,10 +1,17 @@
 ﻿using GalaSoft.MvvmLight;
+using System;
 using System.ComponentModel;
 using System.IO;
 
 namespace ForgeModGenerator.Model
 {
-    public interface IFileItem : INotifyPropertyChanged
+    public interface ICopiable : ICloneable
+    {
+        bool CopyValues(object fromCopy);
+        object DeepClone();
+    }
+
+    public interface IFileItem : INotifyPropertyChanged, ICopiable
     {
         string FileName { get; }
         string FilePath { get; }
@@ -16,6 +23,8 @@ namespace ForgeModGenerator.Model
         public string FileName { get; protected set; }
         public string FilePath { get; protected set; }
 
+        private FileItem() { }
+
         public FileItem(string filePath)
         {
             SetFileItem(filePath);
@@ -25,6 +34,21 @@ namespace ForgeModGenerator.Model
         {
             FilePath = filePath;
             FileName = Path.GetFileName(filePath);
+        }
+
+        public object Clone() => MemberwiseClone();
+
+        public object DeepClone() => new FileItem() { FileName = FileName, FilePath = FilePath };
+
+        public bool CopyValues(object fromCopy)
+        {
+            if (fromCopy is IFileItem fileItem)
+            {
+                FileName = fileItem.FileName;
+                FilePath = fileItem.FilePath;
+                return true;
+            }
+            return false;
         }
     }
 }

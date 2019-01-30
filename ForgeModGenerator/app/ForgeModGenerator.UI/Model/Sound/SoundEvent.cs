@@ -9,16 +9,7 @@ namespace ForgeModGenerator.Model
 {
     public class SoundEvent : ObservableObject, IFileItem
     {
-        // Get formatted sound from full path, "shorten.path.toFile"
-        public static string FormatDottedSoundName(string path)
-        {
-            int startIndex = path.IndexOf("sounds") + 7;
-            if (startIndex == -1)
-            {
-                return null;
-            }
-            return Path.ChangeExtension(path.Substring(startIndex, path.Length - startIndex), null);
-        }
+        private SoundEvent() { }
 
         public SoundEvent(string name) : this(name, new List<Sound>() { new Sound(Mod.GetModidFromPath(name), name) }) { }
 
@@ -37,6 +28,7 @@ namespace ForgeModGenerator.Model
             }
 
             Sounds = new ObservableCollection<Sound>(sounds);
+            Sounds.CollectionChanged += Sounds_CollectionChanged;
             if (File.Exists(name))
             {
                 EventName = FormatDottedSoundName(name);
@@ -45,6 +37,28 @@ namespace ForgeModGenerator.Model
             else
             {
                 EventName = name;
+            }
+        }
+
+        public delegate void OnSoundChangedEventHandler(Sound soundChanged);
+        public event OnSoundChangedEventHandler OnSoundAdded;
+        public event OnSoundChangedEventHandler OnSoundRemoved;
+
+        private void Sounds_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+            {
+                foreach (object item in e.NewItems)
+                {
+                    OnSoundAdded?.Invoke((Sound)item);
+                }
+            }
+            else if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
+            {
+                foreach (object item in e.OldItems)
+                {
+                    OnSoundRemoved?.Invoke((Sound)item);
+                }
             }
         }
 
@@ -85,6 +99,53 @@ namespace ForgeModGenerator.Model
         public ObservableCollection<Sound> Sounds {
             get => sounds;
             set => Set(ref sounds, value);
+        }
+
+        // Get formatted sound from full path, "shorten.path.toFile"
+        public static string FormatDottedSoundName(string path)
+        {
+            int startIndex = path.IndexOf("sounds") + 7;
+            if (startIndex == -1)
+            {
+                return null;
+            }
+            return Path.ChangeExtension(path.Substring(startIndex, path.Length - startIndex), null);
+        }
+
+        public bool CopyValues(object fromCopy)
+        {
+            if (fromCopy is SoundEvent soundEvent)
+            {
+                FileName = soundEvent.FileName;
+                FilePath = soundEvent.FilePath;
+                EventName = soundEvent.EventName;
+                Replace = soundEvent.Replace;
+                Subtitle = soundEvent.Subtitle;
+                System.Windows.MessageBox.Show(soundEvent.Sounds.Count.ToString());
+                Sounds = new ObservableCollection<Sound>(soundEvent.Sounds);
+                Sounds.CollectionChanged += Sounds_CollectionChanged;
+                return true;
+            }
+            return false;
+        }
+
+        public object Clone() => MemberwiseClone();
+
+        public object DeepClone()
+        {
+            ObservableCollection<Sound> sounds = new ObservableCollection<Sound>();
+            foreach (Sound sound in Sounds)
+            {
+                sounds.Add((Sound)sound.DeepClone());
+            }
+            return new SoundEvent() {
+                FileName = FileName,
+                FilePath = FilePath,
+                EventName = EventName,
+                Replace = Replace,
+                Subtitle = Subtitle,
+                Sounds = sounds
+            };
         }
     }
 }

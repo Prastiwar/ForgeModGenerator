@@ -53,9 +53,9 @@ namespace ForgeModGenerator.ViewModel
         public ICommand DeleteSoundCommand => deleteSoundCommand ?? (deleteSoundCommand = new RelayCommand<Tuple<SoundEvent, Sound>>(DeleteSound));
 
         private ICommand changeSoundCommand;
-        public ICommand ChangeSoundCommand => changeSoundCommand ?? (changeSoundCommand = new RelayCommand<Sound>(ChangeSound));
+        public ICommand ChangeSoundCommand => changeSoundCommand ?? (changeSoundCommand = new RelayCommand<Sound>(ChangeSoundName));
 
-        private void ChangeSound(Sound obj)
+        private void ChangeSoundName(Sound obj)
         {
             throw new NotImplementedException();
         }
@@ -109,7 +109,8 @@ namespace ForgeModGenerator.ViewModel
                             Log.Error(ex, $"Couldn't add {fileName} to {soundEvent.EventName}. Make sure the file is not opened by any process.", true);
                             continue;
                         }
-                        soundEvent.Sounds.Add(new Sound(SessionContext.SelectedMod.ModInfo.Modid, newFilePath));
+                        Sound newSound = new Sound(SessionContext.SelectedMod.ModInfo.Modid, newFilePath);
+                        soundEvent.Sounds.Add(newSound);
                     }
                 }
             }
@@ -136,10 +137,16 @@ namespace ForgeModGenerator.ViewModel
 
         protected override void OnEdited(bool result, IFileItem file)
         {
+            SoundEvent soundEvent = (SoundEvent)file;
             if (result)
             {
                 // TODO: Save changes
                 ForceJsonUpdate(); // temporary solution
+            }
+            else
+            {
+                // undo commands
+                base.OnEdited(result, file);
             }
         }
 
@@ -172,20 +179,41 @@ namespace ForgeModGenerator.ViewModel
 
         protected void AddSoundToJson(object item)
         {
-            SoundEvent sound = (SoundEvent)item;
-            if (!HasSoundWritten(sound.EventName))
+            if (item is SoundEvent soundEvent)
             {
-                // TODO: Add sound
+                if (!HasSoundWritten(soundEvent.EventName))
+                {
+                    // TODO: Add sound
+                }
+            }
+            else if (item is Sound sound)
+            {
+                if (!HasSoundWritten(sound.Name))
+                {
+                    // TODO: Add sound
+                }
             }
             ForceJsonUpdate(); // temporary solution
         }
 
         protected void RemoveSoundFromJson(object item)
         {
-            SoundEvent sound = (SoundEvent)item;
-            if (HasSoundWritten(sound.EventName))
+            if (item is SoundEvent soundEvent)
             {
-                // TODO: Remove sound
+                if (HasSoundWritten(soundEvent.EventName))
+                {
+                    foreach (Sound sound in soundEvent.Sounds)
+                    {
+                        // TODO: Remove sound
+                    }
+                }
+            }
+            else if (item is Sound sound)
+            {
+                if (HasSoundWritten(sound.Name))
+                {
+                    // TODO: Remove sound
+                }
             }
             ForceJsonUpdate(); // temporary solution
         }
@@ -204,10 +232,7 @@ namespace ForgeModGenerator.ViewModel
             }
         }
 
-        protected bool HasSoundWritten(string soundEventName)
-        {
-            return File.ReadLines(CollectionRootPath).Any(x => x.Contains(soundEventName));
-        }
+        protected bool HasSoundWritten(string sound) => File.ReadLines(CollectionRootPath).Any(x => x.Contains($"\"{sound}\""));
 
         protected bool IsUpdateAvailable()
         {

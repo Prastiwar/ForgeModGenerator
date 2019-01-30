@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.Caching;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
@@ -45,6 +46,8 @@ namespace ForgeModGenerator.ViewModel
         public string[] AllowedExtensions { get; protected set; }
 
         protected FrameworkElement FileEditForm { get; set; }
+
+        protected string EditFileCacheKey => "EditFileCacheKey";
 
         private ObservableCollection<FileList<T>> files;
         public ObservableCollection<FileList<T>> Files {
@@ -85,7 +88,6 @@ namespace ForgeModGenerator.ViewModel
             return false;
         }
 
-        protected virtual void OnEdited(bool result, IFileItem file) { }
         protected virtual void OpenedEventHandler(object sender, DialogOpenedEventArgs eventArgs) { }
         protected virtual void ClosingEventHandler(object sender, DialogClosingEventArgs eventArgs) { }
         protected virtual async void Edit(IFileItem file)
@@ -94,6 +96,7 @@ namespace ForgeModGenerator.ViewModel
             bool result = false;
             try
             {
+                MemoryCache.Default.Set(EditFileCacheKey, SelectedFileItem.DeepClone(), ObjectCache.InfiniteAbsoluteExpiration);
                 FileEditForm.DataContext = SelectedFileItem;
                 result = (bool)await DialogHost.Show(FileEditForm, OpenedEventHandler, ClosingEventHandler);
             }
@@ -103,6 +106,15 @@ namespace ForgeModGenerator.ViewModel
                 return;
             }
             OnEdited(result, file);
+        }
+
+        protected virtual void OnEdited(bool result, IFileItem file)
+        {
+            if (!result)
+            {
+                // TODO: Undo commands
+                file.CopyValues(MemoryCache.Default.Remove(EditFileCacheKey));
+            }
         }
 
         protected virtual void Remove(Tuple<IFileFolder, IFileItem> param)

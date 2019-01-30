@@ -10,6 +10,8 @@ namespace ForgeModGenerator.Model
         [JsonConverter(typeof(StringEnumConverter))]
         public enum SoundType { file, @event }
 
+        private Sound() { }
+
         public Sound(string modid, string name)
         {
             if (modid == null)
@@ -26,18 +28,6 @@ namespace ForgeModGenerator.Model
             {
                 Name = name;
             }
-        }
-
-        // Get formatted sound from full path, "modid:shorten/path/toFile"
-        public static string FormatSoundName(string modid, string path)
-        {
-            int startIndex = path.IndexOf("sounds") + 7;
-            if (startIndex == -1)
-            {
-                return null;
-            }
-            string shortPath = Path.ChangeExtension(path.Substring(startIndex, path.Length - startIndex), null);
-            return $"{modid}:{shortPath}";
         }
 
         [JsonIgnore]
@@ -106,6 +96,55 @@ namespace ForgeModGenerator.Model
         public SoundType Type {
             get => type;
             set => Set(ref type, value);
+        }
+
+        // Get formatted sound from full path, "modid:shorten/path/toFile"
+        public static string FormatSoundName(string modid, string path)
+        {
+            int startIndex = path.IndexOf("sounds") + 7;
+            if (startIndex == -1)
+            {
+                return null;
+            }
+            string shortPath = Path.ChangeExtension(path.Substring(startIndex, path.Length - startIndex), null);
+            return $"{modid}:{shortPath}";
+        }
+
+        public object Clone() => MemberwiseClone();
+
+        public object DeepClone()
+        {
+            return new Sound() {
+                FileName = FileName,
+                FilePath = FilePath,
+                Name = Name,
+                Volume = Volume,
+                Pitch = Pitch,
+                Weight = Weight,
+                Stream = Stream,
+                AttenuationDistance = AttenuationDistance,
+                Preload = Preload,
+                Type = Type
+            };
+        }
+
+        public bool CopyValues(object fromCopy)
+        {
+            if (fromCopy is Sound sound)
+            {
+                FileName = sound.FileName;
+                FilePath = sound.FilePath;
+                Name = sound.Name;
+                Volume = sound.Volume;
+                Pitch = sound.Pitch;
+                Weight = sound.Weight;
+                Stream = sound.Stream;
+                AttenuationDistance = sound.AttenuationDistance;
+                Preload = sound.Preload;
+                Type = sound.Type;
+                return true;
+            }
+            return false;
         }
     }
 }
