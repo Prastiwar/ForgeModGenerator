@@ -137,7 +137,9 @@
     <Compile Include="Model\Preferences\PreferenceData.cs" />
     <Compile Include="Model\Preferences\SoundsGeneratorPreferences.cs" />
     <Compile Include="Model\Sound\SoundEvent.cs" />
+    <Compile Include="Service\CommandTracker.cs" />
     <Compile Include="Service\ModBuildService.cs" />
+    <Compile Include="Core\ReferenceCounter.cs" />
     <Compile Include="UserControls\FileCollectionListBox.xaml.cs">
       <DependentUpon>FileCollectionListBox.xaml</DependentUpon>
     </Compile>

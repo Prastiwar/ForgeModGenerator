@@ -18,6 +18,10 @@ namespace ForgeModGenerator.Model
     public class FileList<T> : ObservableCollection<T>, IFileFolder
         where T : IFileItem
     {
+        public delegate void OnFileChangedEventHandler(T file);
+        public event OnFileChangedEventHandler OnFileAdded;
+        public event OnFileChangedEventHandler OnFileRemoved;
+
         public string HeaderName { get; set; }
         public string DestinationPath { get; set; }
 
@@ -25,6 +29,28 @@ namespace ForgeModGenerator.Model
         {
             DestinationPath = destinationPath;
             HeaderName = new DirectoryInfo(DestinationPath).Name;
+            CollectionChanged += FileList_CollectionChanged;
+        }
+
+        private void FileList_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (object item in e.NewItems)
+                {
+                    T file = (T)item;
+                    OnFileAdded?.Invoke(file);
+                }
+            }
+            else if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                foreach (object item in e.OldItems)
+                {
+                    T file = (T)item;
+                    ReferenceCounter.RemoveReference(file.FilePath, file);
+                    OnFileRemoved?.Invoke(file);
+                }
+            }
         }
 
         public FileList(string destinationPath, IEnumerable<T> otherCollection) : this(destinationPath)

@@ -1,11 +1,10 @@
-﻿using GalaSoft.MvvmLight;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.IO;
 
 namespace ForgeModGenerator.Model
 {
-    public class Sound : ObservableObject, IFileItem
+    public class Sound : FileItem
     {
         [JsonConverter(typeof(StringEnumConverter))]
         public enum SoundType { file, @event }
@@ -28,18 +27,6 @@ namespace ForgeModGenerator.Model
             {
                 Name = name;
             }
-        }
-
-        [JsonIgnore]
-        public string FileName { get; protected set; }
-
-        [JsonIgnore]
-        public string FilePath { get; protected set; }
-
-        public void SetFileItem(string filePath)
-        {
-            FilePath = filePath;
-            FileName = Path.GetFileName(name);
         }
 
         private string name;
@@ -110,13 +97,15 @@ namespace ForgeModGenerator.Model
             return $"{modid}:{shortPath}";
         }
 
-        public object Clone() => MemberwiseClone();
+        public override bool ShouldSerializeFilePath() => false;
+        public override bool ShouldSerializeFileName() => false;
 
-        public object DeepClone()
+        public override object DeepClone() => DeepClone(true);
+
+        public override object DeepClone(bool countReference)
         {
-            return new Sound() {
+            Sound sound = new Sound() {
                 FileName = FileName,
-                FilePath = FilePath,
                 Name = Name,
                 Volume = Volume,
                 Pitch = Pitch,
@@ -126,9 +115,18 @@ namespace ForgeModGenerator.Model
                 Preload = Preload,
                 Type = Type
             };
+            if (countReference)
+            {
+                sound.FilePath = FilePath;
+            }
+            else
+            {
+                sound.filePath = FilePath;
+            }
+            return sound;
         }
 
-        public bool CopyValues(object fromCopy)
+        public override bool CopyValues(object fromCopy)
         {
             if (fromCopy is Sound sound)
             {

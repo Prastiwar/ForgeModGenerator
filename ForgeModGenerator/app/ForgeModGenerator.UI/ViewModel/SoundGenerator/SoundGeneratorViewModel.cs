@@ -71,6 +71,10 @@ namespace ForgeModGenerator.ViewModel
                 }
                 if (param.Item1.Sounds.Remove(param.Item2))
                 {
+                    if (ReferenceCounter.GetReferenceCount(param.Item2.FilePath) >= 1)
+                    {
+                        return; // do not remove file since it's referenced by any other sound
+                    }
                     try
                     {
                         FileSystem.DeleteFile(param.Item2.FilePath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
@@ -79,7 +83,6 @@ namespace ForgeModGenerator.ViewModel
                     {
                         Log.Error(ex, $"Couldn't delete {param.Item2.FilePath}. Make sure it's not used by any process", true);
                         param.Item1.Sounds.Add(param.Item2); // delete failed, so get item back to collection
-                        return;
                     }
                 }
             }
@@ -106,10 +109,15 @@ namespace ForgeModGenerator.ViewModel
                             {
                                 File.Copy(filePath, newFilePath);
                             }
+                            else if (soundEvent.Sounds.Any(x => x.FilePath == newFilePath))
+                            {
+                                Log.Warning($"{soundEvent.EventName} already has this sound", true);
+                                return;
+                            }
                         }
                         catch (Exception ex)
                         {
-                            Log.Error(ex, $"Couldn't add {fileName} to {soundEvent.EventName}. Make sure the file is not opened by any process.", true);
+                            Log.Error(ex, $"Couldn't add {fileName} to {soundEvent.EventName}. Make sure the file is not opened by any process", true);
                             continue;
                         }
                         Sound newSound = new Sound(SessionContext.SelectedMod.ModInfo.Modid, newFilePath);
@@ -173,7 +181,7 @@ namespace ForgeModGenerator.ViewModel
             }
             else
             {
-                // undo commands
+                // TODO: Undo commands
                 base.OnEdited(result, file);
             }
         }

@@ -1,5 +1,4 @@
-﻿using GalaSoft.MvvmLight;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -7,7 +6,7 @@ using System.Linq;
 
 namespace ForgeModGenerator.Model
 {
-    public class SoundEvent : ObservableObject, IFileItem
+    public class SoundEvent : FileItem
     {
         private SoundEvent() { }
 
@@ -57,21 +56,11 @@ namespace ForgeModGenerator.Model
             {
                 foreach (object item in e.OldItems)
                 {
-                    OnSoundRemoved?.Invoke((Sound)item);
+                    Sound sound = (Sound)item;
+                    ReferenceCounter.RemoveReference(sound.FilePath, sound);
+                    OnSoundRemoved?.Invoke(sound);
                 }
             }
-        }
-
-        [JsonIgnore]
-        public string FileName { get; protected set; }
-
-        [JsonIgnore]
-        public string FilePath { get; protected set; }
-
-        public void SetFileItem(string filePath)
-        {
-            FilePath = filePath;
-            FileName = Path.GetFileName(eventName);
         }
 
         private string eventName;
@@ -95,6 +84,7 @@ namespace ForgeModGenerator.Model
         }
 
         private ObservableCollection<Sound> sounds;
+
         [JsonProperty(PropertyName = "sounds")]
         public ObservableCollection<Sound> Sounds {
             get => sounds;
@@ -112,7 +102,7 @@ namespace ForgeModGenerator.Model
             return Path.ChangeExtension(path.Substring(startIndex, path.Length - startIndex), null);
         }
 
-        public bool CopyValues(object fromCopy)
+        public override bool CopyValues(object fromCopy)
         {
             if (fromCopy is SoundEvent soundEvent)
             {
@@ -128,23 +118,34 @@ namespace ForgeModGenerator.Model
             return false;
         }
 
-        public object Clone() => MemberwiseClone();
+        public override bool ShouldSerializeFilePath() => false;
+        public override bool ShouldSerializeFileName() => false;
 
-        public object DeepClone()
+        public override object DeepClone() => DeepClone(true);
+
+        public override object DeepClone(bool countReference)
         {
             ObservableCollection<Sound> sounds = new ObservableCollection<Sound>();
             foreach (Sound sound in Sounds)
             {
-                sounds.Add((Sound)sound.DeepClone());
+                sounds.Add((Sound)sound.DeepClone(countReference));
             }
-            return new SoundEvent() {
+            SoundEvent soundEvent = new SoundEvent() {
                 FileName = FileName,
-                FilePath = FilePath,
                 EventName = EventName,
                 Replace = Replace,
                 Subtitle = Subtitle,
                 Sounds = sounds
             };
+            if (countReference)
+            {
+                soundEvent.FilePath = FilePath;
+            }
+            else
+            {
+                soundEvent.filePath = FilePath;
+            }
+            return soundEvent;
         }
     }
 }

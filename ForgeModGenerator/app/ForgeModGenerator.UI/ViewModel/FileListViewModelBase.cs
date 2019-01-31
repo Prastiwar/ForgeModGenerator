@@ -107,7 +107,7 @@ namespace ForgeModGenerator.ViewModel
             bool result = false;
             try
             {
-                MemoryCache.Default.Set(EditFileCacheKey, SelectedFileItem.DeepClone(), ObjectCache.InfiniteAbsoluteExpiration);
+                MemoryCache.Default.Set(EditFileCacheKey, SelectedFileItem.DeepClone(false), ObjectCache.InfiniteAbsoluteExpiration);
                 FileEditForm.DataContext = SelectedFileItem;
                 result = (bool)await DialogHost.Show(FileEditForm, OpenedEventHandler, ClosingEventHandler);
             }

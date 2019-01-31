@@ -16,31 +16,50 @@ namespace ForgeModGenerator.Model
         string FileName { get; }
         string FilePath { get; }
         void SetFileItem(string filePath);
+        object DeepClone(bool countReference);
     }
 
     public class FileItem : ObservableObject, IFileItem
     {
-        public string FileName { get; protected set; }
-        public string FilePath { get; protected set; }
+        protected FileItem() { }
 
-        private FileItem() { }
+        public FileItem(string filePath) => SetFileItem(filePath);
 
-        public FileItem(string filePath)
-        {
-            SetFileItem(filePath);
+        ~FileItem() => ReferenceCounter.RemoveReference(FilePath, this);
+
+        private string fileName;
+        public string FileName {
+            get => fileName;
+            protected set => Set(ref fileName, value);
         }
 
-        public void SetFileItem(string filePath)
+        protected string filePath;
+        public string FilePath {
+            get => filePath;
+            protected set {
+                ReferenceCounter.RemoveReference(filePath, this);
+                Set(ref filePath, value);
+                ReferenceCounter.AddReference(filePath, this);
+            }
+        }
+
+        public virtual void SetFileItem(string filePath)
         {
             FilePath = filePath;
             FileName = Path.GetFileName(filePath);
         }
 
-        public object Clone() => MemberwiseClone();
+        public virtual bool ShouldSerializeFilePath() => true;
 
-        public object DeepClone() => new FileItem() { FileName = FileName, FilePath = FilePath };
+        public virtual bool ShouldSerializeFileName() => true;
 
-        public bool CopyValues(object fromCopy)
+        public virtual object Clone() => MemberwiseClone();
+
+        public virtual object DeepClone() => DeepClone(true);
+
+        public virtual object DeepClone(bool countReference) => countReference ? new FileItem() { FileName = FileName, FilePath = FilePath } : new FileItem() { FileName = FileName, filePath = FilePath };
+
+        public virtual bool CopyValues(object fromCopy)
         {
             if (fromCopy is IFileItem fileItem)
             {
