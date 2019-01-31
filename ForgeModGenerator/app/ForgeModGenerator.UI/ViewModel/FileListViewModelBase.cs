@@ -89,7 +89,18 @@ namespace ForgeModGenerator.ViewModel
         }
 
         protected virtual void OpenedEventHandler(object sender, DialogOpenedEventArgs eventArgs) { }
-        protected virtual void ClosingEventHandler(object sender, DialogClosingEventArgs eventArgs) { }
+
+        protected virtual void ClosingEventHandler(object sender, DialogClosingEventArgs eventArgs)
+        {
+            bool result = (bool)eventArgs.Parameter;
+            if (!CanBeEdited(result, SelectedFileItem))
+            {
+                eventArgs.Cancel();
+            }
+        }
+
+        protected virtual bool CanBeEdited(bool result, IFileItem file) => true;
+
         protected virtual async void Edit(IFileItem file)
         {
             SelectedFileItem = (T)file;
@@ -145,8 +156,8 @@ namespace ForgeModGenerator.ViewModel
         {
             try
             {
-                DialogResult result = OpenFileDialog.ShowDialog();
-                if (result == DialogResult.OK)
+                DialogResult dialogResult = OpenFileDialog.ShowDialog();
+                if (dialogResult == DialogResult.OK)
                 {
                     foreach (string filePath in OpenFileDialog.FileNames)
                     {
@@ -154,7 +165,12 @@ namespace ForgeModGenerator.ViewModel
                         string newFilePath = Path.Combine(collection.DestinationPath, fileName);
                         try
                         {
-                            File.Copy(filePath, newFilePath);
+                            if (File.Exists(newFilePath))
+                            {
+                                Log.Warning($"File {newFilePath} already exists.", true);
+                                return;
+                            }
+                            File.Copy(filePath, newFilePath, true);
                         }
                         catch (Exception ex)
                         {

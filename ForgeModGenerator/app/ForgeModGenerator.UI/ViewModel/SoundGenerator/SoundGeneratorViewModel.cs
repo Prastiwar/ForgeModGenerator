@@ -102,7 +102,10 @@ namespace ForgeModGenerator.ViewModel
                         string newFilePath = Path.Combine(soundEvent.FilePath, fileName);
                         try
                         {
-                            File.Copy(filePath, newFilePath);
+                            if (!File.Exists(newFilePath))
+                            {
+                                File.Copy(filePath, newFilePath);
+                            }
                         }
                         catch (Exception ex)
                         {
@@ -133,6 +136,31 @@ namespace ForgeModGenerator.ViewModel
         {
             base.FileCollection_CollectionChanged(sender, e);
             ShouldUpdate = CanRefresh() ? IsUpdateAvailable() : false;
+        }
+
+        protected override bool CanBeEdited(bool result, IFileItem file)
+        {
+            if (result)
+            {
+                SoundEvent soundEvent = (SoundEvent)file;
+                int foundOccurencies = 0;
+                foreach (FileList<SoundEvent> fileList in Files)
+                {
+                    foreach (SoundEvent item in fileList)
+                    {
+                        if (item.EventName == soundEvent.EventName)
+                        {
+                            foundOccurencies++;
+                            if (foundOccurencies > 1)
+                            {
+                                Log.Warning("The sound event name already exists. Duplicates are not allowed", true);
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+            return true;
         }
 
         protected override void OnEdited(bool result, IFileItem file)

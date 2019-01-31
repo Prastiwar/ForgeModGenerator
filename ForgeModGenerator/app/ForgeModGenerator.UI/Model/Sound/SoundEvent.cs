@@ -121,7 +121,6 @@ namespace ForgeModGenerator.Model
                 EventName = soundEvent.EventName;
                 Replace = soundEvent.Replace;
                 Subtitle = soundEvent.Subtitle;
-                System.Windows.MessageBox.Show(soundEvent.Sounds.Count.ToString());
                 Sounds = new ObservableCollection<Sound>(soundEvent.Sounds);
                 Sounds.CollectionChanged += Sounds_CollectionChanged;
                 return true;
