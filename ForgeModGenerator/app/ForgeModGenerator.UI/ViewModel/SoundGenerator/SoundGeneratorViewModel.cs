@@ -247,6 +247,10 @@ namespace ForgeModGenerator.ViewModel
             {
                 SoundEvent cachedSoundEvent = (SoundEvent)fileBeforeEdit;
                 SoundEvent newSoundEvent = (SoundEvent)fileAfterEdit;
+                MessageBox.Show(ReferenceCounter.GetReferenceCount(newSoundEvent.EventName).ToString());
+                foreach (object item in ReferenceCounter.GetReferences(newSoundEvent.EventName))
+                {
+                }
                 if (ReferenceCounter.GetReferenceCount(newSoundEvent.EventName) > 1)
                 {
                     Log.Warning("The sound event name already exists. Duplicates are not allowed", true);
@@ -295,10 +299,6 @@ namespace ForgeModGenerator.ViewModel
                 if (param.Item1.RemoveFile(param.Item2))
                 {
                     SoundEvent soundEvent = (SoundEvent)param.Item2;
-                    //foreach (Sound sound in soundEvent.Sounds)
-                    //{
-                    //    DeleteSound(new Tuple<SoundEvent, Sound>(soundEvent, sound), true);
-                    //}
                     int length = soundEvent.Sounds.Count;
                     for (int i = 0; i < length; i++)
                     {
@@ -321,14 +321,22 @@ namespace ForgeModGenerator.ViewModel
                 if (!File.Exists(path))
                 {
                     File.AppendAllText(path, "{}");
-                    return createRootIfEmpty ? CreateEmptyRoot(soundsFolder) : rootCollection;
+                    return createRootIfEmpty ? CreateEmptyRoot(soundsFolder) : null;
                 }
                 Converter.SoundCollectionConverter converter = new Converter.SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
 
                 rootCollection = JsonConvert.DeserializeObject<ObservableCollection<FileList<SoundEvent>>>(File.ReadAllText(path), converter);
+
                 if (createRootIfEmpty && (rootCollection == null || rootCollection.Count <= 0))
                 {
                     rootCollection = CreateEmptyRoot(soundsFolder);
+                }
+                else if (rootCollection != null)
+                {
+                    foreach (FileList<SoundEvent> item in rootCollection)
+                    {
+                        item.CollectionChanged += FileCollection_CollectionChanged;
+                    }
                 }
                 return rootCollection;
             }

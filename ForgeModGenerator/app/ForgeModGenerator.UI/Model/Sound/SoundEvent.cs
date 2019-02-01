@@ -10,19 +10,41 @@ namespace ForgeModGenerator.Model
     {
         private SoundEvent() { }
 
-        public SoundEvent(string name) : this(name, new List<Sound>() { new Sound(Mod.GetModidFromPath(name), name) }) { }
+        public SoundEvent(string name) : this(new List<Sound>() { new Sound(Mod.GetModidFromPath(name), name) }) { }
 
         public SoundEvent(string modid, string name) : this(name, new List<Sound>() { new Sound(modid, name) }) { }
+
+        public SoundEvent(IEnumerable<Sound> sounds)
+        {
+            if (sounds == null)
+            {
+                Log.Error(null, "Called SoundEvent with null sounds parameter");
+                throw new System.ArgumentNullException(nameof(sounds));
+            }
+            else if (sounds.Count() <= 0)
+            {
+                Log.Error(null, "Called SoundEvent with sounds count <= 0 parameter");
+                throw new System.Exception($"{nameof(sounds)} must have at least one occurency.");
+            }
+
+            Sounds = new ObservableCollection<Sound>(sounds);
+            Sounds.CollectionChanged += Sounds_CollectionChanged;
+            EventName = FormatDottedSoundName(Sounds[0].FilePath);
+            SetFileItem(EventName);
+            IsDirty = false;
+        }
 
         [JsonConstructor]
         public SoundEvent(string name, IEnumerable<Sound> sounds)
         {
             if (sounds == null)
             {
+                Log.Error(null, "Called SoundEvent with null sounds parameter");
                 throw new System.ArgumentNullException(nameof(sounds));
             }
             else if (sounds.Count() <= 0)
             {
+                Log.Error(null, "Called SoundEvent with sounds count <= 0 parameter");
                 throw new System.Exception($"{nameof(sounds)} must have at least one occurency.");
             }
 
@@ -102,11 +124,12 @@ namespace ForgeModGenerator.Model
         // Get formatted sound from full path, "shorten.path.toFile"
         public static string FormatDottedSoundName(string path)
         {
-            int startIndex = path.IndexOf("sounds") + 7;
-            if (startIndex == -1)
+            int soundsIndex = path.IndexOf("sounds");
+            if (soundsIndex == -1)
             {
                 return null;
             }
+            int startIndex = soundsIndex + 7;
             return Path.ChangeExtension(path.Substring(startIndex, path.Length - startIndex), null);
         }
 

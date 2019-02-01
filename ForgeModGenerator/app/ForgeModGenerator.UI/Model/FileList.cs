@@ -84,8 +84,9 @@ namespace ForgeModGenerator.Model
             {
                 return (T)Activator.CreateInstance(typeof(T), filePath);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Log.Error(ex, $"Couldnt create instance of {typeof(T)} with {filePath}. Trying to create parameterless..");
                 return Activator.CreateInstance<T>();
             }
         }
