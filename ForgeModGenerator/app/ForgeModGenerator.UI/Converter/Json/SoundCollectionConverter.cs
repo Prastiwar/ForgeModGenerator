@@ -1,5 +1,4 @@
-﻿using ForgeModGenerator.Core;
-using ForgeModGenerator.Miscellaneous;
+﻿using ForgeModGenerator.Miscellaneous;
 using ForgeModGenerator.Model;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -49,7 +48,9 @@ namespace ForgeModGenerator.Converter
                         soundName = sound.Name.Remove(0, modidLength);
                     }
                     sound.SetFileItem(Path.Combine(soundsPath, $"{soundName}.ogg"));
+                    sound.IsDirty = false;
                 }
+                soundEvent.IsDirty = false;
                 fileList.Add(soundEvent);
             }
             if (typeof(ObservableCollection<FileList<SoundEvent>>).IsAssignableFrom(objectType))

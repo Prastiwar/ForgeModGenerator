@@ -1,5 +1,4 @@
-﻿using ForgeModGenerator.Miscellaneous;
-using ForgeModGenerator.Model;
+﻿using ForgeModGenerator.Model;
 using ForgeModGenerator.Service;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -93,13 +92,13 @@ namespace ForgeModGenerator.ViewModel
         protected virtual void ClosingEventHandler(object sender, DialogClosingEventArgs eventArgs)
         {
             bool result = (bool)eventArgs.Parameter;
-            if (!CanBeEdited(result, SelectedFileItem))
+            if (!CanCloseEditForm(result, (T)MemoryCache.Default.Get(EditFileCacheKey), SelectedFileItem))
             {
                 eventArgs.Cancel();
             }
         }
 
-        protected virtual bool CanBeEdited(bool result, IFileItem file) => true;
+        protected virtual bool CanCloseEditForm(bool result, IFileItem fileBeforeEdit, IFileItem fileAfterEdit) => true;
 
         protected virtual async void Edit(IFileItem file)
         {

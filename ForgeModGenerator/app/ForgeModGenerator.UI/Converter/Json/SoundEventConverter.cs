@@ -23,6 +23,7 @@ namespace ForgeModGenerator.Converter
             {
                 soundEvent.Subtitle = subtitle.ToObject<string>();
             }
+            soundEvent.IsDirty = false;
             return soundEvent;
         }
 

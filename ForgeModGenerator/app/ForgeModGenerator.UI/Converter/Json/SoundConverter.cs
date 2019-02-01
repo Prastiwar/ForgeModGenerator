@@ -41,6 +41,7 @@ namespace ForgeModGenerator.Converter
             {
                 sound.Type = preload.ToObject<Sound.SoundType>();
             }
+            sound.IsDirty = false;
             return sound;
         }
 

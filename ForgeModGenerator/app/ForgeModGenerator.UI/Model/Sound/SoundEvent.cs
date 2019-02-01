@@ -37,6 +37,7 @@ namespace ForgeModGenerator.Model
             {
                 EventName = name;
             }
+            IsDirty = false;
         }
 
         public delegate void OnSoundChangedEventHandler(Sound soundChanged);
@@ -45,6 +46,7 @@ namespace ForgeModGenerator.Model
 
         private void Sounds_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
+            IsDirty = true;
             if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
             {
                 foreach (object item in e.NewItems)
@@ -66,21 +68,21 @@ namespace ForgeModGenerator.Model
         private string eventName;
         public string EventName {
             get => eventName;
-            set => Set(ref eventName, value);
+            set => DirtSet(ref eventName, value);
         }
 
         private bool replace = false;
         [JsonProperty(PropertyName = "replace")]
         public bool Replace {
             get => replace;
-            set => Set(ref replace, value);
+            set => DirtSet(ref replace, value);
         }
 
         private string subtitle;
         [JsonProperty(PropertyName = "subtitle")]
         public string Subtitle {
             get => subtitle;
-            set => Set(ref subtitle, value);
+            set => DirtSet(ref subtitle, value);
         }
 
         private ObservableCollection<Sound> sounds;
@@ -88,7 +90,7 @@ namespace ForgeModGenerator.Model
         [JsonProperty(PropertyName = "sounds")]
         public ObservableCollection<Sound> Sounds {
             get => sounds;
-            set => Set(ref sounds, value);
+            set => DirtSet(ref sounds, value);
         }
 
         // Get formatted sound from full path, "shorten.path.toFile"
@@ -113,6 +115,7 @@ namespace ForgeModGenerator.Model
                 Subtitle = soundEvent.Subtitle;
                 Sounds = new ObservableCollection<Sound>(soundEvent.Sounds);
                 Sounds.CollectionChanged += Sounds_CollectionChanged;
+                //IsDirty = false;
                 return true;
             }
             return false;
@@ -145,6 +148,7 @@ namespace ForgeModGenerator.Model
             {
                 soundEvent.filePath = FilePath;
             }
+            soundEvent.IsDirty = false;
             return soundEvent;
         }
     }

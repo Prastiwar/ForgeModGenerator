@@ -1,6 +1,4 @@
-﻿using ForgeModGenerator.Core;
-using ForgeModGenerator.Miscellaneous;
-using ForgeModGenerator.Model;
+﻿using ForgeModGenerator.Model;
 using ForgeModGenerator.Service;
 using GalaSoft.MvvmLight.Command;
 using Microsoft.VisualBasic.FileIO;
@@ -53,9 +51,9 @@ namespace ForgeModGenerator.ViewModel
         public ICommand DeleteSoundCommand => deleteSoundCommand ?? (deleteSoundCommand = new RelayCommand<Tuple<SoundEvent, Sound>>(DeleteSound));
 
         private ICommand changeSoundCommand;
-        public ICommand ChangeSoundCommand => changeSoundCommand ?? (changeSoundCommand = new RelayCommand<Sound>(ChangeSoundName));
+        public ICommand ChangeSoundCommand => changeSoundCommand ?? (changeSoundCommand = new RelayCommand<Sound>(ChangeSoundPath));
 
-        private void ChangeSoundName(Sound obj)
+        private void ChangeSoundPath(Sound sound)
         {
             throw new NotImplementedException();
         }
@@ -146,11 +144,11 @@ namespace ForgeModGenerator.ViewModel
             ShouldUpdate = CanRefresh() ? IsUpdateAvailable() : false;
         }
 
-        protected override bool CanBeEdited(bool result, IFileItem file)
+        protected override bool CanCloseEditForm(bool result, IFileItem fileBeforeEdit, IFileItem fileAfterEdit)
         {
             if (result)
             {
-                SoundEvent soundEvent = (SoundEvent)file;
+                SoundEvent soundEvent = (SoundEvent)fileAfterEdit;
                 int foundOccurencies = 0;
                 foreach (FileList<SoundEvent> fileList in Files)
                 {
@@ -165,6 +163,17 @@ namespace ForgeModGenerator.ViewModel
                                 return false;
                             }
                         }
+                    }
+                }
+            }
+            else
+            {
+                if (fileAfterEdit.IsDirty)
+                {
+                    DialogResult msgResult = MessageBox.Show("Are you sure you want to exit form? Changes won't be saved", "Not saved changes", MessageBoxButtons.YesNo);
+                    if (msgResult == DialogResult.No)
+                    {
+                        return false;
                     }
                 }
             }

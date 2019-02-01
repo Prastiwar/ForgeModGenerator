@@ -1,5 +1,4 @@
-﻿using ForgeModGenerator.Core;
-using ForgeModGenerator.Model;
+﻿using ForgeModGenerator.Model;
 using ForgeModGenerator.Service;
 using System.Windows.Forms;
 

@@ -20,73 +20,80 @@ namespace ForgeModGenerator.Model
 
             if (File.Exists(name))
             {
-                Name = FormatSoundName(modid, name);
+                Name = FormatSoundPath(modid, name);
                 SetFileItem(name);
             }
             else
             {
                 Name = name;
             }
+            IsDirty = false;
+        }
+
+        [JsonIgnore]
+        public string ShortPath {
+            get => Name.Remove(0, Name.IndexOf(':') + 1);
+            set => Name = FormatSoundShortPath(Mod.GetModidFromPath(Name), value);
         }
 
         private string name;
         [JsonProperty(PropertyName = "name")]
         public string Name {
             get => name;
-            set => Set(ref name, value);
+            set => DirtSet(ref name, value);
         }
 
         private float volume = 1.0f;
         [JsonProperty(PropertyName = "volume")]
         public float Volume {
             get => volume;
-            set => Set(ref volume, Math.Clamp(value));
+            set => DirtSet(ref volume, Math.Clamp(value));
         }
 
         private float pitch = 1.0f;
         [JsonProperty(PropertyName = "pitch")]
         public float Pitch {
             get => pitch;
-            set => Set(ref pitch, value);
+            set => DirtSet(ref pitch, value);
         }
 
         private int weight = 1;
         [JsonProperty(PropertyName = "weight")]
         public int Weight {
             get => weight;
-            set => Set(ref weight, value);
+            set => DirtSet(ref weight, value);
         }
 
         private bool stream = false;
         [JsonProperty(PropertyName = "stream")]
         public bool Stream {
             get => stream;
-            set => Set(ref stream, value);
+            set => DirtSet(ref stream, value);
         }
 
         private int attenuationDistance;
         [JsonProperty(PropertyName = "attenuation_distance")]
         public int AttenuationDistance {
             get => attenuationDistance;
-            set => Set(ref attenuationDistance, value);
+            set => DirtSet(ref attenuationDistance, value);
         }
 
         private bool preload = false;
         [JsonProperty(PropertyName = "preload")]
         public bool Preload {
             get => preload;
-            set => Set(ref preload, value);
+            set => DirtSet(ref preload, value);
         }
 
         private SoundType type = SoundType.file;
         [JsonProperty(PropertyName = "type")]
         public SoundType Type {
             get => type;
-            set => Set(ref type, value);
+            set => DirtSet(ref type, value);
         }
 
         // Get formatted sound from full path, "modid:shorten/path/toFile"
-        public static string FormatSoundName(string modid, string path)
+        public static string FormatSoundPath(string modid, string path)
         {
             int startIndex = path.IndexOf("sounds") + 7;
             if (startIndex == -1)
@@ -94,8 +101,11 @@ namespace ForgeModGenerator.Model
                 return null;
             }
             string shortPath = Path.ChangeExtension(path.Substring(startIndex, path.Length - startIndex), null);
-            return $"{modid}:{shortPath}";
+            return FormatSoundShortPath(modid, shortPath);
         }
+
+        // Get formatted sound from short path, "modid:shorten/path/toFile"
+        public static string FormatSoundShortPath(string modid, string shortPath) => $"{modid}:{shortPath}";
 
         public override bool ShouldSerializeFilePath() => false;
         public override bool ShouldSerializeFileName() => false;
@@ -140,6 +150,7 @@ namespace ForgeModGenerator.Model
                 AttenuationDistance = sound.AttenuationDistance;
                 Preload = sound.Preload;
                 Type = sound.Type;
+                IsDirty = false;
                 return true;
             }
             return false;

@@ -1,6 +1,4 @@
 ﻿using ForgeModGenerator.Converter;
-using ForgeModGenerator.Core;
-using ForgeModGenerator.Miscellaneous;
 using GalaSoft.MvvmLight;
 using Newtonsoft.Json;
 using System.ComponentModel;
@@ -98,6 +96,11 @@ namespace ForgeModGenerator.Model
 
         public static string GetModidFromPath(string path)
         {
+            int index = path.IndexOf(':');
+            if (index >= 1)
+            {
+                return path.Substring(0, index);
+            }
             string modname = GetModnameFromPath(path);
             if (modname != null)
             {

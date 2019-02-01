@@ -1,5 +1,4 @@
-﻿using GalaSoft.MvvmLight;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.IO;
 
@@ -11,7 +10,7 @@ namespace ForgeModGenerator.Model
         object DeepClone();
     }
 
-    public interface IFileItem : INotifyPropertyChanged, ICopiable
+    public interface IFileItem : INotifyPropertyChanged, ICopiable, IDirty
     {
         string FileName { get; }
         string FilePath { get; }
@@ -19,7 +18,7 @@ namespace ForgeModGenerator.Model
         object DeepClone(bool countReference);
     }
 
-    public class FileItem : ObservableObject, IFileItem
+    public class FileItem : ObservableDirtyObject, IFileItem
     {
         protected FileItem() { }
 

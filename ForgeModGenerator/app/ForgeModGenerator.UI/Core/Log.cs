@@ -2,7 +2,7 @@
 using System;
 using System.Windows;
 
-namespace ForgeModGenerator.Miscellaneous
+namespace ForgeModGenerator
 {
     public static class Log
     {

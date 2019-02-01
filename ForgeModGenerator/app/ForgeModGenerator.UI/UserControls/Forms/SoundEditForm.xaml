@@ -64,15 +64,20 @@
 													</MultiBinding>
 												</Button.CommandParameter>
 											</Button>
-											<Button Content="{wpf:PackIcon Kind=Edit}"
+											<Button Content="{wpf:PackIcon Kind=Check}"
 													Width="25"
 													Height="25"
 													Padding="0"
 													Margin="5,0,5,0"
 													Command="{Binding ChangeSoundCommand, RelativeSource={RelativeSource AncestorType=local:SoundEditForm}}"
 													CommandParameter="{Binding}" />
-											<TextBlock Text="{Binding Name}"
+											<TextBlock Text="{Binding Name, Mode=OneTime, Converter={StaticResource PathToModidConverter}}"
 													   VerticalAlignment="Center" />
+											<TextBlock Text=":"
+													   VerticalAlignment="Center" />
+											<TextBox Text="{Binding ShortPath}"
+													 Margin="3,0,0,0"
+													 VerticalAlignment="Center" />
 										</StackPanel>
 										<Separator MinWidth="350" />
 										<Grid Margin="0,10,0,0">

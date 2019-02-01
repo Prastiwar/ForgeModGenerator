@@ -1,5 +1,4 @@
-﻿using ForgeModGenerator.Core;
-using ForgeModGenerator.Miscellaneous;
+﻿using ForgeModGenerator.Miscellaneous;
 using ForgeModGenerator.Model;
 using ForgeModGenerator.Service;
 using GalaSoft.MvvmLight;

@@ -10,52 +10,44 @@
 			 xmlns:vm="clr-namespace:ForgeModGenerator.ViewModel"
 			 xmlns:controls="clr-namespace:ForgeModGenerator.UserControls"
 			 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
-
 	<Application.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
-
 				<ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Dark.xaml" />
 				<ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
 				<ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.DeepPurple.xaml" />
 				<ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml" />
 				<ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.MahApps;component/Themes/MaterialDesignTheme.MahApps.NumericUpDown.xaml" />
 				<ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.MahApps;component/Themes/MaterialDesignTheme.MahApps.RangeSlider.xaml" />
-
 				<ResourceDictionary>
 					<SolidColorBrush x:Key="PageBackground"
 									 Color="#FF424242" />
 				</ResourceDictionary>
-
 				<ResourceDictionary>
 					<vm:ViewModelLocator x:Key="Locator"
 										 d:IsDataSource="True" />
 				</ResourceDictionary>
-
+				<ResourceDictionary>
+					<c:PathToModidConverter x:Key="PathToModidConverter" />
+				</ResourceDictionary>
 				<ResourceDictionary>
 					<c:InvertBooleanConverter x:Key="InvertBooleanConverter" />
 				</ResourceDictionary>
-
 				<ResourceDictionary>
 					<c:IntToVisibilityConverter x:Key="IntToVisibilityConverter" />
 				</ResourceDictionary>
-
 				<ResourceDictionary>
 					<c:InvertIntToVisibilityConverter x:Key="InvertIntToVisibilityConverter" />
 				</ResourceDictionary>
-				
 				<ResourceDictionary>
 					<c:PathNameConverter x:Key="PathToNameConverter" />
 				</ResourceDictionary>
-				
 				<ResourceDictionary>
 					<c:SoundEventSoundConverter x:Key="SoundEventSoundConverter" />
 				</ResourceDictionary>
-
 				<ResourceDictionary>
 					<c:FileFolderFileItemConverter x:Key="FileFolderFileItemConverter" />
 				</ResourceDictionary>
-
 				<ResourceDictionary>
 					<ContextMenu x:Key="DefaultFileItemContext">
 						<MenuItem Header="Remove"
@@ -71,11 +63,9 @@
 						</MenuItem>
 						<MenuItem Header="Edit"
 								  Command="{Binding PlacementTarget.Tag.EditCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}"
-								  CommandParameter="{Binding}">
-						</MenuItem>
+								  CommandParameter="{Binding}"></MenuItem>
 					</ContextMenu>
 				</ResourceDictionary>
-
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</Application.Resources>

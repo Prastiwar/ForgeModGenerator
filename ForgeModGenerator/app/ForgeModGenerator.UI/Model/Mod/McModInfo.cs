@@ -1,5 +1,4 @@
-﻿using ForgeModGenerator.Core;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 using System.IO;

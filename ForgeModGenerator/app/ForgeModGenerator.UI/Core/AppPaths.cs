@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace ForgeModGenerator.Core
+namespace ForgeModGenerator
 {
     public static class AppPaths
     {

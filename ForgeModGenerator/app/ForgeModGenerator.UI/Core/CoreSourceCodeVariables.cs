@@ -1,4 +1,4 @@
-﻿namespace ForgeModGenerator.Core
+﻿namespace ForgeModGenerator
 {
     public static class CoreSourceCodeVariables
     {

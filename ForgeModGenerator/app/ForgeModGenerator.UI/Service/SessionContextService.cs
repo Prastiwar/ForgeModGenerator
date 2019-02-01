@@ -1,6 +1,4 @@
-﻿using ForgeModGenerator.Core;
-using ForgeModGenerator.Miscellaneous;
-using ForgeModGenerator.Model;
+﻿using ForgeModGenerator.Model;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

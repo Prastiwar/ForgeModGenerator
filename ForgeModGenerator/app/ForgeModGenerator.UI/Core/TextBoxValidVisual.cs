@@ -1,7 +1,7 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace ForgeModGenerator.Miscellaneous
+namespace ForgeModGenerator
 {
     public class TextBoxValidVisual
     {

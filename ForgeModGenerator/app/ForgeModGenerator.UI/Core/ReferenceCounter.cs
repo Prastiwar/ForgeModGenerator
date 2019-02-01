@@ -30,7 +30,7 @@ namespace ForgeModGenerator
             }
             if (referenceValues.TryGetValue(referencedObject, out HashSet<object> hashSet))
             {
-                bool removed = hashSet.Remove(reference);
+                hashSet.Remove(reference);
                 if (hashSet.Count <= 0)
                 {
                     referenceValues.Remove(referencedObject);
