@@ -3,6 +3,8 @@ using GalaSoft.MvvmLight;
 using Newtonsoft.Json;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
+using System.Windows;
 
 namespace ForgeModGenerator.Model
 {
@@ -96,7 +98,8 @@ namespace ForgeModGenerator.Model
 
         public static string GetModidFromPath(string path)
         {
-            int index = path.IndexOf(':');
+            path = path.Replace("\\", "/");
+            int index = !path.Contains(":/") ? path.IndexOf(':') : -1;
             if (index >= 1)
             {
                 return path.Substring(0, index);
@@ -104,15 +107,13 @@ namespace ForgeModGenerator.Model
             string modname = GetModnameFromPath(path);
             if (modname != null)
             {
-                string assetsPath = ModPaths.Assets(modname); // in assets folder there should be always folder with modid
+                string assetsPath = ModPaths.Assets(modname).Replace("\\", "/"); // in assets folder there should be always folder with modid
                 int assetsPathLength = assetsPath.Length;
                 try
                 {
-                    foreach (string directory in Directory.EnumerateDirectories(assetsPath))
-                    {
-                        string dir = directory.Replace("\\", "/");
-                        return dir.Remove(0, assetsPathLength + 1);
-                    }
+                    string directory = Directory.EnumerateDirectories(assetsPath).First();
+                    string dir = directory.Replace("\\", "/");
+                    return dir.Remove(0, assetsPathLength + 1);
                 }
                 catch (System.Exception ex)
                 {
@@ -130,13 +131,17 @@ namespace ForgeModGenerator.Model
                 return null;
             }
             path = path.Replace("\\", "/");
-            int length = AppPaths.Mods.Length;
+            string modsPath = AppPaths.Mods.Replace("\\", "/");
+            int length = modsPath.Length;
+            if (!path.StartsWith(modsPath))
+            {
+                return null;
+            }
             try
             {
                 string sub = path.Remove(0, length + 1);
                 int index = sub.IndexOf("/");
                 return index >= 1 ? sub.Substring(0, index) : null;
-
             }
             catch (System.Exception ex)
             {

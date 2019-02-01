@@ -51,27 +51,124 @@ namespace ForgeModGenerator.ViewModel
         public ICommand DeleteSoundCommand => deleteSoundCommand ?? (deleteSoundCommand = new RelayCommand<Tuple<SoundEvent, Sound>>(DeleteSound));
 
         private ICommand changeSoundCommand;
-        public ICommand ChangeSoundCommand => changeSoundCommand ?? (changeSoundCommand = new RelayCommand<Sound>(ChangeSoundPath));
+        public ICommand ChangeSoundCommand => changeSoundCommand ?? (changeSoundCommand = new RelayCommand<Tuple<SoundEvent, Sound>>(ChangeSoundPath));
 
-        private void ChangeSoundPath(Sound sound)
+        private bool CanChangeSoundPath(Tuple<SoundEvent, Sound> param)
         {
-            throw new NotImplementedException();
+            string newFileName = null;
+            try
+            {
+                string modname = Mod.GetModnameFromPath(param.Item2.FilePath);
+                string modid = Mod.GetModidFromPath(param.Item2.Name);
+                string soundsFolderPath = ModPaths.SoundsFolder(modname, modid);
+                string oldFilePath = param.Item2.FilePath.Replace("\\", "/");
+                string extension = Path.GetExtension(oldFilePath);
+                newFileName = param.Item2.Name.Remove(0, param.Item2.Name.IndexOf(":") + 1);
+                string newFilePathToValidate = $"{Path.Combine(soundsFolderPath, newFileName)}{extension}";
+                string newFilePath = null;
+                try
+                {
+                    newFilePath = Path.GetFullPath(newFilePathToValidate).Replace("\\", "/");
+                }
+                catch (Exception pathEx)
+                {
+                    Log.Error(pathEx, $"Path is not valid {newFilePathToValidate}", true);
+                    return false;
+                }
+                if (oldFilePath != newFilePath)
+                {
+                    if (param.Item1.Sounds.Any(x => x.FilePath == newFilePath))
+                    {
+                        Log.Warning($"{param.Item1.EventName} already has {newFileName} sound", true);
+                        return false;
+                    }
+                    if (!File.Exists(newFilePath))
+                    {
+                        new FileInfo(newFilePath).Directory.Create();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, $"Can't change sound name to {newFileName}", true);
+                return false;
+            }
+            return true;
+        }
+
+        private void ChangeSoundPath(Tuple<SoundEvent, Sound> param)
+        {
+            try
+            {
+                string modname = Mod.GetModnameFromPath(param.Item2.FilePath);
+                string modid = Mod.GetModidFromPath(param.Item2.Name);
+                string soundsFolderPath = ModPaths.SoundsFolder(modname, modid);
+                string oldFilePath = param.Item2.FilePath.Replace("\\", "/");
+                string extension = Path.GetExtension(oldFilePath);
+                string newFileName = param.Item2.Name.Remove(0, param.Item2.Name.IndexOf(":") + 1);
+                string newFilePathToValidate = $"{Path.Combine(soundsFolderPath, newFileName)}{extension}";
+                string newFilePath = null;
+                try
+                {
+                    newFilePath = Path.GetFullPath(newFilePathToValidate).Replace("\\", "/");
+                }
+                catch (Exception pathEx)
+                {
+                    Log.Error(pathEx, $"Path is not valid {newFilePathToValidate}", true);
+                    return;
+                }
+
+                if (oldFilePath != newFilePath)
+                {
+                    try
+                    {
+                        if (param.Item1.Sounds.Any(x => x.FilePath == newFilePath))
+                        {
+                            Log.Warning($"{param.Item1.EventName} already has this sound", true);
+                            return;
+                        }
+                        else if (!File.Exists(newFilePath))
+                        {
+                            new FileInfo(newFilePath).Directory.Create();
+                            File.Move(oldFilePath, newFilePath);
+                        }
+                        else if (ReferenceCounter.GetReferenceCount(oldFilePath) > 1)
+                        {
+                            FileSystem.DeleteFile(oldFilePath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+                        }
+                        param.Item2.SetFileItem(newFilePath);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, $"Couldn't change {param.Item2.FileName} to {newFileName}. Make sure the file is not opened by any process", true);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Something went wrong while changing sound name", true);
+            }
         }
 
         private void DeleteSound(Tuple<SoundEvent, Sound> param)
         {
+            DeleteSound(param, false);
+        }
+
+        private void DeleteSound(Tuple<SoundEvent, Sound> param, bool forceDeleteAll)
+        {
             try
             {
-                if (param.Item1.Sounds.Count == 1)
+                if (!forceDeleteAll && param.Item1.Sounds.Count == 1)
                 {
                     Log.Warning("SoundEvent must have at least 1 sound", true);
                     return;
                 }
                 if (param.Item1.Sounds.Remove(param.Item2))
                 {
-                    if (ReferenceCounter.GetReferenceCount(param.Item2.FilePath) >= 1)
+                    if (ReferenceCounter.IsReferenced(param.Item2.FilePath))
                     {
-                        return; // do not remove file since it's referenced by any other sound
+                        return; // do not delete file since it's referenced by any other sound
                     }
                     try
                     {
@@ -148,29 +245,20 @@ namespace ForgeModGenerator.ViewModel
         {
             if (result)
             {
-                SoundEvent soundEvent = (SoundEvent)fileAfterEdit;
-                int foundOccurencies = 0;
-                foreach (FileList<SoundEvent> fileList in Files)
+                SoundEvent cachedSoundEvent = (SoundEvent)fileBeforeEdit;
+                SoundEvent newSoundEvent = (SoundEvent)fileAfterEdit;
+                if (ReferenceCounter.GetReferenceCount(newSoundEvent.EventName) > 1)
                 {
-                    foreach (SoundEvent item in fileList)
-                    {
-                        if (item.EventName == soundEvent.EventName)
-                        {
-                            foundOccurencies++;
-                            if (foundOccurencies > 1)
-                            {
-                                Log.Warning("The sound event name already exists. Duplicates are not allowed", true);
-                                return false;
-                            }
-                        }
-                    }
+                    Log.Warning("The sound event name already exists. Duplicates are not allowed", true);
+                    return false;
                 }
+                return !newSoundEvent.Sounds.Any(sound => !CanChangeSoundPath(new Tuple<SoundEvent, Sound>(newSoundEvent, sound)));
             }
             else
             {
                 if (fileAfterEdit.IsDirty)
                 {
-                    DialogResult msgResult = MessageBox.Show("Are you sure you want to exit form? Changes won't be saved", "Not saved changes", MessageBoxButtons.YesNo);
+                    DialogResult msgResult = MessageBox.Show("Are you sure you want to exit form? Changes won't be saved", "Unsaved changes", MessageBoxButtons.YesNo);
                     if (msgResult == DialogResult.No)
                     {
                         return false;
@@ -186,12 +274,41 @@ namespace ForgeModGenerator.ViewModel
             if (result)
             {
                 // TODO: Save changes
+                foreach (Sound sound in soundEvent.Sounds)
+                {
+                    ChangeSoundPath(new Tuple<SoundEvent, Sound>(soundEvent, sound));
+                }
                 ForceJsonUpdate(); // temporary solution
             }
             else
             {
                 // TODO: Undo commands
                 base.OnEdited(result, file);
+            }
+            soundEvent.IsDirty = false;
+        }
+
+        protected override void Remove(Tuple<IFileFolder, IFileItem> param)
+        {
+            try
+            {
+                if (param.Item1.RemoveFile(param.Item2))
+                {
+                    SoundEvent soundEvent = (SoundEvent)param.Item2;
+                    //foreach (Sound sound in soundEvent.Sounds)
+                    //{
+                    //    DeleteSound(new Tuple<SoundEvent, Sound>(soundEvent, sound), true);
+                    //}
+                    int length = soundEvent.Sounds.Count;
+                    for (int i = 0; i < length; i++)
+                    {
+                        DeleteSound(new Tuple<SoundEvent, Sound>(soundEvent, soundEvent.Sounds[i]), true);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Something went wrong while trying to remove file", true);
             }
         }
 

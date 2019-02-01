@@ -38,6 +38,7 @@ namespace ForgeModGenerator
             }
         }
 
+        public static bool IsReferenced(object referencedObject) => GetReferenceCount(referencedObject) > 0;
         public static int GetReferenceCount(object referencedObject) => referencedObject != null && referenceValues.TryGetValue(referencedObject, out HashSet<object> hashSet) ? hashSet.Count : 0;
         public static IEnumerable<object> GetReferences(object referencedObject) => referencedObject != null && referenceValues.TryGetValue(referencedObject, out HashSet<object> hashSet) ? hashSet : null;
     }

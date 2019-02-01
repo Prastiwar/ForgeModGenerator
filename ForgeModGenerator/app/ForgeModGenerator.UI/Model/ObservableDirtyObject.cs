@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
+using Newtonsoft.Json;
 using System.Runtime.CompilerServices;
 
 namespace ForgeModGenerator.Model
@@ -10,6 +11,7 @@ namespace ForgeModGenerator.Model
 
     public class ObservableDirtyObject : ObservableObject, IDirty
     {
+        [JsonIgnore]
         public bool IsDirty { get; set; }
 
         protected bool DirtSet<T>(ref T variable, T newValue, [CallerMemberName] string propertyName = null)

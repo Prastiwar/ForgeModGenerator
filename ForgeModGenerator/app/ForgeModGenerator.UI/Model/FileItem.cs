@@ -29,7 +29,7 @@ namespace ForgeModGenerator.Model
         private string fileName;
         public string FileName {
             get => fileName;
-            protected set => Set(ref fileName, value);
+            protected set => DirtSet(ref fileName, value);
         }
 
         protected string filePath;
@@ -37,7 +37,7 @@ namespace ForgeModGenerator.Model
             get => filePath;
             protected set {
                 ReferenceCounter.RemoveReference(filePath, this);
-                Set(ref filePath, value);
+                DirtSet(ref filePath, value);
                 ReferenceCounter.AddReference(filePath, this);
             }
         }

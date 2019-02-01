@@ -40,6 +40,8 @@ namespace ForgeModGenerator.Model
             IsDirty = false;
         }
 
+        ~SoundEvent() { ReferenceCounter.RemoveReference(EventName, this); }
+
         public delegate void OnSoundChangedEventHandler(Sound soundChanged);
         public event OnSoundChangedEventHandler OnSoundAdded;
         public event OnSoundChangedEventHandler OnSoundRemoved;
@@ -68,7 +70,11 @@ namespace ForgeModGenerator.Model
         private string eventName;
         public string EventName {
             get => eventName;
-            set => DirtSet(ref eventName, value);
+            set {
+                ReferenceCounter.RemoveReference(eventName, this);
+                DirtSet(ref eventName, value);
+                ReferenceCounter.AddReference(eventName, this);
+            }
         }
 
         private bool replace = false;
@@ -115,7 +121,6 @@ namespace ForgeModGenerator.Model
                 Subtitle = soundEvent.Subtitle;
                 Sounds = new ObservableCollection<Sound>(soundEvent.Sounds);
                 Sounds.CollectionChanged += Sounds_CollectionChanged;
-                //IsDirty = false;
                 return true;
             }
             return false;
@@ -135,7 +140,6 @@ namespace ForgeModGenerator.Model
             }
             SoundEvent soundEvent = new SoundEvent() {
                 FileName = FileName,
-                EventName = EventName,
                 Replace = Replace,
                 Subtitle = Subtitle,
                 Sounds = sounds
@@ -143,10 +147,12 @@ namespace ForgeModGenerator.Model
             if (countReference)
             {
                 soundEvent.FilePath = FilePath;
+                soundEvent.EventName = EventName;
             }
             else
             {
                 soundEvent.filePath = FilePath;
+                soundEvent.eventName = EventName;
             }
             soundEvent.IsDirty = false;
             return soundEvent;
