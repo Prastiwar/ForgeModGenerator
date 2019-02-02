@@ -214,7 +214,7 @@ namespace ForgeModGenerator.ViewModel
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Something went wrong while saving changes. Check error log.");
+                Log.Error(ex, Log.UnexpectedErrorMessage, true);
                 return;
             }
 

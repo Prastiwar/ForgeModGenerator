@@ -146,7 +146,7 @@ namespace ForgeModGenerator.ViewModel
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Something went wrong while changing sound name", true);
+                Log.Error(ex, Log.UnexpectedErrorMessage, true);
             }
         }
 
@@ -183,7 +183,7 @@ namespace ForgeModGenerator.ViewModel
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Something went wrong while trying to remove sound", true);
+                Log.Error(ex, Log.UnexpectedErrorMessage, true);
             }
         }
 
@@ -222,7 +222,7 @@ namespace ForgeModGenerator.ViewModel
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Something went wrong while adding new sound", true);
+                Log.Error(ex, Log.UnexpectedErrorMessage, true);
             }
         }
 
@@ -247,10 +247,6 @@ namespace ForgeModGenerator.ViewModel
             {
                 SoundEvent cachedSoundEvent = (SoundEvent)fileBeforeEdit;
                 SoundEvent newSoundEvent = (SoundEvent)fileAfterEdit;
-                MessageBox.Show(ReferenceCounter.GetReferenceCount(newSoundEvent.EventName).ToString());
-                foreach (object item in ReferenceCounter.GetReferences(newSoundEvent.EventName))
-                {
-                }
                 if (ReferenceCounter.GetReferenceCount(newSoundEvent.EventName) > 1)
                 {
                     Log.Warning("The sound event name already exists. Duplicates are not allowed", true);
@@ -308,7 +304,7 @@ namespace ForgeModGenerator.ViewModel
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Something went wrong while trying to remove file", true);
+                Log.Error(ex, Log.UnexpectedErrorMessage, true);
             }
         }
 
@@ -419,7 +415,7 @@ namespace ForgeModGenerator.ViewModel
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "");
+                Log.Error(ex, Log.UnexpectedErrorMessage);
                 return false;
             }
         }

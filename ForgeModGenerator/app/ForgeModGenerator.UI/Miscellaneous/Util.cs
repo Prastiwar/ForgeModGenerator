@@ -1,10 +1,13 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Media;
 
 namespace ForgeModGenerator.Miscellaneous
 {
     public static class Util
     {
+        public static T CreateInstance<T>(params object[] args) => (T)Activator.CreateInstance(typeof(T), args);
+
         public static FrameworkElement GetDescendantFromName(DependencyObject parent, string name)
         {
             int count = VisualTreeHelper.GetChildrenCount(parent);

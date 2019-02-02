@@ -126,6 +126,7 @@
     <Compile Include="Converter\Json\SoundCollectionConverter.cs" />
     <Compile Include="Converter\Json\SoundConverter.cs" />
     <Compile Include="Converter\Json\SoundEventConverter.cs" />
+    <Compile Include="Converter\Json\PropertyRenameIgnoreResolver.cs" />
     <Compile Include="Converter\ModidPathToPathConverter.cs" />
     <Compile Include="Converter\MultiValues\SoundEventSoundConverter.cs" />
     <Compile Include="Converter\PathToModidConverter.cs" />
@@ -135,10 +136,12 @@
     <Compile Include="Miscellaneous\PrimitiveExtensions.cs" />
     <Compile Include="Model\FileItem.cs" />
     <Compile Include="Model\FileList.cs" />
+    <Compile Include="Model\Json\SoundJsonUpdater.cs" />
     <Compile Include="Model\Mod\LaunchSetup.cs" />
     <Compile Include="Model\ObservableDirtyObject.cs" />
     <Compile Include="Model\Preferences\PreferenceData.cs" />
     <Compile Include="Model\Preferences\SoundsGeneratorPreferences.cs" />
+    <Compile Include="Model\Json\JsonUpdater.cs" />
     <Compile Include="Model\Sound\SoundEvent.cs" />
     <Compile Include="Service\CommandTracker.cs" />
     <Compile Include="Service\ModBuildService.cs" />

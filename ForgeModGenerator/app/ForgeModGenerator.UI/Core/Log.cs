@@ -6,6 +6,8 @@ namespace ForgeModGenerator
 {
     public static class Log
     {
+        public static string UnexpectedErrorMessage = "Something went wrong, this should never happened. Please, report a bug at https://github.com/Prastiwar/ForgeModGenerator/issues/new?template=bug_report.md";
+
         public static readonly ILogger ErrorLogger = LogManager.GetLogger("ErrorLog");
         public static readonly ILogger InfoLogger = LogManager.GetLogger("InfoLog");
 
