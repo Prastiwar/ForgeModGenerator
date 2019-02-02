@@ -74,13 +74,13 @@ namespace ForgeModGenerator.UserControls
             set => SetValue(ClickCommandProperty, value);
         }
 
-        private void OpenFile(IFileItem fileItem) => System.Diagnostics.Process.Start(fileItem.FilePath);
+        private void OpenFile(IFileItem fileItem) => System.Diagnostics.Process.Start(fileItem.Info.FullName);
 
         private void ShowContainer(object sender, RoutedEventArgs e)
         {
             if (FileCollection != null)
             {
-                System.Diagnostics.Process.Start(FileCollection.DestinationPath);
+                System.Diagnostics.Process.Start(FileCollection.Info.FullName);
             }
         }
     }

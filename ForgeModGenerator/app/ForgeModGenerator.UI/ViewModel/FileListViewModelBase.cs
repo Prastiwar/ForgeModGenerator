@@ -1,4 +1,5 @@
-﻿using ForgeModGenerator.Model;
+﻿using ForgeModGenerator.Miscellaneous;
+using ForgeModGenerator.Model;
 using ForgeModGenerator.Service;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -18,16 +19,10 @@ using System.Windows.Input;
 namespace ForgeModGenerator.ViewModel
 {
     /// <summary> Business ViewModel Base class for making file list </summary>
-    public abstract class FileListViewModelBase<T> : ViewModelBase where T : IFileItem
+    public abstract class FileListViewModelBase<TFolder, TFile> : ViewModelBase
+        where TFolder : IFileFolder<TFile>
+        where TFile : IFileItem
     {
-        public delegate void OnFileChangedEventHandler(object itemChanged);
-
-        public ISessionContextService SessionContext { get; }
-        protected OpenFileDialog OpenFileDialog { get; }
-
-        protected event OnFileChangedEventHandler OnFileAdded;
-        protected event OnFileChangedEventHandler OnFileRemoved;
-
         public FileListViewModelBase(ISessionContextService sessionContext)
         {
             SessionContext = sessionContext;
@@ -40,7 +35,14 @@ namespace ForgeModGenerator.ViewModel
             SessionContext.PropertyChanged += OnSessionContexPropertyChanged;
         }
 
-        public abstract string CollectionRootPath { get; }
+        public delegate void OnFileChangedEventHandler(object itemChanged);
+        protected event OnFileChangedEventHandler OnFileAdded;
+        protected event OnFileChangedEventHandler OnFileRemoved;
+
+        public ISessionContextService SessionContext { get; }
+        protected OpenFileDialog OpenFileDialog { get; }
+
+        public abstract string FoldersRootPath { get; }
 
         public string[] AllowedExtensions { get; protected set; }
 
@@ -48,40 +50,40 @@ namespace ForgeModGenerator.ViewModel
 
         protected string EditFileCacheKey => "EditFileCacheKey";
 
-        private ObservableCollection<FileList<T>> files;
-        public ObservableCollection<FileList<T>> Files {
-            get => files;
-            set => Set(ref files, value);
+        private ObservableCollection<TFolder> folders;
+        public ObservableCollection<TFolder> Folders {
+            get => folders;
+            set => Set(ref folders, value);
         }
 
-        private FileList<T> selectedFiles;
-        public FileList<T> SelectedFiles {
-            get => selectedFiles;
-            set => Set(ref selectedFiles, value);
+        private TFolder selectedFolder;
+        public TFolder SelectedFolder {
+            get => selectedFolder;
+            set => Set(ref selectedFolder, value);
         }
 
-        private T selectedFileItem;
-        public T SelectedFileItem {
-            get => selectedFileItem;
-            set => Set(ref selectedFileItem, value);
+        private TFile selectedFile;
+        public TFile SelectedFile {
+            get => selectedFile;
+            set => Set(ref selectedFile, value);
         }
 
         private ICommand editCommand;
-        public ICommand EditCommand => editCommand ?? (editCommand = new RelayCommand<IFileItem>(Edit));
+        public ICommand EditCommand => editCommand ?? (editCommand = new RelayCommand<TFile>(Edit));
 
         private ICommand addCommand;
-        public ICommand AddCommand => addCommand ?? (addCommand = new RelayCommand<FileList<T>>(AddNewFile));
+        public ICommand AddCommand => addCommand ?? (addCommand = new RelayCommand<TFolder>(AddNewFile));
 
         private ICommand removeCommand;
-        public ICommand RemoveCommand => removeCommand ?? (removeCommand = new RelayCommand<Tuple<IFileFolder, IFileItem>>(Remove));
+        public ICommand RemoveCommand => removeCommand ?? (removeCommand = new RelayCommand<Tuple<TFolder, TFile>>(Remove));
 
-        protected virtual bool CanRefresh() => SessionContext.SelectedMod != null && (Directory.Exists(CollectionRootPath) || File.Exists(CollectionRootPath));
+        protected virtual bool CanRefresh() => SessionContext.SelectedMod != null && (Directory.Exists(FoldersRootPath) || File.Exists(FoldersRootPath));
 
         protected virtual bool Refresh()
         {
             if (CanRefresh())
             {
-                Files = FindCollection(CollectionRootPath, true);
+                Folders = FindCollection(FoldersRootPath, true);
                 return true;
             }
             return false;
@@ -92,33 +94,33 @@ namespace ForgeModGenerator.ViewModel
         protected virtual void ClosingEventHandler(object sender, DialogClosingEventArgs eventArgs)
         {
             bool result = (bool)eventArgs.Parameter;
-            if (!CanCloseEditForm(result, (T)MemoryCache.Default.Get(EditFileCacheKey), SelectedFileItem))
+            if (!CanCloseEditForm(result, (TFile)MemoryCache.Default.Get(EditFileCacheKey), SelectedFile))
             {
                 eventArgs.Cancel();
             }
         }
 
-        protected virtual bool CanCloseEditForm(bool result, IFileItem fileBeforeEdit, IFileItem fileAfterEdit) => true;
+        protected virtual bool CanCloseEditForm(bool result, TFile fileBeforeEdit, TFile fileAfterEdit) => true;
 
-        protected virtual async void Edit(IFileItem file)
+        protected virtual async void Edit(TFile file)
         {
-            SelectedFileItem = (T)file;
+            SelectedFile = file;
             bool result = false;
             try
             {
-                MemoryCache.Default.Set(EditFileCacheKey, SelectedFileItem.DeepClone(false), ObjectCache.InfiniteAbsoluteExpiration);
-                FileEditForm.DataContext = SelectedFileItem;
+                MemoryCache.Default.Set(EditFileCacheKey, SelectedFile.DeepClone(), ObjectCache.InfiniteAbsoluteExpiration);
+                FileEditForm.DataContext = SelectedFile;
                 result = (bool)await DialogHost.Show(FileEditForm, OpenedEventHandler, ClosingEventHandler);
             }
             catch (Exception ex)
             {
-                Log.Error(ex, $"Couldn't open edit form for {file.FileName}", true);
+                Log.Error(ex, $"Couldn't open edit form for {file.Info.Name}", true);
                 return;
             }
             OnEdited(result, file);
         }
 
-        protected virtual void OnEdited(bool result, IFileItem file)
+        protected virtual void OnEdited(bool result, TFile file)
         {
             if (!result)
             {
@@ -127,19 +129,19 @@ namespace ForgeModGenerator.ViewModel
             }
         }
 
-        protected virtual void Remove(Tuple<IFileFolder, IFileItem> param)
+        protected virtual void Remove(Tuple<TFolder, TFile> param)
         {
             try
             {
-                if (param.Item1.RemoveFile(param.Item2))
+                if (param.Item1.Remove(param.Item2))
                 {
                     try
                     {
-                        FileSystem.DeleteFile(param.Item2.FilePath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+                        FileSystem.DeleteFile(param.Item2.Info.FullName, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
                     }
                     catch (Exception ex)
                     {
-                        Log.Error(ex, $"Couldn't delete {param.Item2.FilePath}. Make sure it's not used by any process", true);
+                        Log.Error(ex, $"Couldn't delete {param.Item2.Info.FullName}. Make sure it's not used by any process", true);
                         param.Item1.Add(param.Item2); // delete failed, so get item back to collection
                         return;
                     }
@@ -147,11 +149,11 @@ namespace ForgeModGenerator.ViewModel
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Something went wrong while trying to remove file", true);
+                Log.Error(ex, Log.UnexpectedErrorMessage, true);
             }
         }
 
-        protected virtual void AddNewFile(FileList<T> collection)
+        protected virtual void AddNewFile(TFolder collection)
         {
             try
             {
@@ -161,7 +163,7 @@ namespace ForgeModGenerator.ViewModel
                     foreach (string filePath in OpenFileDialog.FileNames)
                     {
                         string fileName = new FileInfo(filePath).Name;
-                        string newFilePath = Path.Combine(collection.DestinationPath, fileName);
+                        string newFilePath = Path.Combine(collection.Info.FullName, fileName);
                         try
                         {
                             if (File.Exists(newFilePath))
@@ -173,7 +175,7 @@ namespace ForgeModGenerator.ViewModel
                         }
                         catch (Exception ex)
                         {
-                            Log.Error(ex, $"Couldn't add {fileName} to {collection.HeaderName}. Make sure the file is not opened by any process.", true);
+                            Log.Error(ex, $"Couldn't add {fileName} to {collection.Info.Name}. Make sure the file is not opened by any process.", true);
                             continue;
                         }
                         collection.Add(newFilePath);
@@ -182,13 +184,13 @@ namespace ForgeModGenerator.ViewModel
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Something went wrong while adding new file", true);
+                Log.Error(ex, Log.UnexpectedErrorMessage, true);
             }
         }
 
-        protected virtual ObservableCollection<FileList<T>> FindCollection(string path, bool createRootIfEmpty = false)
+        protected virtual ObservableCollection<TFolder> FindCollection(string path, bool createRootIfEmpty = false)
         {
-            ObservableCollection<FileList<T>> found = null;
+            ObservableCollection<TFolder> found = null;
             if (Directory.Exists(path))
             {
                 found = FindCollectionFromDirectory(path);
@@ -205,40 +207,40 @@ namespace ForgeModGenerator.ViewModel
             return found;
         }
 
-        protected ObservableCollection<FileList<T>> CreateEmptyRoot(string path)
+        protected ObservableCollection<TFolder> CreateEmptyRoot(string path)
         {
-            FileList<T> root = new FileList<T>(path);
+            TFolder root = Util.CreateInstance<TFolder>(path);
             root.CollectionChanged += FileCollection_CollectionChanged;
-            return new ObservableCollection<FileList<T>>() { root };
+            return new ObservableCollection<TFolder>() { root };
         }
 
-        protected static ObservableCollection<FileList<T>> DeserializeCollectionFromFile(string path)
+        protected static ObservableCollection<TFolder> DeserializeCollectionFromFile(string path)
         {
             string json = File.ReadAllText(path);
             try
             {
-                return JsonConvert.DeserializeObject<ObservableCollection<FileList<T>>>(json);
+                return JsonConvert.DeserializeObject<ObservableCollection<TFolder>>(json);
             }
             catch (Exception ex)
             {
-                Type loadType = typeof(ObservableCollection<FileList<T>>);
+                Type loadType = typeof(ObservableCollection<TFolder>);
                 Log.Error(ex, $"Couldnt load {loadType} from {json}");
                 try
                 {
-                    return new ObservableCollection<FileList<T>>() { JsonConvert.DeserializeObject<FileList<T>>(json) };
+                    return new ObservableCollection<TFolder>() { JsonConvert.DeserializeObject<TFolder>(json) };
                 }
                 catch (Exception ex2)
                 {
-                    loadType = typeof(FileList<T>);
+                    loadType = typeof(TFolder);
                     Log.Error(ex2, $"Couldnt load {loadType} from {json}");
                 }
             }
             return null;
         }
 
-        protected ObservableCollection<FileList<T>> FindCollectionFromDirectory(string path)
+        protected ObservableCollection<TFolder> FindCollectionFromDirectory(string path)
         {
-            List<FileList<T>> initCollection = new List<FileList<T>>(10);
+            List<TFolder> initCollection = new List<TFolder>(10);
             AddFilesToCollection(path);
             foreach (string directory in Directory.EnumerateDirectories(path, "*", System.IO.SearchOption.AllDirectories))
             {
@@ -249,19 +251,19 @@ namespace ForgeModGenerator.ViewModel
                 IEnumerable<string> files = Directory.EnumerateFiles(directoryPath).Where(filePath => AllowedExtensions.Any(ext => ext == Path.GetExtension(filePath)));
                 if (files.Any())
                 {
-                    FileList<T> fileCollection = new FileList<T>(directoryPath);
+                    TFolder folder = Util.CreateInstance<TFolder>(directoryPath);
                     foreach (string filePath in files)
                     {
                         if (AllowedExtensions.Any(x => x == Path.GetExtension(filePath)))
                         {
-                            fileCollection.Add(Path.GetFullPath(filePath).Replace('\\', '/'));
+                            folder.Add(Path.GetFullPath(filePath).Replace('\\', '/'));
                         }
                     }
-                    fileCollection.CollectionChanged += FileCollection_CollectionChanged;
-                    initCollection.Add(fileCollection);
+                    folder.CollectionChanged += FileCollection_CollectionChanged;
+                    initCollection.Add(folder);
                 }
             }
-            return new ObservableCollection<FileList<T>>(initCollection);
+            return new ObservableCollection<TFolder>(initCollection);
         }
 
         protected virtual void FileCollection_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

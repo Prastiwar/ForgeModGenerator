@@ -27,7 +27,7 @@
 							<ListBox.ItemTemplate>
 								<DataTemplate>
 									<StackPanel>
-										<local:FileListExpander HeaderText="{Binding Path=HeaderName}"
+										<local:FileListExpander HeaderText="{Binding Path=Info.Name}"
 																FileCollection="{Binding}"
 																AddCommand="{Binding Path=AddCommand, RelativeSource={RelativeSource AncestorType=local:FileCollectionListBox}}"
 																RemoveCommand="{Binding Path=RemoveCommand, RelativeSource={RelativeSource AncestorType=local:FileCollectionListBox}}"

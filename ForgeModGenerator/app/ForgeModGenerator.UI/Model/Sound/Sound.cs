@@ -21,7 +21,7 @@ namespace ForgeModGenerator.Model
             if (File.Exists(name))
             {
                 Name = FormatSoundPath(modid, name);
-                SetFileItem(name);
+                SetInfo(name);
             }
             else
             {
@@ -92,6 +92,42 @@ namespace ForgeModGenerator.Model
             set => DirtSet(ref type, value);
         }
 
+        public override object DeepClone()
+        {
+            Sound sound = new Sound() {
+                Name = Name,
+                Volume = Volume,
+                Pitch = Pitch,
+                Weight = Weight,
+                Stream = Stream,
+                AttenuationDistance = AttenuationDistance,
+                Preload = Preload,
+                Type = Type
+            };
+            sound.SetInfo(Info.FullName);
+            return sound;
+        }
+
+        public override bool CopyValues(object fromCopy)
+        {
+            if (fromCopy is Sound sound)
+            {
+                Name = sound.Name;
+                Volume = sound.Volume;
+                Pitch = sound.Pitch;
+                Weight = sound.Weight;
+                Stream = sound.Stream;
+                AttenuationDistance = sound.AttenuationDistance;
+                Preload = sound.Preload;
+                Type = sound.Type;
+
+                base.CopyValues(fromCopy);
+                IsDirty = false;
+                return true;
+            }
+            return false;
+        }
+
         // Get formatted sound from full path, "modid:shorten/path/toFile"
         public static string FormatSoundPath(string modid, string path)
         {
@@ -106,54 +142,5 @@ namespace ForgeModGenerator.Model
 
         // Get formatted sound from short path, "modid:shorten/path/toFile"
         public static string FormatSoundShortPath(string modid, string shortPath) => $"{modid}:{shortPath}";
-
-        public override bool ShouldSerializeFilePath() => false;
-        public override bool ShouldSerializeFileName() => false;
-
-        public override object DeepClone() => DeepClone(true);
-
-        public override object DeepClone(bool countReference)
-        {
-            Sound sound = new Sound() {
-                FileName = FileName,
-                Name = Name,
-                Volume = Volume,
-                Pitch = Pitch,
-                Weight = Weight,
-                Stream = Stream,
-                AttenuationDistance = AttenuationDistance,
-                Preload = Preload,
-                Type = Type
-            };
-            if (countReference)
-            {
-                sound.FilePath = FilePath;
-            }
-            else
-            {
-                sound.filePath = FilePath;
-            }
-            return sound;
-        }
-
-        public override bool CopyValues(object fromCopy)
-        {
-            if (fromCopy is Sound sound)
-            {
-                FileName = sound.FileName;
-                FilePath = sound.FilePath;
-                Name = sound.Name;
-                Volume = sound.Volume;
-                Pitch = sound.Pitch;
-                Weight = sound.Weight;
-                Stream = sound.Stream;
-                AttenuationDistance = sound.AttenuationDistance;
-                Preload = sound.Preload;
-                Type = sound.Type;
-                IsDirty = false;
-                return true;
-            }
-            return false;
-        }
     }
 }

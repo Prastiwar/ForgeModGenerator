@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Windows;
 
 namespace ForgeModGenerator.Converter
 {
@@ -11,8 +12,17 @@ namespace ForgeModGenerator.Converter
         public override SoundEvent ReadJson(JsonReader reader, Type objectType, SoundEvent existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
             JObject item = JObject.Load(reader);
+
             string soundsJson = item.GetValue("sounds").ToString();
-            List<Sound> sounds = JsonConvert.DeserializeObject<List<Sound>>(soundsJson, new SoundConverter());
+            PropertyRenameIgnoreResolver soundRenameIgnoreResolver = new PropertyRenameIgnoreResolver();
+            soundRenameIgnoreResolver.IgnoreProperty(typeof(Sound), nameof(Sound.Info));
+
+            JsonSerializerSettings soundSerializerSettings = new JsonSerializerSettings() {
+                ContractResolver = soundRenameIgnoreResolver,
+                Converters = new List<JsonConverter>() { new SoundConverter() }
+            };
+            List<Sound> sounds = JsonConvert.DeserializeObject<List<Sound>>(soundsJson, soundSerializerSettings);// new SoundConverter());
+
             string name = item.TryGetValue("EventName", out JToken eventName) ? eventName.ToObject<string>() : "";
             SoundEvent soundEvent = new SoundEvent(name, sounds);
             if (item.TryGetValue("replace", out JToken replace))
@@ -29,7 +39,8 @@ namespace ForgeModGenerator.Converter
 
         public override void WriteJson(JsonWriter writer, SoundEvent value, JsonSerializer serializer)
         {
-            writer.WriteRawValue(JsonConvert.SerializeObject(value));
+            MessageBox.Show(value.ToString());
+            writer.WriteRawValue(JsonConvert.SerializeObject(value, serializer.Formatting));
         }
     }
 }

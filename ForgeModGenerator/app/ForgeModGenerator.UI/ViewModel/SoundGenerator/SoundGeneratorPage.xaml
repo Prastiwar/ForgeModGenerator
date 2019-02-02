@@ -55,8 +55,8 @@
 						Command="{Binding UpdateSoundsJson}" />
 			</StackPanel>
 			<control:FileCollectionListBox Grid.Row="1"
-										   FilesSource="{Binding Files}"
-										   SelectedFilesItem="{Binding SelectedFiles}"
+										   FilesSource="{Binding Folders}"
+										   SelectedFilesItem="{Binding SelectedFolder}"
 										   FileItemTemplate="{StaticResource ItemTemplate}"
 										   AddCommand="{Binding AddCommand}"
 										   RemoveCommand="{Binding RemoveCommand}"

@@ -10,60 +10,43 @@ namespace ForgeModGenerator.Model
         object DeepClone();
     }
 
-    public interface IFileItem : INotifyPropertyChanged, ICopiable, IDirty
+    public interface IFileSystemInfo : INotifyPropertyChanged, ICopiable, IDirty
     {
-        string FileName { get; }
-        string FilePath { get; }
-        void SetFileItem(string filePath);
-        object DeepClone(bool countReference);
+        FileSystemInfo Info { get; }
+        void SetInfo(string path);
     }
+
+    public interface IFileItem : IFileSystemInfo { }
 
     public class FileItem : ObservableDirtyObject, IFileItem
     {
         protected FileItem() { }
 
-        public FileItem(string filePath) => SetFileItem(filePath);
+        public FileItem(string filePath) => SetInfo(filePath);
 
-        ~FileItem() => ReferenceCounter.RemoveReference(FilePath, this);
+        ~FileItem() => ReferenceCounter.RemoveReference(info?.FullName, this);
 
-        private string fileName;
-        public string FileName {
-            get => fileName;
-            protected set => DirtSet(ref fileName, value);
+        private FileSystemInfo info;
+        public FileSystemInfo Info {
+            get => info;
+            private set => DirtSet(ref info, value);
         }
 
-        protected string filePath;
-        public string FilePath {
-            get => filePath;
-            protected set {
-                ReferenceCounter.RemoveReference(filePath, this);
-                DirtSet(ref filePath, value);
-                ReferenceCounter.AddReference(filePath, this);
-            }
-        }
-
-        public virtual void SetFileItem(string filePath)
+        public virtual void SetInfo(string filePath)
         {
-            FilePath = filePath;
-            FileName = Path.GetFileName(filePath);
+            ReferenceCounter.RemoveReference(info?.FullName, this);
+            Info = new FileInfo(filePath);
+            ReferenceCounter.AddReference(info.FullName, this);
         }
-
-        public virtual bool ShouldSerializeFilePath() => true;
-
-        public virtual bool ShouldSerializeFileName() => true;
 
         public virtual object Clone() => MemberwiseClone();
-
-        public virtual object DeepClone() => DeepClone(true);
-
-        public virtual object DeepClone(bool countReference) => countReference ? new FileItem() { FileName = FileName, FilePath = FilePath } : new FileItem() { FileName = FileName, filePath = FilePath };
+        public virtual object DeepClone() => new FileInfo(Info.FullName);
 
         public virtual bool CopyValues(object fromCopy)
         {
             if (fromCopy is IFileItem fileItem)
             {
-                FileName = fileItem.FileName;
-                FilePath = fileItem.FilePath;
+                SetInfo(fileItem.Info.FullName);
                 return true;
             }
             return false;

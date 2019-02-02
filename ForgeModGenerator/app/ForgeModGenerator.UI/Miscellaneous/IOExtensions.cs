@@ -17,6 +17,21 @@ namespace ForgeModGenerator.Miscellaneous
         public static void DeleteFileToBin(string filePath) => FileSystem.DeleteDirectory(filePath, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
         public static void DeleteDirectoryToBin(string directoryPath) => FileSystem.DeleteFile(directoryPath, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
 
+        public static bool IsFilePath(string path) => !IsDirectoryPath(path);
+
+        public static bool IsDirectoryPath(string path)
+        {
+            try
+            {
+                FileAttributes attr = File.GetAttributes(path);
+                return attr.HasFlag(FileAttributes.Directory);
+            }
+            catch (System.Exception)
+            {
+                return IsPathValid(path) ? string.IsNullOrEmpty(Path.GetExtension(path)) : false;
+            }
+        }
+
         public static bool IsPathValid(string path)
         {
             try

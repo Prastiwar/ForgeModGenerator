@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
+using System.Windows;
 
 namespace ForgeModGenerator.Converter
 {
@@ -24,12 +25,12 @@ namespace ForgeModGenerator.Converter
             Modid = modid;
         }
 
-        public override bool CanConvert(Type objectType) => typeof(ObservableCollection<FileList<SoundEvent>>).IsAssignableFrom(objectType) || typeof(FileList<SoundEvent>).IsAssignableFrom(objectType);
+        public override bool CanConvert(Type objectType) => typeof(ObservableCollection<SoundEvent>).IsAssignableFrom(objectType);
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             string soundsPath = ModPaths.SoundsFolder(ModName, Modid);
-            FileList<SoundEvent> fileList = new FileList<SoundEvent>(soundsPath);
+            ObservableCollection<SoundEvent> fileList = new ObservableCollection<SoundEvent>();
             JObject item = JObject.Load(reader);
 
             foreach (KeyValuePair<string, JToken> property in item)
@@ -38,8 +39,9 @@ namespace ForgeModGenerator.Converter
                 eventSerializer.Converters.Add(new SoundEventConverter());
                 SoundEvent soundEvent = item.GetValue(property.Key).ToObject<SoundEvent>(eventSerializer);
                 soundEvent.EventName = property.Key;
-                soundEvent.SetFileItem(soundsPath);
-                foreach (Sound sound in soundEvent.Sounds)
+                soundEvent.SetInfo(soundsPath);
+
+                foreach (Sound sound in soundEvent.Files)
                 {
                     string soundName = sound.Name;
                     int modidLength = sound.Name.IndexOf(":") + 1;
@@ -47,21 +49,13 @@ namespace ForgeModGenerator.Converter
                     {
                         soundName = sound.Name.Remove(0, modidLength);
                     }
-                    sound.SetFileItem(Path.Combine(soundsPath, $"{soundName}.ogg"));
+                    sound.SetInfo(Path.Combine(soundsPath, $"{soundName}.ogg"));
                     sound.IsDirty = false;
                 }
                 soundEvent.IsDirty = false;
                 fileList.Add(soundEvent);
             }
-            if (typeof(ObservableCollection<FileList<SoundEvent>>).IsAssignableFrom(objectType))
-            {
-                return new ObservableCollection<FileList<SoundEvent>>() { fileList };
-            }
-            else if (typeof(FileList<SoundEvent>).IsAssignableFrom(objectType))
-            {
-                return fileList;
-            }
-            throw new JsonReaderException($"Object type is not neither assignable from {typeof(ObservableCollection<FileList<SoundEvent>>)} or {typeof(FileList<SoundEvent>)}");
+            return fileList;
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
@@ -69,30 +63,30 @@ namespace ForgeModGenerator.Converter
             builder.Clear();
             builder.Append("{\n");
 
-            if (value is FileList<SoundEvent> fileList)
+            if (value is ObservableCollection<SoundEvent> fileList)
             {
                 AppendFileListSoundEvent(fileList, true);
             }
-            else if (value is ObservableCollection<FileList<SoundEvent>> observable)
-            {
-                for (int i = 0; i < observable.Count; i++)
-                {
-                    bool isLastElement = i < observable.Count - 1;
-                    AppendFileListSoundEvent(observable[i], !isLastElement);
-                }
-            }
             else
             {
-                throw new JsonWriterException($"Object type was null, or neither type, {typeof(ObservableCollection<FileList<SoundEvent>>)} or {typeof(FileList<SoundEvent>)}");
+                throw new JsonWriterException($"Object type was null, or not type of {typeof(ObservableCollection<SoundEvent>)}");
             }
 
-            void AppendFileListSoundEvent(FileList<SoundEvent> val, bool removeCommaFromEnd)
+            void AppendFileListSoundEvent(ObservableCollection<SoundEvent> val, bool removeCommaFromEnd)
             {
+                PropertyRenameIgnoreResolver eventRenameResolver = new PropertyRenameIgnoreResolver();
+                eventRenameResolver.IgnoreProperty(typeof(SoundEvent), nameof(SoundEvent.Info), nameof(SoundEvent.IsReadOnly), nameof(SoundEvent.Count));
+                eventRenameResolver.RenameProperty(typeof(SoundEvent), nameof(SoundEvent.Files), "sounds");
+                JsonSerializerSettings settings = new JsonSerializerSettings() {
+                    ContractResolver = eventRenameResolver
+                };
+                settings.Converters.Add(new SoundEventConverter());
                 for (int i = 0; i < val.Count; i++)
                 {
                     SoundEvent item = val[i];
                     itemBuilder.Clear();
-                    string json = JsonConvert.SerializeObject(item, Formatting.Indented);
+                    string json = JsonConvert.SerializeObject(item, Formatting.Indented, settings);
+                    MessageBox.Show(json);
                     itemBuilder.Append(json).Replace($"\"{nameof(item.EventName)}\":", "")
                         .ReplaceN(",", ": {", 1)
                         .Remove(0, 1)
@@ -109,6 +103,8 @@ namespace ForgeModGenerator.Converter
 
             builder.Append("\n}");
             string serializedJson = builder.ToString();
+            //MessageBox.Show(serializedJson);
+            MessageBox.Show(serializedJson.FormatJson(serializer.Formatting));
             writer.WriteRawValue(serializedJson.FormatJson(serializer.Formatting));
         }
     }
