@@ -27,12 +27,13 @@
 							<ListBox.ItemTemplate>
 								<DataTemplate>
 									<StackPanel>
-										<local:FolderExpander HeaderText="{Binding Path=Info.Name}"
-															  Folder="{Binding}"
-															  AddCommand="{Binding Path=AddCommand, RelativeSource={RelativeSource AncestorType=local:FolderListBox}}"
-															  RemoveCommand="{Binding Path=RemoveCommand, RelativeSource={RelativeSource AncestorType=local:FolderListBox}}"
-															  EditCommand="{Binding Path=EditCommand, RelativeSource={RelativeSource AncestorType=local:FolderListBox}}"
-															  ItemTemplate="{Binding Path=FileItemTemplate, RelativeSource={RelativeSource AncestorType=local:FolderListBox}}" />
+										<local:FolderExpanderControl Style="{Binding Path=ExpanderStyle, RelativeSource={RelativeSource AncestorType=local:FolderListBox}}"
+																	 HeaderText="{Binding Path=Info.Name}"
+																	 Folder="{Binding}"
+																	 AddFileCommand="{Binding Path=AddFileCommand, RelativeSource={RelativeSource AncestorType=local:FolderListBox}}"
+																	 RemoveFileCommand="{Binding Path=RemoveFileCommand, RelativeSource={RelativeSource AncestorType=local:FolderListBox}}"
+																	 EditFileCommand="{Binding Path=EditFileCommand, RelativeSource={RelativeSource AncestorType=local:FolderListBox}}"
+																	 ItemTemplate="{Binding Path=FileItemTemplate, RelativeSource={RelativeSource AncestorType=local:FolderListBox}}" />
 										<Border Background="#FF313131"
 												Height="1"
 												HorizontalAlignment="Stretch"

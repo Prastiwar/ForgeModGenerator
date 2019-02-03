@@ -1,5 +1,4 @@
-﻿using ForgeModGenerator.Converter;
-using ForgeModGenerator.Model;
+﻿using ForgeModGenerator.Model;
 using ForgeModGenerator.Service;
 using GalaSoft.MvvmLight.Command;
 using Microsoft.VisualBasic.FileIO;
@@ -286,7 +285,7 @@ namespace ForgeModGenerator.ViewModel
             file.IsDirty = false;
         }
 
-        protected override void Remove(Tuple<SoundEvent, Sound> param)
+        protected override void RemoveFile(Tuple<SoundEvent, Sound> param)
         {
             try
             {

@@ -31,9 +31,9 @@
 			<control:FolderListBox FoldersSource="{Binding Folders}"
 								   SelectedFolder="{Binding SelectedFolder}"
 								   FileItemTemplate="{StaticResource ItemTemplate}"
-								   AddCommand="{Binding AddCommand}"
-								   RemoveCommand="{Binding RemoveCommand}"
-								   EditCommand="{Binding EditCommand}"
+								   AddFileCommand="{Binding AddCommand}"
+								   RemoveFileCommand="{Binding RemoveFileCommand}"
+								   EditFileCommand="{Binding EditFileCommand}"
 								   ShowEmptyMessage="{Binding SessionContext.IsModSelected, Converter={StaticResource InvertBooleanConverter}}" />
 		</Grid>
 	</materialDesign:DialogHost>

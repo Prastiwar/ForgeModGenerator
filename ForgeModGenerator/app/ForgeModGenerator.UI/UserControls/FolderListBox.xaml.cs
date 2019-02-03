@@ -11,6 +11,13 @@ namespace ForgeModGenerator.UserControls
             InitializeComponent();
         }
 
+        public static readonly DependencyProperty ExpanderStyleProperty =
+            DependencyProperty.Register("ExpanderStyle", typeof(Style), typeof(FolderListBox), new PropertyMetadata(null));
+        public Style ExpanderStyle {
+            get => (Style)GetValue(ExpanderStyleProperty);
+            set => SetValue(ExpanderStyleProperty, value);
+        }
+
         public static readonly DependencyProperty FileItemTemplateProperty =
             DependencyProperty.Register("FileItemTemplate", typeof(DataTemplate), typeof(FolderListBox), new PropertyMetadata(null));
         public DataTemplate FileItemTemplate {
@@ -46,25 +53,25 @@ namespace ForgeModGenerator.UserControls
             set => SetValue(ShowEmptyMessageProperty, value);
         }
 
-        public static readonly DependencyProperty AddCommandProperty =
-            DependencyProperty.Register("AddCommand", typeof(ICommand), typeof(FolderListBox), new PropertyMetadata(null));
-        public ICommand AddCommand {
-            get => (ICommand)GetValue(AddCommandProperty);
-            set => SetValue(AddCommandProperty, value);
+        public static readonly DependencyProperty AddFileCommandProperty =
+            DependencyProperty.Register("AddFileCommand", typeof(ICommand), typeof(FolderListBox), new PropertyMetadata(null));
+        public ICommand AddFileCommand {
+            get => (ICommand)GetValue(AddFileCommandProperty);
+            set => SetValue(AddFileCommandProperty, value);
         }
 
-        public static readonly DependencyProperty RemoveCommandProperty =
-            DependencyProperty.Register("RemoveCommand", typeof(ICommand), typeof(FolderListBox), new PropertyMetadata(null));
-        public ICommand RemoveCommand {
-            get => (ICommand)GetValue(RemoveCommandProperty);
-            set => SetValue(RemoveCommandProperty, value);
+        public static readonly DependencyProperty RemoveFileCommandProperty =
+            DependencyProperty.Register("RemoveFileCommand", typeof(ICommand), typeof(FolderListBox), new PropertyMetadata(null));
+        public ICommand RemoveFileCommand {
+            get => (ICommand)GetValue(RemoveFileCommandProperty);
+            set => SetValue(RemoveFileCommandProperty, value);
         }
 
-        public static readonly DependencyProperty EditCommandProperty =
-            DependencyProperty.Register("EditCommand", typeof(ICommand), typeof(FolderListBox), new PropertyMetadata(null));
-        public ICommand EditCommand {
-            get => (ICommand)GetValue(EditCommandProperty);
-            set => SetValue(EditCommandProperty, value);
+        public static readonly DependencyProperty EditFileCommandProperty =
+            DependencyProperty.Register("EditFileCommand", typeof(ICommand), typeof(FolderListBox), new PropertyMetadata(null));
+        public ICommand EditFileCommand {
+            get => (ICommand)GetValue(EditFileCommandProperty);
+            set => SetValue(EditFileCommandProperty, value);
         }
     }
 }

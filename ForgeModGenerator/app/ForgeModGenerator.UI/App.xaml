@@ -19,6 +19,7 @@
 				<ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml" />
 				<ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.MahApps;component/Themes/MaterialDesignTheme.MahApps.NumericUpDown.xaml" />
 				<ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.MahApps;component/Themes/MaterialDesignTheme.MahApps.RangeSlider.xaml" />
+				<ResourceDictionary Source="Themes/Generic.xaml" />
 				<ResourceDictionary>
 					<SolidColorBrush x:Key="PageBackground"
 									 Color="#FF424242" />
@@ -51,7 +52,7 @@
 				<ResourceDictionary>
 					<ContextMenu x:Key="DefaultFileItemContext">
 						<MenuItem Header="Remove"
-								  Command="{Binding PlacementTarget.Tag.RemoveCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}">
+								  Command="{Binding PlacementTarget.Tag.RemoveFileCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}">
 							<MenuItem.CommandParameter>
 								<MultiBinding Converter="{StaticResource FileFolderFileItemConverter}">
 									<Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}"
@@ -62,8 +63,8 @@
 							</MenuItem.CommandParameter>
 						</MenuItem>
 						<MenuItem Header="Edit"
-								  Command="{Binding PlacementTarget.Tag.EditCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}"
-								  CommandParameter="{Binding}"></MenuItem>
+								  Command="{Binding PlacementTarget.Tag.EditFileCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}"
+								  CommandParameter="{Binding}" />
 					</ContextMenu>
 				</ResourceDictionary>
 			</ResourceDictionary.MergedDictionaries>

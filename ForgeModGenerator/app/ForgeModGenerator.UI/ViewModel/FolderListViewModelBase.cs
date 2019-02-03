@@ -68,14 +68,14 @@ namespace ForgeModGenerator.ViewModel
             set => Set(ref selectedFile, value);
         }
 
-        private ICommand editCommand;
-        public ICommand EditCommand => editCommand ?? (editCommand = new RelayCommand<TFile>(Edit));
+        private ICommand editFileCommand;
+        public ICommand EditFileCommand => editFileCommand ?? (editFileCommand = new RelayCommand<TFile>(EditFile));
 
         private ICommand addCommand;
         public ICommand AddCommand => addCommand ?? (addCommand = new RelayCommand<TFolder>(AddNewFile));
 
-        private ICommand removeCommand;
-        public ICommand RemoveCommand => removeCommand ?? (removeCommand = new RelayCommand<Tuple<TFolder, TFile>>(Remove));
+        private ICommand removeFileCommand;
+        public ICommand RemoveFileCommand => removeFileCommand ?? (removeFileCommand = new RelayCommand<Tuple<TFolder, TFile>>(RemoveFile));
 
         protected virtual bool CanRefresh() => SessionContext.SelectedMod != null && (Directory.Exists(FoldersRootPath) || File.Exists(FoldersRootPath));
 
@@ -102,7 +102,7 @@ namespace ForgeModGenerator.ViewModel
 
         protected virtual bool CanCloseEditForm(bool result, TFile fileBeforeEdit, TFile fileAfterEdit) => true;
 
-        protected virtual async void Edit(TFile file)
+        protected virtual async void EditFile(TFile file)
         {
             SelectedFile = file;
             bool result = false;
@@ -129,7 +129,7 @@ namespace ForgeModGenerator.ViewModel
             }
         }
 
-        protected virtual void Remove(Tuple<TFolder, TFile> param)
+        protected virtual void RemoveFile(Tuple<TFolder, TFile> param)
         {
             try
             {

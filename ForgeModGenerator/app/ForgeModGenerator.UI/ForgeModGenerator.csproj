@@ -146,14 +146,12 @@
     <Compile Include="Service\CommandTracker.cs" />
     <Compile Include="Service\ModBuildService.cs" />
     <Compile Include="Core\ReferenceCounter.cs" />
+    <Compile Include="UserControls\FolderExpanderControl.cs" />
     <Compile Include="UserControls\FolderListBox.xaml.cs">
       <DependentUpon>FolderListBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\HorizontalList.xaml.cs">
       <DependentUpon>HorizontalList.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\FolderExpander.xaml.cs">
-      <DependentUpon>FolderExpander.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\Forms\ModBuildForm.xaml.cs">
       <DependentUpon>ModBuildForm.xaml</DependentUpon>
@@ -238,15 +236,15 @@
     <Compile Include="ViewModel\Main\NavigationMenu.xaml.cs">
       <DependentUpon>NavigationMenu.xaml</DependentUpon>
     </Compile>
+    <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UserControls\FolderListBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\HorizontalList.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\FolderExpander.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -14,18 +14,18 @@
 	<Page.Resources>
 		<DataTemplate x:Key="ItemTemplate">
 			<StackPanel>
-				<Button Tag="{Binding ElementName=ThisWindow}"
+				<Button Tag="{Binding RelativeSource={RelativeSource AncestorType=control:FolderExpanderControl}}"
 						Width="32"
 						Height="32"
 						Padding="0"
 						Background="CornflowerBlue"
 						BorderBrush="Black"
 						ContextMenu="{StaticResource DefaultFileItemContext}"
-						Command="{Binding ClickCommand, ElementName=ThisWindow}"
+						Command="{Binding FileClickCommand, RelativeSource={RelativeSource AncestorType=control:FolderExpanderControl}}"
 						CommandParameter="{Binding}">
 					<materialDesign:PackIcon Kind="Play" />
 				</Button>
-				<TextBlock Text="{Binding EventName}" />
+				<TextBlock Text="{Binding Info.Name}" />
 			</StackPanel>
 		</DataTemplate>
 	</Page.Resources>
@@ -55,12 +55,13 @@
 						Command="{Binding UpdateSoundsJson}" />
 			</StackPanel>
 			<control:FolderListBox Grid.Row="1"
+								   ExpanderStyle="{StaticResource SoundFolderExpanderControl}"
 								   FoldersSource="{Binding Folders}"
 								   SelectedFolder="{Binding SelectedFolder}"
 								   FileItemTemplate="{StaticResource ItemTemplate}"
-								   AddCommand="{Binding AddCommand}"
-								   RemoveCommand="{Binding RemoveCommand}"
-								   EditCommand="{Binding EditCommand}"
+								   AddFileCommand="{Binding AddCommand}"
+								   RemoveFileCommand="{Binding RemoveFileCommand}"
+								   EditFileCommand="{Binding EditFileCommand}"
 								   ShowEmptyMessage="{Binding SessionContext.IsModSelected, Converter={StaticResource InvertBooleanConverter}}" />
 		</Grid>
 	</materialDesign:DialogHost>
