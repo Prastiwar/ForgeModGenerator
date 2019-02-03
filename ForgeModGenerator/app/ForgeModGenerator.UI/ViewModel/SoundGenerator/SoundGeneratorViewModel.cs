@@ -5,7 +5,6 @@ using Microsoft.VisualBasic.FileIO;
 using Newtonsoft.Json;
 using System;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -27,8 +26,6 @@ namespace ForgeModGenerator.ViewModel
             };
             Preferences = sessionContext.GetOrCreatePreferences<SoundsGeneratorPreferences>();
             Refresh();
-            OnFileAdded += AddSoundToJson;
-            OnFileRemoved += RemoveSoundFromJson;
         }
 
         public override string FoldersRootPath => SessionContext.SelectedMod != null ? ModPaths.SoundsJson(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid) : null;
@@ -235,13 +232,7 @@ namespace ForgeModGenerator.ViewModel
             return canRefresh;
         }
 
-        protected override void OnFolderChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            base.OnFolderChanged(sender, e);
-            ShouldUpdate = CanRefresh() ? IsUpdateAvailable() : false;
-        }
-
-        protected override bool CanCloseEditForm(bool result, Sound fileBeforeEdit, Sound fileAfterEdit)
+        protected override bool CanCloseFileEditor(bool result, Sound fileBeforeEdit, Sound fileAfterEdit)
         {
             if (result)
             {
@@ -266,7 +257,7 @@ namespace ForgeModGenerator.ViewModel
             return true;
         }
 
-        protected override void OnEdited(bool result, Sound file)
+        protected override void OnFileEdited(bool result, Sound file)
         {
             //if (result)
             //{
@@ -285,7 +276,7 @@ namespace ForgeModGenerator.ViewModel
             file.IsDirty = false;
         }
 
-        protected override void RemoveFile(Tuple<SoundEvent, Sound> param)
+        protected override void RemoveFileFromFolder(Tuple<SoundEvent, Sound> param)
         {
             try
             {
@@ -304,7 +295,7 @@ namespace ForgeModGenerator.ViewModel
             }
         }
 
-        protected override ObservableCollection<SoundEvent> FindCollection(string path, bool createRootIfEmpty = false)
+        protected override ObservableCollection<SoundEvent> FindFolders(string path, bool createRootIfEmpty = false)
         {
             try
             {
@@ -313,7 +304,7 @@ namespace ForgeModGenerator.ViewModel
                 if (!File.Exists(path))
                 {
                     File.AppendAllText(path, "{}");
-                    return createRootIfEmpty ? CreateEmptyRoot(soundsFolder) : null;
+                    return createRootIfEmpty ? CreateEmptyFoldersRoot(soundsFolder) : null;
                 }
                 Converter.SoundCollectionConverter converter = new Converter.SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
 
@@ -321,13 +312,17 @@ namespace ForgeModGenerator.ViewModel
 
                 if (createRootIfEmpty && (rootCollection == null || rootCollection.Count <= 0))
                 {
-                    rootCollection = CreateEmptyRoot(soundsFolder);
+                    rootCollection = CreateEmptyFoldersRoot(soundsFolder);
                 }
                 else if (rootCollection != null)
                 {
                     foreach (SoundEvent item in rootCollection)
                     {
-                        item.CollectionChanged += OnFolderChanged;
+                        item.CollectionChanged += (sender, args) => {
+                            ShouldUpdate = CanRefresh() ? IsUpdateAvailable() : false;
+                        };
+                        item.OnFileAdded += AddSoundToJson;
+                        item.OnFileRemoved += RemoveSoundFromJson;
                     }
                 }
                 return rootCollection;
