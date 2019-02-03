@@ -21,7 +21,7 @@ namespace ForgeModGenerator.Model
             EventName = FormatDottedSoundName(Info.FullName);
             IsDirty = false;
         }
-        
+
         public SoundEvent(string name, IEnumerable<Sound> sounds)
         {
             if (sounds == null)
@@ -61,19 +61,17 @@ namespace ForgeModGenerator.Model
         }
 
         private bool replace = false;
-        [JsonProperty(PropertyName = "replace")]
         public bool Replace {
             get => replace;
             set => DirtSet(ref replace, value);
         }
 
         private string subtitle;
-        [JsonProperty(PropertyName = "subtitle")]
         public string Subtitle {
             get => subtitle;
             set => DirtSet(ref subtitle, value);
         }
-        
+
         public override object DeepClone()
         {
             ObservableFolder<Sound> baseClone = (ObservableFolder<Sound>)base.DeepClone();

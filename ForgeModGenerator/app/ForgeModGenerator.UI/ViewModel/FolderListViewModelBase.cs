@@ -19,11 +19,11 @@ using System.Windows.Input;
 namespace ForgeModGenerator.ViewModel
 {
     /// <summary> Business ViewModel Base class for making file list </summary>
-    public abstract class FileListViewModelBase<TFolder, TFile> : ViewModelBase
+    public abstract class FolderListViewModelBase<TFolder, TFile> : ViewModelBase
         where TFolder : IFileFolder<TFile>
         where TFile : IFileItem
     {
-        public FileListViewModelBase(ISessionContextService sessionContext)
+        public FolderListViewModelBase(ISessionContextService sessionContext)
         {
             SessionContext = sessionContext;
             OpenFileDialog = new OpenFileDialog() {
@@ -210,7 +210,7 @@ namespace ForgeModGenerator.ViewModel
         protected ObservableCollection<TFolder> CreateEmptyRoot(string path)
         {
             TFolder root = Util.CreateInstance<TFolder>(path);
-            root.CollectionChanged += FileCollection_CollectionChanged;
+            root.CollectionChanged += OnFolderChanged;
             return new ObservableCollection<TFolder>() { root };
         }
 
@@ -259,14 +259,14 @@ namespace ForgeModGenerator.ViewModel
                             folder.Add(Path.GetFullPath(filePath).Replace('\\', '/'));
                         }
                     }
-                    folder.CollectionChanged += FileCollection_CollectionChanged;
+                    folder.CollectionChanged += OnFolderChanged;
                     initCollection.Add(folder);
                 }
             }
             return new ObservableCollection<TFolder>(initCollection);
         }
 
-        protected virtual void FileCollection_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        protected virtual void OnFolderChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
             {

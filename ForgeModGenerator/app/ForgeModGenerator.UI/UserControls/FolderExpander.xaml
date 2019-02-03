@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="ForgeModGenerator.UserControls.FileListExpander"
+﻿<UserControl x:Class="ForgeModGenerator.UserControls.FolderExpander"
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -19,8 +19,8 @@
 						<Button Width="20"
 								Height="20"
 								Padding="0"
-								CommandParameter="{Binding Path=FileCollection, RelativeSource={RelativeSource AncestorType=local:FileListExpander}}"
-								Command="{Binding Path=AddCommand, RelativeSource={RelativeSource AncestorType=local:FileListExpander}}">
+								Command="{Binding Path=AddCommand, RelativeSource={RelativeSource AncestorType=local:FolderExpander}}"
+								CommandParameter="{Binding Path=Folder, RelativeSource={RelativeSource AncestorType=local:FolderExpander}}">
 							<materialDesign:PackIcon Kind="Plus" />
 						</Button>
 						<Button Width="20"
@@ -33,18 +33,18 @@
 						<TextBlock Margin="12,0">
 							<TextBlock.Text>
 								<MultiBinding StringFormat="({0}) {1}">
-									<Binding Path="FileCollection.Count"
-											 RelativeSource="{RelativeSource AncestorType=local:FileListExpander}" />
+									<Binding Path="Folder.Count"
+											 RelativeSource="{RelativeSource AncestorType=local:FolderExpander}" />
 									<Binding Path="HeaderText"
-											 RelativeSource="{RelativeSource AncestorType=local:FileListExpander}" />
+											 RelativeSource="{RelativeSource AncestorType=local:FolderExpander}" />
 								</MultiBinding>
 							</TextBlock.Text></TextBlock>
 					</StackPanel>
 				</DataTemplate>
 			</Expander.HeaderTemplate>
-			<ListBox ItemsSource="{Binding Path=FileCollection, RelativeSource={RelativeSource AncestorType=local:FileListExpander}}"
-					 SelectedItem="{Binding Path=SelectedFile, RelativeSource={RelativeSource AncestorType=local:FileListExpander}}"
-					 ItemTemplate="{Binding Path=ItemTemplate, RelativeSource={RelativeSource AncestorType=local:FileListExpander}}"
+			<ListBox ItemsSource="{Binding Path=Folder.Files, RelativeSource={RelativeSource AncestorType=local:FolderExpander}}"
+					 SelectedItem="{Binding Path=SelectedFile, RelativeSource={RelativeSource AncestorType=local:FolderExpander}}"
+					 ItemTemplate="{Binding Path=ItemTemplate, RelativeSource={RelativeSource AncestorType=local:FolderExpander}}"
 					 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
 				<ListBox.ItemsPanel>
 					<ItemsPanelTemplate>

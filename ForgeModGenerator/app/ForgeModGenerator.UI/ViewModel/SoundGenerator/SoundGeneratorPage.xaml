@@ -54,14 +54,14 @@
 						VerticalAlignment="Top"
 						Command="{Binding UpdateSoundsJson}" />
 			</StackPanel>
-			<control:FileCollectionListBox Grid.Row="1"
-										   FilesSource="{Binding Folders}"
-										   SelectedFilesItem="{Binding SelectedFolder}"
-										   FileItemTemplate="{StaticResource ItemTemplate}"
-										   AddCommand="{Binding AddCommand}"
-										   RemoveCommand="{Binding RemoveCommand}"
-										   EditCommand="{Binding EditCommand}"
-										   ShowEmptyMessage="{Binding SessionContext.IsModSelected, Converter={StaticResource InvertBooleanConverter}}" />
+			<control:FolderListBox Grid.Row="1"
+								   FoldersSource="{Binding Folders}"
+								   SelectedFolder="{Binding SelectedFolder}"
+								   FileItemTemplate="{StaticResource ItemTemplate}"
+								   AddCommand="{Binding AddCommand}"
+								   RemoveCommand="{Binding RemoveCommand}"
+								   EditCommand="{Binding EditCommand}"
+								   ShowEmptyMessage="{Binding SessionContext.IsModSelected, Converter={StaticResource InvertBooleanConverter}}" />
 		</Grid>
 	</materialDesign:DialogHost>
 </Page>

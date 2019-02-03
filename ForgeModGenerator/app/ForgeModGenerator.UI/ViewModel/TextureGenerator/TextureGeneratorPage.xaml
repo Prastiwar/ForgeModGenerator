@@ -18,23 +18,23 @@
 					   Width="32"
 					   Height="32">
 					<Image.Source>
-						<BitmapImage UriSource="{Binding FilePath}"
+						<BitmapImage UriSource="{Binding Info.FullName}"
 									 CacheOption="OnLoad" />
 					</Image.Source>
 				</Image>
-				<TextBlock Text="{Binding FileName}" />
+				<TextBlock Text="{Binding Info.Name}" />
 			</StackPanel>
 		</DataTemplate>
 	</Page.Resources>
 	<materialDesign:DialogHost>
 		<Grid Background="{StaticResource PageBackground}">
-			<control:FileCollectionListBox FilesSource="{Binding Files}"
-										   SelectedFilesItem="{Binding SelectedFiles}"
-										   FileItemTemplate="{StaticResource ItemTemplate}"
-										   AddCommand="{Binding AddCommand}"
-										   RemoveCommand="{Binding RemoveCommand}"
-										   EditCommand="{Binding EditCommand}"
-										   ShowEmptyMessage="{Binding SessionContext.IsModSelected, Converter={StaticResource InvertBooleanConverter}}" />
+			<control:FolderListBox FoldersSource="{Binding Folders}"
+								   SelectedFolder="{Binding SelectedFolder}"
+								   FileItemTemplate="{StaticResource ItemTemplate}"
+								   AddCommand="{Binding AddCommand}"
+								   RemoveCommand="{Binding RemoveCommand}"
+								   EditCommand="{Binding EditCommand}"
+								   ShowEmptyMessage="{Binding SessionContext.IsModSelected, Converter={StaticResource InvertBooleanConverter}}" />
 		</Grid>
 	</materialDesign:DialogHost>
 </Page>

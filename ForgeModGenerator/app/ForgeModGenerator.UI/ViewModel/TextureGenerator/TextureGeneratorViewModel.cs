@@ -5,7 +5,7 @@ using System.Windows.Forms;
 namespace ForgeModGenerator.ViewModel
 {
     /// <summary> TextureGenerator Business ViewModel </summary>
-    public class TextureGeneratorViewModel : FileListViewModelBase<ObservableFolder<FileItem>, FileItem>
+    public class TextureGeneratorViewModel : FolderListViewModelBase<ObservableFolder<FileItem>, FileItem>
     {
         public TextureGeneratorViewModel(ISessionContextService sessionContext) : base(sessionContext)
         {

@@ -55,7 +55,7 @@
 							<MenuItem.CommandParameter>
 								<MultiBinding Converter="{StaticResource FileFolderFileItemConverter}">
 									<Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}"
-											 Path="PlacementTarget.Tag.FileCollection" />
+											 Path="PlacementTarget.Tag.Folder" />
 									<Binding Path="." />
 									<!--ContextMenuItemName-->
 								</MultiBinding>

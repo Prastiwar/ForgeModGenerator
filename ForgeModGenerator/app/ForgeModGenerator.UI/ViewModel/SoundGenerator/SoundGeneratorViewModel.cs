@@ -1,4 +1,5 @@
-﻿using ForgeModGenerator.Model;
+﻿using ForgeModGenerator.Converter;
+using ForgeModGenerator.Model;
 using ForgeModGenerator.Service;
 using GalaSoft.MvvmLight.Command;
 using Microsoft.VisualBasic.FileIO;
@@ -14,7 +15,7 @@ using System.Windows.Input;
 namespace ForgeModGenerator.ViewModel
 {
     /// <summary> SoundGenerator Business ViewModel </summary>
-    public class SoundGeneratorViewModel : FileListViewModelBase<SoundEvent, Sound>
+    public class SoundGeneratorViewModel : FolderListViewModelBase<SoundEvent, Sound>
     {
         public SoundGeneratorViewModel(ISessionContextService sessionContext) : base(sessionContext)
         {
@@ -235,9 +236,9 @@ namespace ForgeModGenerator.ViewModel
             return canRefresh;
         }
 
-        protected override void FileCollection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        protected override void OnFolderChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            base.FileCollection_CollectionChanged(sender, e);
+            base.OnFolderChanged(sender, e);
             ShouldUpdate = CanRefresh() ? IsUpdateAvailable() : false;
         }
 
@@ -327,7 +328,7 @@ namespace ForgeModGenerator.ViewModel
                 {
                     foreach (SoundEvent item in rootCollection)
                     {
-                        item.CollectionChanged += FileCollection_CollectionChanged;
+                        item.CollectionChanged += OnFolderChanged;
                     }
                 }
                 return rootCollection;

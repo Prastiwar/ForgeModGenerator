@@ -29,7 +29,7 @@ namespace ForgeModGenerator.Converter
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             string soundsPath = ModPaths.SoundsFolder(ModName, Modid);
-            ObservableCollection<SoundEvent> fileList = new ObservableCollection<SoundEvent>();
+            ObservableCollection<SoundEvent> folders = new ObservableCollection<SoundEvent>();
             JObject item = JObject.Load(reader);
 
             foreach (KeyValuePair<string, JToken> property in item)
@@ -50,9 +50,9 @@ namespace ForgeModGenerator.Converter
                     sound.IsDirty = false;
                 }
                 soundEvent.IsDirty = false;
-                fileList.Add(soundEvent);
+                folders.Add(soundEvent);
             }
-            return fileList;
+            return folders;
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
@@ -60,31 +60,26 @@ namespace ForgeModGenerator.Converter
             builder.Clear();
             builder.Append("{\n");
 
-            if (value is ObservableCollection<SoundEvent> fileList)
+            if (value is ObservableCollection<SoundEvent> folders)
             {
-                AppendFileListSoundEvent(fileList, true);
-            }
-            else
-            {
-                throw new JsonWriterException($"Object type was null, or not type of {typeof(ObservableCollection<SoundEvent>)}");
-            }
-
-            void AppendFileListSoundEvent(ObservableCollection<SoundEvent> val, bool removeCommaFromEnd)
-            {
-                for (int i = 0; i < val.Count; i++)
+                for (int i = 0; i < folders.Count; i++)
                 {
-                    SoundEvent item = val[i];
+                    SoundEvent item = folders[i];
                     itemBuilder.Clear();
                     string json = JsonConvert.SerializeObject(item, Formatting.Indented);
                     itemBuilder.Append(json);
 
-                    bool isLastElement = i < val.Count - 1;
-                    if (removeCommaFromEnd && isLastElement)
+                    bool isLastElement = i < folders.Count - 1;
+                    if (isLastElement)
                     {
                         itemBuilder.Append(',');
                     }
                     builder.Append(itemBuilder);
                 }
+            }
+            else
+            {
+                throw new JsonWriterException($"Object type was null, or not type of {typeof(ObservableCollection<SoundEvent>)}");
             }
 
             builder.Append("\n}");
