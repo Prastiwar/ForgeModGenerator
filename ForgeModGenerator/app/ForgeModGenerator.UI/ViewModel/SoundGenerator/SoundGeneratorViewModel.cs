@@ -1,5 +1,4 @@
-﻿using ForgeModGenerator.Converter;
-using ForgeModGenerator.Model;
+﻿using ForgeModGenerator.Model;
 using ForgeModGenerator.Service;
 using GalaSoft.MvvmLight.Command;
 using Microsoft.VisualBasic.FileIO;
@@ -30,7 +29,6 @@ namespace ForgeModGenerator.ViewModel
             Refresh();
             OnFileAdded += AddSoundToJson;
             OnFileRemoved += RemoveSoundFromJson;
-            JsonConvert.SerializeObject(Folders, Formatting.Indented, new SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid));
         }
 
         public override string FoldersRootPath => SessionContext.SelectedMod != null ? ModPaths.SoundsJson(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid) : null;

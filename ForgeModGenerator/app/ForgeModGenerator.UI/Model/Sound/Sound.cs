@@ -1,9 +1,11 @@
-﻿using Newtonsoft.Json;
+﻿using ForgeModGenerator.Converter;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.IO;
 
 namespace ForgeModGenerator.Model
 {
+    [JsonConverter(typeof(SoundConverter))]
     public class Sound : FileItem
     {
         [JsonConverter(typeof(StringEnumConverter))]
@@ -30,63 +32,54 @@ namespace ForgeModGenerator.Model
             IsDirty = false;
         }
 
-        [JsonIgnore]
         public string ShortPath {
             get => Name.Remove(0, Name.IndexOf(':') + 1);
             set => Name = FormatSoundShortPath(Mod.GetModidFromPath(Name), value);
         }
 
         private string name;
-        [JsonProperty(PropertyName = "name")]
         public string Name {
             get => name;
             set => DirtSet(ref name, value);
         }
 
         private float volume = 1.0f;
-        [JsonProperty(PropertyName = "volume")]
         public float Volume {
             get => volume;
             set => DirtSet(ref volume, Math.Clamp(value));
         }
 
         private float pitch = 1.0f;
-        [JsonProperty(PropertyName = "pitch")]
         public float Pitch {
             get => pitch;
             set => DirtSet(ref pitch, value);
         }
 
         private int weight = 1;
-        [JsonProperty(PropertyName = "weight")]
         public int Weight {
             get => weight;
             set => DirtSet(ref weight, value);
         }
 
         private bool stream = false;
-        [JsonProperty(PropertyName = "stream")]
         public bool Stream {
             get => stream;
             set => DirtSet(ref stream, value);
         }
 
         private int attenuationDistance;
-        [JsonProperty(PropertyName = "attenuation_distance")]
         public int AttenuationDistance {
             get => attenuationDistance;
             set => DirtSet(ref attenuationDistance, value);
         }
 
         private bool preload = false;
-        [JsonProperty(PropertyName = "preload")]
         public bool Preload {
             get => preload;
             set => DirtSet(ref preload, value);
         }
 
         private SoundType type = SoundType.file;
-        [JsonProperty(PropertyName = "type")]
         public SoundType Type {
             get => type;
             set => DirtSet(ref type, value);

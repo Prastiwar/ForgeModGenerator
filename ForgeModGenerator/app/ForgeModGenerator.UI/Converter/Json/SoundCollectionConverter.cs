@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
-using System.Windows;
 
 namespace ForgeModGenerator.Converter
 {
@@ -35,9 +34,7 @@ namespace ForgeModGenerator.Converter
 
             foreach (KeyValuePair<string, JToken> property in item)
             {
-                JsonSerializer eventSerializer = new JsonSerializer();
-                eventSerializer.Converters.Add(new SoundEventConverter());
-                SoundEvent soundEvent = item.GetValue(property.Key).ToObject<SoundEvent>(eventSerializer);
+                SoundEvent soundEvent = item.GetValue(property.Key).ToObject<SoundEvent>();
                 soundEvent.EventName = property.Key;
                 soundEvent.SetInfo(soundsPath);
 
@@ -74,23 +71,12 @@ namespace ForgeModGenerator.Converter
 
             void AppendFileListSoundEvent(ObservableCollection<SoundEvent> val, bool removeCommaFromEnd)
             {
-                PropertyRenameIgnoreResolver eventRenameResolver = new PropertyRenameIgnoreResolver();
-                eventRenameResolver.IgnoreProperty(typeof(SoundEvent), nameof(SoundEvent.Info), nameof(SoundEvent.IsReadOnly), nameof(SoundEvent.Count));
-                eventRenameResolver.RenameProperty(typeof(SoundEvent), nameof(SoundEvent.Files), "sounds");
-                JsonSerializerSettings settings = new JsonSerializerSettings() {
-                    ContractResolver = eventRenameResolver
-                };
-                settings.Converters.Add(new SoundEventConverter());
                 for (int i = 0; i < val.Count; i++)
                 {
                     SoundEvent item = val[i];
                     itemBuilder.Clear();
-                    string json = JsonConvert.SerializeObject(item, Formatting.Indented, settings);
-                    MessageBox.Show(json);
-                    itemBuilder.Append(json).Replace($"\"{nameof(item.EventName)}\":", "")
-                        .ReplaceN(",", ": {", 1)
-                        .Remove(0, 1)
-                        .Replace("null", "\"\"");
+                    string json = JsonConvert.SerializeObject(item, Formatting.Indented);
+                    itemBuilder.Append(json);
 
                     bool isLastElement = i < val.Count - 1;
                     if (removeCommaFromEnd && isLastElement)
@@ -103,8 +89,6 @@ namespace ForgeModGenerator.Converter
 
             builder.Append("\n}");
             string serializedJson = builder.ToString();
-            //MessageBox.Show(serializedJson);
-            MessageBox.Show(serializedJson.FormatJson(serializer.Formatting));
             writer.WriteRawValue(serializedJson.FormatJson(serializer.Formatting));
         }
     }

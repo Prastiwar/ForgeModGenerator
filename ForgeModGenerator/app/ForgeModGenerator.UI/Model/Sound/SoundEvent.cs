@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using ForgeModGenerator.Converter;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -6,6 +7,7 @@ using System.Linq;
 
 namespace ForgeModGenerator.Model
 {
+    [JsonConverter(typeof(SoundEventConverter))]
     public class SoundEvent : ObservableFolder<Sound>
     {
         private SoundEvent() { }
@@ -19,8 +21,7 @@ namespace ForgeModGenerator.Model
             EventName = FormatDottedSoundName(Info.FullName);
             IsDirty = false;
         }
-
-        //[JsonConstructor]
+        
         public SoundEvent(string name, IEnumerable<Sound> sounds)
         {
             if (sounds == null)

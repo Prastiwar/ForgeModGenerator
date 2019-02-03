@@ -3,7 +3,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Windows;
 
 namespace ForgeModGenerator.Converter
 {
@@ -13,23 +12,16 @@ namespace ForgeModGenerator.Converter
         {
             JObject item = JObject.Load(reader);
 
-            string soundsJson = item.GetValue("sounds").ToString();
-            PropertyRenameIgnoreResolver soundRenameIgnoreResolver = new PropertyRenameIgnoreResolver();
-            soundRenameIgnoreResolver.IgnoreProperty(typeof(Sound), nameof(Sound.Info));
+            string soundsJson = item.GetValue("sounds", StringComparison.OrdinalIgnoreCase).ToString();
+            List<Sound> sounds = JsonConvert.DeserializeObject<List<Sound>>(soundsJson);
 
-            JsonSerializerSettings soundSerializerSettings = new JsonSerializerSettings() {
-                ContractResolver = soundRenameIgnoreResolver,
-                Converters = new List<JsonConverter>() { new SoundConverter() }
-            };
-            List<Sound> sounds = JsonConvert.DeserializeObject<List<Sound>>(soundsJson, soundSerializerSettings);// new SoundConverter());
-
-            string name = item.TryGetValue("EventName", out JToken eventName) ? eventName.ToObject<string>() : "";
+            string name = item.TryGetValue(nameof(SoundEvent.EventName), StringComparison.OrdinalIgnoreCase, out JToken eventName) ? eventName.ToObject<string>() : "";
             SoundEvent soundEvent = new SoundEvent(name, sounds);
-            if (item.TryGetValue("replace", out JToken replace))
+            if (item.TryGetValue(nameof(SoundEvent.Replace), StringComparison.OrdinalIgnoreCase, out JToken replace))
             {
                 soundEvent.Replace = replace.ToObject<bool>();
             }
-            if (item.TryGetValue("subtitle", out JToken subtitle))
+            if (item.TryGetValue(nameof(SoundEvent.Subtitle), StringComparison.OrdinalIgnoreCase, out JToken subtitle))
             {
                 soundEvent.Subtitle = subtitle.ToObject<string>();
             }
@@ -39,8 +31,18 @@ namespace ForgeModGenerator.Converter
 
         public override void WriteJson(JsonWriter writer, SoundEvent value, JsonSerializer serializer)
         {
-            MessageBox.Show(value.ToString());
-            writer.WriteRawValue(JsonConvert.SerializeObject(value, serializer.Formatting));
+            writer.WriteRawValue($"\"{value.EventName}\":");
+            if (serializer.Formatting == Formatting.Indented)
+            {
+                writer.WriteRawValue(" ");
+            }
+
+            JObject jo = new JObject {
+                { nameof(SoundEvent.Replace).ToLower(), value.Replace },
+                { nameof(SoundEvent.Subtitle).ToLower(), value.Subtitle },
+                { "sounds", JArray.FromObject(value.Files, serializer) }
+            };
+            jo.WriteTo(writer);
         }
     }
 }

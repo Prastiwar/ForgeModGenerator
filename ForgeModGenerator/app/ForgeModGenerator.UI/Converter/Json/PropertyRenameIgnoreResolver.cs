@@ -3,7 +3,6 @@ using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Windows;
 
 namespace ForgeModGenerator.Converter
 {
@@ -47,19 +46,12 @@ namespace ForgeModGenerator.Converter
             {
                 property.PropertyName = newJsonPropertyName;
             }
-            if (property.DeclaringType == typeof(Model.SoundEvent))
-            {
-                MessageBox.Show($"{property.DeclaringType} = {property.PropertyName}");
-            }
             return property;
         }
-
-        //protected bool IsIgnored(Type fromClass, string jsonPropertyName) => ignored.ContainsKey(fromClass) ? ignored[fromClass].Contains(jsonPropertyName) : false;
 
         protected bool IsIgnored(Type type, string jsonPropertyName)
         {
             Type ignoredType = null;
-
             if (ignored.ContainsKey(type))
             {
                 ignoredType = type;

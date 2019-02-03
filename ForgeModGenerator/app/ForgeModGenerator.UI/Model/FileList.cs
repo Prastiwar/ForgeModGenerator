@@ -1,6 +1,6 @@
 ﻿using ForgeModGenerator.Miscellaneous;
+using Newtonsoft.Json;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -12,16 +12,22 @@ namespace ForgeModGenerator.Model
 {
     public delegate void OnFileChangedEventHandler<T>(T file);
 
-    public interface IFileFolder : IFileSystemInfo, ICollection, IDirty, INotifyCollectionChanged, INotifyPropertyChanged
+    public interface IFileFolder : IFileSystemInfo, IDirty, INotifyCollectionChanged, INotifyPropertyChanged
     {
         void Add(string filePath);
+        void Clear();
     }
 
-    public interface IFileFolder<T> : IFileFolder, ICollection<T>
-        where T : IFileSystemInfo
+    public interface IFileFolder<T> : IFileFolder where T : IFileSystemInfo
     {
         event OnFileChangedEventHandler<T> OnFileAdded;
         event OnFileChangedEventHandler<T> OnFileRemoved;
+
+        ObservableCollection<T> Files { get; }
+
+        void Add(T item);
+        bool Remove(T item);
+        bool Contains(T item);
     }
 
     public class ObservableFolder<T> : ObservableDirtyObject, IFileFolder<T>
@@ -121,21 +127,14 @@ namespace ForgeModGenerator.Model
             ReferenceCounter.AddReference(info.FullName, this);
         }
 
+        [JsonIgnore]
         public int Count => Files.Count;
-        public bool IsReadOnly => false;
 
         public void Add(string filePath) => Add(CreateFileFromPath(filePath));
         public void Add(T item) => Files.Add(item);
         public bool Remove(T item) => Files.Remove(item);
         public void Clear() => Files.Clear();
         public bool Contains(T item) => Files.Contains(item);
-        public void CopyTo(T[] array, int arrayIndex) => Files.CopyTo(array, arrayIndex);
-        public IEnumerator<T> GetEnumerator() => Files.GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => Files.GetEnumerator();
-
-        object ICollection.SyncRoot => throw new NotImplementedException();
-        bool ICollection.IsSynchronized => throw new NotImplementedException();
-        void ICollection.CopyTo(Array array, int index) => throw new NotImplementedException();
 
         protected virtual T CreateFileFromPath(string filePath)
         {

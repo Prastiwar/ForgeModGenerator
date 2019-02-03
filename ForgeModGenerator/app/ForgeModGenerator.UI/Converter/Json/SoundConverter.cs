@@ -45,6 +45,19 @@ namespace ForgeModGenerator.Converter
             return sound;
         }
 
-        public override void WriteJson(JsonWriter writer, Sound value, JsonSerializer serializer) => writer.WriteRawValue(JsonConvert.SerializeObject(value));
+        public override void WriteJson(JsonWriter writer, Sound value, JsonSerializer serializer)
+        {
+            JObject jo = new JObject {
+                { nameof(Sound.Name).ToLower(), value.Name },
+                { nameof(Sound.Volume).ToLower(), value.Volume },
+                { nameof(Sound.Pitch).ToLower(), value.Pitch },
+                { nameof(Sound.Weight).ToLower(), value.Weight },
+                { nameof(Sound.Stream).ToLower(), value.Stream },
+                { nameof(Sound.AttenuationDistance).ToLower(), value.AttenuationDistance },
+                { nameof(Sound.Preload).ToLower(), value.Preload },
+                { nameof(Sound.Type).ToLower(), JToken.FromObject(value.Type, serializer) }
+            };
+            jo.WriteTo(writer);
+        }
     }
 }
