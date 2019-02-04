@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 
 namespace ForgeModGenerator.UserControls
@@ -65,6 +66,13 @@ namespace ForgeModGenerator.UserControls
         public ICommand RemoveFileCommand {
             get => (ICommand)GetValue(RemoveFileCommandProperty);
             set => SetValue(RemoveFileCommandProperty, value);
+        }
+
+        public static readonly DependencyProperty RemoveMenuItemConverterProperty =
+            DependencyProperty.Register("RemoveMenuItemConverter", typeof(IMultiValueConverter), typeof(FolderListBox), new PropertyMetadata(null));
+        public IMultiValueConverter RemoveMenuItemConverter {
+            get => (IMultiValueConverter)GetValue(RemoveMenuItemConverterProperty);
+            set => SetValue(RemoveMenuItemConverterProperty, value);
         }
 
         public static readonly DependencyProperty EditFileCommandProperty =

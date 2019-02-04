@@ -72,6 +72,8 @@ namespace ForgeModGenerator.Model
             set => DirtSet(ref subtitle, value);
         }
 
+        protected override Sound CreateFileFromPath(string filePath) => new Sound(Mod.GetModidFromPath(filePath), filePath);
+
         public override object DeepClone()
         {
             ObservableFolder<Sound> baseClone = (ObservableFolder<Sound>)base.DeepClone();

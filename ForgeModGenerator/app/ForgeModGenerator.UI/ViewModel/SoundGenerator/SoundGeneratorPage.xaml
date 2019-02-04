@@ -60,6 +60,7 @@
 								   SelectedFolder="{Binding SelectedFolder}"
 								   FileItemTemplate="{StaticResource ItemTemplate}"
 								   AddFileCommand="{Binding AddFileCommand}"
+								   RemoveMenuItemConverter="{Binding RemoveMenuItemConverter}"
 								   RemoveFileCommand="{Binding RemoveFileCommand}"
 								   EditFileCommand="{Binding EditFileCommand}"
 								   ShowEmptyMessage="{Binding SessionContext.IsModSelected, Converter={StaticResource InvertBooleanConverter}}" />

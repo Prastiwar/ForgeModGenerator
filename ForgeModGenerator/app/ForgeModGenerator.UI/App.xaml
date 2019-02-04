@@ -9,7 +9,8 @@
 			 xmlns:c="clr-namespace:ForgeModGenerator.Converter"
 			 xmlns:vm="clr-namespace:ForgeModGenerator.ViewModel"
 			 xmlns:controls="clr-namespace:ForgeModGenerator.UserControls"
-			 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+			 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+			 xmlns:system="clr-namespace:System;assembly=mscorlib">
 	<Application.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
@@ -44,21 +45,19 @@
 					<c:PathNameConverter x:Key="PathToNameConverter" />
 				</ResourceDictionary>
 				<ResourceDictionary>
-					<c:SoundEventSoundConverter x:Key="SoundEventSoundConverter" />
-				</ResourceDictionary>
-				<ResourceDictionary>
-					<c:FileFolderFileItemConverter x:Key="FileFolderFileItemConverter" />
+					<c:BindMultiValueConverter x:Key="BindMultiValueConverter" />
 				</ResourceDictionary>
 				<ResourceDictionary>
 					<ContextMenu x:Key="DefaultFileItemContext">
 						<MenuItem Header="Remove"
 								  Command="{Binding PlacementTarget.Tag.RemoveFileCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}">
 							<MenuItem.CommandParameter>
-								<MultiBinding Converter="{StaticResource FileFolderFileItemConverter}">
+								<MultiBinding Converter="{StaticResource BindMultiValueConverter}">
+									<Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}"
+											 Path="PlacementTarget.Tag.RemoveMenuItemConverter" />
 									<Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}"
 											 Path="PlacementTarget.Tag.Folder" />
 									<Binding Path="." />
-									<!--ContextMenuItemName-->
 								</MultiBinding>
 							</MenuItem.CommandParameter>
 						</MenuItem>

@@ -1,4 +1,5 @@
 ﻿using ForgeModGenerator.Miscellaneous;
+using Microsoft.VisualBasic.FileIO;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -26,8 +27,9 @@ namespace ForgeModGenerator.Model
         ObservableCollection<T> Files { get; }
 
         void Add(T item);
-        bool Remove(T item);
+        bool Remove(T item, bool ignoreRecycling = false);
         bool Contains(T item);
+        void Delete();
     }
 
     public class ObservableFolder<T> : ObservableDirtyObject, IFileFolder<T>
@@ -83,9 +85,9 @@ namespace ForgeModGenerator.Model
             IsDirty = false;
         }
 
-        public ObservableFolder(string path, SearchOption searchOption) : this(path, "*", searchOption) { }
-        public ObservableFolder(string path, string fileSearchPattern) : this(path, fileSearchPattern, SearchOption.TopDirectoryOnly) { }
-        public ObservableFolder(string path, string fileSearchPattern, SearchOption searchOption) : this(path)
+        public ObservableFolder(string path, System.IO.SearchOption searchOption) : this(path, "*", searchOption) { }
+        public ObservableFolder(string path, string fileSearchPattern) : this(path, fileSearchPattern, System.IO.SearchOption.TopDirectoryOnly) { }
+        public ObservableFolder(string path, string fileSearchPattern, System.IO.SearchOption searchOption) : this(path)
         {
             foreach (string filePath in Directory.EnumerateFiles(path, fileSearchPattern, searchOption))
             {
@@ -130,11 +132,40 @@ namespace ForgeModGenerator.Model
         [JsonIgnore]
         public int Count => Files.Count;
 
-        public void Add(string filePath) => Add(CreateFileFromPath(filePath));
-        public void Add(T item) => Files.Add(item);
-        public bool Remove(T item) => Files.Remove(item);
         public void Clear() => Files.Clear();
         public bool Contains(T item) => Files.Contains(item);
+
+        public void Add(string filePath) => Add(CreateFileFromPath(filePath));
+        public void Add(T item) => Files.Add(item);
+
+        // Removes file from collection. If ignoreRecycling is false delete file from explorer
+        public virtual bool Remove(T item, bool ignoreRecycling = false)
+        {
+            if (Files.Remove(item))
+            {
+                if (!ignoreRecycling)
+                {
+                    try
+                    {
+                        FileSystem.DeleteFile(item.Info.FullName, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, $"Couldn't delete {item.Info.FullName}. Make sure it's not used by any process", true);
+                        Files.Add(item); // delete failed, so get item back to collection
+                        return false;
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+
+        // Removes folder with all his content
+        public virtual void Delete()
+        {
+            throw new NotImplementedException();
+        }
 
         protected virtual T CreateFileFromPath(string filePath)
         {

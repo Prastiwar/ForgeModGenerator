@@ -1,10 +1,10 @@
-﻿using ForgeModGenerator.Miscellaneous;
+﻿using ForgeModGenerator.Converter;
+using ForgeModGenerator.Miscellaneous;
 using ForgeModGenerator.Model;
 using ForgeModGenerator.Service;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using MaterialDesignThemes.Wpf;
-using Microsoft.VisualBasic.FileIO;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -13,6 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Caching;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Forms;
 using System.Windows.Input;
 
@@ -34,8 +35,11 @@ namespace ForgeModGenerator.ViewModel
             AllowedExtensions = new string[] { OpenFileDialog.DefaultExt };
             SessionContext.PropertyChanged += OnSessionContexPropertyChanged;
         }
+        
+        public IMultiValueConverter RemoveMenuItemConverter => new TupleValueConverter<TFolder, TFile>();
 
         public ISessionContextService SessionContext { get; }
+
         protected OpenFileDialog OpenFileDialog { get; }
 
         public abstract string FoldersRootPath { get; }
@@ -130,26 +134,21 @@ namespace ForgeModGenerator.ViewModel
 
         private void RemoveFolder(TFolder folder)
         {
-            throw new NotImplementedException();
+            try
+            {
+                folder.Delete();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, Log.UnexpectedErrorMessage, true);
+            }
         }
 
         protected virtual void RemoveFileFromFolder(Tuple<TFolder, TFile> param)
         {
             try
             {
-                if (param.Item1.Remove(param.Item2))
-                {
-                    try
-                    {
-                        FileSystem.DeleteFile(param.Item2.Info.FullName, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error(ex, $"Couldn't delete {param.Item2.Info.FullName}. Make sure it's not used by any process", true);
-                        param.Item1.Add(param.Item2); // delete failed, so get item back to collection
-                        return;
-                    }
-                }
+                param.Item1.Remove(param.Item2);
             }
             catch (Exception ex)
             {

@@ -259,40 +259,21 @@ namespace ForgeModGenerator.ViewModel
 
         protected override void OnFileEdited(bool result, Sound file)
         {
-            //if (result)
-            //{
-            //    // TODO: Save changes
-            //    foreach (Sound sound in file.Files)
-            //    {
-            //        ChangeSoundPath(new Tuple<SoundEvent, Sound>(file, sound));
-            //    }
-            //    ForceJsonUpdate(); // temporary solution
-            //}
-            //else
-            //{
-            //    // TODO: Undo commands
-            //    base.OnEdited(result, file);
-            //}
-            file.IsDirty = false;
-        }
-
-        protected override void RemoveFileFromFolder(Tuple<SoundEvent, Sound> param)
-        {
-            try
+            if (result)
             {
-                //if (param.Item1.Remove(param.Item2))
+                // TODO: Save changes
+                //foreach (Sound sound in file.Files)
                 //{
-                //    int length = param.Item2.Files.Count;
-                //    for (int i = 0; i < length; i++)
-                //    {
-                //        DeleteSound(new Tuple<SoundEvent, Sound>(param.Item2, param.Item2.Files[i]), true);
-                //    }
+                //    ChangeSoundPath(new Tuple<SoundEvent, Sound>(file, sound));
                 //}
+                ForceJsonUpdate(); // temporary solution
             }
-            catch (Exception ex)
+            else
             {
-                Log.Error(ex, Log.UnexpectedErrorMessage, true);
+                // TODO: Undo commands
+                base.OnFileEdited(result, file);
             }
+            file.IsDirty = false;
         }
 
         protected override ObservableCollection<SoundEvent> FindFolders(string path, bool createRootIfEmpty = false)
