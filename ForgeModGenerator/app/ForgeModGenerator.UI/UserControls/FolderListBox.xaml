@@ -33,6 +33,7 @@
 																	 AddFileCommand="{Binding Path=AddFileCommand, RelativeSource={RelativeSource AncestorType=local:FolderListBox}}"
 																	 RemoveFileCommand="{Binding Path=RemoveFileCommand, RelativeSource={RelativeSource AncestorType=local:FolderListBox}}"
 																	 RemoveMenuItemConverter="{Binding Path=RemoveMenuItemConverter, RelativeSource={RelativeSource AncestorType=local:FolderListBox}}"
+																	 RemoveFolderCommand="{Binding Path=RemoveFolderCommand, RelativeSource={RelativeSource AncestorType=local:FolderListBox}}"
 																	 EditFileCommand="{Binding Path=EditFileCommand, RelativeSource={RelativeSource AncestorType=local:FolderListBox}}"
 																	 ItemTemplate="{Binding Path=FileItemTemplate, RelativeSource={RelativeSource AncestorType=local:FolderListBox}}" />
 										<Border Background="#FF313131"

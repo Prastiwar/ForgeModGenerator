@@ -27,6 +27,7 @@ namespace ForgeModGenerator.ViewModel
         public FolderListViewModelBase(ISessionContextService sessionContext)
         {
             SessionContext = sessionContext;
+            RemoveMenuItemConverter = new TupleValueConverter<TFolder, TFile>();
             OpenFileDialog = new OpenFileDialog() {
                 Multiselect = true,
                 CheckFileExists = true,
@@ -35,16 +36,16 @@ namespace ForgeModGenerator.ViewModel
             AllowedExtensions = new string[] { OpenFileDialog.DefaultExt };
             SessionContext.PropertyChanged += OnSessionContexPropertyChanged;
         }
-        
-        public IMultiValueConverter RemoveMenuItemConverter => new TupleValueConverter<TFolder, TFile>();
-
-        public ISessionContextService SessionContext { get; }
-
-        protected OpenFileDialog OpenFileDialog { get; }
 
         public abstract string FoldersRootPath { get; }
 
+        public ISessionContextService SessionContext { get; }
+
+        public IMultiValueConverter RemoveMenuItemConverter { get; }
+
         public string[] AllowedExtensions { get; protected set; }
+
+        protected OpenFileDialog OpenFileDialog { get; }
 
         protected FrameworkElement FileEditForm { get; set; }
 
@@ -81,7 +82,6 @@ namespace ForgeModGenerator.ViewModel
         public ICommand RemoveFolderCommand => removeFolderCommand ?? (removeFolderCommand = new RelayCommand<TFolder>(RemoveFolder));
 
         protected virtual bool CanRefresh() => SessionContext.SelectedMod != null && (Directory.Exists(FoldersRootPath) || File.Exists(FoldersRootPath));
-
         protected virtual bool Refresh()
         {
             if (CanRefresh())
@@ -92,8 +92,7 @@ namespace ForgeModGenerator.ViewModel
             return false;
         }
 
-        protected virtual void OnFileEditorOpening(object sender, DialogOpenedEventArgs eventArgs) { }
-
+        protected virtual bool CanCloseFileEditor(bool result, TFile fileBeforeEdit, TFile fileAfterEdit) => true;
         protected virtual void OnFileEditorClosing(object sender, DialogClosingEventArgs eventArgs)
         {
             bool result = (bool)eventArgs.Parameter;
@@ -103,8 +102,7 @@ namespace ForgeModGenerator.ViewModel
             }
         }
 
-        protected virtual bool CanCloseFileEditor(bool result, TFile fileBeforeEdit, TFile fileAfterEdit) => true;
-
+        protected virtual void OnFileEditorOpening(object sender, DialogOpenedEventArgs eventArgs) { }
         protected virtual async void OpenFileEditor(TFile file)
         {
             SelectedFile = file;
@@ -132,7 +130,7 @@ namespace ForgeModGenerator.ViewModel
             }
         }
 
-        private void RemoveFolder(TFolder folder)
+        protected void RemoveFolder(TFolder folder)
         {
             try
             {
@@ -156,7 +154,7 @@ namespace ForgeModGenerator.ViewModel
             }
         }
 
-        protected virtual void AddNewFileToFolder(TFolder collection)
+        protected virtual void AddNewFileToFolder(TFolder folder)
         {
             try
             {
@@ -165,23 +163,7 @@ namespace ForgeModGenerator.ViewModel
                 {
                     foreach (string filePath in OpenFileDialog.FileNames)
                     {
-                        string fileName = new FileInfo(filePath).Name;
-                        string newFilePath = Path.Combine(collection.Info.FullName, fileName);
-                        try
-                        {
-                            if (File.Exists(newFilePath))
-                            {
-                                Log.Warning($"File {newFilePath} already exists.", true);
-                                return;
-                            }
-                            File.Copy(filePath, newFilePath, true);
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Error(ex, $"Couldn't add {fileName} to {collection.Info.Name}. Make sure the file is not opened by any process.", true);
-                            continue;
-                        }
-                        collection.Add(newFilePath);
+                        folder.Add(filePath);
                     }
                 }
             }

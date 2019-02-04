@@ -74,6 +74,16 @@ namespace ForgeModGenerator.Model
 
         protected override Sound CreateFileFromPath(string filePath) => new Sound(Mod.GetModidFromPath(filePath), filePath);
 
+        public override bool Remove(Sound item, bool ignoreRecycling = false)
+        {
+            if (Files.Count == 1)
+            {
+                Log.Warning("SoundEvent must have at least 1 sound", true);
+                return false;
+            }
+            return base.Remove(item, ignoreRecycling);
+        }
+
         public override object DeepClone()
         {
             ObservableFolder<Sound> baseClone = (ObservableFolder<Sound>)base.DeepClone();

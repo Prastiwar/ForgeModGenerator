@@ -96,6 +96,13 @@ namespace ForgeModGenerator.UserControls
             set => SetValue(ShowContainerCommandProperty, value);
         }
 
+        public static readonly DependencyProperty RemoveFolderCommandProperty =
+            DependencyProperty.Register("RemoveFolderCommand", typeof(ICommand), typeof(FolderExpanderControl), new PropertyMetadata(null));
+        public ICommand RemoveFolderCommand {
+            get => (ICommand)GetValue(RemoveFolderCommandProperty);
+            set => SetValue(RemoveFolderCommandProperty, value);
+        }
+
         protected void OpenFile(IFileItem fileItem) => System.Diagnostics.Process.Start(fileItem.Info.FullName);
 
         protected void ShowContainer()

@@ -19,11 +19,7 @@ namespace ForgeModGenerator.ViewModel
         {
             OpenFileDialog.Filter = "Sound file (*.ogg) | *.ogg";
             AllowedExtensions = new string[] { ".ogg" };
-            FileEditForm = new UserControls.SoundEditForm() {
-                AddSoundCommand = AddSoundCommand,
-                DeleteSoundCommand = DeleteSoundCommand,
-                ChangeSoundCommand = ChangeSoundCommand
-            };
+            FileEditForm = new UserControls.SoundEditForm();
             Preferences = sessionContext.GetOrCreatePreferences<SoundsGeneratorPreferences>();
             Refresh();
         }
@@ -40,15 +36,6 @@ namespace ForgeModGenerator.ViewModel
 
         private ICommand updateSoundsJson;
         public ICommand UpdateSoundsJson => updateSoundsJson ?? (updateSoundsJson = new RelayCommand(ForceJsonUpdate));
-
-        private ICommand addSoundCommand;
-        public ICommand AddSoundCommand => addSoundCommand ?? (addSoundCommand = new RelayCommand<SoundEvent>(AddSound));
-
-        private ICommand deleteSoundCommand;
-        public ICommand DeleteSoundCommand => deleteSoundCommand ?? (deleteSoundCommand = new RelayCommand<Tuple<SoundEvent, Sound>>(DeleteSound));
-
-        private ICommand changeSoundCommand;
-        public ICommand ChangeSoundCommand => changeSoundCommand ?? (changeSoundCommand = new RelayCommand<Tuple<SoundEvent, Sound>>(ChangeSoundPath));
 
         private bool CanChangeSoundPath(Tuple<SoundEvent, Sound> param)
         {
@@ -138,82 +125,6 @@ namespace ForgeModGenerator.ViewModel
                     catch (Exception ex)
                     {
                         Log.Error(ex, $"Couldn't change {param.Item2.Info.Name} to {newFileName}. Make sure the file is not opened by any process", true);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, Log.UnexpectedErrorMessage, true);
-            }
-        }
-
-        private void DeleteSound(Tuple<SoundEvent, Sound> param)
-        {
-            DeleteSound(param, false);
-        }
-
-        private void DeleteSound(Tuple<SoundEvent, Sound> param, bool forceDeleteAll)
-        {
-            try
-            {
-                if (!forceDeleteAll && param.Item1.Files.Count == 1)
-                {
-                    Log.Warning("SoundEvent must have at least 1 sound", true);
-                    return;
-                }
-                if (param.Item1.Files.Remove(param.Item2))
-                {
-                    if (ReferenceCounter.IsReferenced(param.Item2.Info.FullName))
-                    {
-                        return; // do not delete file since it's referenced by any other sound
-                    }
-                    try
-                    {
-                        FileSystem.DeleteFile(param.Item2.Info.FullName, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error(ex, $"Couldn't delete {param.Item2.Info.FullName}. Make sure it's not used by any process", true);
-                        param.Item1.Files.Add(param.Item2); // delete failed, so get item back to collection
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, Log.UnexpectedErrorMessage, true);
-            }
-        }
-
-        private void AddSound(SoundEvent soundEvent)
-        {
-            try
-            {
-                DialogResult result = OpenFileDialog.ShowDialog();
-                if (result == DialogResult.OK)
-                {
-                    foreach (string filePath in OpenFileDialog.FileNames)
-                    {
-                        string fileName = new FileInfo(filePath).Name;
-                        string newFilePath = Path.Combine(soundEvent.Info.FullName, fileName);
-                        try
-                        {
-                            if (!File.Exists(newFilePath))
-                            {
-                                File.Copy(filePath, newFilePath);
-                            }
-                            else if (soundEvent.Files.Any(x => x.Info.FullName == newFilePath))
-                            {
-                                Log.Warning($"{soundEvent.EventName} already has this sound", true);
-                                return;
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Error(ex, $"Couldn't add {fileName} to {soundEvent.EventName}. Make sure the file is not opened by any process", true);
-                            continue;
-                        }
-                        Sound newSound = new Sound(SessionContext.SelectedMod.ModInfo.Modid, newFilePath);
-                        soundEvent.Files.Add(newSound);
                     }
                 }
             }

@@ -62,6 +62,7 @@
 								   AddFileCommand="{Binding AddFileCommand}"
 								   RemoveMenuItemConverter="{Binding RemoveMenuItemConverter}"
 								   RemoveFileCommand="{Binding RemoveFileCommand}"
+								   RemoveFolderCommand="{Binding RemoveFolderCommand}"
 								   EditFileCommand="{Binding EditFileCommand}"
 								   ShowEmptyMessage="{Binding SessionContext.IsModSelected, Converter={StaticResource InvertBooleanConverter}}" />
 		</Grid>

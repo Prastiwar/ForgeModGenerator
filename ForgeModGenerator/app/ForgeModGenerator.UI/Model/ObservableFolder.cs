@@ -135,15 +135,38 @@ namespace ForgeModGenerator.Model
         public void Clear() => Files.Clear();
         public bool Contains(T item) => Files.Contains(item);
 
-        public void Add(string filePath) => Add(CreateFileFromPath(filePath));
         public void Add(T item) => Files.Add(item);
+
+        public void Add(string filePath)
+        {
+            string fileName = new FileInfo(filePath).Name;
+            string newFilePath = Path.Combine(Info.FullName, fileName);
+            try
+            {
+                if (!File.Exists(newFilePath))
+                {
+                    File.Copy(filePath, newFilePath);
+                }
+                else if (Files.Any(x => x.Info.FullName == newFilePath))
+                {
+                    Log.Warning($"File {newFilePath} already exists.", true);
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, $"Couldn't add {fileName} to {Info.Name}. Make sure the file is not opened by any process.", true);
+                return;
+            }
+            Add(CreateFileFromPath(newFilePath));
+        }
 
         // Removes file from collection. If ignoreRecycling is false delete file from explorer
         public virtual bool Remove(T item, bool ignoreRecycling = false)
         {
             if (Files.Remove(item))
             {
-                if (!ignoreRecycling)
+                if (!ignoreRecycling && !ReferenceCounter.IsReferenced(item.Info.FullName))
                 {
                     try
                     {
@@ -183,6 +206,7 @@ namespace ForgeModGenerator.Model
         protected virtual void Files_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             IsDirty = true;
+            RaisePropertyChanged(nameof(Count));
             CollectionChanged?.Invoke(sender, e);
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
