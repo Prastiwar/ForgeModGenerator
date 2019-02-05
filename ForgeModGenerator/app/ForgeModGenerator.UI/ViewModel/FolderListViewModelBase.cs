@@ -33,7 +33,8 @@ namespace ForgeModGenerator.ViewModel
                 CheckFileExists = true,
                 ValidateNames = true
             };
-            AllowedExtensions = new string[] { OpenFileDialog.DefaultExt };
+            OpenFolderDialog = new FolderBrowserDialog() { ShowNewFolderButton = true };
+            AllowedFileExtensions = new string[] { OpenFileDialog.DefaultExt };
             SessionContext.PropertyChanged += OnSessionContexPropertyChanged;
         }
 
@@ -43,9 +44,11 @@ namespace ForgeModGenerator.ViewModel
 
         public IMultiValueConverter RemoveMenuItemConverter { get; }
 
-        public string[] AllowedExtensions { get; protected set; }
+        public string[] AllowedFileExtensions { get; protected set; }
 
         protected OpenFileDialog OpenFileDialog { get; }
+
+        protected FolderBrowserDialog OpenFolderDialog { get; }
 
         protected FrameworkElement FileEditForm { get; set; }
 
@@ -80,6 +83,9 @@ namespace ForgeModGenerator.ViewModel
 
         private ICommand removeFolderCommand;
         public ICommand RemoveFolderCommand => removeFolderCommand ?? (removeFolderCommand = new RelayCommand<TFolder>(RemoveFolder));
+
+        private ICommand addFolderCommand;
+        public ICommand AddFolderCommand => addFolderCommand ?? (addFolderCommand = new RelayCommand(AddNewFolder));
 
         protected virtual bool CanRefresh() => SessionContext.SelectedMod != null && (Directory.Exists(FoldersRootPath) || File.Exists(FoldersRootPath));
         protected virtual bool Refresh()
@@ -129,12 +135,33 @@ namespace ForgeModGenerator.ViewModel
                 file.CopyValues(MemoryCache.Default.Remove(EditFileCacheKey));
             }
         }
-
-        protected void RemoveFolder(TFolder folder)
+        
+        protected virtual void AddNewFolder()
         {
             try
             {
-                folder.Delete();
+                DialogResult dialogResult = OpenFolderDialog.ShowDialog();
+                if (dialogResult == DialogResult.OK)
+                {
+                    string newfolderPath = OpenFolderDialog.SelectedPath;
+                    TFolder newFolder = Util.CreateInstance<TFolder>(newfolderPath);
+                    Folders.Add(newFolder);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, Log.UnexpectedErrorMessage, true);
+            }
+        }
+
+        protected virtual void RemoveFolder(TFolder folder)
+        {
+            try
+            {
+                if (Folders.Remove(folder))
+                {
+                    folder.Delete();
+                }
             }
             catch (Exception ex)
             {
@@ -220,13 +247,13 @@ namespace ForgeModGenerator.ViewModel
             }
             void AddFilesToCollection(string directoryPath)
             {
-                IEnumerable<string> files = Directory.EnumerateFiles(directoryPath).Where(filePath => AllowedExtensions.Any(ext => ext == Path.GetExtension(filePath)));
+                IEnumerable<string> files = Directory.EnumerateFiles(directoryPath).Where(filePath => AllowedFileExtensions.Any(ext => ext == Path.GetExtension(filePath)));
                 if (files.Any())
                 {
                     TFolder folder = Util.CreateInstance<TFolder>(directoryPath);
                     foreach (string filePath in files)
                     {
-                        if (AllowedExtensions.Any(x => x == Path.GetExtension(filePath)))
+                        if (AllowedFileExtensions.Any(x => x == Path.GetExtension(filePath)))
                         {
                             folder.Add(Path.GetFullPath(filePath).Replace('\\', '/'));
                         }

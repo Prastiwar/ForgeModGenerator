@@ -13,21 +13,21 @@ namespace ForgeModGenerator.Model
 
         private Sound() { }
 
-        public Sound(string modid, string name)
+        public Sound(string modid, string filePath)
         {
             if (modid == null)
             {
                 throw new System.ArgumentNullException(nameof(modid));
             }
 
-            if (File.Exists(name))
+            if (File.Exists(filePath))
             {
-                Name = FormatSoundPath(modid, name);
-                SetInfo(name);
+                Name = FormatSoundPath(modid, filePath);
+                SetInfo(filePath);
             }
             else
             {
-                Name = name;
+                Name = filePath;
             }
             IsDirty = false;
         }

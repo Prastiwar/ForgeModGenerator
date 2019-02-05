@@ -18,7 +18,7 @@ namespace ForgeModGenerator.ViewModel
         public SoundGeneratorViewModel(ISessionContextService sessionContext) : base(sessionContext)
         {
             OpenFileDialog.Filter = "Sound file (*.ogg) | *.ogg";
-            AllowedExtensions = new string[] { ".ogg" };
+            AllowedFileExtensions = new string[] { ".ogg" };
             FileEditForm = new UserControls.SoundEditForm();
             Preferences = sessionContext.GetOrCreatePreferences<SoundsGeneratorPreferences>();
             Refresh();
@@ -36,6 +36,27 @@ namespace ForgeModGenerator.ViewModel
 
         private ICommand updateSoundsJson;
         public ICommand UpdateSoundsJson => updateSoundsJson ?? (updateSoundsJson = new RelayCommand(ForceJsonUpdate));
+
+        protected override void AddNewFolder()
+        {
+            try
+            {
+                OpenFolderDialog.SelectedPath = ModPaths.SoundsFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
+                DialogResult dialogResult = OpenFolderDialog.ShowDialog();
+                if (dialogResult == DialogResult.OK)
+                {
+                    string newfolderPath = OpenFolderDialog.SelectedPath;
+                    SoundEvent newFolder = SoundEvent.CreateEmpty(newfolderPath);
+                    SetDelegates(newFolder);
+                    AddNewFileToFolder(newFolder);
+                    Folders.Add(newFolder);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, Log.UnexpectedErrorMessage, true);
+            }
+        }
 
         private bool CanChangeSoundPath(Tuple<SoundEvent, Sound> param)
         {
@@ -147,12 +168,11 @@ namespace ForgeModGenerator.ViewModel
         {
             if (result)
             {
-                //if (ReferenceCounter.GetReferenceCount(fileAfterEdit.EventName) > 1)
-                //{
-                //    Log.Warning("The sound event name already exists. Duplicates are not allowed", true);
-                //    return false;
-                //}
-                //return !fileAfterEdit.Files.Any(sound => !CanChangeSoundPath(new Tuple<SoundEvent, Sound>(fileAfterEdit, sound)));
+                //if (soundEvent.Files.Count(x => x.Name == fileAfterEdit.Name) > 1)
+                {
+                    Log.Warning("The sound already exists. Duplicates are not allowed", true);
+                    return false;
+                }
             }
             else
             {
@@ -173,10 +193,7 @@ namespace ForgeModGenerator.ViewModel
             if (result)
             {
                 // TODO: Save changes
-                //foreach (Sound sound in file.Files)
-                //{
-                //    ChangeSoundPath(new Tuple<SoundEvent, Sound>(file, sound));
-                //}
+                //ChangeSoundPath(new Tuple<SoundEvent, Sound>(soundEvent, file));
                 ForceJsonUpdate(); // temporary solution
             }
             else
@@ -210,11 +227,7 @@ namespace ForgeModGenerator.ViewModel
                 {
                     foreach (SoundEvent item in rootCollection)
                     {
-                        item.CollectionChanged += (sender, args) => {
-                            ShouldUpdate = CanRefresh() ? IsUpdateAvailable() : false;
-                        };
-                        item.OnFileAdded += AddSoundToJson;
-                        item.OnFileRemoved += RemoveSoundFromJson;
+                        SetDelegates(item);
                     }
                 }
                 return rootCollection;
@@ -223,6 +236,22 @@ namespace ForgeModGenerator.ViewModel
             {
                 Log.Error(ex, Log.UnexpectedErrorMessage, true);
                 return null;
+            }
+        }
+
+        protected void SetDelegates(SoundEvent soundEvent)
+        {
+            try
+            {
+                soundEvent.CollectionChanged += (sender, args) => {
+                    ShouldUpdate = CanRefresh() ? IsUpdateAvailable() : false;
+                };
+                soundEvent.OnFileAdded += AddSoundToJson;
+                soundEvent.OnFileRemoved += RemoveSoundFromJson;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, Log.UnexpectedErrorMessage, true);
             }
         }
 

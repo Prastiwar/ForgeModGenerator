@@ -9,6 +9,29 @@ namespace ForgeModGenerator.Tests
     public class PathTests
     {
         [TestMethod]
+        public void Subpaths()
+        {
+            Assert.IsTrue(IOExtensions.IsSubPathOf(@"c:\foo", @"c:"));
+            Assert.IsTrue(IOExtensions.IsSubPathOf(@"c:\foo", @"c:\"));
+            Assert.IsTrue(IOExtensions.IsSubPathOf(@"c:\foo", @"c:\foo"));
+            Assert.IsTrue(IOExtensions.IsSubPathOf(@"c:\foo", @"c:\foo\"));
+            Assert.IsTrue(IOExtensions.IsSubPathOf(@"c:\foo\", @"c:\foo"));
+            Assert.IsTrue(IOExtensions.IsSubPathOf(@"c:\foo\bar\", @"c:\foo\"));
+            Assert.IsTrue(IOExtensions.IsSubPathOf(@"c:\foo\bar", @"c:\foo\"));
+            Assert.IsTrue(IOExtensions.IsSubPathOf(@"c:\foo\a.txt", @"c:\foo"));
+            Assert.IsTrue(IOExtensions.IsSubPathOf(@"c:\FOO\a.txt", @"c:\foo"));
+            Assert.IsTrue(IOExtensions.IsSubPathOf(@"c:/foo/a.txt", @"c:\foo"));
+            Assert.IsTrue(IOExtensions.IsSubPathOf(@"c:\foo\..\bar\baz", @"c:\bar"));
+            Assert.IsFalse(IOExtensions.IsSubPathOf(@"c:\foobar", @"c:\foo"));
+            Assert.IsFalse(IOExtensions.IsSubPathOf(@"c:\foobar\a.txt", @"c:\foo"));
+            Assert.IsFalse(IOExtensions.IsSubPathOf(@"c:\foobar\a.txt", @"c:\foo\"));
+            Assert.IsFalse(IOExtensions.IsSubPathOf(@"c:\foo\a.txt", @"c:\foobar"));
+            Assert.IsFalse(IOExtensions.IsSubPathOf(@"c:\foo\a.txt", @"c:\foobar\"));
+            Assert.IsFalse(IOExtensions.IsSubPathOf(@"c:\foo\..\bar\baz", @"c:\foo"));
+            Assert.IsFalse(IOExtensions.IsSubPathOf(@"c:\foo\..\bar\baz", @"c:\barr"));
+        }
+
+        [TestMethod]
         public void PathValidation()
         {
             Assert.IsTrue(IOExtensions.IsDirectoryPath(@"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis\src\main\resources"));

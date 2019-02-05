@@ -1,5 +1,7 @@
 ﻿using ForgeModGenerator.Converter;
+using ForgeModGenerator.Miscellaneous;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -12,17 +14,37 @@ namespace ForgeModGenerator.Model
     {
         private SoundEvent() { }
 
-        public SoundEvent(string path) : this(new List<Sound>() { new Sound(Mod.GetModidFromPath(path), path) }) { }
+        // Create SoundEvent without any sound
+        public static SoundEvent CreateEmpty(string folderPath)
+        {
+            if (!IOExtensions.IsPathValid(folderPath))
+            {
+                Log.Error(null, $"Called ObservableFolder constructor with invalid path parameter, {nameof(folderPath)}");
+                throw new ArgumentException("Invalid Path", nameof(folderPath));
+            }
+            SoundEvent soundEvent = new SoundEvent {
+                Files = new ObservableCollection<Sound>()
+            };
+            soundEvent.SetInfo(folderPath);
+            soundEvent.EventName = soundEvent.Info.Name;
+            soundEvent.IsDirty = false;
+            return soundEvent;
+        }
 
-        public SoundEvent(string modid, string name) : this(name, new List<Sound>() { new Sound(modid, name) }) { }
+        // Create SoundEvent from single sound, path must be in sounds folder (will get modid from soundFilePath)
+        public SoundEvent(string soundFilePath) : this(Mod.GetModidFromPath(soundFilePath), soundFilePath) { }
 
+        // Create SoundEvent from single sound, path must be in sounds folder
+        public SoundEvent(string modid, string soundFilePath) : this(soundFilePath, new List<Sound>() { new Sound(modid, soundFilePath) }) { }
+
+        // Create SoundEvent from Sound collection. SoundEvent will be folder of first sound
         public SoundEvent(IEnumerable<Sound> files) : base(files)
         {
             EventName = FormatDottedSoundName(Info.FullName);
             IsDirty = false;
         }
 
-        public SoundEvent(string name, IEnumerable<Sound> sounds)
+        public SoundEvent(string folderPath, IEnumerable<Sound> sounds)
         {
             if (sounds == null)
             {
@@ -36,14 +58,14 @@ namespace ForgeModGenerator.Model
             }
 
             Files = new ObservableCollection<Sound>(sounds);
-            if (File.Exists(name))
+            if (File.Exists(folderPath))
             {
-                EventName = FormatDottedSoundName(name);
-                SetInfo(name);
+                EventName = FormatDottedSoundName(folderPath);
+                SetInfo(folderPath);
             }
             else
             {
-                EventName = name;
+                EventName = folderPath;
             }
             IsDirty = false;
         }
@@ -74,14 +96,25 @@ namespace ForgeModGenerator.Model
 
         protected override Sound CreateFileFromPath(string filePath) => new Sound(Mod.GetModidFromPath(filePath), filePath);
 
-        public override bool Remove(Sound item, bool ignoreRecycling = false)
+        public override bool Remove(Sound item) => Remove(item, false);
+
+        private bool Remove(Sound item, bool ignoreMinValue)
         {
-            if (Files.Count == 1)
+            if (!ignoreMinValue && Files.Count == 1)
             {
                 Log.Warning("SoundEvent must have at least 1 sound", true);
                 return false;
             }
-            return base.Remove(item, ignoreRecycling);
+            return base.Remove(item);
+        }
+
+        public override void Delete()
+        {
+            int length = Files.Count;
+            for (int i = 0; i < length; i++)
+            {
+                Remove(Files[i], true);
+            }
         }
 
         public override object DeepClone()

@@ -20,6 +20,13 @@
 				<materialDesign:Card Background="#FF535353"
 									 Margin="10">
 					<StackPanel>
+						<Button Width="25"
+								Height="25"
+								Margin="5"
+								Padding="0"
+								Content="{materialDesign:PackIcon Kind=FolderPlus}"
+								HorizontalAlignment="Left"
+								Command="{Binding Path=AddFolderCommand, RelativeSource={RelativeSource AncestorType=local:FolderListBox}}" />
 						<ListBox ItemsSource="{Binding Path=FoldersSource, RelativeSource={RelativeSource AncestorType=local:FolderListBox}}"
 								 SelectedItem="{Binding Path=SelectedFolder, RelativeSource={RelativeSource AncestorType=local:FolderListBox}}"
 								 HorizontalContentAlignment="Stretch"

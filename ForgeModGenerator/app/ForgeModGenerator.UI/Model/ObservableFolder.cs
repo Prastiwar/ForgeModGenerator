@@ -27,7 +27,7 @@ namespace ForgeModGenerator.Model
         ObservableCollection<T> Files { get; }
 
         void Add(T item);
-        bool Remove(T item, bool ignoreRecycling = false);
+        bool Remove(T item);
         bool Contains(T item);
         void Delete();
     }
@@ -137,7 +137,8 @@ namespace ForgeModGenerator.Model
 
         public void Add(T item) => Files.Add(item);
 
-        public void Add(string filePath)
+        // Copy file from filePath to folder path and add to collection
+        public virtual void Add(string filePath)
         {
             string fileName = new FileInfo(filePath).Name;
             string newFilePath = Path.Combine(Info.FullName, fileName);
@@ -161,12 +162,12 @@ namespace ForgeModGenerator.Model
             Add(CreateFileFromPath(newFilePath));
         }
 
-        // Removes file from collection. If ignoreRecycling is false delete file from explorer
-        public virtual bool Remove(T item, bool ignoreRecycling = false)
+        // Removes file from collection and if is not referenced in application, remove from explorer
+        public virtual bool Remove(T item)
         {
             if (Files.Remove(item))
             {
-                if (!ignoreRecycling && !ReferenceCounter.IsReferenced(item.Info.FullName))
+                if (!ReferenceCounter.IsReferenced(item.Info.FullName))
                 {
                     try
                     {
@@ -187,7 +188,11 @@ namespace ForgeModGenerator.Model
         // Removes folder with all his content
         public virtual void Delete()
         {
-            throw new NotImplementedException();
+            int length = Files.Count;
+            for (int i = 0; i < length; i++)
+            {
+                Remove(Files[i]);
+            }
         }
 
         protected virtual T CreateFileFromPath(string filePath)
