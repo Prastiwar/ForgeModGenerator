@@ -135,7 +135,7 @@ namespace ForgeModGenerator.ViewModel
                 file.CopyValues(MemoryCache.Default.Remove(EditFileCacheKey));
             }
         }
-        
+
         protected virtual void AddNewFolder()
         {
             try
@@ -220,19 +220,27 @@ namespace ForgeModGenerator.ViewModel
             return found;
         }
 
-        protected ObservableCollection<TFolder> CreateEmptyFoldersRoot(string path) => new ObservableCollection<TFolder>() { Util.CreateInstance<TFolder>(path) };
+        protected ObservableCollection<TFolder> CreateEmptyFoldersRoot(string path)
+        {
+            TFolder folder = Util.CreateInstance<TFolder>(path);
+            SubscribeFolderEvents(folder);
+            return new ObservableCollection<TFolder>() { folder };
+        }
 
         protected ObservableCollection<TFolder> DeserializeCollectionFromFile(string path)
         {
             string json = File.ReadAllText(path);
             try
             {
-                return JsonConvert.DeserializeObject<ObservableCollection<TFolder>>(json);
+                ObservableCollection<TFolder> folders = JsonConvert.DeserializeObject<ObservableCollection<TFolder>>(json);
+                foreach (TFolder folder in folders)
+                {
+                    SubscribeFolderEvents(folder);
+                }
             }
             catch (Exception ex)
             {
-                Type loadType = typeof(ObservableCollection<TFolder>);
-                Log.Error(ex, $"Couldnt load {loadType} from {json}");
+                Log.Error(ex, $"Couldnt load {typeof(ObservableCollection<TFolder>)} from {json}");
             }
             return null;
         }
@@ -258,11 +266,14 @@ namespace ForgeModGenerator.ViewModel
                             folder.Add(Path.GetFullPath(filePath).Replace('\\', '/'));
                         }
                     }
+                    SubscribeFolderEvents(folder);
                     initCollection.Add(folder);
                 }
             }
             return new ObservableCollection<TFolder>(initCollection);
         }
+
+        protected virtual void SubscribeFolderEvents(TFolder folder) { }
 
         protected virtual void OnSessionContexPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {

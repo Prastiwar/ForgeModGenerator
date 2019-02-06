@@ -190,6 +190,7 @@
       <DependentUpon>SoundEditForm.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\SoundFolderExpanderControl.cs" />
+    <Compile Include="UserControls\SubmitTextBox.cs" />
     <Compile Include="ViewModel\BuildConfiguration\BuildConfigurationViewModel.cs" />
     <Compile Include="ViewModel\AchievementGenerator\AchievementGeneratorViewModel.cs" />
     <Compile Include="ViewModel\BlockGenerator\BlockGeneratorViewModel.cs" />

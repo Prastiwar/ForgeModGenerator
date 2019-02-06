@@ -76,9 +76,9 @@ namespace ForgeModGenerator.Model
         public string EventName {
             get => eventName;
             set {
-                ReferenceCounter.RemoveReference(eventName, this);
+                ReferenceCounter.RemoveReference(EventName, this);
+                ReferenceCounter.AddReference(value, this);
                 DirtSet(ref eventName, value);
-                ReferenceCounter.AddReference(eventName, this);
             }
         }
 

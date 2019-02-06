@@ -47,7 +47,7 @@ namespace ForgeModGenerator.ViewModel
                 {
                     string newfolderPath = OpenFolderDialog.SelectedPath;
                     SoundEvent newFolder = SoundEvent.CreateEmpty(newfolderPath);
-                    SetDelegates(newFolder);
+                    SubscribeFolderEvents(newFolder);
                     AddNewFileToFolder(newFolder);
                     Folders.Add(newFolder);
                 }
@@ -227,7 +227,7 @@ namespace ForgeModGenerator.ViewModel
                 {
                     foreach (SoundEvent item in rootCollection)
                     {
-                        SetDelegates(item);
+                        SubscribeFolderEvents(item);
                     }
                 }
                 return rootCollection;
@@ -239,12 +239,15 @@ namespace ForgeModGenerator.ViewModel
             }
         }
 
-        protected void SetDelegates(SoundEvent soundEvent)
+        protected override void SubscribeFolderEvents(SoundEvent soundEvent)
         {
             try
             {
                 soundEvent.CollectionChanged += (sender, args) => {
                     ShouldUpdate = CanRefresh() ? IsUpdateAvailable() : false;
+                };
+                soundEvent.PropertyChanged += (sender, args) => {
+                    ForceJsonUpdate();
                 };
                 soundEvent.OnFileAdded += AddSoundToJson;
                 soundEvent.OnFileRemoved += RemoveSoundFromJson;
@@ -300,6 +303,12 @@ namespace ForgeModGenerator.ViewModel
         {
             try
             {
+                SoundEvent duplicatedSoundEvent = Folders.FirstOrDefault(folder => ReferenceCounter.GetReferenceCount(folder.EventName) > 1);
+                if (duplicatedSoundEvent != null)
+                {
+                    Log.Warning($"SoundEvent name \"{duplicatedSoundEvent.EventName}\" is duplicated, changes won't save", true);
+                    return;
+                }
                 Converter.SoundCollectionConverter converter = new Converter.SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
                 string json = JsonConvert.SerializeObject(Folders, Preferences.JsonFormatting, converter);
                 File.WriteAllText(FoldersRootPath, json);
