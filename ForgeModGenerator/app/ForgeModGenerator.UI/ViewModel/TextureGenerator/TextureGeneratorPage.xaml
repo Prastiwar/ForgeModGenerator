@@ -11,30 +11,43 @@
 	  d:DesignWidth="800"
 	  local:ViewModelLocator.GetDataContext="ForgeModGenerator.ViewModel.TextureGeneratorViewModel">
 	<Page.Resources>
-		<DataTemplate x:Key="ItemTemplate">
+		<DataTemplate x:Key="FolderTemplate">
 			<StackPanel>
-				<Image Tag="{Binding ElementName=ThisWindow}"
-					   ContextMenu="{StaticResource DefaultFileItemContext}"
-					   Width="32"
-					   Height="32">
-					<Image.Source>
-						<BitmapImage UriSource="{Binding Info.FullName}"
-									 CacheOption="OnLoad" />
-					</Image.Source>
-				</Image>
-				<TextBlock Text="{Binding Info.Name}" />
+				<control:FolderExpanderControl HeaderText="{Binding Path=Info.Name}"
+											   Folder="{Binding}"
+											   AddFileCommand="{Binding Path=DataContext.AddFileCommand, RelativeSource={RelativeSource AncestorType=control:FolderListBox}}"
+											   RemoveFileCommand="{Binding Path=DataContext.RemoveFileCommand, RelativeSource={RelativeSource AncestorType=control:FolderListBox}}"
+											   RemoveMenuItemConverter="{Binding Path=DataContext.RemoveMenuItemConverter, RelativeSource={RelativeSource AncestorType=control:FolderListBox}}"
+											   RemoveFolderCommand="{Binding Path=DataContext.RemoveFolderCommand, RelativeSource={RelativeSource AncestorType=control:FolderListBox}}"
+											   EditFileCommand="{Binding Path=DataContext.EditFileCommand, RelativeSource={RelativeSource AncestorType=control:FolderListBox}}">
+					<control:FolderExpanderControl.FileItemTemplate>
+						<DataTemplate>
+							<StackPanel>
+								<Image Tag="{Binding ElementName=ThisWindow}"
+									   ContextMenu="{StaticResource DefaultFileItemContext}"
+									   Width="32"
+									   Height="32">
+									<Image.Source>
+										<BitmapImage UriSource="{Binding Info.FullName}"
+													 CacheOption="OnLoad" />
+									</Image.Source>
+								</Image>
+								<TextBlock Text="{Binding Info.Name}" />
+							</StackPanel>
+						</DataTemplate>
+					</control:FolderExpanderControl.FileItemTemplate>
+				</control:FolderExpanderControl>
 			</StackPanel>
 		</DataTemplate>
 	</Page.Resources>
 	<materialDesign:DialogHost>
 		<Grid Background="{StaticResource PageBackground}">
-			<control:FolderListBox FoldersSource="{Binding Folders}"
+			<control:FolderListBox Grid.Row="1"
+								   FoldersSource="{Binding Folders}"
 								   SelectedFolder="{Binding SelectedFolder}"
-								   FileItemTemplate="{StaticResource ItemTemplate}"
-								   AddFileCommand="{Binding AddFileCommand}"
-								   RemoveFileCommand="{Binding RemoveFileCommand}"
-								   EditFileCommand="{Binding EditFileCommand}"
-								   ShowEmptyMessage="{Binding SessionContext.IsModSelected, Converter={StaticResource InvertBooleanConverter}}" />
+								   AddFolderCommand="{Binding AddFolderCommand}"
+								   ShowEmptyMessage="{Binding SessionContext.IsModSelected, Converter={StaticResource InvertBooleanConverter}}"
+								   FolderTemplate="{StaticResource FolderTemplate}" />
 		</Grid>
 	</materialDesign:DialogHost>
 </Page>

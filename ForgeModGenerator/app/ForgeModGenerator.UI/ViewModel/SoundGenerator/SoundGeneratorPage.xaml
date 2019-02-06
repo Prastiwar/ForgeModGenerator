@@ -12,20 +12,34 @@
 	  x:Name="ThisWindow"
 	  local:ViewModelLocator.GetDataContext="ForgeModGenerator.ViewModel.SoundGeneratorViewModel">
 	<Page.Resources>
-		<DataTemplate x:Key="ItemTemplate">
+		<DataTemplate x:Key="FolderTemplate">
 			<StackPanel>
-				<Button Tag="{Binding RelativeSource={RelativeSource AncestorType=control:FolderExpanderControl}}"
-						Width="32"
-						Height="32"
-						Padding="0"
-						Background="CornflowerBlue"
-						BorderBrush="Black"
-						ContextMenu="{StaticResource DefaultFileItemContext}"
-						Command="{Binding FileClickCommand, RelativeSource={RelativeSource AncestorType=control:FolderExpanderControl}}"
-						CommandParameter="{Binding}">
-					<materialDesign:PackIcon Kind="Play" />
-				</Button>
-				<TextBlock Text="{Binding Info.Name}" />
+				<control:SoundFolderExpanderControl HeaderText="{Binding Path=Info.Name}"
+													Folder="{Binding}"
+													AddFileCommand="{Binding Path=DataContext.AddFileCommand, RelativeSource={RelativeSource AncestorType=control:FolderListBox}}"
+													RemoveFileCommand="{Binding Path=DataContext.RemoveFileCommand, RelativeSource={RelativeSource AncestorType=control:FolderListBox}}"
+													RemoveMenuItemConverter="{Binding Path=DataContext.RemoveMenuItemConverter, RelativeSource={RelativeSource AncestorType=control:FolderListBox}}"
+													RemoveFolderCommand="{Binding Path=DataContext.RemoveFolderCommand, RelativeSource={RelativeSource AncestorType=control:FolderListBox}}"
+													EditFileCommand="{Binding Path=DataContext.EditFileCommand, RelativeSource={RelativeSource AncestorType=control:FolderListBox}}">
+					<control:SoundFolderExpanderControl.FileItemTemplate>
+						<DataTemplate>
+							<StackPanel>
+								<Button Tag="{Binding RelativeSource={RelativeSource AncestorType=control:FolderExpanderControl}}"
+										Width="32"
+										Height="32"
+										Padding="0"
+										Background="CornflowerBlue"
+										BorderBrush="Black"
+										ContextMenu="{StaticResource DefaultFileItemContext}"
+										Command="{Binding FileClickCommand, RelativeSource={RelativeSource AncestorType=control:FolderExpanderControl}}"
+										CommandParameter="{Binding}">
+									<materialDesign:PackIcon Kind="Play" />
+								</Button>
+								<TextBlock Text="{Binding Info.Name}" />
+							</StackPanel>
+						</DataTemplate>
+					</control:SoundFolderExpanderControl.FileItemTemplate>
+				</control:SoundFolderExpanderControl>
 			</StackPanel>
 		</DataTemplate>
 	</Page.Resources>
@@ -55,17 +69,11 @@
 						Command="{Binding UpdateSoundsJson}" />
 			</StackPanel>
 			<control:FolderListBox Grid.Row="1"
-								   ExpanderStyle="{StaticResource SoundFolderExpanderControl}"
 								   FoldersSource="{Binding Folders}"
 								   SelectedFolder="{Binding SelectedFolder}"
-								   FileItemTemplate="{StaticResource ItemTemplate}"
-								   AddFileCommand="{Binding AddFileCommand}"
-								   RemoveMenuItemConverter="{Binding RemoveMenuItemConverter}"
-								   RemoveFileCommand="{Binding RemoveFileCommand}"
-								   RemoveFolderCommand="{Binding RemoveFolderCommand}"
 								   AddFolderCommand="{Binding AddFolderCommand}"
-								   EditFileCommand="{Binding EditFileCommand}"
-								   ShowEmptyMessage="{Binding SessionContext.IsModSelected, Converter={StaticResource InvertBooleanConverter}}" />
+								   ShowEmptyMessage="{Binding SessionContext.IsModSelected, Converter={StaticResource InvertBooleanConverter}}"
+								   FolderTemplate="{StaticResource FolderTemplate}" />
 		</Grid>
 	</materialDesign:DialogHost>
 </Page>

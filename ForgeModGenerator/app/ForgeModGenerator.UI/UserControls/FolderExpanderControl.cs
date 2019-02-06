@@ -47,11 +47,11 @@ namespace ForgeModGenerator.UserControls
             set => SetValue(SelectedFileProperty, value);
         }
 
-        public static readonly DependencyProperty ItemTemplateProperty =
-            DependencyProperty.Register("ItemTemplate", typeof(DataTemplate), typeof(FolderExpanderControl), new PropertyMetadata(null));
-        public DataTemplate ItemTemplate {
-            get => (DataTemplate)GetValue(ItemTemplateProperty);
-            set => SetValue(ItemTemplateProperty, value);
+        public static readonly DependencyProperty FileItemTemplateProperty =
+            DependencyProperty.Register("FileItemTemplate", typeof(DataTemplate), typeof(FolderExpanderControl), new PropertyMetadata(null));
+        public DataTemplate FileItemTemplate {
+            get => (DataTemplate)GetValue(FileItemTemplateProperty);
+            set => SetValue(FileItemTemplateProperty, value);
         }
 
         public static readonly DependencyProperty AddFileCommandProperty =

@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
 
 namespace ForgeModGenerator.UserControls
@@ -12,18 +11,11 @@ namespace ForgeModGenerator.UserControls
             InitializeComponent();
         }
 
-        public static readonly DependencyProperty ExpanderStyleProperty =
-            DependencyProperty.Register("ExpanderStyle", typeof(Style), typeof(FolderListBox), new PropertyMetadata(null));
-        public Style ExpanderStyle {
-            get => (Style)GetValue(ExpanderStyleProperty);
-            set => SetValue(ExpanderStyleProperty, value);
-        }
-
-        public static readonly DependencyProperty FileItemTemplateProperty =
-            DependencyProperty.Register("FileItemTemplate", typeof(DataTemplate), typeof(FolderListBox), new PropertyMetadata(null));
-        public DataTemplate FileItemTemplate {
-            get => (DataTemplate)GetValue(FileItemTemplateProperty);
-            set => SetValue(FileItemTemplateProperty, value);
+        public static readonly DependencyProperty FolderTemplateProperty =
+            DependencyProperty.Register("FolderTemplate", typeof(DataTemplate), typeof(FolderListBox), new PropertyMetadata(null));
+        public DataTemplate FolderTemplate {
+            get => (DataTemplate)GetValue(FolderTemplateProperty);
+            set => SetValue(FolderTemplateProperty, value);
         }
 
         public static readonly DependencyProperty FoldersSourceProperty =
@@ -54,46 +46,11 @@ namespace ForgeModGenerator.UserControls
             set => SetValue(ShowEmptyMessageProperty, value);
         }
 
-        public static readonly DependencyProperty AddFileCommandProperty =
-            DependencyProperty.Register("AddFileCommand", typeof(ICommand), typeof(FolderListBox), new PropertyMetadata(null));
-        public ICommand AddFileCommand {
-            get => (ICommand)GetValue(AddFileCommandProperty);
-            set => SetValue(AddFileCommandProperty, value);
-        }
-
-        public static readonly DependencyProperty RemoveFileCommandProperty =
-            DependencyProperty.Register("RemoveFileCommand", typeof(ICommand), typeof(FolderListBox), new PropertyMetadata(null));
-        public ICommand RemoveFileCommand {
-            get => (ICommand)GetValue(RemoveFileCommandProperty);
-            set => SetValue(RemoveFileCommandProperty, value);
-        }
-
-        public static readonly DependencyProperty RemoveFolderCommandProperty =
-            DependencyProperty.Register("RemoveFolderCommand", typeof(ICommand), typeof(FolderListBox), new PropertyMetadata(null));
-        public ICommand RemoveFolderCommand {
-            get => (ICommand)GetValue(RemoveFolderCommandProperty);
-            set => SetValue(RemoveFolderCommandProperty, value);
-        }
-
         public static readonly DependencyProperty AddFolderCommandProperty =
             DependencyProperty.Register("AddFolderCommand", typeof(ICommand), typeof(FolderListBox), new PropertyMetadata(null));
         public ICommand AddFolderCommand {
             get => (ICommand)GetValue(AddFolderCommandProperty);
             set => SetValue(AddFolderCommandProperty, value);
-        }
-
-        public static readonly DependencyProperty EditFileCommandProperty =
-            DependencyProperty.Register("EditFileCommand", typeof(ICommand), typeof(FolderListBox), new PropertyMetadata(null));
-        public ICommand EditFileCommand {
-            get => (ICommand)GetValue(EditFileCommandProperty);
-            set => SetValue(EditFileCommandProperty, value);
-        }
-
-        public static readonly DependencyProperty RemoveMenuItemConverterProperty =
-            DependencyProperty.Register("RemoveMenuItemConverter", typeof(IMultiValueConverter), typeof(FolderListBox), new PropertyMetadata(null));
-        public IMultiValueConverter RemoveMenuItemConverter {
-            get => (IMultiValueConverter)GetValue(RemoveMenuItemConverterProperty);
-            set => SetValue(RemoveMenuItemConverterProperty, value);
         }
     }
 }

@@ -44,7 +44,7 @@
 							</Expander.HeaderTemplate>
 							<ListBox ItemsSource="{Binding Path=Folder.Files, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
 									 SelectedItem="{Binding Path=SelectedFile, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
-									 ItemTemplate="{Binding Path=ItemTemplate, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
+									 ItemTemplate="{Binding Path=FileItemTemplate, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
 									 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
 								<ListBox.ItemsPanel>
 									<ItemsPanelTemplate>
@@ -58,11 +58,10 @@
 			</Setter.Value>
 		</Setter>
 	</Style>
-	<Style x:Key="SoundFolderExpanderControl"
-		   TargetType="{x:Type controls:FolderExpanderControl}">
+	<Style TargetType="{x:Type controls:SoundFolderExpanderControl}">
 		<Setter Property="Template">
 			<Setter.Value>
-				<ControlTemplate TargetType="{x:Type controls:FolderExpanderControl}">
+				<ControlTemplate TargetType="{x:Type controls:SoundFolderExpanderControl}">
 					<Border Background="{TemplateBinding Background}"
 							BorderBrush="{TemplateBinding BorderBrush}"
 							BorderThickness="{TemplateBinding BorderThickness}">
@@ -95,7 +94,7 @@
 							</Expander.HeaderTemplate>
 							<ListBox ItemsSource="{Binding Path=Folder.Files, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
 									 SelectedItem="{Binding Path=SelectedFile, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
-									 ItemTemplate="{Binding Path=ItemTemplate, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
+									 ItemTemplate="{Binding Path=FileItemTemplate, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
 									 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
 								<ListBox.ItemsPanel>
 									<ItemsPanelTemplate>

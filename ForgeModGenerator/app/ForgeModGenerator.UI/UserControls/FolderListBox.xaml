@@ -30,27 +30,8 @@
 						<ListBox ItemsSource="{Binding Path=FoldersSource, RelativeSource={RelativeSource AncestorType=local:FolderListBox}}"
 								 SelectedItem="{Binding Path=SelectedFolder, RelativeSource={RelativeSource AncestorType=local:FolderListBox}}"
 								 HorizontalContentAlignment="Stretch"
-								 VerticalContentAlignment="Stretch">
-							<ListBox.ItemTemplate>
-								<DataTemplate>
-									<StackPanel>
-										<local:FolderExpanderControl Style="{Binding Path=ExpanderStyle, RelativeSource={RelativeSource AncestorType=local:FolderListBox}}"
-																	 HeaderText="{Binding Path=Info.Name}"
-																	 Folder="{Binding}"
-																	 AddFileCommand="{Binding Path=AddFileCommand, RelativeSource={RelativeSource AncestorType=local:FolderListBox}}"
-																	 RemoveFileCommand="{Binding Path=RemoveFileCommand, RelativeSource={RelativeSource AncestorType=local:FolderListBox}}"
-																	 RemoveMenuItemConverter="{Binding Path=RemoveMenuItemConverter, RelativeSource={RelativeSource AncestorType=local:FolderListBox}}"
-																	 RemoveFolderCommand="{Binding Path=RemoveFolderCommand, RelativeSource={RelativeSource AncestorType=local:FolderListBox}}"
-																	 EditFileCommand="{Binding Path=EditFileCommand, RelativeSource={RelativeSource AncestorType=local:FolderListBox}}"
-																	 ItemTemplate="{Binding Path=FileItemTemplate, RelativeSource={RelativeSource AncestorType=local:FolderListBox}}" />
-										<Border Background="#FF313131"
-												Height="1"
-												HorizontalAlignment="Stretch"
-												SnapsToDevicePixels="True" />
-									</StackPanel>
-								</DataTemplate>
-							</ListBox.ItemTemplate>
-						</ListBox>
+								 VerticalContentAlignment="Stretch"
+								 ItemTemplate="{Binding Path=FolderTemplate, RelativeSource={RelativeSource AncestorType=local:FolderListBox}}" />
 					</StackPanel>
 				</materialDesign:Card>
 			</StackPanel>
