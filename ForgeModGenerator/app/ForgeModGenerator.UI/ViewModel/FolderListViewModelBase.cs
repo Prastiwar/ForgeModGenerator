@@ -24,6 +24,7 @@ namespace ForgeModGenerator.ViewModel
         where TFolder : IFileFolder<TFile>
         where TFile : IFileItem
     {
+        #region EventArgs
         public class FileEditedEventArgs : EventArgs
         {
             public FileEditedEventArgs(TFolder folder, TFile fileBeforeEdit, TFile fileAfterEdit)
@@ -60,6 +61,7 @@ namespace ForgeModGenerator.ViewModel
             public TFolder Folder { get; }
             public TFile File { get; }
         }
+        #endregion
 
         public FolderListViewModelBase(ISessionContextService sessionContext)
         {
@@ -109,6 +111,7 @@ namespace ForgeModGenerator.ViewModel
             set => Set(ref selectedFile, value);
         }
 
+        #region Commands
         private ICommand editFileCommand;
         public ICommand EditFileCommand => editFileCommand ?? (editFileCommand = new RelayCommand<Tuple<TFolder, TFile>>(OpenFileEditor));
 
@@ -123,6 +126,7 @@ namespace ForgeModGenerator.ViewModel
 
         private ICommand addFolderCommand;
         public ICommand AddFolderCommand => addFolderCommand ?? (addFolderCommand = new RelayCommand(AddNewFolder));
+        #endregion
 
         protected virtual bool CanRefresh() => SessionContext.SelectedMod != null && (Directory.Exists(FoldersRootPath) || File.Exists(FoldersRootPath));
         protected virtual bool Refresh()
@@ -247,6 +251,7 @@ namespace ForgeModGenerator.ViewModel
             }
         }
 
+        #region Folders Initializers
         protected virtual ObservableCollection<TFolder> FindFolders(string path, bool createRootIfEmpty = false)
         {
             ObservableCollection<TFolder> found = null;
@@ -295,11 +300,13 @@ namespace ForgeModGenerator.ViewModel
         protected ObservableCollection<TFolder> FindFoldersFromDirectory(string path)
         {
             List<TFolder> initCollection = new List<TFolder>(10);
+
             AddFilesToCollection(path);
-            foreach (string directory in Directory.EnumerateDirectories(path, "*", System.IO.SearchOption.AllDirectories))
+            foreach (string directory in Directory.EnumerateDirectories(path, "*", SearchOption.AllDirectories))
             {
                 AddFilesToCollection(directory);
             }
+
             void AddFilesToCollection(string directoryPath)
             {
                 IEnumerable<string> files = Directory.EnumerateFiles(directoryPath).Where(filePath => AllowedFileExtensions.Any(ext => ext == Path.GetExtension(filePath)));
@@ -308,10 +315,7 @@ namespace ForgeModGenerator.ViewModel
                     TFolder folder = Util.CreateInstance<TFolder>(directoryPath);
                     foreach (string filePath in files)
                     {
-                        if (AllowedFileExtensions.Any(x => x == Path.GetExtension(filePath)))
-                        {
-                            folder.Add(Path.GetFullPath(filePath).Replace('\\', '/'));
-                        }
+                        folder.Add(filePath);
                     }
                     SubscribeFolderEvents(folder);
                     initCollection.Add(folder);
@@ -320,7 +324,9 @@ namespace ForgeModGenerator.ViewModel
             return new ObservableCollection<TFolder>(initCollection);
         }
 
+        // Used on any folder initialization
         protected virtual void SubscribeFolderEvents(TFolder folder) { }
+        #endregion
 
         protected virtual void OnSessionContexPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {

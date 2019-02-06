@@ -58,50 +58,7 @@ namespace ForgeModGenerator.ViewModel
             }
         }
 
-        private bool CanChangeSoundPath(Tuple<SoundEvent, Sound> param)
-        {
-            string newFileName = null;
-            try
-            {
-                string modname = Mod.GetModnameFromPath(param.Item2.Info.FullName);
-                string modid = Mod.GetModidFromPath(param.Item2.Name);
-                string soundsFolderPath = ModPaths.SoundsFolder(modname, modid);
-                string oldFilePath = param.Item2.Info.FullName.Replace("\\", "/");
-                string extension = Path.GetExtension(oldFilePath);
-                newFileName = param.Item2.Name.Remove(0, param.Item2.Name.IndexOf(":") + 1);
-                string newFilePathToValidate = $"{Path.Combine(soundsFolderPath, newFileName)}{extension}";
-                string newFilePath = null;
-                try
-                {
-                    newFilePath = Path.GetFullPath(newFilePathToValidate).Replace("\\", "/");
-                }
-                catch (Exception pathEx)
-                {
-                    Log.Error(pathEx, $"Path is not valid {newFilePathToValidate}", true);
-                    return false;
-                }
-                if (oldFilePath != newFilePath)
-                {
-                    if (param.Item1.Files.Any(x => x.Info.FullName == newFilePath))
-                    {
-                        Log.Warning($"{param.Item1.EventName} already has {newFileName} sound", true);
-                        return false;
-                    }
-                    if (!File.Exists(newFilePath))
-                    {
-                        new FileInfo(newFilePath).Directory.Create();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, $"Can't change sound name to {newFileName}", true);
-                return false;
-            }
-            return true;
-        }
-
-        private void ChangeSoundPath(Tuple<SoundEvent, Sound> param)
+        protected void ChangeSoundPath(Tuple<SoundEvent, Sound> param)
         {
             try
             {
