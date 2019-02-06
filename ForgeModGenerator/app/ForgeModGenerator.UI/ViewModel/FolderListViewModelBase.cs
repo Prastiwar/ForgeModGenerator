@@ -24,10 +24,47 @@ namespace ForgeModGenerator.ViewModel
         where TFolder : IFileFolder<TFile>
         where TFile : IFileItem
     {
+        public class FileEditedEventArgs : EventArgs
+        {
+            public FileEditedEventArgs(TFolder folder, TFile fileBeforeEdit, TFile fileAfterEdit)
+            {
+                Folder = folder;
+                FileBeforeEdit = fileBeforeEdit;
+                FileAfterEdit = fileAfterEdit;
+            }
+            public TFolder Folder { get; }
+            public TFile FileBeforeEdit { get; }
+            public TFile FileAfterEdit { get; }
+        }
+
+        public class FileEditorClosingDialogEventArgs : DialogClosingEventArgs
+        {
+            public FileEditorClosingDialogEventArgs(DialogClosingEventArgs otherArgs, TFolder folder, TFile file)
+                : base(otherArgs.Session, otherArgs.Parameter, otherArgs.RoutedEvent, otherArgs.Source)
+            {
+                Folder = folder;
+                File = file;
+            }
+            public TFolder Folder { get; }
+            public TFile File { get; }
+        }
+
+        public class FileEditorOpeningDialogEventArgs : DialogOpenedEventArgs
+        {
+            public FileEditorOpeningDialogEventArgs(DialogOpenedEventArgs otherArgs, TFolder folder, TFile file)
+                : base(otherArgs.Session, otherArgs.RoutedEvent)
+            {
+                Folder = folder;
+                File = file;
+            }
+            public TFolder Folder { get; }
+            public TFile File { get; }
+        }
+
         public FolderListViewModelBase(ISessionContextService sessionContext)
         {
             SessionContext = sessionContext;
-            RemoveMenuItemConverter = new TupleValueConverter<TFolder, TFile>();
+            FolderFileConverter = new TupleValueConverter<TFolder, TFile>();
             OpenFileDialog = new OpenFileDialog() {
                 Multiselect = true,
                 CheckFileExists = true,
@@ -42,7 +79,7 @@ namespace ForgeModGenerator.ViewModel
 
         public ISessionContextService SessionContext { get; }
 
-        public IMultiValueConverter RemoveMenuItemConverter { get; }
+        public IMultiValueConverter FolderFileConverter { get; }
 
         public string[] AllowedFileExtensions { get; protected set; }
 
@@ -73,7 +110,7 @@ namespace ForgeModGenerator.ViewModel
         }
 
         private ICommand editFileCommand;
-        public ICommand EditFileCommand => editFileCommand ?? (editFileCommand = new RelayCommand<TFile>(OpenFileEditor));
+        public ICommand EditFileCommand => editFileCommand ?? (editFileCommand = new RelayCommand<Tuple<TFolder, TFile>>(OpenFileEditor));
 
         private ICommand addFileCommand;
         public ICommand AddFileCommand => addFileCommand ?? (addFileCommand = new RelayCommand<TFolder>(AddNewFileToFolder));
@@ -98,41 +135,51 @@ namespace ForgeModGenerator.ViewModel
             return false;
         }
 
-        protected virtual bool CanCloseFileEditor(bool result, TFile fileBeforeEdit, TFile fileAfterEdit) => true;
-        protected virtual void OnFileEditorClosing(object sender, DialogClosingEventArgs eventArgs)
+        protected virtual bool CanCloseFileEditor(bool result, FileEditedEventArgs args) => true;
+        protected virtual void OnFileEditorClosing(object sender, FileEditorClosingDialogEventArgs eventArgs)
         {
             bool result = (bool)eventArgs.Parameter;
-            if (!CanCloseFileEditor(result, (TFile)MemoryCache.Default.Get(EditFileCacheKey), SelectedFile))
+            if (!CanCloseFileEditor(result, new FileEditedEventArgs(eventArgs.Folder, (TFile)MemoryCache.Default.Get(EditFileCacheKey), eventArgs.File)))
             {
                 eventArgs.Cancel();
             }
         }
 
-        protected virtual void OnFileEditorOpening(object sender, DialogOpenedEventArgs eventArgs) { }
-        protected virtual async void OpenFileEditor(TFile file)
+        protected virtual void OnFileEditorOpening(object sender, FileEditorOpeningDialogEventArgs eventArgs) { }
+        protected virtual async void OpenFileEditor(Tuple<TFolder, TFile> param)
         {
-            SelectedFile = file;
-            bool result = false;
             try
             {
-                MemoryCache.Default.Set(EditFileCacheKey, SelectedFile.DeepClone(), ObjectCache.InfiniteAbsoluteExpiration);
-                FileEditForm.DataContext = SelectedFile;
-                result = (bool)await DialogHost.Show(FileEditForm, OnFileEditorOpening, OnFileEditorClosing);
+                SelectedFile = param.Item2;
+                bool result = false;
+                try
+                {
+                    MemoryCache.Default.Set(EditFileCacheKey, SelectedFile.DeepClone(), ObjectCache.InfiniteAbsoluteExpiration);
+                    FileEditForm.DataContext = SelectedFile;
+                    result = (bool)await DialogHost.Show(FileEditForm,
+                        (s, a) => { OnFileEditorOpening(s, new FileEditorOpeningDialogEventArgs(a, param.Item1, param.Item2)); },
+                        (s, a) => { OnFileEditorClosing(s, new FileEditorClosingDialogEventArgs(a, param.Item1, param.Item2)); }
+                    );
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, $"Couldn't open edit form for {param.Item2.Info.Name}", true);
+                    return;
+                }
+                OnFileEdited(result, new FileEditedEventArgs(param.Item1, (TFile)MemoryCache.Default.Remove(EditFileCacheKey), param.Item2));
             }
             catch (Exception ex)
             {
-                Log.Error(ex, $"Couldn't open edit form for {file.Info.Name}", true);
-                return;
+                Log.Error(ex, Log.UnexpectedErrorMessage, true);
             }
-            OnFileEdited(result, file);
         }
 
-        protected virtual void OnFileEdited(bool result, TFile file)
+        protected virtual void OnFileEdited(bool result, FileEditedEventArgs args)
         {
             if (!result)
             {
                 // TODO: Undo commands
-                file.CopyValues(MemoryCache.Default.Remove(EditFileCacheKey));
+                args.FileAfterEdit.CopyValues(args.FileBeforeEdit);
             }
         }
 

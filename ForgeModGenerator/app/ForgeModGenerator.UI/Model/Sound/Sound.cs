@@ -40,7 +40,10 @@ namespace ForgeModGenerator.Model
         private string name;
         public string Name {
             get => name;
-            set => DirtSet(ref name, value);
+            set {
+                DirtSet(ref name, value);
+                RaisePropertyChanged(nameof(ShortPath));
+            }
         }
 
         private float volume = 1.0f;
@@ -121,6 +124,11 @@ namespace ForgeModGenerator.Model
             return false;
         }
 
+        public void RefreshName()
+        {
+            Name = FormatSoundPath(Mod.GetModidFromPath(Name), Info.FullName);
+        }
+
         // Get formatted sound from full path, "modid:shorten/path/toFile"
         public static string FormatSoundPath(string modid, string path)
         {
@@ -129,7 +137,7 @@ namespace ForgeModGenerator.Model
             {
                 return null;
             }
-            string shortPath = Path.ChangeExtension(path.Substring(startIndex, path.Length - startIndex), null);
+            string shortPath = Path.ChangeExtension(path.Substring(startIndex, path.Length - startIndex), null).Replace("\\", "/");
             return FormatSoundShortPath(modid, shortPath);
         }
 

@@ -14,7 +14,8 @@
 							BorderThickness="{TemplateBinding BorderThickness}">
 						<Expander Foreground="Wheat"
 								  Background="#FF424242"
-								  HorizontalAlignment="Stretch">
+								  HorizontalAlignment="Stretch"
+								  IsExpanded="{Binding Path=IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}">
 							<Expander.HeaderTemplate>
 								<DataTemplate>
 									<StackPanel Orientation="Horizontal">
@@ -69,7 +70,8 @@
 							BorderThickness="{TemplateBinding BorderThickness}">
 						<Expander Foreground="Wheat"
 								  Background="#FF424242"
-								  HorizontalAlignment="Stretch">
+								  HorizontalAlignment="Stretch"
+								  IsExpanded="{Binding Path=IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}">
 							<Expander.HeaderTemplate>
 								<DataTemplate>
 									<StackPanel Orientation="Horizontal">

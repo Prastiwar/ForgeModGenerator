@@ -54,7 +54,7 @@
 							<MenuItem.CommandParameter>
 								<MultiBinding Converter="{StaticResource BindMultiValueConverter}">
 									<Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}"
-											 Path="PlacementTarget.Tag.RemoveMenuItemConverter" />
+											 Path="PlacementTarget.Tag.FolderFileConverter" />
 									<Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}"
 											 Path="PlacementTarget.Tag.Folder" />
 									<Binding Path="." />
@@ -62,8 +62,17 @@
 							</MenuItem.CommandParameter>
 						</MenuItem>
 						<MenuItem Header="Edit"
-								  Command="{Binding PlacementTarget.Tag.EditFileCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}"
-								  CommandParameter="{Binding}" />
+								  Command="{Binding PlacementTarget.Tag.EditFileCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}">
+							<MenuItem.CommandParameter>
+								<MultiBinding Converter="{StaticResource BindMultiValueConverter}">
+									<Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}"
+											 Path="PlacementTarget.Tag.FolderFileConverter" />
+									<Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}"
+											 Path="PlacementTarget.Tag.Folder" />
+									<Binding Path="." />
+								</MultiBinding>
+							</MenuItem.CommandParameter>
+						</MenuItem>
 					</ContextMenu>
 				</ResourceDictionary>
 			</ResourceDictionary.MergedDictionaries>

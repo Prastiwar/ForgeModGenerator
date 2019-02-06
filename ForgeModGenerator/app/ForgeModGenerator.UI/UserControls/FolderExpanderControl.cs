@@ -68,11 +68,11 @@ namespace ForgeModGenerator.UserControls
             set => SetValue(RemoveFileCommandProperty, value);
         }
 
-        public static readonly DependencyProperty RemoveMenuItemConverterProperty =
-            DependencyProperty.Register("RemoveMenuItemConverter", typeof(IMultiValueConverter), typeof(FolderExpanderControl), new PropertyMetadata(null));
-        public IMultiValueConverter RemoveMenuItemConverter {
-            get => (IMultiValueConverter)GetValue(RemoveMenuItemConverterProperty);
-            set => SetValue(RemoveMenuItemConverterProperty, value);
+        public static readonly DependencyProperty FolderFileConverterProperty =
+            DependencyProperty.Register("FolderFileConverter", typeof(IMultiValueConverter), typeof(FolderExpanderControl), new PropertyMetadata(null));
+        public IMultiValueConverter FolderFileConverter {
+            get => (IMultiValueConverter)GetValue(FolderFileConverterProperty);
+            set => SetValue(FolderFileConverterProperty, value);
         }
 
         public static readonly DependencyProperty EditFileCommandProperty =

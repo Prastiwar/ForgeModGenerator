@@ -110,11 +110,12 @@ namespace ForgeModGenerator.ViewModel
                 string soundsFolderPath = ModPaths.SoundsFolder(modname, modid);
                 string oldFilePath = param.Item2.Info.FullName.Replace("\\", "/");
                 string extension = Path.GetExtension(oldFilePath);
-                string newFileName = param.Item2.Name.Remove(0, param.Item2.Name.IndexOf(":") + 1);
-                string newFilePathToValidate = $"{Path.Combine(soundsFolderPath, newFileName)}{extension}";
+                string newFileName = param.Item2.Name.Remove(0, param.Item2.Name.IndexOf(":") + 1); // remove modid
+                string newFilePathToValidate = null;
                 string newFilePath = null;
                 try
                 {
+                    newFilePathToValidate = $"{Path.Combine(soundsFolderPath, newFileName)}{extension}";
                     newFilePath = Path.GetFullPath(newFilePathToValidate).Replace("\\", "/");
                 }
                 catch (Exception pathEx)
@@ -142,6 +143,7 @@ namespace ForgeModGenerator.ViewModel
                             FileSystem.DeleteFile(oldFilePath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
                         }
                         param.Item2.SetInfo(newFilePath);
+                        param.Item2.Name = Sound.FormatSoundPath(Mod.GetModidFromPath(param.Item2.Name), newFilePath);
                     }
                     catch (Exception ex)
                     {
@@ -164,11 +166,11 @@ namespace ForgeModGenerator.ViewModel
             return canRefresh;
         }
 
-        protected override bool CanCloseFileEditor(bool result, Sound fileBeforeEdit, Sound fileAfterEdit)
+        protected override bool CanCloseFileEditor(bool result, FileEditedEventArgs args)
         {
             if (result)
             {
-                //if (soundEvent.Files.Count(x => x.Name == fileAfterEdit.Name) > 1)
+                if (args.Folder.Files.Count(x => x.Name == args.FileAfterEdit.Name) > 1)
                 {
                     Log.Warning("The sound already exists. Duplicates are not allowed", true);
                     return false;
@@ -176,7 +178,7 @@ namespace ForgeModGenerator.ViewModel
             }
             else
             {
-                if (fileAfterEdit.IsDirty)
+                if (args.FileAfterEdit.IsDirty)
                 {
                     DialogResult msgResult = MessageBox.Show("Are you sure you want to exit form? Changes won't be saved", "Unsaved changes", MessageBoxButtons.YesNo);
                     if (msgResult == DialogResult.No)
@@ -188,20 +190,24 @@ namespace ForgeModGenerator.ViewModel
             return true;
         }
 
-        protected override void OnFileEdited(bool result, Sound file)
+        protected override void OnFileEdited(bool result, FileEditedEventArgs args)
         {
             if (result)
             {
                 // TODO: Save changes
-                //ChangeSoundPath(new Tuple<SoundEvent, Sound>(soundEvent, file));
+                if (args.FileBeforeEdit.Name != args.FileAfterEdit.Name)
+                {
+                    ChangeSoundPath(new Tuple<SoundEvent, Sound>(args.Folder, args.FileAfterEdit));
+                    args.FileAfterEdit.RefreshName();
+                }
                 ForceJsonUpdate(); // temporary solution
             }
             else
             {
                 // TODO: Undo commands
-                base.OnFileEdited(result, file);
+                base.OnFileEdited(result, args);
             }
-            file.IsDirty = false;
+            args.FileAfterEdit.IsDirty = false;
         }
 
         protected override ObservableCollection<SoundEvent> FindFolders(string path, bool createRootIfEmpty = false)
