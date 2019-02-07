@@ -133,6 +133,7 @@
     <Compile Include="Converter\MultiValues\TupleValueConverter.cs" />
     <Compile Include="Converter\PathToModidConverter.cs" />
     <Compile Include="Core\CodeOperation.cs" />
+    <Compile Include="Miscellaneous\BindingProxy.cs" />
     <Compile Include="Miscellaneous\IOExtensions.cs" />
     <Compile Include="Core\Log.cs" />
     <Compile Include="Miscellaneous\PrimitiveExtensions.cs" />
@@ -191,6 +192,8 @@
     </Compile>
     <Compile Include="UserControls\SoundFolderExpanderControl.cs" />
     <Compile Include="UserControls\SubmitTextBox.cs" />
+    <Compile Include="ValidationRules\NotEmptyRule.cs" />
+    <Compile Include="ValidationRules\SoundEventRules.cs" />
     <Compile Include="ViewModel\BuildConfiguration\BuildConfigurationViewModel.cs" />
     <Compile Include="ViewModel\AchievementGenerator\AchievementGeneratorViewModel.cs" />
     <Compile Include="ViewModel\BlockGenerator\BlockGeneratorViewModel.cs" />

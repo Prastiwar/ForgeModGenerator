@@ -7,16 +7,16 @@ namespace ForgeModGenerator.Model
 {
     public abstract class JsonUpdater<T>
     {
-        public JsonUpdater(object target, string jsonPath)
+        public JsonUpdater(IEnumerable<T> target, string jsonPath)
             : this(target, jsonPath, Formatting.Indented, new JsonSerializerSettings()) { }
-        public JsonUpdater(object target, string jsonPath, JsonSerializerSettings settings)
+        public JsonUpdater(IEnumerable<T> target, string jsonPath, JsonSerializerSettings settings)
             : this(target, jsonPath, Formatting.Indented, settings) { }
-        public JsonUpdater(object target, string jsonPath, JsonConverter converter)
+        public JsonUpdater(IEnumerable<T> target, string jsonPath, JsonConverter converter)
             : this(target, jsonPath, Formatting.Indented, new JsonSerializerSettings() { Converters = new List<JsonConverter>() { converter } }) { }
-        public JsonUpdater(object target, string jsonPath, Formatting formatting, JsonConverter converter)
+        public JsonUpdater(IEnumerable<T> target, string jsonPath, Formatting formatting, JsonConverter converter)
             : this(target, jsonPath, Formatting.Indented, new JsonSerializerSettings() { Converters = new List<JsonConverter>() { converter } }) { }
 
-        public JsonUpdater(object target, string jsonPath, Formatting formatting, JsonSerializerSettings settings)
+        public JsonUpdater(IEnumerable<T> target, string jsonPath, Formatting formatting, JsonSerializerSettings settings)
         {
             Target = target;
             Path = jsonPath;
@@ -27,7 +27,7 @@ namespace ForgeModGenerator.Model
         public Formatting Formatting { get; set; }
         public string Path { get; set; }
 
-        protected object Target { get; set; }
+        protected IEnumerable<T> Target { get; set; }
         protected JsonSerializerSettings Settings { get; set; }
 
         protected string GetJsonFromFile() => File.ReadAllText(Path);
@@ -35,6 +35,8 @@ namespace ForgeModGenerator.Model
         protected string Serialize() => JsonConvert.SerializeObject(Target, Formatting, Settings);
 
         protected void OverwriteJson(string json) => File.WriteAllText(Path, json);
+
+        public virtual bool IsValidToSerialize() => true;
 
         public virtual void AddToJson(T item)
         {
@@ -58,7 +60,10 @@ namespace ForgeModGenerator.Model
         {
             try
             {
-                OverwriteJson(Serialize());
+                if (IsValidToSerialize())
+                {
+                    OverwriteJson(Serialize());
+                }
             }
             catch (Exception ex)
             {

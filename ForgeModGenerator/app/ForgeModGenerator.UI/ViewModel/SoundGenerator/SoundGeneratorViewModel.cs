@@ -1,4 +1,5 @@
-﻿using ForgeModGenerator.Model;
+﻿using ForgeModGenerator.Miscellaneous;
+using ForgeModGenerator.Model;
 using ForgeModGenerator.Service;
 using GalaSoft.MvvmLight.Command;
 using Microsoft.VisualBasic.FileIO;
@@ -43,11 +44,17 @@ namespace ForgeModGenerator.ViewModel
         {
             try
             {
-                OpenFolderDialog.SelectedPath = ModPaths.SoundsFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
+                string soundsFolder = ModPaths.SoundsFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
+                OpenFolderDialog.SelectedPath = soundsFolder;
                 DialogResult dialogResult = OpenFolderDialog.ShowDialog();
                 if (dialogResult == DialogResult.OK)
                 {
                     string newfolderPath = OpenFolderDialog.SelectedPath;
+                    if (!IOExtensions.IsSubPathOf(newfolderPath, soundsFolder))
+                    {
+                        Log.Warning($"You can choose only folder from sounds folder ({soundsFolder})", true);
+                        return;
+                    }
                     SoundEvent newFolder = SoundEvent.CreateEmpty(newfolderPath);
                     SubscribeFolderEvents(newFolder);
                     AddNewFileToFolder(newFolder);

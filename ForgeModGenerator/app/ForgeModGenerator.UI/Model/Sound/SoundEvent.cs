@@ -1,17 +1,28 @@
 ﻿using ForgeModGenerator.Converter;
 using ForgeModGenerator.Miscellaneous;
+using ForgeModGenerator.ValidationRules;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Windows.Controls;
 
 namespace ForgeModGenerator.Model
 {
     [JsonConverter(typeof(SoundEventConverter))]
     public class SoundEvent : ObservableFolder<Sound>
     {
+        public ValidationResult IsValid(IEnumerable<SoundEvent> soundEvents)
+        {
+            SoundEventValidationDependencyWrapper parameters = new SoundEventValidationDependencyWrapper() {
+                SoundEvents = soundEvents,
+                SoundEventBeforeChange = this
+            };
+            return new SoundEventRules(nameof(EventName), parameters).Validate(EventName, null);
+        }
+
         private SoundEvent() { }
 
         // Create SoundEvent without any sound

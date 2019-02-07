@@ -16,6 +16,7 @@
 			<StackPanel>
 				<control:SoundFolderExpanderControl HeaderText="{Binding Path=Info.Name}"
 													Folder="{Binding}"
+													AllFolders="{Binding Path=FoldersSource, RelativeSource={RelativeSource AncestorType=control:FolderListBox}}"
 													AddFileCommand="{Binding Path=DataContext.AddFileCommand, RelativeSource={RelativeSource AncestorType=control:FolderListBox}}"
 													RemoveFileCommand="{Binding Path=DataContext.RemoveFileCommand, RelativeSource={RelativeSource AncestorType=control:FolderListBox}}"
 													FolderFileConverter="{Binding Path=DataContext.FolderFileConverter, RelativeSource={RelativeSource AncestorType=control:FolderListBox}}"

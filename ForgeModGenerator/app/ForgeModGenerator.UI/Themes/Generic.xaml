@@ -2,7 +2,10 @@
 					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 					xmlns:local="clr-namespace:ForgeModGenerator"
 					xmlns:controls="clr-namespace:ForgeModGenerator.UserControls"
-					xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+					xmlns:vm="clr-namespace:ForgeModGenerator.ViewModel"
+					xmlns:rules="clr-namespace:ForgeModGenerator.ValidationRules"
+					xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+					xmlns:misc="clr-namespace:ForgeModGenerator.Miscellaneous">
 	<Style TargetType="{x:Type controls:SubmitTextBox}"
 		   BasedOn="{StaticResource {x:Type TextBox}}"></Style>
 	<Style TargetType="{x:Type controls:FolderExpanderControl}">
@@ -90,7 +93,7 @@
 												CommandParameter="{Binding Path=Folder, RelativeSource={RelativeSource AncestorType=controls:SoundFolderExpanderControl}}">
 											<materialDesign:PackIcon Kind="Trash" />
 										</Button>
-										<StackPanel Margin="5">
+										<StackPanel Margin="5,0,5,0">
 											<TextBlock VerticalAlignment="Center"
 													   FontSize="11"
 													   Text="Sounds"
@@ -100,16 +103,36 @@
 													   Text="{Binding Path=Folder.Count, StringFormat={}({0}), RelativeSource={RelativeSource AncestorType=controls:SoundFolderExpanderControl}}" />
 										</StackPanel>
 										<controls:SubmitTextBox Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+																Margin="5,0,10,0"
 																materialDesign:HintAssist.Hint="Event Name"
-																Text="{Binding Path=DataContext.EventName, RelativeSource={RelativeSource AncestorType=controls:SoundFolderExpanderControl}}"
-																IsTabStop="True" />
+																IsTabStop="True">
+											<controls:SubmitTextBox.Resources>
+												<misc:BindingProxy x:Key="ControlProxy"
+																   Data="{Binding Path=., RelativeSource={RelativeSource AncestorType=controls:SoundFolderExpanderControl}}" />
+											</controls:SubmitTextBox.Resources>
+											<controls:SubmitTextBox.Text>
+												<Binding Path="DataContext.EventName"
+														 RelativeSource="{RelativeSource AncestorType=controls:SoundFolderExpanderControl}">
+													<Binding.ValidationRules>
+														<rules:SoundEventRules ValidatesOnTargetUpdated="True"
+																			   PropertyName="EventName">
+															<rules:SoundEventRules.Parameters>
+																<rules:SoundEventValidationDependencyWrapper SoundEvents="{Binding Path=Data.AllFolders, Source={StaticResource ControlProxy}}"
+																											 SoundEventBeforeChange="{Binding Path=Data.DataContext, Source={StaticResource ControlProxy}}" />
+															</rules:SoundEventRules.Parameters>
+														</rules:SoundEventRules>
+													</Binding.ValidationRules>
+												</Binding>
+											</controls:SubmitTextBox.Text>
+										</controls:SubmitTextBox>
 										<controls:SubmitTextBox Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+																Margin="10,0,10,0"
 																materialDesign:HintAssist.Hint="Subtitle"
-																Margin="10,5,5,0"
 																HorizontalAlignment="Center"
 																Text="{Binding Path=DataContext.Subtitle, RelativeSource={RelativeSource AncestorType=controls:SoundFolderExpanderControl}}" />
-										<CheckBox Margin="15,5,5,0"
-												  Content="Replace"
+										<CheckBox Content="Replace"
+												  Margin="10,0,10,0"
+												  VerticalAlignment="Bottom"
 												  IsChecked="{Binding Path=DataContext.Replace, RelativeSource={RelativeSource AncestorType=controls:SoundFolderExpanderControl}}" />
 									</StackPanel>
 								</DataTemplate>
