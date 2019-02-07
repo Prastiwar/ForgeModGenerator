@@ -90,10 +90,27 @@
 												CommandParameter="{Binding Path=Folder, RelativeSource={RelativeSource AncestorType=controls:SoundFolderExpanderControl}}">
 											<materialDesign:PackIcon Kind="Trash" />
 										</Button>
-										<TextBlock Margin="10,5,5,0"
-												   Text="{Binding Folder.Count, StringFormat={}({0}), RelativeSource={RelativeSource AncestorType=controls:SoundFolderExpanderControl}}" />
-										<controls:SubmitTextBox Text="{Binding Path=DataContext.EventName, RelativeSource={RelativeSource AncestorType=controls:SoundFolderExpanderControl}}"
+										<StackPanel Margin="5">
+											<TextBlock VerticalAlignment="Center"
+													   FontSize="11"
+													   Text="Sounds"
+													   Foreground="#72F5DEB3" />
+											<TextBlock VerticalAlignment="Center"
+													   HorizontalAlignment="Center"
+													   Text="{Binding Path=Folder.Count, StringFormat={}({0}), RelativeSource={RelativeSource AncestorType=controls:SoundFolderExpanderControl}}" />
+										</StackPanel>
+										<controls:SubmitTextBox Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+																materialDesign:HintAssist.Hint="Event Name"
+																Text="{Binding Path=DataContext.EventName, RelativeSource={RelativeSource AncestorType=controls:SoundFolderExpanderControl}}"
 																IsTabStop="True" />
+										<controls:SubmitTextBox Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+																materialDesign:HintAssist.Hint="Subtitle"
+																Margin="10,5,5,0"
+																HorizontalAlignment="Center"
+																Text="{Binding Path=DataContext.Subtitle, RelativeSource={RelativeSource AncestorType=controls:SoundFolderExpanderControl}}" />
+										<CheckBox Margin="15,5,5,0"
+												  Content="Replace"
+												  IsChecked="{Binding Path=DataContext.Replace, RelativeSource={RelativeSource AncestorType=controls:SoundFolderExpanderControl}}" />
 									</StackPanel>
 								</DataTemplate>
 							</Expander.HeaderTemplate>

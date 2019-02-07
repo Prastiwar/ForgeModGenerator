@@ -28,6 +28,8 @@ namespace ForgeModGenerator.ViewModel
 
         public SoundsGeneratorPreferences Preferences { get; }
 
+        public SoundJsonUpdater JsonUpdater { get; protected set; }
+
         private bool shouldUpdate;
         public bool ShouldUpdate {
             get => shouldUpdate;
@@ -35,7 +37,7 @@ namespace ForgeModGenerator.ViewModel
         }
 
         private ICommand updateSoundsJson;
-        public ICommand UpdateSoundsJson => updateSoundsJson ?? (updateSoundsJson = new RelayCommand(ForceJsonUpdate));
+        public ICommand UpdateSoundsJson => updateSoundsJson ?? (updateSoundsJson = new RelayCommand(JsonUpdater.ForceJsonUpdate));
 
         protected override void AddNewFolder()
         {
@@ -119,7 +121,8 @@ namespace ForgeModGenerator.ViewModel
         protected override bool Refresh()
         {
             bool canRefresh = base.Refresh();
-            ShouldUpdate = canRefresh ? IsUpdateAvailable() : false;
+            JsonUpdater = new SoundJsonUpdater(Folders, FoldersRootPath, Preferences.JsonFormatting, new Converter.SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid));
+            ShouldUpdate = canRefresh ? JsonUpdater.IsUpdateAvailable() : false;
             return canRefresh;
         }
 
@@ -157,7 +160,7 @@ namespace ForgeModGenerator.ViewModel
                     ChangeSoundPath(new Tuple<SoundEvent, Sound>(args.Folder, args.FileAfterEdit));
                     args.FileAfterEdit.RefreshName();
                 }
-                ForceJsonUpdate(); // temporary solution
+                JsonUpdater.ForceJsonUpdate(); // temporary solution
             }
             else
             {
@@ -207,100 +210,17 @@ namespace ForgeModGenerator.ViewModel
             try
             {
                 soundEvent.CollectionChanged += (sender, args) => {
-                    ShouldUpdate = CanRefresh() ? IsUpdateAvailable() : false;
+                    ShouldUpdate = CanRefresh() ? JsonUpdater.IsUpdateAvailable() : false;
                 };
                 soundEvent.PropertyChanged += (sender, args) => {
-                    ForceJsonUpdate();
+                    JsonUpdater.ForceJsonUpdate();
                 };
-                soundEvent.OnFileAdded += AddSoundToJson;
-                soundEvent.OnFileRemoved += RemoveSoundFromJson;
+                soundEvent.OnFileAdded += (sound) => { JsonUpdater.AddToJson(soundEvent, sound); };
+                soundEvent.OnFileRemoved += (sound) => { JsonUpdater.RemoveFromJson(soundEvent, sound); };
             }
             catch (Exception ex)
             {
                 Log.Error(ex, Log.UnexpectedErrorMessage, true);
-            }
-        }
-
-        protected void AddSoundToJson(object item)
-        {
-            if (item is SoundEvent soundEvent)
-            {
-                if (!HasSoundWritten(soundEvent.EventName))
-                {
-                    // TODO: Add sound
-                }
-            }
-            else if (item is Sound sound)
-            {
-                if (!HasSoundWritten(sound.Name))
-                {
-                    // TODO: Add sound
-                }
-            }
-            ForceJsonUpdate(); // temporary solution
-        }
-
-        protected void RemoveSoundFromJson(object item)
-        {
-            if (item is SoundEvent soundEvent)
-            {
-                if (HasSoundWritten(soundEvent.EventName))
-                {
-                    foreach (Sound sound in soundEvent.Files)
-                    {
-                        // TODO: Remove sound
-                    }
-                }
-            }
-            else if (item is Sound sound)
-            {
-                if (HasSoundWritten(sound.Name))
-                {
-                    // TODO: Remove sound
-                }
-            }
-            ForceJsonUpdate(); // temporary solution
-        }
-
-        protected void ForceJsonUpdate()
-        {
-            try
-            {
-                SoundEvent duplicatedSoundEvent = Folders.FirstOrDefault(folder => ReferenceCounter.GetReferenceCount(folder.EventName) > 1);
-                if (duplicatedSoundEvent != null)
-                {
-                    Log.Warning($"SoundEvent name \"{duplicatedSoundEvent.EventName}\" is duplicated, changes won't save", true);
-                    return;
-                }
-                Converter.SoundCollectionConverter converter = new Converter.SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
-                string json = JsonConvert.SerializeObject(Folders, Preferences.JsonFormatting, converter);
-                File.WriteAllText(FoldersRootPath, json);
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, Log.UnexpectedErrorMessage, true);
-            }
-        }
-
-        protected bool HasSoundWritten(string sound) => File.ReadLines(FoldersRootPath).Any(x => x.Contains($"\"{sound}\""));
-
-        protected bool IsUpdateAvailable()
-        {
-            try
-            {
-                Converter.SoundCollectionConverter converter = new Converter.SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
-                string newJson = JsonConvert.SerializeObject(Folders, Preferences.JsonFormatting);
-                string savedJson = File.ReadAllText(FoldersRootPath);
-                if (newJson == savedJson)
-                {
-                    newJson = JsonConvert.SerializeObject(Folders, Preferences.JsonFormatting == Formatting.Indented ? Formatting.None : Formatting.Indented);
-                }
-                return newJson == savedJson;
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, Log.UnexpectedErrorMessage);
-                return false;
             }
         }
     }

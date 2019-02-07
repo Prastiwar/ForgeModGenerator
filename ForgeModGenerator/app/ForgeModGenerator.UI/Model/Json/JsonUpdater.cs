@@ -1,29 +1,42 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace ForgeModGenerator.Model
 {
     public abstract class JsonUpdater<T>
     {
-        public JsonUpdater(object target)
+        public JsonUpdater(object target, string jsonPath)
+            : this(target, jsonPath, Formatting.Indented, new JsonSerializerSettings()) { }
+        public JsonUpdater(object target, string jsonPath, JsonSerializerSettings settings)
+            : this(target, jsonPath, Formatting.Indented, settings) { }
+        public JsonUpdater(object target, string jsonPath, JsonConverter converter)
+            : this(target, jsonPath, Formatting.Indented, new JsonSerializerSettings() { Converters = new List<JsonConverter>() { converter } }) { }
+        public JsonUpdater(object target, string jsonPath, Formatting formatting, JsonConverter converter)
+            : this(target, jsonPath, Formatting.Indented, new JsonSerializerSettings() { Converters = new List<JsonConverter>() { converter } }) { }
+
+        public JsonUpdater(object target, string jsonPath, Formatting formatting, JsonSerializerSettings settings)
         {
             Target = target;
+            Path = jsonPath;
+            Formatting = Formatting;
+            Settings = settings;
         }
 
         public Formatting Formatting { get; set; }
         public string Path { get; set; }
 
         protected object Target { get; set; }
-        protected JsonConverter Converter { get; set; }
+        protected JsonSerializerSettings Settings { get; set; }
 
         protected string GetJsonFromFile() => File.ReadAllText(Path);
 
-        protected string GetJsonFromSerialize() => JsonConvert.SerializeObject(Target, Formatting, Converter);
+        protected string Serialize() => JsonConvert.SerializeObject(Target, Formatting, Settings);
 
         protected void OverwriteJson(string json) => File.WriteAllText(Path, json);
 
-        public void AddToJson(T item)
+        public virtual void AddToJson(T item)
         {
             if (!JsonContains(item))
             {
@@ -32,7 +45,7 @@ namespace ForgeModGenerator.Model
             ForceJsonUpdate(); // temporary solution
         }
 
-        public void RemoveFromJson(T item)
+        public virtual void RemoveFromJson(T item)
         {
             if (JsonContains(item))
             {
@@ -45,7 +58,7 @@ namespace ForgeModGenerator.Model
         {
             try
             {
-                OverwriteJson(GetJsonFromSerialize());
+                OverwriteJson(Serialize());
             }
             catch (Exception ex)
             {
@@ -57,7 +70,7 @@ namespace ForgeModGenerator.Model
         {
             try
             {
-                string newJson = GetJsonFromSerialize();
+                string newJson = Serialize();
                 string savedJson = GetJsonFromFile();
                 if (newJson == savedJson)
                 {
@@ -75,7 +88,7 @@ namespace ForgeModGenerator.Model
         public virtual bool JsonContains(T item)
         {
             string json = GetJsonFromFile();
-            string itemJson = GetJsonFromSerialize();
+            string itemJson = Serialize();
             if (json.Contains(itemJson))
             {
                 itemJson = JsonConvert.SerializeObject(Target, Formatting == Formatting.Indented ? Formatting.None : Formatting.Indented);
