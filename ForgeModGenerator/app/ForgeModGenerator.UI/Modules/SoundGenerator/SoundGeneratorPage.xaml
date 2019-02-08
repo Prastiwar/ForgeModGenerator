@@ -1,0 +1,82 @@
+﻿<Page x:Class="ForgeModGenerator.SoundGenerator.Views.SoundGeneratorPage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:local="clr-namespace:ForgeModGenerator.SoundGenerator.Views"
+	  xmlns:vm="clr-namespace:ForgeModGenerator.ViewModels"
+	  xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
+	  xmlns:sControls="clr-namespace:ForgeModGenerator.SoundGenerator.Controls"
+	  xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+	  mc:Ignorable="d"
+	  d:DesignHeight="450"
+	  d:DesignWidth="800"
+	  x:Name="ThisWindow"
+	  vm:ViewModelLocator.GetDataContext="ForgeModGenerator.SoundGenerator.ViewModels.SoundGeneratorViewModel">
+	<Page.Resources>
+		<DataTemplate x:Key="FolderTemplate">
+			<StackPanel>
+				<sControls:SoundFolderExpanderControl HeaderText="{Binding Path=Info.Name}"
+													  Folder="{Binding}"
+													  AllFolders="{Binding Path=FoldersSource, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
+													  AddFileCommand="{Binding Path=DataContext.AddFileCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
+													  RemoveFileCommand="{Binding Path=DataContext.RemoveFileCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
+													  FolderFileConverter="{Binding Path=DataContext.FolderFileConverter, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
+													  RemoveFolderCommand="{Binding Path=DataContext.RemoveFolderCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
+													  EditFileCommand="{Binding Path=DataContext.EditFileCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}">
+					<sControls:SoundFolderExpanderControl.FileItemTemplate>
+						<DataTemplate>
+							<StackPanel>
+								<Button Tag="{Binding RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
+										Width="32"
+										Height="32"
+										Padding="0"
+										Background="CornflowerBlue"
+										BorderBrush="Black"
+										ContextMenu="{StaticResource DefaultFileItemContext}"
+										Command="{Binding FileClickCommand, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
+										CommandParameter="{Binding}">
+									<materialDesign:PackIcon Kind="Play" />
+								</Button>
+								<TextBlock Text="{Binding Info.Name}" />
+							</StackPanel>
+						</DataTemplate>
+					</sControls:SoundFolderExpanderControl.FileItemTemplate>
+				</sControls:SoundFolderExpanderControl>
+			</StackPanel>
+		</DataTemplate>
+	</Page.Resources>
+	<materialDesign:DialogHost>
+		<Grid Background="{StaticResource PageBackground}">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="auto" />
+				<RowDefinition Height="*" />
+			</Grid.RowDefinitions>
+			<StackPanel Grid.Row="0"
+						Orientation="Horizontal"
+						Visibility="{Binding ShouldUpdate, Converter={StaticResource BooleanToVisibilityConverter}}">
+				<TextBlock Text="Sounds.json doesn't match found occurencies, do you want to update it?"
+						   Padding="7"
+						   Margin="15,0,0,0"
+						   FontSize="11"
+						   FontStyle="Normal"
+						   HorizontalAlignment="Left"
+						   Foreground="Red"
+						   FontWeight="Bold" />
+				<Button Content="Update"
+						Width="100"
+						Height="20"
+						Margin="5"
+						Padding="0"
+						VerticalAlignment="Top"
+						Command="{Binding UpdateSoundsJson}" />
+			</StackPanel>
+			<controls:FolderListBox Grid.Row="1"
+									FoldersSource="{Binding Folders}"
+									SelectedFolder="{Binding SelectedFolder}"
+									AddFolderCommand="{Binding AddFolderCommand}"
+									ShowEmptyMessage="{Binding SessionContext.IsModSelected, Converter={StaticResource InvertBooleanConverter}}"
+									FolderTemplate="{StaticResource FolderTemplate}" />
+		</Grid>
+	</materialDesign:DialogHost>
+</Page>

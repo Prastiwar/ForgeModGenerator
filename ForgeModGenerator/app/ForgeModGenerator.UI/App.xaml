@@ -2,13 +2,13 @@
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:local="clr-namespace:ForgeModGenerator"
-			 StartupUri="ViewModel/Main/MainWindow.xaml"
+			 StartupUri="Modules/ApplicationModule/MainWindow.xaml"
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 d1p1:Ignorable="d"
 			 xmlns:d1p1="http://schemas.openxmlformats.org/markup-compatibility/2006"
-			 xmlns:c="clr-namespace:ForgeModGenerator.Converter"
-			 xmlns:vm="clr-namespace:ForgeModGenerator.ViewModel"
-			 xmlns:controls="clr-namespace:ForgeModGenerator.UserControls"
+			 xmlns:converters="clr-namespace:ForgeModGenerator.Converters"
+			 xmlns:vm="clr-namespace:ForgeModGenerator.ViewModels"
+			 xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
 			 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 			 xmlns:system="clr-namespace:System;assembly=mscorlib">
 	<Application.Resources>
@@ -21,6 +21,7 @@
 				<ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.MahApps;component/Themes/MaterialDesignTheme.MahApps.NumericUpDown.xaml" />
 				<ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.MahApps;component/Themes/MaterialDesignTheme.MahApps.RangeSlider.xaml" />
 				<ResourceDictionary Source="Themes/Generic.xaml" />
+				<ResourceDictionary Source="Themes/FolderExpanderThemes.xaml" />
 				<ResourceDictionary>
 					<SolidColorBrush x:Key="PageBackground"
 									 Color="#FF424242" />
@@ -30,22 +31,22 @@
 										 d:IsDataSource="True" />
 				</ResourceDictionary>
 				<ResourceDictionary>
-					<c:PathToModidConverter x:Key="PathToModidConverter" />
+					<converters:PathToModidConverter x:Key="PathToModidConverter" />
 				</ResourceDictionary>
 				<ResourceDictionary>
-					<c:InvertBooleanConverter x:Key="InvertBooleanConverter" />
+					<converters:InvertBooleanConverter x:Key="InvertBooleanConverter" />
 				</ResourceDictionary>
 				<ResourceDictionary>
-					<c:IntToVisibilityConverter x:Key="IntToVisibilityConverter" />
+					<converters:IntToVisibilityConverter x:Key="IntToVisibilityConverter" />
 				</ResourceDictionary>
 				<ResourceDictionary>
-					<c:InvertIntToVisibilityConverter x:Key="InvertIntToVisibilityConverter" />
+					<converters:InvertIntToVisibilityConverter x:Key="InvertIntToVisibilityConverter" />
 				</ResourceDictionary>
 				<ResourceDictionary>
-					<c:PathNameConverter x:Key="PathToNameConverter" />
+					<converters:PathNameConverter x:Key="PathToNameConverter" />
 				</ResourceDictionary>
 				<ResourceDictionary>
-					<c:BindMultiValueConverter x:Key="BindMultiValueConverter" />
+					<converters:BindMultiValueConverter x:Key="BindMultiValueConverter" />
 				</ResourceDictionary>
 				<ResourceDictionary>
 					<ContextMenu x:Key="DefaultFileItemContext">

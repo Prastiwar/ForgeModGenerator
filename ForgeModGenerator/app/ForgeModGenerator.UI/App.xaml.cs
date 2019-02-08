@@ -1,5 +1,5 @@
 ﻿using CommonServiceLocator;
-using ForgeModGenerator.Service;
+using ForgeModGenerator.Services;
 using System.Windows;
 
 namespace ForgeModGenerator

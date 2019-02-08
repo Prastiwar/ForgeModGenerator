@@ -1,5 +1,5 @@
-﻿using ForgeModGenerator.Miscellaneous;
-using ForgeModGenerator.Model;
+﻿using ForgeModGenerator.SoundGenerator.Models;
+using ForgeModGenerator.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Linq;

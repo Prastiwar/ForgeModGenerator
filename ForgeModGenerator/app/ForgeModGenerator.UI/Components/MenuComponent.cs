@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using ForgeModGenerator.Animations;
+using System.Windows.Controls;
 
 namespace ForgeModGenerator.Components
 {

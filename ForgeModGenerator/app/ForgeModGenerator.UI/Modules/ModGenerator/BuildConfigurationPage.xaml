@@ -1,0 +1,39 @@
+﻿<Page x:Class="ForgeModGenerator.ModGenerator.Views.BuildConfigurationPage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:local="clr-namespace:ForgeModGenerator.ModGenerator.Views"
+	  xmlns:vm="clr-namespace:ForgeModGenerator.ViewModels"
+	  xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+	  xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
+	  xmlns:mControls="clr-namespace:ForgeModGenerator.ModGenerator.Controls"
+	  mc:Ignorable="d"
+	  d:DesignHeight="450"
+	  d:DesignWidth="800"
+	  vm:ViewModelLocator.GetDataContext="ForgeModGenerator.ModGenerator.ViewModels.BuildConfigurationViewModel">
+	<Grid Background="{StaticResource PageBackground}">
+		<ScrollViewer VerticalScrollBarVisibility="Auto">
+			<StackPanel>
+				<materialDesign:Card Background="#FF535353"
+									 Margin="10">
+					<StackPanel>
+						<ListBox ItemsSource="{Binding SessionContext.Mods}"
+								 HorizontalContentAlignment="Stretch">
+							<ListBox.ItemTemplate>
+								<DataTemplate>
+									<mControls:ModBuildForm DataContext="{Binding}"
+															RunClientCommand="{Binding DataContext.RunClientCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+															RunServerCommand="{Binding DataContext.RunServerCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+															RunBothCommand="{Binding DataContext.RunBothCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+															CompileCommand="{Binding DataContext.CompileCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+															ToggleSelectCommand="{Binding DataContext.ToggleSelectCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" />
+								</DataTemplate>
+							</ListBox.ItemTemplate>
+						</ListBox>
+					</StackPanel>
+				</materialDesign:Card>
+			</StackPanel>
+		</ScrollViewer>
+	</Grid>
+</Page>

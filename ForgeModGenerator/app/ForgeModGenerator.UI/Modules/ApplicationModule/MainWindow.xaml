@@ -1,0 +1,127 @@
+﻿<Window x:Class="ForgeModGenerator.ApplicationModule.Views.MainWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
+		xmlns:aControls="clr-namespace:ForgeModGenerator.ApplicationModule.Controls"
+		xmlns:views="clr-namespace:ForgeModGenerator.ApplicationModule.Views"
+		xmlns:vm="clr-namespace:ForgeModGenerator.ViewModels"
+		mc:Ignorable="d"
+		xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+		Height="450"
+		Width="800"
+		MinWidth="760"
+		MinHeight="500"
+		WindowStyle="None"
+		AllowsTransparency="True"
+		ResizeMode="CanResizeWithGrip"
+		Foreground="{DynamicResource MaterialDesignBody}"
+		Background="{DynamicResource MaterialDesignPaper}"
+		FontFamily="Consolas"
+		Closing="Window_Closing"
+		TextElement.FontWeight="Regular"
+		TextElement.FontSize="13"
+		TextOptions.TextFormattingMode="Ideal"
+		TextOptions.TextRenderingMode="Auto"
+		vm:ViewModelLocator.GetDataContext="ForgeModGenerator.ApplicationModule.ViewModels.MainWindowViewModel">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="25" />
+			<RowDefinition Height="1*" />
+			<RowDefinition Height="10" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="10" />
+			<ColumnDefinition Width="1*" />
+			<ColumnDefinition Width="10" />
+		</Grid.ColumnDefinitions>
+		<controls:DraggableRectangle Grid.Row="0"
+									 Grid.Column="0" />
+		<controls:DraggableRectangle Grid.Row="0"
+									 Grid.Column="1" />
+		<controls:DraggableRectangle Grid.Row="0"
+									 Grid.Column="2" />
+		<controls:DraggableRectangle Grid.Row="1"
+									 Grid.Column="0" />
+		<controls:DraggableRectangle Grid.Row="1"
+									 Grid.Column="2" />
+		<controls:DraggableRectangle Grid.Row="2"
+									 Grid.Column="0" />
+		<controls:DraggableRectangle Grid.Row="2"
+									 Grid.Column="1" />
+		<!--Mod Selector-->
+		<StackPanel Grid.Column="1"
+					Margin="1"
+					Orientation="Horizontal">
+			<ComboBox ItemsSource="{Binding Path=SessionContext.Mods}"
+					  SelectedItem="{Binding Path=SessionContext.SelectedMod}"
+					  Background="#FF404040"
+					  Foreground="#FFE8E8E8"
+					  BorderBrush="Wheat"
+					  HorizontalAlignment="Left"
+					  VerticalAlignment="Center"
+					  HorizontalContentAlignment="Center"
+					  Width="220"
+					  FontSize="11"
+					  materialDesign:HintAssist.Hint="Selected Mod">
+				<ComboBox.ItemTemplate>
+					<DataTemplate>
+						<StackPanel Orientation="Horizontal">
+							<TextBlock Text="{Binding Path=Side}" />
+							<TextBlock Text=" - " />
+							<TextBlock Text="{Binding Path=ModInfo.Name}" />
+						</StackPanel>
+					</DataTemplate>
+				</ComboBox.ItemTemplate>
+			</ComboBox>
+			<Button Width="20"
+					Height="20"
+					Padding="0"
+					Margin="15,0,5,0"
+					ToolTip="Force Refresh"
+					Command="{Binding RefreshCommand}">
+				<materialDesign:PackIcon Kind="Refresh" />
+			</Button>
+			<Button Width="20"
+					Height="20"
+					Padding="0"
+					Margin="5,0,5,0"
+					ToolTip="Run main selected"
+					Command="{Binding RunModCommand}"
+					CommandParameter="{Binding SessionContext.SelectedMod}">
+				<materialDesign:PackIcon Kind="PlayCircleOutline" />
+			</Button>
+			<Button Width="20"
+					Height="20"
+					Padding="0"
+					Margin="5,0,5,0"
+					ToolTip="Run all selected"
+					Command="{Binding RunModsCommand}"
+					CommandParameter="{Binding SessionContext.SelectedMods}">
+				<materialDesign:PackIcon Kind="PlayBoxOutline" />
+			</Button>
+		</StackPanel>
+		<aControls:AppMenu x:Name="ApplicationMenu"
+						   Grid.Column="1"
+						   VerticalAlignment="Bottom"
+						   HorizontalAlignment="Right"
+						   OpenSettingsCommand="{Binding OpenSettingsCommand}"
+						   AskToClose="{Binding SessionContext.AskBeforeClose}" />
+		<!--Content - nav menu and page frame-->
+		<Grid x:Name="ContentGrid"
+			  Grid.Column="1"
+			  Grid.Row="1"
+			  Background="#FF424242">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="50" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<views:NavigationMenu x:Name="GenMenu" />
+			<Frame x:Name="PageFrame"
+				   Grid.Column="1"
+				   NavigationUIVisibility="Hidden"
+				   Source="{Binding SessionContext.StartPage}" />
+		</Grid>
+	</Grid>
+</Window>

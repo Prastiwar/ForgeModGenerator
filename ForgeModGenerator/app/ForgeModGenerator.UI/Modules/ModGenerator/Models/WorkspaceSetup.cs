@@ -1,0 +1,60 @@
+﻿using Newtonsoft.Json;
+using System;
+
+namespace ForgeModGenerator.ModGenerator.Models
+{
+    public abstract class WorkspaceSetup
+    {
+        public static WorkspaceSetup NONE = new EmptyWorkspace();
+
+        [JsonProperty(Required = Required.Always)]
+        public string Name { get; protected set; }
+
+        public WorkspaceSetup(string name)
+        {
+            Name = name;
+        }
+
+        public abstract void Setup(Mod mod);
+
+        public override bool Equals(object obj) => obj is WorkspaceSetup objSetup && objSetup.Name == Name;
+        public override int GetHashCode() => base.GetHashCode();
+    }
+
+    public class EmptyWorkspace : WorkspaceSetup
+    {
+        public EmptyWorkspace() : base("None") { }
+
+        public override void Setup(Mod mod) { }
+    }
+
+    public class EclipseWorkspace : WorkspaceSetup
+    {
+        public EclipseWorkspace() : base("Eclipse") { }
+
+        public override void Setup(Mod mod)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class IntelliJIDEAWorkspace : WorkspaceSetup
+    {
+        public IntelliJIDEAWorkspace() : base("IntelliJIDEA") { }
+
+        public override void Setup(Mod mod)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class VSCodeWorkspace : WorkspaceSetup
+    {
+        public VSCodeWorkspace() : base("VSCode") { }
+
+        public override void Setup(Mod mod)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}
