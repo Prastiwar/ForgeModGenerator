@@ -1,4 +1,5 @@
 ﻿using ForgeModGenerator.Miscellaneous;
+using ForgeModGenerator.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Linq;
@@ -29,6 +30,13 @@ namespace ForgeModGenerator.Tests
             Assert.IsFalse(IOExtensions.IsSubPathOf(@"c:\foo\a.txt", @"c:\foobar\"));
             Assert.IsFalse(IOExtensions.IsSubPathOf(@"c:\foo\..\bar\baz", @"c:\foo"));
             Assert.IsFalse(IOExtensions.IsSubPathOf(@"c:\foo\..\bar\baz", @"c:\barr"));
+        }
+
+        [TestMethod]
+        public void SoundPath()
+        {
+            Assert.AreEqual("craftpolis", Sound.GetModidFromSoundPath("craftpolis:entity/jump"));
+            Assert.AreEqual("entity/jump", Sound.GetRelativePathFromSoundPath("craftpolis:entity/jump"));
         }
 
         [TestMethod]

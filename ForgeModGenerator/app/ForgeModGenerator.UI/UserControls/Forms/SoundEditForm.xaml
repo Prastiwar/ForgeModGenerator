@@ -7,6 +7,8 @@
 			 xmlns:system="clr-namespace:System;assembly=mscorlib"
 			 xmlns:wpf="http://materialdesigninxaml.net/winfx/xaml/themes"
 			 xmlns:mahapp="http://metro.mahapps.com/winfx/xaml/controls"
+			 xmlns:misc="clr-namespace:ForgeModGenerator.Miscellaneous"
+			 xmlns:rules="clr-namespace:ForgeModGenerator.ValidationRules"
 			 mc:Ignorable="d"
 			 d:DesignHeight="450"
 			 d:DesignWidth="800">
@@ -15,20 +17,48 @@
 			<Border BorderThickness="0.7"
 					BorderBrush="Black">
 				<StackPanel Background="WhiteSmoke">
-					<StackPanel Orientation="Horizontal">
-						<TextBlock Text="Name: "
-								   FontSize="14"
-								   FontWeight="Bold"
-								   Margin="3,0,3,0"
-								   VerticalAlignment="Center" />
+					<TextBlock Text="Name: "
+							   FontSize="14"
+							   FontWeight="Bold"
+							   Margin="3,0,3,0"
+							   VerticalAlignment="Center" />
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="auto" />
+							<ColumnDefinition Width="auto" />
+							<ColumnDefinition Width="*" />
+						</Grid.ColumnDefinitions>
 						<TextBlock Text="{Binding Name, Mode=OneTime, Converter={StaticResource PathToModidConverter}}"
 								   VerticalAlignment="Center" />
 						<TextBlock Text=":"
+								   Grid.Column="1"
 								   VerticalAlignment="Center" />
-						<TextBox Text="{Binding ShortPath}"
-								 Margin="3,0,0,0"
-								 VerticalAlignment="Center" />
-					</StackPanel>
+						<local:SubmitTextBox x:Name="NameBox"
+											 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+											 Grid.Column="2"
+											 Margin="3,0,0,0"
+											 wpf:HintAssist.Hint="Relative path"
+											 IsTabStop="True">
+							<local:SubmitTextBox.Resources>
+								<misc:BindingProxy x:Key="DataProxy"
+												   Data="{Binding RelativeSource={RelativeSource AncestorType=local:SoundEditForm}}" />
+							</local:SubmitTextBox.Resources>
+							<local:SubmitTextBox.Text>
+								<Binding Path="ShortPath"
+										 UpdateSourceTrigger="PropertyChanged">
+									<Binding.ValidationRules>
+										<rules:SoundRules ValidatesOnTargetUpdated="True"
+														  PropertyName="Name">
+											<rules:SoundRules.Parameters>
+												<rules:SoundValidationDependencyWrapper Sounds="{Binding Path=Data.AllSounds, Source={StaticResource DataProxy}}"
+																						SoundBeforeChange="{Binding Path=Data.DataContext, Source={StaticResource DataProxy}}" />
+											</rules:SoundRules.Parameters>
+										</rules:SoundRules>
+									</Binding.ValidationRules>
+								</Binding>
+							</local:SubmitTextBox.Text>
+						</local:SubmitTextBox>
+					</Grid>
 					<Separator MinWidth="350" />
 					<Grid Margin="0,10,0,0">
 						<Grid.ColumnDefinitions>
@@ -147,8 +177,7 @@
 			<StackPanel Orientation="Horizontal"
 						HorizontalAlignment="Center"
 						Margin="0,16,0,0">
-				<Button IsDefault="True"
-						Style="{DynamicResource MaterialDesignFlatButton}"
+				<Button Style="{DynamicResource MaterialDesignFlatButton}"
 						Command="{x:Static wpf:DialogHost.CloseDialogCommand}">
 					<Button.CommandParameter>
 						<system:Boolean>True</system:Boolean>

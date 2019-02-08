@@ -40,14 +40,6 @@ namespace ForgeModGenerator
             }
         }
 
-        public static string Templates {
-            get {
-                string path = Path.Combine(AppRootPath, "templates");
-                CreateIfNotExist(path);
-                return path;
-            }
-        }
-
         public static string Logs {
             get {
                 string path = Path.Combine(AppRootPath, "logs");

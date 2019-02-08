@@ -137,8 +137,8 @@
     <Compile Include="Miscellaneous\IOExtensions.cs" />
     <Compile Include="Core\Log.cs" />
     <Compile Include="Miscellaneous\PrimitiveExtensions.cs" />
-    <Compile Include="Model\FileItem.cs" />
-    <Compile Include="Model\ObservableFolder.cs" />
+    <Compile Include="Model\FileSystem\FileItem.cs" />
+    <Compile Include="Model\FileSystem\ObservableFolder.cs" />
     <Compile Include="Model\Json\SoundJsonUpdater.cs" />
     <Compile Include="Model\Mod\LaunchSetup.cs" />
     <Compile Include="Model\ObservableDirtyObject.cs" />
@@ -194,6 +194,7 @@
     <Compile Include="UserControls\SubmitTextBox.cs" />
     <Compile Include="ValidationRules\NotEmptyRule.cs" />
     <Compile Include="ValidationRules\SoundEventRules.cs" />
+    <Compile Include="ValidationRules\SoundRules.cs" />
     <Compile Include="ViewModel\BuildConfiguration\BuildConfigurationViewModel.cs" />
     <Compile Include="ViewModel\AchievementGenerator\AchievementGeneratorViewModel.cs" />
     <Compile Include="ViewModel\BlockGenerator\BlockGeneratorViewModel.cs" />

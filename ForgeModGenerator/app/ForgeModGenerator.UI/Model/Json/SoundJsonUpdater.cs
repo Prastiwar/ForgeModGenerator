@@ -13,12 +13,12 @@ namespace ForgeModGenerator.Model
 
         public override bool IsValidToSerialize()
         {
-            foreach (SoundEvent item in Target)
+            foreach (SoundEvent soundEvent in Target)
             {
-                System.Windows.Controls.ValidationResult result = item.IsValid(Target);
+                System.Windows.Controls.ValidationResult result = soundEvent.IsValid(Target);
                 if (!result.IsValid)
                 {
-                    Log.Warning($"Cannot serialize json. {item.EventName} is not valid. Reason: {result.ErrorContent}", true);
+                    Log.Warning($"Cannot serialize json. {soundEvent.EventName} is not valid. Reason: {result.ErrorContent}", true);
                     return false;
                 }
             }

@@ -14,15 +14,6 @@ namespace ForgeModGenerator.Model
     [JsonConverter(typeof(SoundEventConverter))]
     public class SoundEvent : ObservableFolder<Sound>
     {
-        public ValidationResult IsValid(IEnumerable<SoundEvent> soundEvents)
-        {
-            SoundEventValidationDependencyWrapper parameters = new SoundEventValidationDependencyWrapper() {
-                SoundEvents = soundEvents,
-                SoundEventBeforeChange = this
-            };
-            return new SoundEventRules(nameof(EventName), parameters).Validate(EventName, null);
-        }
-
         private SoundEvent() { }
 
         // Create SoundEvent without any sound
@@ -153,6 +144,21 @@ namespace ForgeModGenerator.Model
                 return true;
             }
             return false;
+        }
+
+        public ValidationResult IsValid(IEnumerable<SoundEvent> soundEvents)
+        {
+            SoundEventRules soundEventRules = new SoundEventRules();
+            SoundEventValidationDependencyWrapper parameters = new SoundEventValidationDependencyWrapper() {
+                SoundEvents = soundEvents,
+                SoundEventBeforeChange = this
+            };
+            ValidationResult eventResult = soundEventRules.ValidateEventName(EventName, parameters);
+            if (!eventResult.IsValid)
+            {
+                return eventResult;
+            }
+            return soundEventRules.ValidateSounds(Files);
         }
 
         // Get formatted sound from full path, "shorten.path.toFile"

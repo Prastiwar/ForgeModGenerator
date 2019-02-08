@@ -1,7 +1,10 @@
 ﻿using ForgeModGenerator.Converter;
+using ForgeModGenerator.ValidationRules;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System.Collections.Generic;
 using System.IO;
+using System.Windows.Controls;
 
 namespace ForgeModGenerator.Model
 {
@@ -33,7 +36,7 @@ namespace ForgeModGenerator.Model
         }
 
         public string ShortPath {
-            get => Name.Remove(0, Name.IndexOf(':') + 1);
+            get => GetRelativePathFromSoundPath(Name);
             set => Name = FormatSoundShortPath(Mod.GetModidFromPath(Name), value);
         }
 
@@ -124,10 +127,24 @@ namespace ForgeModGenerator.Model
             return false;
         }
 
-        public void RefreshName()
+        public void FormatName()
         {
             Name = FormatSoundPath(Mod.GetModidFromPath(Name), Info.FullName);
         }
+
+        public ValidationResult IsValid(IEnumerable<Sound> sounds)
+        {
+            SoundRules rules = new SoundRules();
+            SoundValidationDependencyWrapper parameters = new SoundValidationDependencyWrapper() {
+                Sounds = sounds,
+                SoundBeforeChange = this
+            };
+            ValidationResult result = rules.ValidateShortPath(ShortPath, parameters);
+            return result;
+        }
+
+        public static string GetModidFromSoundPath(string path) => path.Substring(0, path.IndexOf(":"));
+        public static string GetRelativePathFromSoundPath(string path) => path.Remove(0, path.IndexOf(":") + 1);
 
         // Get formatted sound from full path, "modid:shorten/path/toFile"
         public static string FormatSoundPath(string modid, string path)

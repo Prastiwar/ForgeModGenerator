@@ -43,27 +43,43 @@ namespace ForgeModGenerator.ValidationRules
             switch (PropertyName)
             {
                 case nameof(SoundEvent.EventName):
-                    return ValidateEventName(value.ToString());
+                    return ValidateEventName(value.ToString(), Parameters);
+                case nameof(SoundEvent.Files):
+                    return ValidateSounds(Parameters.SoundEventBeforeChange.Files);
                 default:
                     throw new NotImplementedException($"Validation of paremeter: {PropertyName} is not implemented");
             }
         }
 
-        private ValidationResult ValidateEventName(string eventName)
+        public ValidationResult ValidateSounds(IEnumerable<Sound> sounds)
         {
-            ValidationResult emptyResult = new NotEmptyRule().Validate(eventName, null);
+            SoundRules soundRules = new SoundRules();
+            foreach (Sound sound in sounds)
+            {
+                ValidationResult result = sound.IsValid(sounds);
+                if (!result.IsValid)
+                {
+                    return result;
+                }
+            }
+            return ValidationResult.ValidResult;
+        }
+
+        public ValidationResult ValidateEventName(string newEventName, SoundEventValidationDependencyWrapper parameters)
+        {
+            ValidationResult emptyResult = new NotEmptyRule().Validate(newEventName, null);
             if (!emptyResult.IsValid)
             {
                 return emptyResult;
             }
-            if (Parameters == null || Parameters.SoundEvents == null || Parameters.SoundEventBeforeChange == null)
+            if (parameters == null || parameters.SoundEvents == null || parameters.SoundEventBeforeChange == null)
             {
                 return new ValidationResult(false, "Validation failed, one of parameters was null");
             }
-            if (Parameters.SoundEventBeforeChange.EventName != eventName)
+            if (parameters.SoundEventBeforeChange.EventName != newEventName)
             {
-                int eventNameCount = Parameters.SoundEvents.Count(x => x.EventName == eventName) + 1;
-                ValidationResult existResult = new ValidationResult(eventNameCount <= 1, $"{eventName} already exists");
+                int eventNameCount = parameters.SoundEvents.Count(x => x.EventName == newEventName) + 1;
+                ValidationResult existResult = new ValidationResult(eventNameCount <= 1, $"{newEventName} already exists");
                 if (!existResult.IsValid)
                 {
                     return existResult;

@@ -45,15 +45,30 @@ namespace ForgeModGenerator.ViewModel
             {
                 Folder = folder;
                 File = file;
+                OtherArgs = otherArgs;
             }
+            public DialogClosingEventArgs OtherArgs { get; }
             public TFolder Folder { get; }
             public TFile File { get; }
+
+            public new void Cancel() => OtherArgs.Cancel();
         }
 
         public class FileEditorOpeningDialogEventArgs : DialogOpenedEventArgs
         {
             public FileEditorOpeningDialogEventArgs(DialogOpenedEventArgs otherArgs, TFolder folder, TFile file)
                 : base(otherArgs.Session, otherArgs.RoutedEvent)
+            {
+                Folder = folder;
+                File = file;
+            }
+            public TFolder Folder { get; }
+            public TFile File { get; }
+        }
+
+        public class FileEditorOpeningDialogEventArgs2
+        {
+            public FileEditorOpeningDialogEventArgs2(TFolder folder, TFile file)
             {
                 Folder = folder;
                 File = file;

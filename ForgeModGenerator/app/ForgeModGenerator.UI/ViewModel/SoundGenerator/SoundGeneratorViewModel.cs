@@ -76,7 +76,7 @@ namespace ForgeModGenerator.ViewModel
                 string soundsFolderPath = ModPaths.SoundsFolder(modname, modid);
                 string oldFilePath = param.Item2.Info.FullName.Replace("\\", "/");
                 string extension = Path.GetExtension(oldFilePath);
-                string newFileName = param.Item2.Name.Remove(0, param.Item2.Name.IndexOf(":") + 1); // remove modid
+                string newFileName = Sound.GetRelativePathFromSoundPath(param.Item2.Name);
                 string newFilePathToValidate = null;
                 string newFilePath = null;
                 try
@@ -87,6 +87,11 @@ namespace ForgeModGenerator.ViewModel
                 catch (Exception pathEx)
                 {
                     Log.Error(pathEx, $"Path is not valid {newFilePathToValidate}", true);
+                    return;
+                }
+                if (!IOExtensions.IsSubPathOf(newFilePath, soundsFolderPath))
+                {
+                    Log.Warning($"Path must be in {soundsFolderPath}", true);
                     return;
                 }
 
@@ -133,13 +138,24 @@ namespace ForgeModGenerator.ViewModel
             return canRefresh;
         }
 
+        protected override void OnFileEditorOpening(object sender, FileEditorOpeningDialogEventArgs eventArgs)
+        {
+            (FileEditForm as UserControls.SoundEditForm).AllSounds = eventArgs.Folder.Files;
+        }
+
         protected override bool CanCloseFileEditor(bool result, FileEditedEventArgs args)
         {
             if (result)
             {
-                if (args.Folder.Files.Count(x => x.Name == args.FileAfterEdit.Name) > 1)
+                if (!(FileEditForm as UserControls.SoundEditForm).IsValid())
                 {
-                    Log.Warning("The sound already exists. Duplicates are not allowed", true);
+                    Log.Warning($"Cannot save, fix errors first", true);
+                    return false;
+                }
+                System.Windows.Controls.ValidationResult validation = args.FileAfterEdit.IsValid(args.Folder.Files);
+                if (!validation.IsValid)
+                {
+                    Log.Warning($"Cannot save, {validation.ErrorContent}", true);
                     return false;
                 }
             }
@@ -165,7 +181,7 @@ namespace ForgeModGenerator.ViewModel
                 if (args.FileBeforeEdit.Name != args.FileAfterEdit.Name)
                 {
                     ChangeSoundPath(new Tuple<SoundEvent, Sound>(args.Folder, args.FileAfterEdit));
-                    args.FileAfterEdit.RefreshName();
+                    args.FileAfterEdit.FormatName();
                 }
                 JsonUpdater.ForceJsonUpdate(); // temporary solution
             }
