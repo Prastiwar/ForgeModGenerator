@@ -38,24 +38,6 @@ namespace ForgeModGenerator.Models
 
         public virtual bool IsValidToSerialize() => true;
 
-        public virtual void AddToJson(T item)
-        {
-            if (!JsonContains(item))
-            {
-                // TODO: Add
-            }
-            ForceJsonUpdate(); // temporary solution
-        }
-
-        public virtual void RemoveFromJson(T item)
-        {
-            if (JsonContains(item))
-            {
-                // TODO: Remove
-            }
-            ForceJsonUpdate(); // temporary solution
-        }
-
         public virtual void ForceJsonUpdate()
         {
             try

@@ -100,7 +100,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
             mod.ForgeVersion.UnZip(newModPath);
             RemoveDumpExample(mod);
 
-            string generatedPath = ModPaths.GeneratedSourceCode(mod.ModInfo.Name, mod.Organization);
+            string generatedPath = ModPaths.GeneratedSourceCodeFolder(mod.ModInfo.Name, mod.Organization);
             string assetsPath = ModPaths.Assets(mod.ModInfo.Name, mod.ModInfo.Modid);
             GenerateFolders(assetsPath, assetsFolerToGenerate);
             Directory.CreateDirectory(generatedPath);

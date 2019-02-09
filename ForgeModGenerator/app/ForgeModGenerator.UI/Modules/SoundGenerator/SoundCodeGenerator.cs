@@ -3,9 +3,9 @@ using ForgeModGenerator.SoundGenerator.Models;
 using System.CodeDom;
 using System.Collections.Generic;
 
-namespace ForgeModGenerator.Modules.SoundGenerator
+namespace ForgeModGenerator.SoundGenerator
 {
-    public class SoundCodeGenerator : CodeGenerator<SoundEvent>
+    public class SoundCodeGenerator : ScriptCodeGenerator
     {
         public SoundCodeGenerator(string modname, string organization, IEnumerable<SoundEvent> soundEvents) : base(modname, organization)
         {

@@ -120,10 +120,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="CodeGeneration\CodeGenerator.cs" />
-    <Compile Include="CodeGeneration\JavaCodeBuilder.cs" />
-    <Compile Include="CodeGeneration\JavaCodeGenerator.cs" />
-    <Compile Include="CodeGeneration\JavaCodeProvider.cs">
+    <Compile Include="CodeGeneration\MultiScriptsCodeGenerator.cs" />
+    <Compile Include="CodeGeneration\ScriptCodeGenerator.cs" />
+    <Compile Include="CodeGeneration\JavaCodeDom\JavaTypeAttributeConverter.cs" />
+    <Compile Include="CodeGeneration\JavaCodeDom\JavaMemberAttributeConverter.cs" />
+    <Compile Include="CodeGeneration\JavaCodeDom\JavaModifierAttributeConverter.cs" />
+    <Compile Include="CodeGeneration\JavaCodeDom\JavaCodeGenerator.cs" />
+    <Compile Include="CodeGeneration\JavaCodeDom\JavaCodeProvider.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Converters\InvertIntToVisibilityConverter.cs" />
@@ -140,6 +143,9 @@
     <Compile Include="Converters\PathToModidConverter.cs" />
     <Compile Include="CodeGeneration\CodeOperation.cs" />
     <Compile Include="Controls\BindingProxy.cs" />
+    <Compile Include="Modules\ModGenerator\SourceCodeGeneration\ModHookCodeGenerator.cs" />
+    <Compile Include="Modules\ModGenerator\SourceCodeGeneration\ManagerCodeGenerator.cs" />
+    <Compile Include="Modules\ModGenerator\SourceCodeGeneration\ProxyCodeGenerator.cs" />
     <Compile Include="Modules\SoundGenerator\SoundCodeGenerator.cs" />
     <Compile Include="Utils\IOExtensions.cs" />
     <Compile Include="Common\Log.cs" />

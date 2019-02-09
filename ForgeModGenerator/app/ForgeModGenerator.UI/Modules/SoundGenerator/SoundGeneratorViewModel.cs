@@ -1,5 +1,4 @@
-﻿using ForgeModGenerator.CodeGeneration;
-using ForgeModGenerator.ModGenerator.Models;
+﻿using ForgeModGenerator.ModGenerator.Models;
 using ForgeModGenerator.Services;
 using ForgeModGenerator.SoundGenerator.Controls;
 using ForgeModGenerator.SoundGenerator.Models;
@@ -9,12 +8,9 @@ using GalaSoft.MvvmLight.Command;
 using Microsoft.VisualBasic.FileIO;
 using Newtonsoft.Json;
 using System;
-using System.CodeDom;
-using System.CodeDom.Compiler;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
 using System.Windows.Input;
 
@@ -46,6 +42,8 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
 
         private ICommand updateSoundsJson;
         public ICommand UpdateSoundsJson => updateSoundsJson ?? (updateSoundsJson = new RelayCommand(FindAndAddNewFiles));
+
+        public SoundCodeGenerator GetCurrentSoundCodeGenerator() => new SoundCodeGenerator(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.Organization, Folders);
 
         protected override void AddNewFolder()
         {
@@ -174,7 +172,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
                 SubscribeFolderEvents(newFolder);
                 Folders.Add(newFolder);
             }
-            JsonUpdater.ForceJsonUpdate();
+            ForceUpdate();
             CheckForUpdate();
         }
 
@@ -214,13 +212,12 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
         {
             if (result)
             {
-                // TODO: Save changes
                 if (args.FileBeforeEdit.Name != args.FileAfterEdit.Name)
                 {
                     ChangeSoundPath(new Tuple<SoundEvent, Sound>(args.Folder, args.FileAfterEdit));
                     args.FileAfterEdit.FormatName();
                 }
-                JsonUpdater.ForceJsonUpdate(); // temporary solution
+                ForceUpdate();
             }
             else
             {
@@ -271,16 +268,11 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             try
             {
                 soundEvent.CollectionChanged += (sender, args) => {
+                    ForceUpdate();
                     CheckForUpdate();
                 };
                 soundEvent.PropertyChanged += (sender, args) => {
-                    JsonUpdater.ForceJsonUpdate();
-                };
-                soundEvent.OnFileAdded += (sound) => {
-                    JsonUpdater.AddToJson(soundEvent, sound);
-                };
-                soundEvent.OnFileRemoved += (sound) => {
-                    JsonUpdater.RemoveFromJson(soundEvent, sound);
+                    ForceUpdate();
                 };
             }
             catch (Exception ex)
@@ -288,5 +280,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
                 Log.Error(ex, Log.UnexpectedErrorMessage, true);
             }
         }
+
+        protected void ForceUpdate() => JsonUpdater.ForceJsonUpdate();// GetCurrentSoundCodeGenerator().RegenerateScript();
     }
 }

@@ -6,9 +6,9 @@ using System.Reflection;
 
 namespace ForgeModGenerator.CodeGeneration
 {
-    public abstract class CodeGenerator<T>
+    public abstract class ScriptCodeGenerator
     {
-        public CodeGenerator(string modname, string organization)
+        public ScriptCodeGenerator(string modname, string organization)
         {
             Modname = modname;
             Organization = organization;
@@ -23,24 +23,17 @@ namespace ForgeModGenerator.CodeGeneration
 
         protected abstract string ScriptFilePath { get; }
 
-        public virtual void RegenerateScript()
-        {
-            CodeCompileUnit targetCodeUnit = CreateTargetCodeUnit();
-            using (StreamWriter sourceWriter = new StreamWriter(ScriptFilePath))
-            {
-                JavaProvider.GenerateCodeFromCompileUnit(targetCodeUnit, sourceWriter, GeneratorOptions);
-            }
-        }
+        public virtual void RegenerateScript() => RegenerateScript(ScriptFilePath, CreateTargetCodeUnit(), GeneratorOptions);
 
         protected string GetClassName(string name) => $"{Modname}{name}";
 
         // Gets public class "{Modname}name"
-        protected CodeTypeDeclaration GetDefaultClass(string name) => new CodeTypeDeclaration(GetClassName(name)) { IsClass = true, TypeAttributes = TypeAttributes.Public };
+        protected CodeTypeDeclaration GetDefaultClass(string name, bool useModname = true) => new CodeTypeDeclaration(useModname ? GetClassName(name) : name) { IsClass = true, TypeAttributes = TypeAttributes.Public };
 
-        protected CodeNamespace GetDefaultPackage(CodeTypeDeclaration clas, params string[] imports)
+        protected CodeNamespace GetDefaultPackage(CodeTypeDeclaration defaultType, params string[] imports)
         {
             CodeNamespace package = GetDefaultPackage(imports);
-            package.Types.Add(clas);
+            package.Types.Add(defaultType);
             return package;
         }
 
@@ -55,6 +48,28 @@ namespace ForgeModGenerator.CodeGeneration
                 }
             }
             return package;
+        }
+
+        protected CodeCompileUnit GetDefaultCodeUnit(CodeNamespace package)
+        {
+            CodeCompileUnit targetUnit = new CodeCompileUnit();
+            targetUnit.Namespaces.Add(package);
+            return targetUnit;
+        }
+
+        protected void RegenerateScript(string scriptPath, CodeCompileUnit targetCodeUnit, CodeGeneratorOptions options)
+        {
+            try
+            {
+                using (StreamWriter sourceWriter = new StreamWriter(ScriptFilePath))
+                {
+                    JavaProvider.GenerateCodeFromCompileUnit(targetCodeUnit, sourceWriter, options);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Log.Error(ex, $"Couldnt generate code for file. Make sure it's not accesed by any process. {ScriptFilePath}", true);
+            }
         }
 
         protected abstract CodeCompileUnit CreateTargetCodeUnit();

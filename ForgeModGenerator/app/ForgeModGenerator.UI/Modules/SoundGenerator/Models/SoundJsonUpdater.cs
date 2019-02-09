@@ -26,24 +26,6 @@ namespace ForgeModGenerator.SoundGenerator.Models
             return true;
         }
 
-        public void AddToJson(SoundEvent soundEvent, Sound sound)
-        {
-            if (!JsonContains(soundEvent, sound))
-            {
-                // TODO: Add
-            }
-            ForceJsonUpdate(); // temporary solution
-        }
-
-        public void RemoveFromJson(SoundEvent soundEvent, Sound sound)
-        {
-            if (JsonContains(soundEvent, sound))
-            {
-                // TODO: Remove
-            }
-            ForceJsonUpdate(); // temporary solution
-        }
-
         public bool JsonContains(SoundEvent soundEvent, Sound sound)
         {
             string json = GetJsonFromFile();
