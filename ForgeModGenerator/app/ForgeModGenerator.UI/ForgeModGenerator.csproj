@@ -120,6 +120,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CodeGeneration\CodeGenerator.cs" />
+    <Compile Include="CodeGeneration\JavaCodeBuilder.cs" />
+    <Compile Include="CodeGeneration\JavaCodeGenerator.cs" />
+    <Compile Include="CodeGeneration\JavaCodeProvider.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Converters\InvertIntToVisibilityConverter.cs" />
     <Compile Include="Converters\IntToVisibilityConverter.cs" />
     <Compile Include="Converters\InvertBooleanConverter.cs" />
@@ -132,8 +138,9 @@
     <Compile Include="Converters\MultiValues\GenericMultiValueConverter.cs" />
     <Compile Include="Converters\MultiValues\TupleValueConverter.cs" />
     <Compile Include="Converters\PathToModidConverter.cs" />
-    <Compile Include="CodeGenerator\CodeOperation.cs" />
+    <Compile Include="CodeGeneration\CodeOperation.cs" />
     <Compile Include="Controls\BindingProxy.cs" />
+    <Compile Include="Modules\SoundGenerator\SoundCodeGenerator.cs" />
     <Compile Include="Utils\IOExtensions.cs" />
     <Compile Include="Common\Log.cs" />
     <Compile Include="Utils\PrimitiveExtensions.cs" />
@@ -165,7 +172,7 @@
     <Compile Include="Converters\EnumToCollectionConverter.cs" />
     <Compile Include="Converters\PathNameConverter.cs" />
     <Compile Include="Common\AppPaths.cs" />
-    <Compile Include="CodeGenerator\CoreSourceCodeVariables.cs" />
+    <Compile Include="CodeGeneration\CoreSourceCodeVariables.cs" />
     <Compile Include="Components\TextBoxValidVisual.cs" />
     <Compile Include="Modules\ModGenerator\Models\ForgeVersion.cs" />
     <Compile Include="Modules\ModGenerator\Models\McModInfo.cs" />

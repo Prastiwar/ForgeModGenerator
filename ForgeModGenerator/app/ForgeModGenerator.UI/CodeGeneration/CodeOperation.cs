@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace ForgeModGenerator.CodeGenerator
+namespace ForgeModGenerator.CodeGeneration
 {
     public static class CodeOperation
     {

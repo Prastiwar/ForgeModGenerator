@@ -1,4 +1,4 @@
-﻿using ForgeModGenerator.CodeGenerator;
+﻿using ForgeModGenerator.CodeGeneration;
 using ForgeModGenerator.ModGenerator.Models;
 using ForgeModGenerator.Services;
 using ForgeModGenerator.Utils;

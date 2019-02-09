@@ -1,4 +1,5 @@
-﻿using ForgeModGenerator.ModGenerator.Models;
+﻿using ForgeModGenerator.CodeGeneration;
+using ForgeModGenerator.ModGenerator.Models;
 using ForgeModGenerator.Services;
 using ForgeModGenerator.SoundGenerator.Controls;
 using ForgeModGenerator.SoundGenerator.Models;
@@ -8,9 +9,12 @@ using GalaSoft.MvvmLight.Command;
 using Microsoft.VisualBasic.FileIO;
 using Newtonsoft.Json;
 using System;
+using System.CodeDom;
+using System.CodeDom.Compiler;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 using System.Windows.Input;
 
@@ -174,10 +178,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             CheckForUpdate();
         }
 
-        protected override void OnFileEditorOpening(object sender, FileEditorOpeningDialogEventArgs eventArgs)
-        {
-            (FileEditForm as SoundEditForm).AllSounds = eventArgs.Folder.Files;
-        }
+        protected override void OnFileEditorOpening(object sender, FileEditorOpeningDialogEventArgs eventArgs) => (FileEditForm as SoundEditForm).AllSounds = eventArgs.Folder.Files;
 
         protected override bool CanCloseFileEditor(bool result, FileEditedEventArgs args)
         {
