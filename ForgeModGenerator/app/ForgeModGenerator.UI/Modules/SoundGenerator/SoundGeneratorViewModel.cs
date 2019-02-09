@@ -41,7 +41,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
         }
 
         private ICommand updateSoundsJson;
-        public ICommand UpdateSoundsJson => updateSoundsJson ?? (updateSoundsJson = new RelayCommand(JsonUpdater.ForceJsonUpdate));
+        public ICommand UpdateSoundsJson => updateSoundsJson ?? (updateSoundsJson = new RelayCommand(FindAndAddNewFiles));
 
         protected override void AddNewFolder()
         {
@@ -136,9 +136,42 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
         protected override bool Refresh()
         {
             bool canRefresh = base.Refresh();
-            JsonUpdater = new SoundJsonUpdater(Folders, FoldersRootPath, Preferences.JsonFormatting, new Converters.SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid));
-            ShouldUpdate = canRefresh ? JsonUpdater.IsUpdateAvailable() : false;
+            if (canRefresh)
+            {
+                JsonUpdater = new SoundJsonUpdater(Folders, FoldersRootPath, Preferences.JsonFormatting, new Converters.SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid));
+                CheckForUpdate();
+            }
             return canRefresh;
+        }
+
+        protected bool IsJsonUpdated()
+        {
+            if (SessionContext.SelectedMod != null)
+            {
+                string soundsFolderPath = ModPaths.SoundsFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
+                return EnumerateFilteredFiles(soundsFolderPath, System.IO.SearchOption.AllDirectories).All(filePath => ReferenceCounter.IsReferenced(filePath));
+            }
+            return true;
+        }
+
+        protected void FindAndAddNewFiles()
+        {
+            string soundsFolderPath = ModPaths.SoundsFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
+            foreach (string filePath in EnumerateFilteredFiles(soundsFolderPath, System.IO.SearchOption.AllDirectories).Where(filePath => !ReferenceCounter.IsReferenced(filePath)))
+            {
+                SoundEvent newFolder = new SoundEvent(SessionContext.SelectedMod.ModInfo.Modid, filePath);
+                string cachedName = newFolder.EventName;
+                int i = 1;
+                while (ReferenceCounter.GetReferenceCount(newFolder.EventName) > 1)
+                {
+                    newFolder.EventName = $"{cachedName}({i})";
+                    i++;
+                }
+                SubscribeFolderEvents(newFolder);
+                Folders.Add(newFolder);
+            }
+            JsonUpdater.ForceJsonUpdate();
+            CheckForUpdate();
         }
 
         protected override void OnFileEditorOpening(object sender, FileEditorOpeningDialogEventArgs eventArgs)
@@ -152,7 +185,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             {
                 if (!(FileEditForm as SoundEditForm).IsValid())
                 {
-                    Log.Warning($"Cannot save, fix errors first", true);
+                    Log.Warning($"Cannot save, your data is not valid", true);
                     return false;
                 }
                 System.Windows.Controls.ValidationResult validation = args.FileAfterEdit.IsValid(args.Folder.Files);
@@ -190,11 +223,12 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             }
             else
             {
-                // TODO: Undo commands
                 base.OnFileEdited(result, args);
             }
             args.FileAfterEdit.IsDirty = false;
         }
+
+        protected void CheckForUpdate() => ShouldUpdate = !IsJsonUpdated();
 
         protected override ObservableCollection<SoundEvent> FindFolders(string path, bool createRootIfEmpty = false)
         {
@@ -236,13 +270,17 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             try
             {
                 soundEvent.CollectionChanged += (sender, args) => {
-                    ShouldUpdate = CanRefresh() ? JsonUpdater.IsUpdateAvailable() : false;
+                    CheckForUpdate();
                 };
                 soundEvent.PropertyChanged += (sender, args) => {
                     JsonUpdater.ForceJsonUpdate();
                 };
-                soundEvent.OnFileAdded += (sound) => { JsonUpdater.AddToJson(soundEvent, sound); };
-                soundEvent.OnFileRemoved += (sound) => { JsonUpdater.RemoveFromJson(soundEvent, sound); };
+                soundEvent.OnFileAdded += (sound) => {
+                    JsonUpdater.AddToJson(soundEvent, sound);
+                };
+                soundEvent.OnFileRemoved += (sound) => {
+                    JsonUpdater.RemoveFromJson(soundEvent, sound);
+                };
             }
             catch (Exception ex)
             {

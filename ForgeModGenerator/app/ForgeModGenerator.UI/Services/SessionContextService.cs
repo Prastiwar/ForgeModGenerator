@@ -120,7 +120,12 @@ namespace ForgeModGenerator.Services
         public T GetOrCreatePreferences<T>() where T : PreferenceData
         {
             T preferences = GetPreferences<T>();
-            return preferences ?? Activator.CreateInstance<T>();
+            if (preferences == null)
+            {
+                preferences = Activator.CreateInstance<T>();
+                preferences.SavePreferences();
+            }
+            return preferences;
         }
 
         protected ObservableCollection<Mod> FindMods()
@@ -158,16 +163,18 @@ namespace ForgeModGenerator.Services
             Dictionary<Type, PreferenceData> dictionary = new Dictionary<Type, PreferenceData>();
             foreach (string filePath in Directory.EnumerateFiles(AppPaths.Preferences))
             {
-                string typeName = Path.GetFileNameWithoutExtension(filePath);
                 string jsonText = File.ReadAllText(filePath);
-                Type type = Type.GetType(typeName);
                 try
                 {
-                    dictionary.Add(type, (PreferenceData)JsonConvert.DeserializeObject(jsonText, type));
+                    JsonSerializerSettings settings = new JsonSerializerSettings() {
+                        TypeNameHandling = TypeNameHandling.All
+                    };
+                    object preferences = JsonConvert.DeserializeObject(jsonText, settings);
+                    dictionary.Add(preferences.GetType(), (PreferenceData)preferences);
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(ex, $"Failed to load preferences for {type}");
+                    Log.Error(ex, $"Failed to load preferences {filePath}");
                     throw;
                 }
             }

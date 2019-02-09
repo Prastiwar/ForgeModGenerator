@@ -1,7 +1,7 @@
 ﻿using ForgeModGenerator.Converters;
-using ForgeModGenerator.Utils;
 using ForgeModGenerator.Models;
 using ForgeModGenerator.Services;
+using ForgeModGenerator.Utils;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using MaterialDesignThemes.Wpf;
@@ -324,7 +324,7 @@ namespace ForgeModGenerator.ViewModels
 
             void AddFilesToCollection(string directoryPath)
             {
-                IEnumerable<string> files = Directory.EnumerateFiles(directoryPath).Where(filePath => AllowedFileExtensions.Any(ext => ext == Path.GetExtension(filePath)));
+                IEnumerable<string> files = EnumerateFilteredFiles(directoryPath);
                 if (files.Any())
                 {
                     TFolder folder = WPFExtensions.CreateInstance<TFolder>(directoryPath);
@@ -338,6 +338,11 @@ namespace ForgeModGenerator.ViewModels
             }
             return new ObservableCollection<TFolder>(initCollection);
         }
+
+        protected IEnumerable<string> EnumerateFilteredFiles(string directoryPath) => EnumerateFilteredFiles(directoryPath, SearchOption.TopDirectoryOnly);
+
+        protected IEnumerable<string> EnumerateFilteredFiles(string directoryPath, SearchOption searchOption) =>
+            Directory.EnumerateFiles(directoryPath, "*", searchOption).Where(filePath => AllowedFileExtensions.Any(ext => ext == Path.GetExtension(filePath)));
 
         // Used on any folder initialization
         protected virtual void SubscribeFolderEvents(TFolder folder) { }

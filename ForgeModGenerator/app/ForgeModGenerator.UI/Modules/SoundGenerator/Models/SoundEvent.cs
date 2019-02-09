@@ -7,7 +7,6 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using System.Windows.Controls;
 
@@ -62,10 +61,10 @@ namespace ForgeModGenerator.SoundGenerator.Models
             }
 
             Files = new ObservableCollection<Sound>(sounds);
-            if (File.Exists(folderPath))
+            if (IOExtensions.IsPathValid(folderPath))
             {
-                EventName = FormatDottedSoundName(folderPath);
                 SetInfo(folderPath);
+                EventName = FormatDottedSoundName(folderPath);
             }
             else
             {
@@ -164,15 +163,6 @@ namespace ForgeModGenerator.SoundGenerator.Models
         }
 
         // Get formatted sound from full path, "shorten.path.toFile"
-        public static string FormatDottedSoundName(string path)
-        {
-            int soundsIndex = path.IndexOf("sounds");
-            if (soundsIndex == -1)
-            {
-                return null;
-            }
-            int startIndex = soundsIndex + 7;
-            return Path.ChangeExtension(path.Substring(startIndex, path.Length - startIndex), null);
-        }
+        public static string FormatDottedSoundName(string path) => Sound.FormatSoundPathFromFullPath(null, path).Remove(0, 1).Replace("/", ".");
     }
 }

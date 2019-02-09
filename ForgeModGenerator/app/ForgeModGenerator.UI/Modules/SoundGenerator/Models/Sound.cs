@@ -27,7 +27,7 @@ namespace ForgeModGenerator.SoundGenerator.Models
 
             if (File.Exists(filePath))
             {
-                Name = FormatSoundPath(modid, filePath);
+                Name = FormatSoundPathFromFullPath(modid, filePath);
                 SetInfo(filePath);
             }
             else
@@ -39,7 +39,7 @@ namespace ForgeModGenerator.SoundGenerator.Models
 
         public string ShortPath {
             get => GetRelativePathFromSoundPath(Name);
-            set => Name = FormatSoundShortPath(Mod.GetModidFromPath(Name), value);
+            set => Name = FormatSoundPath(Mod.GetModidFromPath(Name), value);
         }
 
         private string name;
@@ -131,7 +131,7 @@ namespace ForgeModGenerator.SoundGenerator.Models
 
         public void FormatName()
         {
-            Name = FormatSoundPath(Mod.GetModidFromPath(Name), Info.FullName);
+            Name = FormatSoundPathFromFullPath(Mod.GetModidFromPath(Name), Info.FullName);
         }
 
         public ValidationResult IsValid(IEnumerable<Sound> sounds)
@@ -148,19 +148,25 @@ namespace ForgeModGenerator.SoundGenerator.Models
         public static string GetModidFromSoundPath(string path) => path.Substring(0, path.IndexOf(":"));
         public static string GetRelativePathFromSoundPath(string path) => path.Remove(0, path.IndexOf(":") + 1);
 
+        // Get formatted sound from short path, "modid:shortPath"
+        public static string FormatSoundPath(string modid, string shortPath) => $"{modid}:{shortPath}";
+
         // Get formatted sound from full path, "modid:shorten/path/toFile"
-        public static string FormatSoundPath(string modid, string path)
+        public static string FormatSoundPathFromFullPath(string modid, string path)
         {
-            int startIndex = path.IndexOf("sounds") + 7;
+            string shortPath = FormatSoundShortPath(path);
+            return $"{modid}:{shortPath}";
+        }
+
+        // Get formatted sound from full path, "shorten/path/toFile"
+        public static string FormatSoundShortPath(string fullPath)
+        {
+            int startIndex = fullPath.IndexOf("sounds") + 7;
             if (startIndex == -1)
             {
                 return null;
             }
-            string shortPath = Path.ChangeExtension(path.Substring(startIndex, path.Length - startIndex), null).Replace("\\", "/");
-            return FormatSoundShortPath(modid, shortPath);
+            return Path.ChangeExtension(fullPath.Substring(startIndex, fullPath.Length - startIndex), null).Replace("\\", "/");
         }
-
-        // Get formatted sound from short path, "modid:shorten/path/toFile"
-        public static string FormatSoundShortPath(string modid, string shortPath) => $"{modid}:{shortPath}";
     }
 }

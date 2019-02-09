@@ -5,11 +5,15 @@ namespace ForgeModGenerator.Models
 {
     public abstract class PreferenceData : ObservableDirtyObject
     {
+        [JsonIgnore]
         public virtual string PreferenceLocation => Path.Combine(AppPaths.Preferences, $"{GetType().Name}.json");
 
         public virtual void SavePreferences()
         {
-            string jsonContent = JsonConvert.SerializeObject(this);
+            JsonSerializerSettings settings = new JsonSerializerSettings() {
+                TypeNameHandling = TypeNameHandling.All
+            };
+            string jsonContent = JsonConvert.SerializeObject(this, settings);
             File.WriteAllText(PreferenceLocation, jsonContent);
             IsDirty = false;
         }

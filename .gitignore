@@ -5,6 +5,7 @@
 
 ForgeModGenerator/mods/*
 ForgeModGenerator/logs/*
+ForgeModGenerator/cache/*
 ForgeModGenerator/forgeversions/*
 
 # User-specific files
