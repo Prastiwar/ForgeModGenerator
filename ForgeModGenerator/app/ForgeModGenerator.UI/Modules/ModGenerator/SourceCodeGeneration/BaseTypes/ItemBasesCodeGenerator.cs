@@ -1,5 +1,6 @@
 ﻿using ForgeModGenerator.CodeGeneration;
 using ForgeModGenerator.CodeGeneration.JavaCodeDom;
+using System;
 using System.CodeDom;
 using System.Collections.Generic;
 using System.IO;
@@ -11,9 +12,20 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
         public ItemBasesCodeGenerator(string modname, string organization) : base(modname, organization)
         {
             string folder = ModPaths.GeneratedItemFolder(modname, organization);
+            ScriptFilePaths = new string[] {
+                Path.Combine(folder, "ItemBase.java"),
+                Path.Combine(folder, "bow", "BowBase.java"),
+                Path.Combine(folder, "food", "FoodBase.java"),
+                Path.Combine(folder, "armor", "ArmorBase.java"),
+                Path.Combine(folder, "tool", "SwordBase.java"),
+                Path.Combine(folder, "tool", "SpadeBase.java"),
+                Path.Combine(folder, "tool", "PickaxeBase.java"),
+                Path.Combine(folder, "tool", "HoeBase.java"),
+                Path.Combine(folder, "tool", "AxeBase.java"),
+            };
         }
 
-        protected override string[] ScriptFilePaths => throw new System.NotImplementedException();
+        protected override string[] ScriptFilePaths { get; }
 
         protected override CodeCompileUnit CreateTargetCodeUnit(string scriptPath)
         {
@@ -63,7 +75,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
                     unit.Namespaces[0].Imports.Add(new CodeNamespaceImport("net.minecraft.inventory.EntityEquipmentSlot"));
                     return unit;
                 default:
-                    throw new System.NotImplementedException();
+                    throw new NotImplementedException($"CodeCompileUnit for {fileName} not found");
             }
         }
 

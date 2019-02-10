@@ -31,7 +31,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
                 case "ServerProxy":
                     return CreateServerProxyCodeUnit();
                 default:
-                    throw new NotImplementedException($"CodeUnit for {fileName} not found");
+                    throw new NotImplementedException($"CodeCompileUnit for {fileName} not found");
             }
         }
 
