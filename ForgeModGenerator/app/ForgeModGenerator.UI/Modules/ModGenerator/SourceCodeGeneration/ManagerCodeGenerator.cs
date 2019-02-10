@@ -1,7 +1,7 @@
 ﻿using ForgeModGenerator.CodeGeneration;
 using System.CodeDom;
 
-namespace ForgeModGenerator.Modules.ModGenerator
+namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 {
     public class ManagerCodeGenerator : ScriptCodeGenerator
     {
@@ -16,9 +16,9 @@ namespace ForgeModGenerator.Modules.ModGenerator
             CodeMethodInvokeExpression getModLog = new CodeMethodInvokeExpression(new CodeTypeReferenceExpression("event"), "getModLog");
             CodeAssignStatement assignLogger = new CodeAssignStatement(loggerReference, getModLog);
             preInitMethod.Statements.Add(assignLogger);
-            CodeMethodInvokeExpression registerWorldGenerator =
-                new CodeMethodInvokeExpression(new CodeTypeReferenceExpression("GameRegistry"), "registerWorldGenerator", new CodeObjectCreateExpression($"{Modname}WorldGen"), new CodePrimitiveExpression(3));
-            preInitMethod.Statements.Add(registerWorldGenerator);
+            //CodeMethodInvokeExpression registerWorldGenerator =
+            //    new CodeMethodInvokeExpression(new CodeTypeReferenceExpression("GameRegistry"), "registerWorldGenerator", new CodeObjectCreateExpression($"{Modname}WorldGen"), new CodePrimitiveExpression(3));
+            //preInitMethod.Statements.Add(registerWorldGenerator);
             return preInitMethod;
         }
 
@@ -63,7 +63,7 @@ namespace ForgeModGenerator.Modules.ModGenerator
 
         protected override CodeCompileUnit CreateTargetCodeUnit()
         {
-            CodeTypeDeclaration managerClass = GetDefaultClass(null);
+            CodeTypeDeclaration managerClass = GetDefaultClass(null, true);
 
             // TODO: Add annotation @Instance
             CodeMemberField instanceField = new CodeMemberField(Modname, "instance") {

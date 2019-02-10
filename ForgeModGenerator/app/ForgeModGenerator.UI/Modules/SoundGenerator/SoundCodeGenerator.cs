@@ -20,7 +20,7 @@ namespace ForgeModGenerator.SoundGenerator
         protected override CodeCompileUnit CreateTargetCodeUnit()
         {
             CodeCompileUnit targetUnit = new CodeCompileUnit();
-            CodeTypeDeclaration soundsClass = GetDefaultClass("Sounds");
+            CodeTypeDeclaration soundsClass = GetDefaultClass("Sounds", true);
 
             CodeMemberField listField = new CodeMemberField("List<SoundEvent>", "SOUNDS") {
                 Attributes = MemberAttributes.Public | MemberAttributes.Static | MemberAttributes.Final,

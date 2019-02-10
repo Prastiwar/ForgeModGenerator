@@ -2,7 +2,7 @@
 using ForgeModGenerator.ModGenerator.Models;
 using System.CodeDom;
 
-namespace ForgeModGenerator.Modules.ModGenerator
+namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 {
     public class ModHookCodeGenerator : ScriptCodeGenerator
     {
@@ -27,13 +27,13 @@ namespace ForgeModGenerator.Modules.ModGenerator
 
         protected override CodeCompileUnit CreateTargetCodeUnit()
         {
-            CodeTypeDeclaration hookClass = GetDefaultClass("Hook");
+            CodeTypeDeclaration hookClass = GetDefaultClass("Hook", true);
 
             hookClass.Members.Add(CreateHookString("MODID", modInfo.Modid));
             hookClass.Members.Add(CreateHookString("VERSION", modInfo.Version));
             hookClass.Members.Add(CreateHookString("ACCEPTEDVERSIONS", modInfo.McVersion));
-            hookClass.Members.Add(CreateHookString("CLIENTPROXYCLASS", $"{PackageName}.proxy.ClientProxy"));
-            hookClass.Members.Add(CreateHookString("SERVERPROXYCLASS", $"{PackageName}.proxy.ServerProxy"));
+            hookClass.Members.Add(CreateHookString("CLIENTPROXYCLASS", $"{GeneratedPackageName}.proxy.ClientProxy"));
+            hookClass.Members.Add(CreateHookString("SERVERPROXYCLASS", $"{GeneratedPackageName}.proxy.ServerProxy"));
 
             CodeNamespace package = GetDefaultPackage(hookClass);
             return GetDefaultCodeUnit(package);

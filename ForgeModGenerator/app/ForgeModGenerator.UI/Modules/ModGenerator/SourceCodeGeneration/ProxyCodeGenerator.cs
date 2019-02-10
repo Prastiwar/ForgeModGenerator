@@ -2,9 +2,8 @@
 using System;
 using System.CodeDom;
 using System.IO;
-using System.Reflection;
 
-namespace ForgeModGenerator.Modules.ModGenerator
+namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 {
     public class ProxyCodeGenerator : MultiScriptsCodeGenerator
     {
@@ -72,7 +71,7 @@ namespace ForgeModGenerator.Modules.ModGenerator
 
         private CodeCompileUnit CreateICommonProxyCodeUnit()
         {
-            CodeTypeDeclaration proxyInterface = new CodeTypeDeclaration("ICommonProxy") { IsInterface = true, TypeAttributes = TypeAttributes.Public };
+            CodeTypeDeclaration proxyInterface = GetDefaultInterface("ICommonProxy", false);
             proxyInterface.Members.Add(CreateRegisterItemRendererMethod());
             CodeNamespace package = GetDefaultPackage(proxyInterface, "net.minecraft.item.Item");
             return GetDefaultCodeUnit(package);

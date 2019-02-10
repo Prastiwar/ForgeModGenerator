@@ -12,12 +12,12 @@ namespace ForgeModGenerator.CodeGeneration
         {
             Modname = modname;
             Organization = organization;
-            PackageName = $"com.{Organization}.{Modname}.generated";
+            GeneratedPackageName = $"com.{Organization}.{Modname}.generated";
         }
 
         protected string Modname { get; }
         protected string Organization { get; }
-        protected string PackageName { get; }
+        protected string GeneratedPackageName { get; }
         protected CodeDomProvider JavaProvider { get; } = new JavaCodeProvider();
         protected CodeGeneratorOptions GeneratorOptions { get; } = new CodeGeneratorOptions() { BracingStyle = "Block" };
 
@@ -28,7 +28,8 @@ namespace ForgeModGenerator.CodeGeneration
         protected string GetClassName(string name) => $"{Modname}{name}";
 
         // Gets public class "{Modname}name"
-        protected CodeTypeDeclaration GetDefaultClass(string name, bool useModname = true) => new CodeTypeDeclaration(useModname ? GetClassName(name) : name) { IsClass = true, TypeAttributes = TypeAttributes.Public };
+        protected CodeTypeDeclaration GetDefaultClass(string name, bool useModname = false) => new CodeTypeDeclaration(useModname ? GetClassName(name) : name) { IsClass = true, TypeAttributes = TypeAttributes.Public };
+        protected CodeTypeDeclaration GetDefaultInterface(string name, bool useModname = false) => new CodeTypeDeclaration(useModname ? GetClassName(name) : name) { IsInterface = true, TypeAttributes = TypeAttributes.Public };
 
         protected CodeNamespace GetDefaultPackage(CodeTypeDeclaration defaultType, params string[] imports)
         {
@@ -39,7 +40,7 @@ namespace ForgeModGenerator.CodeGeneration
 
         protected CodeNamespace GetDefaultPackage(params string[] imports)
         {
-            CodeNamespace package = new CodeNamespace(PackageName);
+            CodeNamespace package = new CodeNamespace(GeneratedPackageName);
             if (imports != null)
             {
                 foreach (string import in imports)
