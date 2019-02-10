@@ -11,7 +11,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace ForgeModGenerator.ModGenerator.ViewModels
@@ -20,13 +20,11 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
     public class ModGeneratorViewModel : ViewModelBase
     {
         public ISessionContextService SessionContext { get; }
-        public ModValidationService Validator { get; }
         public IWorkspaceSetupService WorkspaceService { get; }
 
-        public ModGeneratorViewModel(ISessionContextService sessionContext, ModValidationService validator, IWorkspaceSetupService workspaceService)
+        public ModGeneratorViewModel(ISessionContextService sessionContext, IWorkspaceSetupService workspaceService)
         {
             SessionContext = sessionContext;
-            Validator = validator;
             WorkspaceService = workspaceService;
 
             NewMod = new Mod(new McModInfo() {
@@ -60,20 +58,20 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
             set => Set(ref selectedEditMod, value);
         }
 
-        private ICommand addNewForgeVersion;
-        public ICommand AddNewForgeVersion => addNewForgeVersion ?? (addNewForgeVersion = new RelayCommand(AddNewForge));
+        private ICommand addNewForgeVersionCommand;
+        public ICommand AddNewForgeVersionCommand => addNewForgeVersionCommand ?? (addNewForgeVersionCommand = new RelayCommand(AddNewForge));
 
-        private ICommand createMod;
-        public ICommand CreateMod => createMod ?? (createMod = new RelayCommand(() => GenerateMod(NewMod)));
+        private ICommand createModCommand;
+        public ICommand CreateModCommand => createModCommand ?? (createModCommand = new RelayCommand(() => GenerateMod(NewMod)));
 
-        private ICommand addNewItem;
-        public ICommand AddNewItem => addNewItem ?? (addNewItem = new RelayCommand<ObservableCollection<string>>(AddNewItemTo));
+        private ICommand addNewItemCommand;
+        public ICommand AddNewItemCommand => addNewItemCommand ?? (addNewItemCommand = new RelayCommand<ObservableCollection<string>>(AddNewItemTo));
 
-        private ICommand removeItem;
-        public ICommand RemoveItem => removeItem ?? (removeItem = new RelayCommand<Tuple<ObservableCollection<string>, string>>(RemoveItemFromList));
+        private ICommand removeModCommand;
+        public ICommand RemoveModCommand => removeModCommand ?? (removeModCommand = new RelayCommand<Tuple<ObservableCollection<string>, string>>(RemoveItemFromList));
 
-        private ICommand saveChanges;
-        public ICommand SaveChanges => saveChanges ?? (saveChanges = new RelayCommand<Mod>(SaveModChanges));
+        private ICommand saveChangesCommand;
+        public ICommand SaveChangesCommand => saveChangesCommand ?? (saveChangesCommand = new RelayCommand<Mod>(SaveModChanges));
 
         private void AddNewItemTo(ObservableCollection<string> collection) => collection.Add("NewItem");
         private void RemoveItemFromList(Tuple<ObservableCollection<string>, string> param) => param.Item1.Remove(param.Item2);
@@ -86,9 +84,10 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
 
         private void GenerateMod(Mod mod)
         {
-            if (!Validator.IsValid(mod))
+            ValidationResult validation = mod.IsValid();
+            if (!validation.IsValid)
             {
-                MessageBox.Show($"Selected mod is not valid");
+                Log.Warning($"Selected mod is not valid. Reason: {validation.ErrorContent}", true);
                 return;
             }
             string newModPath = ModPaths.ModRoot(mod.ModInfo.Name);
@@ -165,9 +164,10 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
 
         private void SaveModChanges(Mod mod)
         {
-            if (!Validator.IsValid(mod))
+            ValidationResult validation = mod.IsValid();
+            if (!validation.IsValid)
             {
-                MessageBox.Show($"Selected mod is not valid");
+                Log.Warning($"Selected mod is not valid. Reason: {validation.ErrorContent}", true);
                 return;
             }
             Mod oldValues = Mod.Import(ModPaths.ModRoot(mod.CachedName));

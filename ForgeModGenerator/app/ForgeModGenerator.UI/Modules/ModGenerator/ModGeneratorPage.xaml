@@ -26,12 +26,11 @@
 								   Foreground="Wheat" />
 						<mControls:ModForm DataContext="{Binding NewMod}"
 										   Margin="10"
-										   Validator="{Binding DataContext.Validator, ElementName=ThisWindow}"
-										   SaveCommand="{Binding DataContext.CreateMod, ElementName=ThisWindow}"
+										   SaveCommand="{Binding DataContext.CreateModCommand, ElementName=ThisWindow}"
 										   SaveButtonText="Generate Mod"
-										   AddForgeVersionCommand="{Binding DataContext.AddNewForgeVersion, ElementName=ThisWindow}"
-										   RemoveStringItemCommand="{Binding DataContext.RemoveItem, ElementName=ThisWindow}"
-										   AddStringItemCommand="{Binding DataContext.AddNewItem, ElementName=ThisWindow}"
+										   AddForgeVersionCommand="{Binding DataContext.AddNewForgeVersionCommand, ElementName=ThisWindow}"
+										   RemoveStringItemCommand="{Binding DataContext.RemoveModCommand, ElementName=ThisWindow}"
+										   AddStringItemCommand="{Binding DataContext.AddNewItemCommand, ElementName=ThisWindow}"
 										   Setups="{Binding DataContext.WorkspaceService.Setups, ElementName=ThisWindow}"
 										   ForgeVersions="{Binding DataContext.SessionContext.ForgeVersions, ElementName=ThisWindow}"
 										   Sides="{Binding DataContext.Sides, ElementName=ThisWindow}" />
@@ -47,11 +46,10 @@
 							<ListBox.ItemTemplate>
 								<DataTemplate>
 									<mControls:ModForm DataContext="{Binding}"
-													   Validator="{Binding DataContext.Validator, ElementName=ThisWindow}"
-													   SaveCommand="{Binding DataContext.SaveChanges, ElementName=ThisWindow}"
-													   AddForgeVersionCommand="{Binding DataContext.AddNewForgeVersion, ElementName=ThisWindow}"
-													   RemoveStringItemCommand="{Binding DataContext.RemoveItem, ElementName=ThisWindow}"
-													   AddStringItemCommand="{Binding DataContext.AddNewItem, ElementName=ThisWindow}"
+													   SaveCommand="{Binding DataContext.SaveChangesCommand, ElementName=ThisWindow}"
+													   AddForgeVersionCommand="{Binding DataContext.AddNewForgeVersionCommand, ElementName=ThisWindow}"
+													   RemoveStringItemCommand="{Binding DataContext.RemoveModCommand, ElementName=ThisWindow}"
+													   AddStringItemCommand="{Binding DataContext.AddNewItemCommand, ElementName=ThisWindow}"
 													   Setups="{Binding DataContext.WorkspaceService.Setups, ElementName=ThisWindow}"
 													   ForgeVersions="{Binding DataContext.SessionContext.ForgeVersions, ElementName=ThisWindow}"
 													   Sides="{Binding DataContext.Sides, ElementName=ThisWindow}" />

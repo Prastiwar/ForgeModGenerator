@@ -1,9 +1,11 @@
 ﻿using ForgeModGenerator.Converters;
+using ForgeModGenerator.ModGenerator.Validations;
 using GalaSoft.MvvmLight;
 using Newtonsoft.Json;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Windows.Controls;
 
 namespace ForgeModGenerator.ModGenerator.Models
 {
@@ -149,11 +151,24 @@ namespace ForgeModGenerator.ModGenerator.Models
             }
         }
 
-        // Writes to FmgModInfo file
-        public static void Export(Mod mod)
+        public ValidationResult IsValid()
         {
-            File.WriteAllText(ModPaths.FmgModInfo(mod.ModInfo.Name), JsonConvert.SerializeObject(mod, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All }));
+            ModRules rules = new ModRules();
+            ValidationResult result = rules.ValidateName(ModInfo.Name);
+            if (!result.IsValid)
+            {
+                return result;
+            }
+            result = rules.ValidateModid(ModInfo.Modid);
+            if (!result.IsValid)
+            {
+                return result;
+            }
+            return rules.ValidateOrganization(Organization);
         }
+
+        // Writes to FmgModInfo file
+        public static void Export(Mod mod) => File.WriteAllText(ModPaths.FmgModInfo(mod.ModInfo.Name), JsonConvert.SerializeObject(mod, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All }));
 
         public static Mod Import(string modPath)
         {

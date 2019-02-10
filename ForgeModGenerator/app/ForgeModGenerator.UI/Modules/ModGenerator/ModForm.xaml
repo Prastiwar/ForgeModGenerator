@@ -6,6 +6,7 @@
 			 xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
 			 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 			 xmlns:local="clr-namespace:ForgeModGenerator.ModGenerator.Controls"
+			 xmlns:rules="clr-namespace:ForgeModGenerator.ModGenerator.Validations"
 			 mc:Ignorable="d"
 			 d:DesignHeight="500"
 			 d:DesignWidth="800">
@@ -58,9 +59,17 @@
 				<StackPanel Grid.Column="1"
 							TextBlock.Foreground="{DynamicResource MaterialDesignBody}"
 							Margin="7">
-					<TextBox x:Name="OrganizationBox"
-							 Text="{Binding Path=Organization, Mode=TwoWay}"
-							 TextChanged="ValidateOrganization" />
+					<TextBox x:Name="OrganizationBox">
+						<TextBox.Text>
+							<Binding Path="Organization"
+									 UpdateSourceTrigger="PropertyChanged">
+								<Binding.ValidationRules>
+									<rules:ModRules PropertyName="Organization"
+													ValidatesOnTargetUpdated="True" />
+								</Binding.ValidationRules>
+							</Binding>
+						</TextBox.Text>
+					</TextBox>
 					<ComboBox x:Name="SideBox"
 							  ItemsSource="{Binding Path=Sides, RelativeSource={RelativeSource AncestorType=local:ModForm}}"
 							  SelectedValue="{Binding Path=Side}"
@@ -107,12 +116,28 @@
 													 VerticalAlignment="Center" />
 						</Button>
 					</StackPanel>
-					<TextBox x:Name="NameBox"
-							 Text="{Binding Path=ModInfo.Name, Mode=TwoWay}"
-							 TextChanged="ValidateNameAndTryFillModif" />
-					<TextBox x:Name="ModidBox"
-							 Text="{Binding Path=ModInfo.Modid, Mode=TwoWay}"
-							 TextChanged="ValidateModid" />
+					<TextBox x:Name="NameBox">
+						<TextBox.Text>
+							<Binding Path="ModInfo.Name"
+									 UpdateSourceTrigger="PropertyChanged">
+								<Binding.ValidationRules>
+									<rules:ModRules PropertyName="Name"
+													ValidatesOnTargetUpdated="True" />
+								</Binding.ValidationRules>
+							</Binding>
+						</TextBox.Text>
+					</TextBox>
+					<TextBox x:Name="ModidBox">
+						<TextBox.Text>
+							<Binding Path="ModInfo.Modid"
+									 UpdateSourceTrigger="PropertyChanged">
+								<Binding.ValidationRules>
+									<rules:ModRules PropertyName="Modid"
+													ValidatesOnTargetUpdated="True" />
+								</Binding.ValidationRules>
+							</Binding>
+						</TextBox.Text>
+					</TextBox>
 					<TextBox x:Name="DescriptionBox"
 							 Text="{Binding Path=ModInfo.Description, Mode=TwoWay}"
 							 TextWrapping="Wrap"

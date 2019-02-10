@@ -6,10 +6,7 @@ namespace ForgeModGenerator.ModGenerator.Controls
 {
     public partial class ModBuildForm : UserControl
     {
-        public ModBuildForm()
-        {
-            InitializeComponent();
-        }
+        public ModBuildForm() => InitializeComponent();
 
         public static readonly DependencyProperty ToggleSelectCommandProperty =
             DependencyProperty.Register("ToggleSelectCommand", typeof(ICommand), typeof(ModBuildForm), new PropertyMetadata(null));
