@@ -1,4 +1,5 @@
 ﻿using ForgeModGenerator.CodeGeneration;
+using ForgeModGenerator.ModGenerator.Models;
 using System.CodeDom;
 using System.IO;
 
@@ -6,9 +7,9 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 {
     public class RegistryHandlerCodeGenerator : ScriptCodeGenerator
     {
-        public RegistryHandlerCodeGenerator(string modname, string organization) : base(modname, organization)
+        public RegistryHandlerCodeGenerator(Mod mod) : base(mod)
         {
-            string handlerFolder = ModPaths.GeneratedHandlerFolder(modname, organization);
+            string handlerFolder = ModPaths.GeneratedHandlerFolder(Modname, Organization);
             ScriptFilePath = Path.Combine(handlerFolder, "RegistryHandler.java");
         }
 

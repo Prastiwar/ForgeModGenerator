@@ -14,7 +14,10 @@ namespace ForgeModGenerator.CodeGeneration
             }
             Element = element;
             Iterator = iterator;
-            Statements.AddRange(statements);
+            if (statements != null)
+            {
+                Statements.AddRange(statements);
+            }
         }
 
         public CodeVariableDeclarationStatement Element { get; set; }

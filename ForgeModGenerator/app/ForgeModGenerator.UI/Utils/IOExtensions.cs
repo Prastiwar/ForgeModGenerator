@@ -46,6 +46,15 @@ namespace ForgeModGenerator.Utils
             }
         }
 
+        public static void GenerateFolders(string rootPath, params string[] generatedFolders)
+        {
+            Directory.CreateDirectory(rootPath); // create root even if generatedFolders is null
+            foreach (string folder in generatedFolders)
+            {
+                Directory.CreateDirectory(Path.Combine(rootPath, folder));
+            }
+        }
+
         public static void MoveDirectoriesAndFiles(string from, string destination)
         {
             foreach (string folder in Directory.EnumerateDirectories(from))

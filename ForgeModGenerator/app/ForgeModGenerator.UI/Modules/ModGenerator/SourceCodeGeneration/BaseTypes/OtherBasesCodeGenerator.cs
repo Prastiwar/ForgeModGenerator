@@ -1,5 +1,6 @@
 ﻿using ForgeModGenerator.CodeGeneration;
 using ForgeModGenerator.CodeGeneration.JavaCodeDom;
+using ForgeModGenerator.ModGenerator.Models;
 using System;
 using System.CodeDom;
 using System.IO;
@@ -8,10 +9,10 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 {
     public class OtherBasesCodeGenerator : MultiScriptsCodeGenerator
     {
-        public OtherBasesCodeGenerator(string modname, string organization) : base(modname, organization)
+        public OtherBasesCodeGenerator(Mod mod) : base(mod)
             => ScriptFilePaths = new string[] {
-                Path.Combine(ModPaths.GeneratedSoundFolder(modname, organization), "SoundEventBase.java"),
-                Path.Combine(ModPaths.GeneratedItemFolder(modname, organization), "food", "FoodEffectBase.java")
+                Path.Combine(ModPaths.GeneratedSoundFolder(Modname, Organization), "SoundEventBase.java"),
+                Path.Combine(ModPaths.GeneratedItemFolder(Modname, Organization), "food", "FoodEffectBase.java")
             };
 
         protected override string[] ScriptFilePaths { get; }

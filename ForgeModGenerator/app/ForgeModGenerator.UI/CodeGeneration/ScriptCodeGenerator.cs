@@ -1,4 +1,5 @@
 ﻿using ForgeModGenerator.CodeGeneration.JavaCodeDom;
+using ForgeModGenerator.ModGenerator.Models;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.IO;
@@ -8,17 +9,19 @@ namespace ForgeModGenerator.CodeGeneration
 {
     public abstract class ScriptCodeGenerator
     {
-        public ScriptCodeGenerator(string modname, string organization)
+        public ScriptCodeGenerator(Mod mod)
         {
-            Modname = modname;
-            Organization = organization;
+            Mod = mod;
+            Modname = mod.ModInfo.Name;
+            Organization = mod.Organization;
             GeneratedPackageName = $"com.{Organization}.{Modname}.generated";
         }
 
+        protected Mod Mod { get; }
         protected string Modname { get; }
         protected string Organization { get; }
         protected string GeneratedPackageName { get; }
-        protected CodeDomProvider JavaProvider { get; } = new JavaCodeProvider();
+        protected JavaCodeProvider JavaProvider { get; } = new JavaCodeProvider();
         protected CodeGeneratorOptions GeneratorOptions { get; } = new CodeGeneratorOptions() { BracingStyle = "Block" };
 
         protected abstract string ScriptFilePath { get; }
@@ -62,14 +65,15 @@ namespace ForgeModGenerator.CodeGeneration
         {
             try
             {
-                using (StreamWriter sourceWriter = new StreamWriter(ScriptFilePath))
+                new FileInfo(scriptPath).Directory.Create();
+                using (StreamWriter sourceWriter = new StreamWriter(scriptPath))
                 {
                     JavaProvider.GenerateCodeFromCompileUnit(targetCodeUnit, sourceWriter, options);
                 }
             }
             catch (System.Exception ex)
             {
-                Log.Error(ex, $"Couldnt generate code for file. Make sure it's not accesed by any process. {ScriptFilePath}", true);
+                Log.Error(ex, $"Couldnt generate code for file. Make sure it's not accesed by any process. {scriptPath}", true);
             }
         }
 

@@ -65,17 +65,6 @@ namespace ForgeModGenerator.ViewModels
             public TFolder Folder { get; }
             public TFile File { get; }
         }
-
-        public class FileEditorOpeningDialogEventArgs2
-        {
-            public FileEditorOpeningDialogEventArgs2(TFolder folder, TFile file)
-            {
-                Folder = folder;
-                File = file;
-            }
-            public TFolder Folder { get; }
-            public TFile File { get; }
-        }
         #endregion
 
         public FolderListViewModelBase(ISessionContextService sessionContext)

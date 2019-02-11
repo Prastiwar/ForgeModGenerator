@@ -1,11 +1,12 @@
-﻿using System;
+﻿using ForgeModGenerator.ModGenerator.Models;
+using System;
 using System.CodeDom;
 
 namespace ForgeModGenerator.CodeGeneration
 {
     public abstract class MultiScriptsCodeGenerator : ScriptCodeGenerator
     {
-        public MultiScriptsCodeGenerator(string modname, string organization) : base(modname, organization) { }
+        public MultiScriptsCodeGenerator(Mod mod) : base(mod) { }
 
         protected abstract string[] ScriptFilePaths { get; }
 

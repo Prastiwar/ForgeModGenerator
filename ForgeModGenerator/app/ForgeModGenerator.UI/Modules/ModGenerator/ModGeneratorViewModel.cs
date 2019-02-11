@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -89,13 +88,10 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
             }
             mod.ForgeVersion.UnZip(newModPath);
             RemoveDumpExample(mod);
-
-            string generatedPath = ModPaths.GeneratedSourceCodeFolder(mod.ModInfo.Name, mod.Organization);
+            
             string assetsPath = ModPaths.Assets(mod.ModInfo.Name, mod.ModInfo.Modid);
-            GenerateFolders(assetsPath, assetsFolerToGenerate);
-            Directory.CreateDirectory(generatedPath);
-            ExtractCore(generatedPath);
-            ReplaceTemplateVariables(mod, generatedPath);
+            IOExtensions.GenerateFolders(assetsPath, assetsFolerToGenerate);
+            RegenerateSourceCode(mod);
 
             mod.WorkspaceSetup.Setup(mod);
             Mod.Export(mod);
@@ -105,6 +101,14 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
             Log.Info($"{mod.ModInfo.Name} was created successfully", true);
         }
 
+        private void RegenerateSourceCode(Mod mod)
+        {
+            foreach (ScriptCodeGenerator item in ReflectionExtensions.GetSubclasses<ScriptCodeGenerator>(mod))
+            {
+                item.RegenerateScript();
+            }
+        }
+
         private void RemoveDumpExample(Mod mod)
         {
             string javaSource = ModPaths.JavaSource(mod.ModInfo.Name);
@@ -112,44 +116,6 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
             foreach (string organization in organizationPaths)
             {
                 Directory.Delete(organization, true);
-            }
-        }
-
-        private void GenerateFolders(string rootPath, params string[] generatedFolders)
-        {
-            Directory.CreateDirectory(rootPath);
-            foreach (string folder in generatedFolders)
-            {
-                Directory.CreateDirectory(Path.Combine(rootPath, folder));
-            }
-        }
-
-        private void ExtractCore(string rootPath)
-        {
-            string tempZipPath = Path.Combine(rootPath, "temp.zip");
-            File.WriteAllBytes(tempZipPath, Properties.Resources.SourceCodeArchive);
-            ZipFile.ExtractToDirectory(tempZipPath, rootPath);
-            File.Delete(tempZipPath);
-        }
-
-        private void ReplaceTemplateVariables(Mod mod, string rootPath)
-        {
-            foreach (string file in IOExtensions.EnumerateAllFiles(rootPath))
-            {
-                string content = File.ReadAllText(file);
-                string newContent = content.Replace(CoreSourceCodeVariables.Modname, mod.ModInfo.Name)
-                                            .Replace(CoreSourceCodeVariables.ModnameLower, mod.ModInfo.Name.ToLower())
-                                            .Replace(CoreSourceCodeVariables.Organization, mod.Organization)
-                                            .Replace(CoreSourceCodeVariables.ModVersion, mod.ModInfo.Version)
-                                            .Replace(CoreSourceCodeVariables.McVersion, mod.ModInfo.McVersion)
-                                            .Replace(CoreSourceCodeVariables.Modid, mod.ModInfo.Modid);
-                File.WriteAllText(file, newContent);
-
-                FileInfo fileInfo = new FileInfo(file);
-                if (fileInfo.Name.Contains(CoreSourceCodeVariables.Modname))
-                {
-                    File.Move(file, file.Replace(CoreSourceCodeVariables.Modname, mod.ModInfo.Name));
-                }
             }
         }
 

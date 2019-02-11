@@ -1,4 +1,5 @@
 ﻿using ForgeModGenerator.CodeGeneration;
+using ForgeModGenerator.ModGenerator.Models;
 using System.CodeDom;
 using System.IO;
 
@@ -6,7 +7,7 @@ namespace ForgeModGenerator.GUIGenerator
 {
     public class CreativeTabCodeGenerator : ScriptCodeGenerator
     {
-        public CreativeTabCodeGenerator(string modname, string organization) : base(modname, organization) => ScriptFilePath = Path.Combine(ModPaths.GeneratedGuiFolder(modname, organization), $"{modname}CreativeTab.java");
+        public CreativeTabCodeGenerator(Mod mod) : base(mod) => ScriptFilePath = Path.Combine(ModPaths.GeneratedGuiFolder(Modname, Organization), $"{Modname}CreativeTab.java");
 
         protected override string ScriptFilePath { get; }
 

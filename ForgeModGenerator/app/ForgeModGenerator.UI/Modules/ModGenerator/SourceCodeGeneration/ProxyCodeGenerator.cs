@@ -1,4 +1,5 @@
 ﻿using ForgeModGenerator.CodeGeneration;
+using ForgeModGenerator.ModGenerator.Models;
 using System;
 using System.CodeDom;
 using System.IO;
@@ -7,9 +8,9 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 {
     public class ProxyCodeGenerator : MultiScriptsCodeGenerator
     {
-        public ProxyCodeGenerator(string modname, string organization) : base(modname, organization)
+        public ProxyCodeGenerator(Mod mod) : base(mod)
         {
-            string proxyFolder = ModPaths.GeneratedProxyFolder(modname, organization);
+            string proxyFolder = ModPaths.GeneratedProxyFolder(Modname, Organization);
             ScriptFilePaths = new string[] {
                 Path.Combine(proxyFolder, "ICommonProxy.java"),
                 Path.Combine(proxyFolder, "ClientProxy.java"),
@@ -42,7 +43,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             CodeMemberMethod registerItemRendererMethod = CreateRegisterItemRendererMethod();
             registerItemRendererMethod.Attributes |= MemberAttributes.Override;
             CodeObjectCreateExpression modelResourceLocation =
-                new CodeObjectCreateExpression("ModelResourceLocation", new CodeMethodInvokeExpression(new CodeVariableReferenceExpression("item"), "getRegistryName", null), new CodeVariableReferenceExpression("id"));
+                new CodeObjectCreateExpression("ModelResourceLocation", new CodeMethodInvokeExpression(new CodeVariableReferenceExpression("item"), "getRegistryName"), new CodeVariableReferenceExpression("id"));
             CodeMethodInvokeExpression setCustomModelResourceLocation =
                 new CodeMethodInvokeExpression(new CodeTypeReferenceExpression("ModelLoader"),
                                                 "setCustomModelResourceLocation",

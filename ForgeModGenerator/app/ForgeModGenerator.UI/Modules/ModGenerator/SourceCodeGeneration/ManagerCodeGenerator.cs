@@ -1,11 +1,12 @@
 ﻿using ForgeModGenerator.CodeGeneration;
+using ForgeModGenerator.ModGenerator.Models;
 using System.CodeDom;
 
 namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 {
     public class ManagerCodeGenerator : ScriptCodeGenerator
     {
-        public ManagerCodeGenerator(string modname, string organization) : base(modname, organization) => ScriptFilePath = ModPaths.GeneratedModManagerFile(modname, organization);
+        public ManagerCodeGenerator(Mod mod) : base(mod) => ScriptFilePath = ModPaths.GeneratedModManagerFile(Modname, Organization);
 
         protected override string ScriptFilePath { get; }
 

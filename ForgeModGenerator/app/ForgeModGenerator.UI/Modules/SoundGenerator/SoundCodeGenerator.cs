@@ -1,46 +1,23 @@
 ﻿using ForgeModGenerator.CodeGeneration;
+using ForgeModGenerator.ModGenerator.Models;
 using ForgeModGenerator.SoundGenerator.Models;
 using System.CodeDom;
 using System.Collections.Generic;
 
 namespace ForgeModGenerator.SoundGenerator
 {
-    public class SoundCodeGenerator : ScriptCodeGenerator
+    public class SoundCodeGenerator : InitVariablesCodeGenerator<SoundEvent>
     {
-        public SoundCodeGenerator(string modname, string organization, IEnumerable<SoundEvent> soundEvents) : base(modname, organization)
-        {
-            SoundEvents = soundEvents;
-            ScriptFilePath = ModPaths.GeneratedSoundsFile(modname, organization);
-        }
-
-        protected IEnumerable<SoundEvent> SoundEvents { get; }
+        public SoundCodeGenerator(Mod mod) : this(mod, null) { }
+        public SoundCodeGenerator(Mod mod, IEnumerable<SoundEvent> soundEvents) : base(mod, soundEvents) => ScriptFilePath = ModPaths.GeneratedSoundsFile(Modname, Organization);
 
         protected override string ScriptFilePath { get; }
 
-        protected override CodeCompileUnit CreateTargetCodeUnit()
-        {
-            CodeCompileUnit targetUnit = new CodeCompileUnit();
-            CodeTypeDeclaration soundsClass = GetDefaultClass("Sounds", true);
+        protected override string GetElementName(SoundEvent element) => element.EventName;
 
-            CodeMemberField listField = new CodeMemberField("List<SoundEvent>", "SOUNDS") {
-                Attributes = MemberAttributes.Public | MemberAttributes.Static | MemberAttributes.Final,
-                InitExpression = new CodeObjectCreateExpression("ArrayList<SoundEvent>")
-            };
+        protected override CodeCompileUnit CreateTargetCodeUnit() => CreateDefaultTargetCodeUnit("Sounds", "SoundEvent", "SoundEventBase");
 
-            soundsClass.Members.Add(listField);
-            foreach (SoundEvent soundEvent in SoundEvents)
-            {
-                CodeMemberField field = new CodeMemberField("SoundEvent", soundEvent.EventName.Replace(' ', '_').ToUpper()) {
-                    Attributes = MemberAttributes.Public | MemberAttributes.Static | MemberAttributes.Final,
-                    InitExpression = new CodeObjectCreateExpression("SoundEventBase", new CodePrimitiveExpression(soundEvent.EventName))
-                };
-                soundsClass.Members.Add(field);
-            }
+        protected override IEnumerable<SoundEvent> GetElementsForMod(Mod mod) => base.GetElementsForMod(mod); // TODO: Get SoundEvents for mod
 
-            CodeNamespace package = GetDefaultPackage(soundsClass, "java.util.ArrayList", "java.util.List", "net.minecraft.util.SoundEvent");
-            targetUnit.Namespaces.Add(package);
-
-            return targetUnit;
-        }
     }
 }

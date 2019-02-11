@@ -6,13 +6,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 {
     public class ModHookCodeGenerator : ScriptCodeGenerator
     {
-        public ModHookCodeGenerator(McModInfo modInfo, string organization) : base(modInfo.Name, organization)
-        {
-            this.modInfo = modInfo;
-            ScriptFilePath = ModPaths.GeneratedModHookFile(modInfo.Name, organization);
-        }
-
-        private readonly McModInfo modInfo;
+        public ModHookCodeGenerator(Mod mod) : base(mod) => ScriptFilePath = ModPaths.GeneratedModHookFile(Modname, Organization);
 
         protected override string ScriptFilePath { get; }
 
@@ -29,9 +23,9 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
         {
             CodeTypeDeclaration hookClass = GetDefaultClass("Hook", true);
 
-            hookClass.Members.Add(CreateHookString("MODID", modInfo.Modid));
-            hookClass.Members.Add(CreateHookString("VERSION", modInfo.Version));
-            hookClass.Members.Add(CreateHookString("ACCEPTEDVERSIONS", modInfo.McVersion));
+            hookClass.Members.Add(CreateHookString("MODID", Mod.ModInfo.Modid));
+            hookClass.Members.Add(CreateHookString("VERSION", Mod.ModInfo.Version));
+            hookClass.Members.Add(CreateHookString("ACCEPTEDVERSIONS", Mod.ModInfo.McVersion));
             hookClass.Members.Add(CreateHookString("CLIENTPROXYCLASS", $"{GeneratedPackageName}.proxy.ClientProxy"));
             hookClass.Members.Add(CreateHookString("SERVERPROXYCLASS", $"{GeneratedPackageName}.proxy.ServerProxy"));
 

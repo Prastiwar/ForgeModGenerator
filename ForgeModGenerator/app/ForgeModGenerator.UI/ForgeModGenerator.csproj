@@ -120,14 +120,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CodeGeneration\InitVariablesCodeGenerator.cs" />
     <Compile Include="CodeGeneration\JavaCodeDom\CodeForeachStatement.cs" />
     <Compile Include="CodeGeneration\JavaCodeDom\CodeSuperInvokeExpression.cs" />
+    <Compile Include="CodeGeneration\JavaCodeGenerator.cs" />
     <Compile Include="CodeGeneration\MultiScriptsCodeGenerator.cs" />
     <Compile Include="CodeGeneration\ScriptCodeGenerator.cs" />
     <Compile Include="CodeGeneration\JavaCodeDom\JavaTypeAttributeConverter.cs" />
     <Compile Include="CodeGeneration\JavaCodeDom\JavaMemberAttributeConverter.cs" />
     <Compile Include="CodeGeneration\JavaCodeDom\JavaModifierAttributeConverter.cs" />
-    <Compile Include="CodeGeneration\JavaCodeDom\JavaCodeGenerator.cs" />
     <Compile Include="CodeGeneration\JavaCodeDom\JavaCodeProvider.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -190,6 +191,7 @@
     <Compile Include="Modules\ModGenerator\Models\ForgeVersion.cs" />
     <Compile Include="Modules\ModGenerator\Models\McModInfo.cs" />
     <Compile Include="Common\Math.cs" />
+    <Compile Include="Utils\ReflectionExtensions.cs" />
     <Compile Include="Utils\WPFExtensions.cs" />
     <Compile Include="Modules\AchievementGenerator\Achievement.cs" />
     <Compile Include="Modules\BlockGenerator\Block.cs" />
@@ -405,7 +407,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Resources\SourceCodeArchive.zip" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -1,5 +1,6 @@
 ﻿using ForgeModGenerator.CodeGeneration;
 using ForgeModGenerator.CodeGeneration.JavaCodeDom;
+using ForgeModGenerator.ModGenerator.Models;
 using System;
 using System.CodeDom;
 using System.IO;
@@ -8,9 +9,9 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 {
     public class BlockBasesCodeGenerator : MultiScriptsCodeGenerator
     {
-        public BlockBasesCodeGenerator(string modname, string organization) : base(modname, organization)
+        public BlockBasesCodeGenerator(Mod mod) : base(mod)
         {
-            string folder = ModPaths.GeneratedBlockFolder(modname, organization);
+            string folder = ModPaths.GeneratedBlockFolder(Modname, Organization);
             ScriptFilePaths = new string[] {
                 Path.Combine(folder, "BlockBase.java"),
                 Path.Combine(folder, "OreBase.java")

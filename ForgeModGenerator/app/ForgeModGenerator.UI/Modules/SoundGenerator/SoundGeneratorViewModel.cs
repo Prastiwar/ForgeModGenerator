@@ -43,8 +43,6 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
         private ICommand updateSoundsJson;
         public ICommand UpdateSoundsJson => updateSoundsJson ?? (updateSoundsJson = new RelayCommand(FindAndAddNewFiles));
 
-        public SoundCodeGenerator GetCurrentSoundCodeGenerator() => new SoundCodeGenerator(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.Organization, Folders);
-
         protected override void AddNewFolder()
         {
             try

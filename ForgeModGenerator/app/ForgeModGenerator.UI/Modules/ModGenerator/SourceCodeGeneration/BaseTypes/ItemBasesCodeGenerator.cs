@@ -1,5 +1,6 @@
 ﻿using ForgeModGenerator.CodeGeneration;
 using ForgeModGenerator.CodeGeneration.JavaCodeDom;
+using ForgeModGenerator.ModGenerator.Models;
 using System;
 using System.CodeDom;
 using System.Collections.Generic;
@@ -9,9 +10,9 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 {
     public class ItemBasesCodeGenerator : MultiScriptsCodeGenerator
     {
-        public ItemBasesCodeGenerator(string modname, string organization) : base(modname, organization)
+        public ItemBasesCodeGenerator(Mod mod) : base(mod)
         {
-            string folder = ModPaths.GeneratedItemFolder(modname, organization);
+            string folder = ModPaths.GeneratedItemFolder(Modname, Organization);
             ScriptFilePaths = new string[] {
                 Path.Combine(folder, "ItemBase.java"),
                 Path.Combine(folder, "bow", "BowBase.java"),
