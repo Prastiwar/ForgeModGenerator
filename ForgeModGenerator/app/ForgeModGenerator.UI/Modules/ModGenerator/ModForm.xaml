@@ -24,36 +24,52 @@
 							TextBlock.Foreground="{DynamicResource MaterialDesignBody}"
 							Margin="7">
 					<Label Height="{Binding ActualHeight, ElementName=OrganizationBox, Mode=OneWay}"
+						   ToolTip="Name of your organization (or just your name)"
 						   Content="Organization:" />
 					<Label Height="{Binding ActualHeight, ElementName=SideBox, Mode=OneWay}"
+						   ToolTip="Mod can work on server-only, client-only on on both"
 						   Content="Side:" />
 					<Label Height="{Binding ActualHeight, ElementName=WorkspaceBox, Mode=OneWay}"
+						   ToolTip="Generate workspace settings for manual changes"
 						   Content="Workspace Setup:" />
 					<Label Height="{Binding ActualHeight, ElementName=ForgeVersionBox, Mode=OneWay}"
+						   ToolTip="Forge version for your workspace and play mode"
 						   Content="Forge Version:" />
 					<Label Height="{Binding ActualHeight, ElementName=NameBox, Mode=OneWay}"
+						   ToolTip="The user-friendly name of this mod."
 						   Content="Name:" />
 					<Label Height="{Binding ActualHeight, ElementName=ModidBox, Mode=OneWay}"
+						   ToolTip="Identifier of your mod"
 						   Content="modid:" />
 					<Label Height="{Binding ActualHeight, ElementName=DescriptionBox, Mode=OneWay}"
+						   ToolTip="Short description of your mod"
 						   Content="Description:" />
 					<Label Height="{Binding ActualHeight, ElementName=VersionBox, Mode=OneWay}"
+						   ToolTip="Mod version"
 						   Content="Version:" />
 					<Label Height="{Binding ActualHeight, ElementName=McVersionBox, Mode=OneWay}"
+						   ToolTip="Minecraft version"
 						   Content="McVersion:" />
 					<Label Height="{Binding ActualHeight, ElementName=UrlBox, Mode=OneWay}"
+						   ToolTip="Url to mod's homepage"
 						   Content="Url:" />
 					<Label Height="{Binding ActualHeight, ElementName=UpdateUrlBox, Mode=OneWay}"
+						   ToolTip="The URL to a version JSON"
 						   Content="UpdateUrl:" />
 					<Label Height="{Binding ActualHeight, ElementName=CreditsBox, Mode=OneWay}"
+						   ToolTip="A string that contains any acknowledgements you want to mention"
 						   Content="Credits:" />
 					<Label Height="{Binding ActualHeight, ElementName=LogoFileBox, Mode=OneWay}"
+						   ToolTip="Path to logo file"
 						   Content="LogoFile:" />
 					<Label Height="{Binding ActualHeight, ElementName=AuthorListBox, Mode=OneWay}"
+						   ToolTip="A list of creators of this mod"
 						   Content="AuthorList:" />
 					<Label Height="{Binding ActualHeight, ElementName=DependencyListBox, Mode=OneWay}"
+						   ToolTip="A list of modids that will load before yours"
 						   Content="Dependencies:" />
 					<Label Height="{Binding ActualHeight, ElementName=ScreenshotListBox, Mode=OneWay}"
+						   ToolTip="A list of images to be shown on the info page"
 						   Content="Screenshots:" />
 				</StackPanel>
 				<StackPanel Grid.Column="1"
@@ -160,18 +176,12 @@
 							 AcceptsReturn="True" />
 					<TextBox x:Name="LogoFileBox"
 							 Text="{Binding Path=ModInfo.LogoFile, Mode=TwoWay}" />
-					<controls:HorizontalList x:Name="AuthorListBox"
-											 AddCommand="{Binding Path=AddStringItemCommand, RelativeSource={RelativeSource AncestorType=local:ModForm}}"
-											 RemoveCommand="{Binding Path=RemoveStringItemCommand, RelativeSource={RelativeSource AncestorType=local:ModForm}}"
-											 StringList="{Binding Path=ModInfo.AuthorList, Mode=TwoWay}" />
-					<controls:HorizontalList x:Name="DependencyListBox"
-											 AddCommand="{Binding Path=AddStringItemCommand, RelativeSource={RelativeSource AncestorType=local:ModForm}}"
-											 RemoveCommand="{Binding Path=RemoveStringItemCommand, RelativeSource={RelativeSource AncestorType=local:ModForm}}"
-											 StringList="{Binding Path=ModInfo.Dependencies, Mode=TwoWay}" />
-					<controls:HorizontalList x:Name="ScreenshotListBox"
-											 AddCommand="{Binding Path=AddStringItemCommand, RelativeSource={RelativeSource AncestorType=local:ModForm}}"
-											 RemoveCommand="{Binding Path=RemoveStringItemCommand, RelativeSource={RelativeSource AncestorType=local:ModForm}}"
-											 StringList="{Binding Path=ModInfo.Screenshots, Mode=TwoWay}" />
+					<controls:EditableStringList x:Name="AuthorListBox"
+												 ItemsSource="{Binding Path=ModInfo.AuthorList, Mode=TwoWay}" />
+					<controls:EditableStringList x:Name="DependencyListBox"
+												 ItemsSource="{Binding Path=ModInfo.Dependencies, Mode=TwoWay}" />
+					<controls:EditableStringList x:Name="ScreenshotListBox"
+												 ItemsSource="{Binding Path=ModInfo.Screenshots, Mode=TwoWay}" />
 					<Button Content="{Binding Path=SaveButtonText, RelativeSource={RelativeSource AncestorType=local:ModForm}}"
 							Command="{Binding Path=SaveCommand, RelativeSource={RelativeSource AncestorType=local:ModForm}}"
 							CommandParameter="{Binding}" />

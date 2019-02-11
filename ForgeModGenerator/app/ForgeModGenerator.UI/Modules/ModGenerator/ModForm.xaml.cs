@@ -39,20 +39,6 @@ namespace ForgeModGenerator.ModGenerator.Controls
             set => SetValue(AddForgeVersionCommandProperty, value);
         }
 
-        public static readonly DependencyProperty AddStringItemCommandProperty =
-            DependencyProperty.Register("AddStringItemCommand", typeof(ICommand), typeof(ModForm), new PropertyMetadata(null));
-        public ICommand AddStringItemCommand {
-            get => (ICommand)GetValue(AddStringItemCommandProperty);
-            set => SetValue(AddStringItemCommandProperty, value);
-        }
-
-        public static readonly DependencyProperty RemoveStringItemCommandProperty =
-            DependencyProperty.Register("RemoveStringItemCommand", typeof(ICommand), typeof(ModForm), new PropertyMetadata(null));
-        public ICommand RemoveStringItemCommand {
-            get => (ICommand)GetValue(RemoveStringItemCommandProperty);
-            set => SetValue(RemoveStringItemCommandProperty, value);
-        }
-
         public static readonly DependencyProperty SaveCommandProperty =
             DependencyProperty.Register("SaveCommand", typeof(ICommand), typeof(ModForm), new PropertyMetadata(null));
         public ICommand SaveCommand {

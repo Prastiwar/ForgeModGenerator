@@ -29,8 +29,6 @@
 										   SaveCommand="{Binding DataContext.CreateModCommand, ElementName=ThisWindow}"
 										   SaveButtonText="Generate Mod"
 										   AddForgeVersionCommand="{Binding DataContext.AddNewForgeVersionCommand, ElementName=ThisWindow}"
-										   RemoveStringItemCommand="{Binding DataContext.RemoveModCommand, ElementName=ThisWindow}"
-										   AddStringItemCommand="{Binding DataContext.AddNewItemCommand, ElementName=ThisWindow}"
 										   Setups="{Binding DataContext.WorkspaceService.Setups, ElementName=ThisWindow}"
 										   ForgeVersions="{Binding DataContext.SessionContext.ForgeVersions, ElementName=ThisWindow}"
 										   Sides="{Binding DataContext.Sides, ElementName=ThisWindow}" />
@@ -48,8 +46,6 @@
 									<mControls:ModForm DataContext="{Binding}"
 													   SaveCommand="{Binding DataContext.SaveChangesCommand, ElementName=ThisWindow}"
 													   AddForgeVersionCommand="{Binding DataContext.AddNewForgeVersionCommand, ElementName=ThisWindow}"
-													   RemoveStringItemCommand="{Binding DataContext.RemoveModCommand, ElementName=ThisWindow}"
-													   AddStringItemCommand="{Binding DataContext.AddNewItemCommand, ElementName=ThisWindow}"
 													   Setups="{Binding DataContext.WorkspaceService.Setups, ElementName=ThisWindow}"
 													   ForgeVersions="{Binding DataContext.SessionContext.ForgeVersions, ElementName=ThisWindow}"
 													   Sides="{Binding DataContext.Sides, ElementName=ThisWindow}" />

@@ -131,6 +131,7 @@
     <Compile Include="CodeGeneration\JavaCodeDom\JavaCodeProvider.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\EditableList.cs" />
     <Compile Include="Converters\InvertIntToVisibilityConverter.cs" />
     <Compile Include="Converters\IntToVisibilityConverter.cs" />
     <Compile Include="Converters\InvertBooleanConverter.cs" />
@@ -174,9 +175,6 @@
     <Compile Include="Controls\FolderExpanderControl.cs" />
     <Compile Include="Controls\FolderListBox.xaml.cs">
       <DependentUpon>FolderListBox.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\HorizontalList.xaml.cs">
-      <DependentUpon>HorizontalList.xaml</DependentUpon>
     </Compile>
     <Compile Include="Modules\ModGenerator\BuildConfiguration\ModBuildForm.xaml.cs">
       <DependentUpon>ModBuildForm.xaml</DependentUpon>
@@ -273,10 +271,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\FolderListBox.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\HorizontalList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

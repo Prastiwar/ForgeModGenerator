@@ -2,10 +2,76 @@
 					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 					xmlns:local="clr-namespace:ForgeModGenerator"
 					xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
-					xmlns:vm="clr-namespace:ForgeModGenerator.ViewModels"
-					xmlns:rules="clr-namespace:ForgeModGenerator.Validations"
 					xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-					xmlns:misc="clr-namespace:ForgeModGenerator.Utils">
+					xmlns:misc="clr-namespace:ForgeModGenerator.Utils"
+					xmlns:converters="clr-namespace:ForgeModGenerator.Converters">
 	<Style TargetType="{x:Type controls:SubmitTextBox}"
 		   BasedOn="{StaticResource {x:Type TextBox}}" />
+	<Style TargetType="{x:Type controls:EditableStringList}">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type controls:EditableStringList}">
+					<Border Background="{TemplateBinding Background}"
+							BorderBrush="{TemplateBinding BorderBrush}"
+							BorderThickness="{TemplateBinding BorderThickness}">
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="25" />
+								<ColumnDefinition Width="*" />
+							</Grid.ColumnDefinitions>
+							<Button Grid.Column="0"
+									Height="20"
+									Width="25"
+									Padding="0"
+									Command="{Binding Path=AddCommand, RelativeSource={RelativeSource AncestorType=controls:EditableStringList}}"
+									CommandParameter="{Binding Path=ItemsSource, RelativeSource={RelativeSource AncestorType=controls:EditableStringList}}">
+								<materialDesign:PackIcon Kind="Plus"
+														 HorizontalAlignment="Center"
+														 VerticalAlignment="Center" />
+							</Button>
+							<ScrollViewer Grid.Column="1"
+										  ScrollViewer.HorizontalScrollBarVisibility="Auto"
+										  ScrollViewer.VerticalScrollBarVisibility="Disabled">
+								<StackPanel Orientation="Horizontal">
+									<ListBox ItemsSource="{Binding Path=ItemsSource, RelativeSource={RelativeSource AncestorType=controls:EditableStringList}, Mode=TwoWay}"
+											 FontSize="11"
+											 MinHeight="25">
+										<ListBox.ItemTemplate>
+											<DataTemplate>
+												<TextBox Text="{Binding Path=.}"
+														 Tag="{Binding Path=., RelativeSource={RelativeSource AncestorType=controls:EditableStringList}}">
+													<TextBox.ContextMenu>
+														<ContextMenu>
+															<MenuItem Header="Remove"
+																	  Command="{Binding PlacementTarget.Tag.RemoveCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}">
+																<MenuItem.Resources>
+																	<converters:StringListStringConverter x:Key="ListStringConverter" />
+																</MenuItem.Resources>
+																<MenuItem.CommandParameter>
+																	<MultiBinding Converter="{StaticResource ListStringConverter}">
+																		<Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}"
+																				 Path="PlacementTarget.Tag.ItemsSource" />
+																		<Binding Path="." />
+																	</MultiBinding>
+																</MenuItem.CommandParameter>
+															</MenuItem>
+														</ContextMenu>
+													</TextBox.ContextMenu>
+												</TextBox>
+											</DataTemplate>
+										</ListBox.ItemTemplate>
+										<ListBox.ItemsPanel>
+											<ItemsPanelTemplate>
+												<StackPanel Orientation="Horizontal" />
+											</ItemsPanelTemplate>
+										</ListBox.ItemsPanel>
+									</ListBox>
+								</StackPanel>
+							</ScrollViewer>
+						</Grid>
+					</Border>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
 </ResourceDictionary>

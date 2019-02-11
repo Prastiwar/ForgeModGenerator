@@ -30,13 +30,13 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
             NewMod = new Mod(new McModInfo() {
                 Name = "NewExampleMod",
                 Modid = "newexamplemod",
-                Credits = "For someone",
-                Description = "Some description",
+                Credits = "For contributors of ForgeModGenerator",
+                Description = "This is example mod",
                 McVersion = "12.2",
                 Version = "1.0",
-                AuthorList = new ObservableCollection<string>() { "Me", "And Him" },
-                Dependencies = new ObservableCollection<string>() { "OtherMod", "EvenOtherMod" },
-                Screenshots = new ObservableCollection<string>() { "url", "otherurl" }
+                AuthorList = new ObservableCollection<string>() { "Me" },
+                Dependencies = new ObservableCollection<string>(),
+                Screenshots = new ObservableCollection<string>()
             }, "newexampleorg", SessionContext.ForgeVersions[0]);
         }
 
@@ -64,17 +64,8 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
         private ICommand createModCommand;
         public ICommand CreateModCommand => createModCommand ?? (createModCommand = new RelayCommand(() => GenerateMod(NewMod)));
 
-        private ICommand addNewItemCommand;
-        public ICommand AddNewItemCommand => addNewItemCommand ?? (addNewItemCommand = new RelayCommand<ObservableCollection<string>>(AddNewItemTo));
-
-        private ICommand removeModCommand;
-        public ICommand RemoveModCommand => removeModCommand ?? (removeModCommand = new RelayCommand<Tuple<ObservableCollection<string>, string>>(RemoveItemFromList));
-
         private ICommand saveChangesCommand;
         public ICommand SaveChangesCommand => saveChangesCommand ?? (saveChangesCommand = new RelayCommand<Mod>(SaveModChanges));
-
-        private void AddNewItemTo(ObservableCollection<string> collection) => collection.Add("NewItem");
-        private void RemoveItemFromList(Tuple<ObservableCollection<string>, string> param) => param.Item1.Remove(param.Item2);
 
         private void AddNewForge()
         {

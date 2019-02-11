@@ -9,10 +9,7 @@ namespace ForgeModGenerator.Controls
 {
     public class FolderExpanderControl : ContentControl
     {
-        static FolderExpanderControl()
-        {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(FolderExpanderControl), new FrameworkPropertyMetadata(typeof(FolderExpanderControl)));
-        }
+        static FolderExpanderControl() => DefaultStyleKeyProperty.OverrideMetadata(typeof(FolderExpanderControl), new FrameworkPropertyMetadata(typeof(FolderExpanderControl)));
 
         public FolderExpanderControl()
         {
