@@ -112,6 +112,7 @@ namespace ForgeModGenerator.ViewModels
         {
             SimpleIoc.Default.Register<NavigationMenuViewModel>();
             SimpleIoc.Default.Register<MainWindowViewModel>();
+            // pages ViewModels are generated with NavigationService
         }
 
         private void RegisterServices()
