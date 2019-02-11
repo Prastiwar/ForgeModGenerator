@@ -6,7 +6,7 @@
 			 xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
 			 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 			 xmlns:local="clr-namespace:ForgeModGenerator.ApplicationModule.Views"
-			 xmlns:aControls="clr-namespace:ForgeModGenerator.ApplicationModule.Controls"
+			 xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
 			 xmlns:vm="clr-namespace:ForgeModGenerator.ViewModels"
 			 mc:Ignorable="d"
 			 d:DesignHeight="450"
@@ -39,44 +39,44 @@
 					  Grid.Row="2"
 					  VerticalScrollBarVisibility="Hidden">
 			<StackPanel>
-				<aControls:MenuButton Desc="Dashboard"
-									  Kind="ViewDashboard"
-									  Command="{Binding OpenDashboard}" />
-				<aControls:MenuButton Desc="Build Configuration"
-									  Kind="Build"
-									  Command="{Binding OpenBuildConfiguration}" />
-				<aControls:MenuButton Desc="Mod Generator"
-									  Kind="CreateNewFolder"
-									  Command="{Binding OpenModGenerator}" />
-				<aControls:MenuButton Desc="Texture Generator"
-									  Kind="Texture"
-									  Command="{Binding OpenTextureGenerator}" />
-				<aControls:MenuButton Desc="Block Generator"
-									  Kind="CubeOutline"
-									  Command="{Binding OpenBlockGenerator}" />
-				<aControls:MenuButton Desc="Item Generator"
-									  Kind="Pickaxe"
-									  Command="{Binding OpenItemGenerator}" />
-				<aControls:MenuButton Desc="Sound Generator"
-									  Kind="FileMusic"
-									  Command="{Binding OpenSoundGenerator}" />
-				<aControls:MenuButton Desc="Command Generator"
-									  Kind="CodeTags"
-									  Command="{Binding OpenCommandGenerator}" />
-				<aControls:MenuButton Desc="Achievement Generator"
-									  Kind="Achievement"
-									  Command="{Binding OpenAchievementGenerator}" />
-				<aControls:MenuButton Desc="Recipe Generator"
-									  Kind="Group"
-									  Command="{Binding OpenRecipeGenerator}" />
+				<controls:NavButton Desc="Dashboard"
+									Kind="ViewDashboard"
+									Command="{Binding OpenDashboard}" />
+				<controls:NavButton Desc="Build Configuration"
+									Kind="Build"
+									Command="{Binding OpenBuildConfiguration}" />
+				<controls:NavButton Desc="Mod Generator"
+									Kind="CreateNewFolder"
+									Command="{Binding OpenModGenerator}" />
+				<controls:NavButton Desc="Texture Generator"
+									Kind="Texture"
+									Command="{Binding OpenTextureGenerator}" />
+				<controls:NavButton Desc="Block Generator"
+									Kind="CubeOutline"
+									Command="{Binding OpenBlockGenerator}" />
+				<controls:NavButton Desc="Item Generator"
+									Kind="Pickaxe"
+									Command="{Binding OpenItemGenerator}" />
+				<controls:NavButton Desc="Sound Generator"
+									Kind="FileMusic"
+									Command="{Binding OpenSoundGenerator}" />
+				<controls:NavButton Desc="Command Generator"
+									Kind="CodeTags"
+									Command="{Binding OpenCommandGenerator}" />
+				<controls:NavButton Desc="Achievement Generator"
+									Kind="Achievement"
+									Command="{Binding OpenAchievementGenerator}" />
+				<controls:NavButton Desc="Recipe Generator"
+									Kind="Group"
+									Command="{Binding OpenRecipeGenerator}" />
 			</StackPanel>
 		</ScrollViewer>
-		<aControls:ScrollButton Grid.Row="1"
-								ArrowIcon="ArrowUp"
-								ScrollTarget="{Binding ElementName=MenuScroll}"
-								Direction="Top" />
-		<aControls:ScrollButton Grid.Row="3"
-								ArrowIcon="ArrowDown"
-								ScrollTarget="{Binding ElementName=MenuScroll}" />
+		<controls:ScrollButton Grid.Row="1"
+							   ArrowIcon="ArrowUp"
+							   ScrollTarget="{Binding ElementName=MenuScroll}"
+							   Direction="Top" />
+		<controls:ScrollButton Grid.Row="3"
+							   ArrowIcon="ArrowDown"
+							   ScrollTarget="{Binding ElementName=MenuScroll}" />
 	</Grid>
 </UserControl>

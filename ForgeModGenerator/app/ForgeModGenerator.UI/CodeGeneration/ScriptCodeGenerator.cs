@@ -13,12 +13,14 @@ namespace ForgeModGenerator.CodeGeneration
         {
             Mod = mod;
             Modname = mod.ModInfo.Name;
+            ModnameLower = Modname.ToLower();
             Organization = mod.Organization;
-            GeneratedPackageName = $"com.{Organization}.{Modname}.generated";
+            GeneratedPackageName = $"com.{Organization}.{ModnameLower}.generated";
         }
 
         protected Mod Mod { get; }
         protected string Modname { get; }
+        protected string ModnameLower { get; }
         protected string Organization { get; }
         protected string GeneratedPackageName { get; }
         protected JavaCodeProvider JavaProvider { get; } = new JavaCodeProvider();
@@ -28,11 +30,13 @@ namespace ForgeModGenerator.CodeGeneration
 
         public virtual void RegenerateScript() => RegenerateScript(ScriptFilePath, CreateTargetCodeUnit(), GeneratorOptions);
 
-        protected string GetClassName(string name) => $"{Modname}{name}";
+        protected string GetModClassName(string name) => $"{Modname}{name}";
 
         // Gets public class "{Modname}name"
-        protected CodeTypeDeclaration GetDefaultClass(string name, bool useModname = false) => new CodeTypeDeclaration(useModname ? GetClassName(name) : name) { IsClass = true, TypeAttributes = TypeAttributes.Public };
-        protected CodeTypeDeclaration GetDefaultInterface(string name, bool useModname = false) => new CodeTypeDeclaration(useModname ? GetClassName(name) : name) { IsInterface = true, TypeAttributes = TypeAttributes.Public };
+        protected CodeTypeDeclaration GetDefaultClass(string name, bool useModname = false) => new CodeTypeDeclaration(useModname ? GetModClassName(name) : name) { IsClass = true, TypeAttributes = TypeAttributes.Public };
+
+        // Gets public interface "{Modname}name"
+        protected CodeTypeDeclaration GetDefaultInterface(string name, bool useModname = false) => new CodeTypeDeclaration(useModname ? GetModClassName(name) : name) { IsInterface = true, TypeAttributes = TypeAttributes.Public };
 
         protected CodeNamespace GetDefaultPackage(CodeTypeDeclaration defaultType, params string[] imports)
         {

@@ -1,18 +1,19 @@
 ﻿using ForgeModGenerator.CodeGeneration;
 using ForgeModGenerator.ModGenerator.Models;
 using System.CodeDom;
+using System.IO;
 
 namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 {
     public class ModHookCodeGenerator : ScriptCodeGenerator
     {
-        public ModHookCodeGenerator(Mod mod) : base(mod) => ScriptFilePath = ModPaths.GeneratedModHookFile(Modname, Organization);
+        public ModHookCodeGenerator(Mod mod) : base(mod) => ScriptFilePath = Path.Combine(ModPaths.GeneratedSourceCodeFolder(Modname, Organization), Modname + "Hook.java");
 
         protected override string ScriptFilePath { get; }
 
         protected CodeMemberField CreateHookString(string variableName, string value)
         {
-            CodeMemberField field = new CodeMemberField("String", variableName.ToUpper()) {
+            CodeMemberField field = new CodeMemberField(typeof(string), variableName.ToUpper()) {
                 Attributes = MemberAttributes.Public | MemberAttributes.Static | MemberAttributes.Final,
                 InitExpression = new CodePrimitiveExpression(value)
             };

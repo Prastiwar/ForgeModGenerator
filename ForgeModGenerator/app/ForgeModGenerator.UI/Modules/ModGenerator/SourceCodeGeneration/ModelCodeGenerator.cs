@@ -7,11 +7,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 {
     public class ModelCodeGenerator : ScriptCodeGenerator
     {
-        public ModelCodeGenerator(Mod mod) : base(mod)
-        {
-            string handlerFolder = ModPaths.GeneratedHandlerFolder(Modname, Organization);
-            ScriptFilePath = Path.Combine(handlerFolder, "IHasModel.java");
-        }
+        public ModelCodeGenerator(Mod mod) : base(mod) => ScriptFilePath = Path.Combine(ModPaths.GeneratedSourceCodeFolder(Modname, Organization), "handler", "IHasModel.java");
 
         protected override string ScriptFilePath { get; }
 

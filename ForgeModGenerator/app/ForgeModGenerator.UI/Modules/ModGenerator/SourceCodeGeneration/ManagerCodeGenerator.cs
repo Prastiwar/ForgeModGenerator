@@ -1,12 +1,13 @@
 ﻿using ForgeModGenerator.CodeGeneration;
 using ForgeModGenerator.ModGenerator.Models;
 using System.CodeDom;
+using System.IO;
 
 namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 {
     public class ManagerCodeGenerator : ScriptCodeGenerator
     {
-        public ManagerCodeGenerator(Mod mod) : base(mod) => ScriptFilePath = ModPaths.GeneratedModManagerFile(Modname, Organization);
+        public ManagerCodeGenerator(Mod mod) : base(mod) => ScriptFilePath = Path.Combine(ModPaths.GeneratedSourceCodeFolder(Modname, Organization), Modname + ".java");
 
         protected override string ScriptFilePath { get; }
 
@@ -29,7 +30,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             CodeMemberMethod initMethod = new CodeMemberMethod() {
                 Name = "init",
                 Attributes = MemberAttributes.Public,
-                ReturnType = new CodeTypeReference("void"),
+                ReturnType = new CodeTypeReference(typeof(void)),
             };
             CodeMethodInvokeExpression initRecipes = new CodeMethodInvokeExpression(new CodeTypeReferenceExpression($"{Modname}Recipes"), "init");
             initMethod.Statements.Add(initRecipes);
@@ -56,7 +57,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             CodeMemberMethod method = new CodeMemberMethod() {
                 Name = name,
                 Attributes = MemberAttributes.Public,
-                ReturnType = new CodeTypeReference("void"),
+                ReturnType = new CodeTypeReference(typeof(void)),
             };
             method.Parameters.Add(new CodeParameterDeclarationExpression(eventType, "event"));
             return method;

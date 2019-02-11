@@ -2,15 +2,9 @@
 {
     public static class Math
     {
-        public static float Lerp(float from, float to, float time)
-        {
-            return time * (to - from) + from;
-        }
+        public static float Lerp(float from, float to, float time) => time * (to - from) + from;
 
-        public static double Lerp(double from, double to, double time)
-        {
-            return time * (to - from) + from;
-        }
+        public static double Lerp(double from, double to, double time) => time * (to - from) + from;
 
         public static float Clamp(float value, float min = 0.0f, float max = 1.0f)
         {

@@ -10,7 +10,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
     {
         public ProxyCodeGenerator(Mod mod) : base(mod)
         {
-            string proxyFolder = ModPaths.GeneratedProxyFolder(Modname, Organization);
+            string proxyFolder = Path.Combine(ModPaths.GeneratedSourceCodeFolder(Modname, Organization), "proxy");
             ScriptFilePaths = new string[] {
                 Path.Combine(proxyFolder, "ICommonProxy.java"),
                 Path.Combine(proxyFolder, "ClientProxy.java"),
@@ -84,8 +84,8 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
                 Attributes = MemberAttributes.Public
             };
             registerItemRenderer.Parameters.Add(new CodeParameterDeclarationExpression("Item", "item"));
-            registerItemRenderer.Parameters.Add(new CodeParameterDeclarationExpression("int", "meta"));
-            registerItemRenderer.Parameters.Add(new CodeParameterDeclarationExpression("String", "id"));
+            registerItemRenderer.Parameters.Add(new CodeParameterDeclarationExpression(typeof(int), "meta"));
+            registerItemRenderer.Parameters.Add(new CodeParameterDeclarationExpression(typeof(string), "id"));
             return registerItemRenderer;
         }
     }

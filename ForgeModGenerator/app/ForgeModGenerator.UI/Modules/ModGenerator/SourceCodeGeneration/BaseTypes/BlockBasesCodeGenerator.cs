@@ -11,7 +11,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
     {
         public BlockBasesCodeGenerator(Mod mod) : base(mod)
         {
-            string folder = ModPaths.GeneratedBlockFolder(Modname, Organization);
+            string folder = Path.Combine(ModPaths.GeneratedSourceCodeFolder(Modname, Organization), "block");
             ScriptFilePaths = new string[] {
                 Path.Combine(folder, "BlockBase.java"),
                 Path.Combine(folder, "OreBase.java")
@@ -44,7 +44,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
                 Name = "BlockBase",
                 Attributes = MemberAttributes.Public
             };
-            ctor.Parameters.Add(new CodeParameterDeclarationExpression("String", "name"));
+            ctor.Parameters.Add(new CodeParameterDeclarationExpression(typeof(string), "name"));
             ctor.Parameters.Add(new CodeParameterDeclarationExpression("Material", "material"));
             ctor.Statements.Add(new CodeSuperConstructorInvokeExpression(new CodeVariableReferenceExpression("material")));
             ctor.Statements.Add(new CodeMethodInvokeExpression(null, "setUnlocalizedName", new CodeVariableReferenceExpression("name")));
@@ -84,17 +84,17 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             clas.Members.Add(setSoundType);
 
             CodeMemberMethod setBlockHarvestLevel = new CodeMemberMethod() {
-                Name = "setSoundType",
+                Name = "setBlockHarvestLevel",
                 Attributes = MemberAttributes.Public,
                 ReturnType = new CodeTypeReference("BlockBase")
             };
-            setSoundType.Parameters.Add(new CodeParameterDeclarationExpression("String", "toolClass"));
-            setSoundType.Parameters.Add(new CodeParameterDeclarationExpression("int", "level"));
+            setBlockHarvestLevel.Parameters.Add(new CodeParameterDeclarationExpression(typeof(string), "toolClass"));
+            setBlockHarvestLevel.Parameters.Add(new CodeParameterDeclarationExpression(typeof(int), "level"));
             CodeMethodInvokeExpression baseSetHarvestLevel = new CodeMethodInvokeExpression(new CodeBaseReferenceExpression(), "setBlockHarvestLevel",
                 new CodeVariableReferenceExpression("toolClass"),
                 new CodeVariableReferenceExpression("level")
             );
-            setBlockHarvestLevel.Statements.Add(baseSetSoundType);
+            setBlockHarvestLevel.Statements.Add(baseSetHarvestLevel);
             setBlockHarvestLevel.Statements.Add(returnThis);
             clas.Members.Add(setBlockHarvestLevel);
 
@@ -115,13 +115,13 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
         {
             CodeTypeDeclaration clas = GetDefaultClass("OreBase");
             clas.BaseTypes.Add("BlockBase");
-            clas.Members.Add(new CodeMemberField("Item", "dropItem"));
+            clas.Members.Add(new CodeMemberField("Item", "dropItem") { Attributes = MemberAttributes.Family });
 
             CodeConstructor ctor = new CodeConstructor() {
                 Name = "OreBase",
                 Attributes = MemberAttributes.Public
             };
-            ctor.Parameters.Add(new CodeParameterDeclarationExpression("String", "name"));
+            ctor.Parameters.Add(new CodeParameterDeclarationExpression(typeof(string), "name"));
             ctor.Parameters.Add(new CodeParameterDeclarationExpression("Material", "material"));
             ctor.Statements.Add(new CodeSuperConstructorInvokeExpression(new CodeVariableReferenceExpression("name"), new CodeVariableReferenceExpression("material")));
             clas.Members.Add(ctor);
@@ -134,7 +134,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             };
             getItemDropped.Parameters.Add(new CodeParameterDeclarationExpression("IBlockState", "state"));
             getItemDropped.Parameters.Add(new CodeParameterDeclarationExpression("Random", "rand"));
-            getItemDropped.Parameters.Add(new CodeParameterDeclarationExpression("int", "fortune"));
+            getItemDropped.Parameters.Add(new CodeParameterDeclarationExpression(typeof(int), "fortune"));
             getItemDropped.Statements.Add(new CodeMethodReturnStatement(new CodeVariableReferenceExpression("dropItem")));
             clas.Members.Add(getItemDropped);
 
@@ -142,11 +142,11 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             CodeMemberMethod quantityDropped = new CodeMemberMethod() {
                 Name = "getItemDropped",
                 Attributes = MemberAttributes.Public,
-                ReturnType = new CodeTypeReference("int")
+                ReturnType = new CodeTypeReference(typeof(int))
             };
             quantityDropped.Parameters.Add(new CodeParameterDeclarationExpression("Random", "rand"));
-            quantityDropped.Statements.Add(new CodeVariableDeclarationStatement("int", "max", new CodePrimitiveExpression(4)));
-            quantityDropped.Statements.Add(new CodeVariableDeclarationStatement("int", "min", new CodePrimitiveExpression(1)));
+            quantityDropped.Statements.Add(new CodeVariableDeclarationStatement(typeof(int), "max", new CodePrimitiveExpression(4)));
+            quantityDropped.Statements.Add(new CodeVariableDeclarationStatement(typeof(int), "min", new CodePrimitiveExpression(1)));
             quantityDropped.Statements.Add(new CodeMethodReturnStatement(
                 new CodeBinaryOperatorExpression(new CodeMethodInvokeExpression(new CodeVariableReferenceExpression("rand"), "nextInt", new CodeVariableReferenceExpression("max")),
                                                  CodeBinaryOperatorType.Add,

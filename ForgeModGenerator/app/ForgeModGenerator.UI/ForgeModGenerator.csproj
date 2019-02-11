@@ -123,7 +123,7 @@
     <Compile Include="CodeGeneration\InitVariablesCodeGenerator.cs" />
     <Compile Include="CodeGeneration\JavaCodeDom\CodeForeachStatement.cs" />
     <Compile Include="CodeGeneration\JavaCodeDom\CodeSuperInvokeExpression.cs" />
-    <Compile Include="CodeGeneration\JavaCodeGenerator.cs" />
+    <Compile Include="CodeGeneration\JavaCodeDom\JavaCodeGenerator.cs" />
     <Compile Include="CodeGeneration\MultiScriptsCodeGenerator.cs" />
     <Compile Include="CodeGeneration\ScriptCodeGenerator.cs" />
     <Compile Include="CodeGeneration\JavaCodeDom\JavaTypeAttributeConverter.cs" />
@@ -133,19 +133,20 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\EditableList.cs" />
+    <Compile Include="Controls\ScrollButton.cs" />
     <Compile Include="Converters\InvertIntToVisibilityConverter.cs" />
     <Compile Include="Converters\IntToVisibilityConverter.cs" />
     <Compile Include="Converters\InvertBooleanConverter.cs" />
-    <Compile Include="Converters\Json\SoundCollectionConverter.cs" />
-    <Compile Include="Converters\Json\SoundConverter.cs" />
-    <Compile Include="Converters\Json\SoundEventConverter.cs" />
+    <Compile Include="Controls\NavButton.cs" />
+    <Compile Include="Modules\SoundGenerator\Converters\SoundCollectionConverter.cs" />
+    <Compile Include="Modules\SoundGenerator\Converters\SoundConverter.cs" />
+    <Compile Include="Modules\SoundGenerator\Converters\SoundEventConverter.cs" />
     <Compile Include="Converters\Json\PropertyRenameIgnoreResolver.cs" />
     <Compile Include="Converters\ModidPathToPathConverter.cs" />
     <Compile Include="Converters\MultiValues\BindMultiValueConverter.cs" />
     <Compile Include="Converters\MultiValues\GenericMultiValueConverter.cs" />
     <Compile Include="Converters\MultiValues\TupleValueConverter.cs" />
     <Compile Include="Converters\PathToModidConverter.cs" />
-    <Compile Include="CodeGeneration\CodeOperation.cs" />
     <Compile Include="Controls\BindingProxy.cs" />
     <Compile Include="Modules\GUIGenerator\CreativeTabCodeGenerator.cs" />
     <Compile Include="Modules\ModGenerator\ModRules.cs" />
@@ -186,7 +187,6 @@
     <Compile Include="Converters\EnumToCollectionConverter.cs" />
     <Compile Include="Converters\PathNameConverter.cs" />
     <Compile Include="Common\AppPaths.cs" />
-    <Compile Include="CodeGeneration\CoreSourceCodeVariables.cs" />
     <Compile Include="Components\TextBoxValidVisual.cs" />
     <Compile Include="Modules\ModGenerator\Models\ForgeVersion.cs" />
     <Compile Include="Modules\ModGenerator\Models\McModInfo.cs" />
@@ -205,9 +205,6 @@
     <Compile Include="Services\NavigationService.cs" />
     <Compile Include="Services\SessionContextService.cs" />
     <Compile Include="Services\WorkspaceSetupService.cs" />
-    <Compile Include="Modules\ApplicationModule\Controls\ScrollButton.xaml.cs">
-      <DependentUpon>ScrollButton.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Modules\SoundGenerator\Controls\SoundEditForm.xaml.cs">
       <DependentUpon>SoundEditForm.xaml</DependentUpon>
     </Compile>
@@ -284,10 +281,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Modules\ApplicationModule\Controls\ScrollButton.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Modules\SoundGenerator\Controls\SoundEditForm.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -332,10 +325,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Modules\ApplicationModule\Controls\MenuButton.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Modules\ModGenerator\BuildConfiguration\BuildConfigurationPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -357,9 +346,6 @@
     </Compile>
     <Compile Include="Controls\DraggableRectangle.xaml.cs">
       <DependentUpon>DraggableRectangle.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Modules\ApplicationModule\Controls\MenuButton.xaml.cs">
-      <DependentUpon>MenuButton.xaml</DependentUpon>
     </Compile>
     <Compile Include="Animations\GridLengthAnimation.cs" />
     <Compile Include="Components\MenuComponent.cs" />

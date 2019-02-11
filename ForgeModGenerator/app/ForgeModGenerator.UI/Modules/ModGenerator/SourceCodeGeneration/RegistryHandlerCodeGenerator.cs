@@ -7,11 +7,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 {
     public class RegistryHandlerCodeGenerator : ScriptCodeGenerator
     {
-        public RegistryHandlerCodeGenerator(Mod mod) : base(mod)
-        {
-            string handlerFolder = ModPaths.GeneratedHandlerFolder(Modname, Organization);
-            ScriptFilePath = Path.Combine(handlerFolder, "RegistryHandler.java");
-        }
+        public RegistryHandlerCodeGenerator(Mod mod) : base(mod) => ScriptFilePath = Path.Combine(ModPaths.GeneratedSourceCodeFolder(Modname, Organization), "handler", "RegistryHandler.java");
 
         protected override string ScriptFilePath { get; }
 
@@ -28,6 +24,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             CodeFieldReferenceExpression list = new CodeFieldReferenceExpression(new CodeVariableReferenceExpression($"{Modname}{registerType}s"), $"{registerType.ToUpper()}S");
             CodeMethodInvokeExpression registerParam = new CodeMethodInvokeExpression(list, "toArray", new CodeArrayCreateExpression($"{registerType}", 0));
             CodeMethodInvokeExpression registerAll = new CodeMethodInvokeExpression(getRegistry, "registerAll", registerParam);
+            method.Statements.Add(registerAll);
             return method;
         }
 

@@ -11,8 +11,8 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
     {
         public OtherBasesCodeGenerator(Mod mod) : base(mod)
             => ScriptFilePaths = new string[] {
-                Path.Combine(ModPaths.GeneratedSoundFolder(Modname, Organization), "SoundEventBase.java"),
-                Path.Combine(ModPaths.GeneratedItemFolder(Modname, Organization), "food", "FoodEffectBase.java")
+                Path.Combine(ModPaths.GeneratedSourceCodeFolder(Modname, Organization), "sound", "SoundEventBase.java"),
+                Path.Combine(ModPaths.GeneratedSourceCodeFolder(Modname, Organization), "item", "food", "FoodEffectBase.java")
             };
 
         protected override string[] ScriptFilePaths { get; }
@@ -39,7 +39,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
                 Name = "SoundEventBase",
                 Attributes = MemberAttributes.Public
             };
-            ctor.Parameters.Add(new CodeParameterDeclarationExpression("String", "name"));
+            ctor.Parameters.Add(new CodeParameterDeclarationExpression(typeof(string), "name"));
             ctor.Statements.Add(new CodeSuperConstructorInvokeExpression(new CodeObjectCreateExpression("ResourceLocation",
                                         new CodeFieldReferenceExpression(new CodeTypeReferenceExpression($"{Modname}Hook"), "MODID"), new CodeVariableReferenceExpression("name")))
                                         );
@@ -62,8 +62,8 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
                 Name = "SoundEventBase",
                 Attributes = MemberAttributes.Public
             };
-            ctor.Parameters.Add(new CodeParameterDeclarationExpression("String", "name"));
-            ctor.Parameters.Add(new CodeParameterDeclarationExpression("int", "amount"));
+            ctor.Parameters.Add(new CodeParameterDeclarationExpression(typeof(string), "name"));
+            ctor.Parameters.Add(new CodeParameterDeclarationExpression(typeof(int), "amount"));
             ctor.Parameters.Add(new CodeParameterDeclarationExpression("float", "saturation"));
             ctor.Parameters.Add(new CodeParameterDeclarationExpression("boolean", "isAnimalFood"));
             ctor.Parameters.Add(new CodeParameterDeclarationExpression("PotionEffect", "effect"));

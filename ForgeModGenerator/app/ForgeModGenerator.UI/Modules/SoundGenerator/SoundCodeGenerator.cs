@@ -3,13 +3,15 @@ using ForgeModGenerator.ModGenerator.Models;
 using ForgeModGenerator.SoundGenerator.Models;
 using System.CodeDom;
 using System.Collections.Generic;
+using System.IO;
 
 namespace ForgeModGenerator.SoundGenerator
 {
     public class SoundCodeGenerator : InitVariablesCodeGenerator<SoundEvent>
     {
         public SoundCodeGenerator(Mod mod) : this(mod, null) { }
-        public SoundCodeGenerator(Mod mod, IEnumerable<SoundEvent> soundEvents) : base(mod, soundEvents) => ScriptFilePath = ModPaths.GeneratedSoundsFile(Modname, Organization);
+        public SoundCodeGenerator(Mod mod, IEnumerable<SoundEvent> soundEvents) : base(mod, soundEvents)
+            => ScriptFilePath = Path.Combine(ModPaths.GeneratedSourceCodeFolder(Modname, Organization), Modname + "Sounds.java");
 
         protected override string ScriptFilePath { get; }
 

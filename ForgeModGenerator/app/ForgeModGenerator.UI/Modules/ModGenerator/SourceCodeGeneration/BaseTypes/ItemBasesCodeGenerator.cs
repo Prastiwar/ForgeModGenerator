@@ -12,7 +12,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
     {
         public ItemBasesCodeGenerator(Mod mod) : base(mod)
         {
-            string folder = ModPaths.GeneratedItemFolder(Modname, Organization);
+            string folder = Path.Combine(ModPaths.GeneratedSourceCodeFolder(Modname, Organization), "item");
             ScriptFilePaths = new string[] {
                 Path.Combine(folder, "ItemBase.java"),
                 Path.Combine(folder, "bow", "BowBase.java"),
@@ -58,18 +58,18 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 
                 case "FoodBase":
                     parameters = new KeyValuePair<string, string>[] {
-                        new KeyValuePair<string, string>("String", "name"),
-                        new KeyValuePair<string, string>("int", "amount"),
-                        new KeyValuePair<string, string>("float", "saturation"),
-                        new KeyValuePair<string, string>("boolean", "isAnimalFood")
+                        new KeyValuePair<string, string>(typeof(string).FullName, "name"),
+                        new KeyValuePair<string, string>(typeof(int).FullName, "amount"),
+                        new KeyValuePair<string, string>(typeof(float).FullName, "saturation"),
+                        new KeyValuePair<string, string>(typeof(bool).FullName, "isAnimalFood")
                     };
                     return CreateCustomItemUnit(fileName, "ItemFood", parameters);
 
                 case "ArmorBase":
                     parameters = new KeyValuePair<string, string>[] {
-                        new KeyValuePair<string, string>("String", "name"),
+                        new KeyValuePair<string, string>(typeof(string).FullName, "name"),
                         new KeyValuePair<string, string>("ArmorMaterial", "materialIn"),
-                        new KeyValuePair<string, string>("int", "renderIndexIn"),
+                        new KeyValuePair<string, string>(typeof(int).FullName, "renderIndexIn"),
                         new KeyValuePair<string, string>("EntityEquipmentSlot", "equipmentSlotIn")
                     };
                     unit = CreateCustomItemUnit(fileName, "ItemArmor", parameters);
@@ -86,14 +86,14 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             if (tool)
             {
                 toolParameters = new KeyValuePair<string, string>[] {
-                    new KeyValuePair<string, string>("String", "mame"),
+                    new KeyValuePair<string, string>(typeof(string).FullName, "name"),
                     new KeyValuePair<string, string>("ToolMaterial", "material")
                 };
             }
             else
             {
                 toolParameters = new KeyValuePair<string, string>[] {
-                    new KeyValuePair<string, string>("String", "mame")
+                    new KeyValuePair<string, string>(typeof(string).FullName, "name")
                 };
             }
             return CreateCustomItemUnit(className, baseType, toolParameters);
@@ -105,7 +105,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             CodeNamespace package = GetDefaultPackage(clas, $"{GeneratedPackageName}.{Modname}",
                                                             $"{GeneratedPackageName}.gui.{Modname}CreativeTab",
                                                             $"{GeneratedPackageName}.{Modname}Items",
-                                                            $"{GeneratedPackageName}.interface.IHasModel",
+                                                            $"{GeneratedPackageName}.handler.IHasModel",
                                                             $"net.minecraft.item.{baseType}");
             return GetDefaultCodeUnit(package);
         }

@@ -3,10 +3,71 @@
 					xmlns:local="clr-namespace:ForgeModGenerator"
 					xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
 					xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+					xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
 					xmlns:misc="clr-namespace:ForgeModGenerator.Utils"
 					xmlns:converters="clr-namespace:ForgeModGenerator.Converters">
 	<Style TargetType="{x:Type controls:SubmitTextBox}"
 		   BasedOn="{StaticResource {x:Type TextBox}}" />
+	<Style TargetType="{x:Type controls:ScrollButton}">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type controls:ScrollButton}">
+					<Border Background="{TemplateBinding Background}"
+							BorderBrush="{TemplateBinding BorderBrush}"
+							BorderThickness="{TemplateBinding BorderThickness}">
+						<Button Style="{StaticResource MaterialDesignRaisedLightButton}"
+								Background="#FF353535"
+								Foreground="#DDFFFFFF"
+								BorderBrush="#FF353535"
+								VerticalAlignment="Center">
+							<materialDesign:PackIcon Kind="{Binding ArrowIcon, RelativeSource={RelativeSource AncestorType=controls:ScrollButton}}" />
+							<i:Interaction.Triggers>
+								<i:EventTrigger EventName="PreviewMouseDown">
+									<i:InvokeCommandAction Command="{Binding ScrollCommand, RelativeSource={RelativeSource AncestorType={x:Type controls:ScrollButton}}}" />
+								</i:EventTrigger>
+							</i:Interaction.Triggers>
+						</Button>
+					</Border>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+	<Style TargetType="{x:Type controls:NavButton}">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type controls:NavButton}">
+					<Border Background="{TemplateBinding Background}"
+							BorderBrush="{TemplateBinding BorderBrush}"
+							BorderThickness="{TemplateBinding BorderThickness}">
+						<Button Background="#FF673AB7"
+								BorderBrush="Black"
+								Padding="0"
+								Margin="5"
+								Height="40"
+								Command="{Binding Command, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:NavButton}}}">
+							<Grid Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Button}}"
+								  Height="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Button}}">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="40" />
+									<ColumnDefinition Width="*" />
+								</Grid.ColumnDefinitions>
+								<materialDesign:PackIcon Kind="{Binding Kind, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:NavButton}}}"
+														 Width="25"
+														 Height="25"
+														 HorizontalAlignment="Center"
+														 VerticalAlignment="Center" />
+								<Label Grid.Column="1"
+									   Foreground="White"
+									   Height="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Button}}"
+									   VerticalContentAlignment="Center"
+									   Content="{Binding Desc, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:NavButton}}}" />
+							</Grid>
+						</Button>
+					</Border>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
 	<Style TargetType="{x:Type controls:EditableStringList}">
 		<Setter Property="Template">
 			<Setter.Value>

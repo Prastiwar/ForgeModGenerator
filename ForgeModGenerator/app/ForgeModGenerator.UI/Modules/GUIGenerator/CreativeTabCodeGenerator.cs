@@ -7,7 +7,7 @@ namespace ForgeModGenerator.GUIGenerator
 {
     public class CreativeTabCodeGenerator : ScriptCodeGenerator
     {
-        public CreativeTabCodeGenerator(Mod mod) : base(mod) => ScriptFilePath = Path.Combine(ModPaths.GeneratedGuiFolder(Modname, Organization), $"{Modname}CreativeTab.java");
+        public CreativeTabCodeGenerator(Mod mod) : base(mod) => ScriptFilePath = Path.Combine(ModPaths.GeneratedSourceCodeFolder(Modname, Organization), "gui", Modname + "CreativeTab.java");
 
         protected override string ScriptFilePath { get; }
 
@@ -15,11 +15,11 @@ namespace ForgeModGenerator.GUIGenerator
         {
             CodeTypeDeclaration clas = GetDefaultClass("CreativeTab", true);
             clas.Members.Add(GetCreativeTab());
-            CodeNamespace package = GetDefaultPackage(clas, $"import {GeneratedPackageName}.{Modname}Items",
-                                                            "import net.minecraft.creativetab.CreativeTabs",
-                                                            "import net.minecraft.item.ItemStack",
-                                                            "import net.minecraftforge.fml.relauncher.Side",
-                                                            "import net.minecraftforge.fml.relauncher.SideOnly");
+            CodeNamespace package = GetDefaultPackage(clas, $"{GeneratedPackageName}.{Modname}Items",
+                                                            "net.minecraft.creativetab.CreativeTabs",
+                                                            "net.minecraft.item.ItemStack",
+                                                            "net.minecraftforge.fml.relauncher.Side",
+                                                            "net.minecraftforge.fml.relauncher.SideOnly");
             return GetDefaultCodeUnit(package);
         }
 
@@ -28,8 +28,6 @@ namespace ForgeModGenerator.GUIGenerator
             CodeMemberField field = new CodeMemberField("CreativeTabs", "MODCEATIVETAB") {
                 Attributes = MemberAttributes.Public | MemberAttributes.Static | MemberAttributes.Final,
             };
-            CodeObjectCreateExpression initExpression = new CodeObjectCreateExpression("CreativeTabs", new CodePrimitiveExpression($"{Modname}"));
-            field.InitExpression = initExpression;
             field.InitExpression = new CodeSnippetExpression(
 $"public static final CreativeTabs MODCEATIVETAB = new CreativeTabs(\"{Modname}\") {{" + @"
     @SideOnly(Side.CLIENT)
@@ -43,7 +41,7 @@ $"    	return new ItemStack({Modname}Items.{Modname}LOGO, 1);" + @"
     public boolean hasSearchBar() {
     	return true;
     }
-};"
+}"
             );
             return field;
         }
