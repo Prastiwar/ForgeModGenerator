@@ -134,10 +134,14 @@
     </Compile>
     <Compile Include="Controls\EditableList.cs" />
     <Compile Include="Controls\ScrollButton.cs" />
+    <Compile Include="Converters\BoolValueConverter.cs" />
     <Compile Include="Converters\InvertIntToVisibilityConverter.cs" />
     <Compile Include="Converters\IntToVisibilityConverter.cs" />
     <Compile Include="Converters\InvertBooleanConverter.cs" />
     <Compile Include="Controls\NavButton.cs" />
+    <Compile Include="Modules\ApplicationModule\BugReporter.xaml.cs">
+      <DependentUpon>BugReporter.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Modules\SoundGenerator\Converters\SoundCollectionConverter.cs" />
     <Compile Include="Modules\SoundGenerator\Converters\SoundConverter.cs" />
     <Compile Include="Modules\SoundGenerator\Converters\SoundEventConverter.cs" />
@@ -261,6 +265,10 @@
     <Compile Include="Modules\ApplicationModule\NavigationMenu.xaml.cs">
       <DependentUpon>NavigationMenu.xaml</DependentUpon>
     </Compile>
+    <Page Include="Modules\ApplicationModule\BugReporter.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Themes\FolderExpanderThemes.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
