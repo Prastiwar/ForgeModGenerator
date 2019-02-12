@@ -11,27 +11,12 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 
         protected override string ScriptFilePath { get; }
 
-        protected CodeMemberField CreateHookString(string variableName, string value)
-        {
-            CodeMemberField field = new CodeMemberField(typeof(string), variableName.ToUpper()) {
-                Attributes = MemberAttributes.Public | MemberAttributes.Static | MemberAttributes.Final,
-                InitExpression = new CodePrimitiveExpression(value)
-            };
-            return field;
-        }
+        protected CodeMemberField CreateHookString(string variableName, string value) => NewFieldGlobal(typeof(string).FullName, variableName.ToUpper(), NewPrimitive(value));
 
-        protected override CodeCompileUnit CreateTargetCodeUnit()
-        {
-            CodeTypeDeclaration hookClass = GetDefaultClass("Hook", true);
-
-            hookClass.Members.Add(CreateHookString("MODID", Mod.ModInfo.Modid));
-            hookClass.Members.Add(CreateHookString("VERSION", Mod.ModInfo.Version));
-            hookClass.Members.Add(CreateHookString("ACCEPTEDVERSIONS", Mod.ModInfo.McVersion));
-            hookClass.Members.Add(CreateHookString("CLIENTPROXYCLASS", $"{GeneratedPackageName}.proxy.ClientProxy"));
-            hookClass.Members.Add(CreateHookString("SERVERPROXYCLASS", $"{GeneratedPackageName}.proxy.ServerProxy"));
-
-            CodeNamespace package = GetDefaultPackage(hookClass);
-            return GetDefaultCodeUnit(package);
-        }
+        protected override CodeCompileUnit CreateTargetCodeUnit() => NewCodeUnit(NewClassWithMembers("Hook", true, CreateHookString("MODID", Mod.ModInfo.Modid),
+                                                                                                                   CreateHookString("VERSION", Mod.ModInfo.Version),
+                                                                                                                   CreateHookString("ACCEPTEDVERSIONS", Mod.ModInfo.McVersion),
+                                                                                                                   CreateHookString("CLIENTPROXYCLASS", $"{GeneratedPackageName}.proxy.ClientProxy"),
+                                                                                                                   CreateHookString("SERVERPROXYCLASS", $"{GeneratedPackageName}.proxy.ServerProxy")));
     }
 }

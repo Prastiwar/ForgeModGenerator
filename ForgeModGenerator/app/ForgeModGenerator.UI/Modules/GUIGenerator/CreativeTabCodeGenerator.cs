@@ -13,14 +13,14 @@ namespace ForgeModGenerator.GUIGenerator
 
         protected override CodeCompileUnit CreateTargetCodeUnit()
         {
-            CodeTypeDeclaration clas = GetDefaultClass("CreativeTab", true);
+            CodeTypeDeclaration clas = NewClassWithMembers("CreativeTab", true);
             clas.Members.Add(GetCreativeTab());
-            CodeNamespace package = GetDefaultPackage(clas, $"{GeneratedPackageName}.{Modname}Items",
+            CodeNamespace package = NewPackage(clas, $"{GeneratedPackageName}.{Modname}Items",
                                                             "net.minecraft.creativetab.CreativeTabs",
                                                             "net.minecraft.item.ItemStack",
                                                             "net.minecraftforge.fml.relauncher.Side",
                                                             "net.minecraftforge.fml.relauncher.SideOnly");
-            return GetDefaultCodeUnit(package);
+            return NewCodeUnit(package);
         }
 
         private CodeMemberField GetCreativeTab()

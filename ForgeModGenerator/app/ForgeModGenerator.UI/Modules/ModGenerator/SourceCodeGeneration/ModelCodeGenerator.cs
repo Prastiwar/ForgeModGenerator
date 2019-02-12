@@ -11,19 +11,6 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 
         protected override string ScriptFilePath { get; }
 
-        protected override CodeCompileUnit CreateTargetCodeUnit()
-        {
-            CodeTypeDeclaration modelInterface = GetDefaultInterface("IHasModel", false);
-
-            CodeMemberMethod modelRegister = new CodeMemberMethod() {
-                Name = "registerModels",
-                Attributes = MemberAttributes.Public,
-                ReturnType = new CodeTypeReference("void")
-            };
-            modelInterface.Members.Add(modelRegister);
-
-            CodeNamespace package = GetDefaultPackage(modelInterface);
-            return GetDefaultCodeUnit(package);
-        }
+        protected override CodeCompileUnit CreateTargetCodeUnit() => NewCodeUnit(NewInterface("IHasModel", NewMethod("registerModels", typeof(void).FullName, MemberAttributes.Public)));
     }
 }

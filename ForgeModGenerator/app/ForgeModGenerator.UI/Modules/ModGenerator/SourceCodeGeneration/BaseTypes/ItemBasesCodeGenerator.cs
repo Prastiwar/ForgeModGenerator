@@ -30,7 +30,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 
         protected override CodeCompileUnit CreateTargetCodeUnit(string scriptPath)
         {
-            KeyValuePair<string, string>[] parameters = null;
+            Parameter[] parameters = null;
             CodeCompileUnit unit = null;
             string fileName = Path.GetFileNameWithoutExtension(scriptPath);
             switch (fileName)
@@ -57,20 +57,20 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
                     return unit;
 
                 case "FoodBase":
-                    parameters = new KeyValuePair<string, string>[] {
-                        new KeyValuePair<string, string>(typeof(string).FullName, "name"),
-                        new KeyValuePair<string, string>(typeof(int).FullName, "amount"),
-                        new KeyValuePair<string, string>(typeof(float).FullName, "saturation"),
-                        new KeyValuePair<string, string>(typeof(bool).FullName, "isAnimalFood")
+                    parameters = new Parameter[] {
+                        new Parameter(typeof(string).FullName, "name"),
+                        new Parameter(typeof(int).FullName, "amount"),
+                        new Parameter(typeof(float).FullName, "saturation"),
+                        new Parameter(typeof(bool).FullName, "isAnimalFood")
                     };
                     return CreateCustomItemUnit(fileName, "ItemFood", parameters);
 
                 case "ArmorBase":
-                    parameters = new KeyValuePair<string, string>[] {
-                        new KeyValuePair<string, string>(typeof(string).FullName, "name"),
-                        new KeyValuePair<string, string>("ArmorMaterial", "materialIn"),
-                        new KeyValuePair<string, string>(typeof(int).FullName, "renderIndexIn"),
-                        new KeyValuePair<string, string>("EntityEquipmentSlot", "equipmentSlotIn")
+                    parameters = new Parameter[] {
+                        new Parameter(typeof(string).FullName, "name"),
+                        new Parameter("ArmorMaterial", "materialIn"),
+                        new Parameter(typeof(int).FullName, "renderIndexIn"),
+                        new Parameter("EntityEquipmentSlot", "equipmentSlotIn")
                     };
                     unit = CreateCustomItemUnit(fileName, "ItemArmor", parameters);
                     unit.Namespaces[0].Imports.Add(new CodeNamespaceImport("net.minecraft.inventory.EntityEquipmentSlot"));
@@ -82,62 +82,54 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 
         private CodeCompileUnit CreateBaseItemUnit(string className, string baseType, bool tool = false)
         {
-            KeyValuePair<string, string>[] toolParameters = null;
+            Parameter[] toolParameters = null;
             if (tool)
             {
-                toolParameters = new KeyValuePair<string, string>[] {
-                    new KeyValuePair<string, string>(typeof(string).FullName, "name"),
-                    new KeyValuePair<string, string>("ToolMaterial", "material")
+                toolParameters = new Parameter[] {
+                    new Parameter(typeof(string).FullName, "name"),
+                    new Parameter("ToolMaterial", "material")
                 };
             }
             else
             {
-                toolParameters = new KeyValuePair<string, string>[] {
-                    new KeyValuePair<string, string>(typeof(string).FullName, "name")
+                toolParameters = new Parameter[] {
+                    new Parameter(typeof(string).FullName, "name")
                 };
             }
             return CreateCustomItemUnit(className, baseType, toolParameters);
         }
 
-        private CodeCompileUnit CreateCustomItemUnit(string className, string baseType, params KeyValuePair<string, string>[] ctorParameters)
+        private CodeCompileUnit CreateCustomItemUnit(string className, string baseType, params Parameter[] ctorParameters)
         {
             CodeTypeDeclaration clas = CreateBaseItemClass(className, baseType, ctorParameters);
-            CodeNamespace package = GetDefaultPackage(clas, $"{GeneratedPackageName}.{Modname}",
-                                                            $"{GeneratedPackageName}.gui.{Modname}CreativeTab",
-                                                            $"{GeneratedPackageName}.{Modname}Items",
-                                                            $"{GeneratedPackageName}.handler.IHasModel",
-                                                            $"net.minecraft.item.{baseType}");
-            return GetDefaultCodeUnit(package);
+            return NewCodeUnit(clas, $"{GeneratedPackageName}.{Modname}",
+                                     $"{GeneratedPackageName}.gui.{Modname}CreativeTab",
+                                     $"{GeneratedPackageName}.{Modname}Items",
+                                     $"{GeneratedPackageName}.handler.IHasModel",
+                                     $"net.minecraft.item.{baseType}");
         }
 
         private CodeMemberMethod CreateItemRegisterModelsMethod()
         {
             // TODO: Add annotation @Override
-            CodeMemberMethod method = new CodeMemberMethod() {
-                Name = "registerModels",
-                Attributes = MemberAttributes.Public
-            };
-            CodeMethodInvokeExpression getProxy = new CodeMethodInvokeExpression(new CodeVariableReferenceExpression($"{Modname}"), "getProxy");
-            CodeMethodInvokeExpression registerItemRenderer =
-                new CodeMethodInvokeExpression(getProxy, "registerItemRenderer", new CodeVariableReferenceExpression("this"), new CodePrimitiveExpression(0), new CodePrimitiveExpression("inventory"));
+            CodeMemberMethod method = NewMethod("registerModels", typeof(void).FullName, MemberAttributes.Public);
+            CodeMethodInvokeExpression getProxy = NewMethodInvokeVar(Modname, "getProxy");
+            method.Statements.Add(NewMethodInvoke(getProxy, "registerItemRenderer", NewVarReference("this"), NewPrimitive(0), NewPrimitive("inventory")));
             return method;
         }
 
-        private CodeTypeDeclaration CreateBaseItemClass(string className, string baseClass, params KeyValuePair<string, string>[] ctorParameters)
+        private CodeTypeDeclaration CreateBaseItemClass(string className, string baseClass, params Parameter[] ctorParameters)
         {
-            CodeConstructor ctor = new CodeConstructor() {
-                Name = className,
-                Attributes = MemberAttributes.Public
-            };
+            CodeConstructor ctor = NewConstructor(className, MemberAttributes.Public);
             string[] superParameters = null;
             if (ctorParameters != null && ctorParameters.Length > 0)
             {
                 List<string> parameterNames = new List<string>(ctorParameters.Length);
-                ctor.Parameters.Add(new CodeParameterDeclarationExpression(ctorParameters[0].Key, ctorParameters[0].Value)); // do not add first param to super arguments
+                ctor.Parameters.Add(NewParameter(ctorParameters[0].TypeName, ctorParameters[0].Name)); // do not add first param to super arguments
                 for (int i = 1; i < ctorParameters.Length; i++)
                 {
-                    ctor.Parameters.Add(new CodeParameterDeclarationExpression(ctorParameters[i].Key, ctorParameters[i].Value));
-                    parameterNames.Add(ctorParameters[i].Value);
+                    ctor.Parameters.Add(NewParameter(ctorParameters[i].TypeName, ctorParameters[i].Name));
+                    parameterNames.Add(ctorParameters[i].Name);
                 }
                 superParameters = parameterNames.ToArray();
             }
@@ -150,10 +142,9 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 
         private CodeTypeDeclaration CreateBaseItemClass(string className, string baseClass, CodeConstructor ctor)
         {
-            CodeTypeDeclaration clas = GetDefaultClass(className, false);
-            clas.BaseTypes.Add(new CodeTypeReference(baseClass));
-            clas.BaseTypes.Add(new CodeTypeReference("IHasModel"));
+            CodeTypeDeclaration clas = NewClassWithBases(className, false, baseClass, "IHasModel");
             clas.Members.Add(ctor);
+            clas.Members.Add(CreateItemRegisterModelsMethod());
             return clas;
         }
 
@@ -165,16 +156,15 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
                 List<CodeExpression> ctorArgsList = new List<CodeExpression>(superParameters.Length);
                 foreach (string param in superParameters)
                 {
-                    ctorArgsList.Add(new CodeVariableReferenceExpression(param));
+                    ctorArgsList.Add(NewVarReference(param));
                 }
                 ctorArgs = ctorArgsList.ToArray();
             }
             CodeSuperConstructorInvokeExpression super = new CodeSuperConstructorInvokeExpression(ctorArgs);
-            CodeMethodInvokeExpression setUnlocalizedName = new CodeMethodInvokeExpression(null, "setUnlocalizedName", new CodeVariableReferenceExpression("name"));
-            CodeMethodInvokeExpression setRegistryName = new CodeMethodInvokeExpression(null, "setRegistryName", new CodeVariableReferenceExpression("name"));
-            CodeMethodInvokeExpression setCreativeTab = new CodeMethodInvokeExpression(null, "setCreativeTab", new CodeVariableReferenceExpression($"{Modname}CreativeTab.MODCEATIVETAB"));
-            CodeFieldReferenceExpression list = new CodeFieldReferenceExpression(new CodeVariableReferenceExpression($"{Modname}Items"), "ITEMS");
-            CodeMethodInvokeExpression addToList = new CodeMethodInvokeExpression(list, "add", new CodeThisReferenceExpression());
+            CodeMethodInvokeExpression setUnlocalizedName = NewMethodInvoke("setUnlocalizedName", NewVarReference("name"));
+            CodeMethodInvokeExpression setRegistryName = NewMethodInvoke("setRegistryName", NewVarReference("name"));
+            CodeMethodInvokeExpression setCreativeTab = NewMethodInvoke("setCreativeTab", NewVarReference(Modname + "CreativeTab.MODCEATIVETAB"));
+            CodeMethodInvokeExpression addToList = NewMethodInvoke(NewFieldReferenceVar(Modname + "Items", "ITEMS"), "add", NewThis());
             return new CodeExpression[] { super, setUnlocalizedName, setRegistryName, setCreativeTab, addToList };
         }
     }

@@ -38,55 +38,30 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 
         private CodeCompileUnit CreateClientProxyCodeUnit()
         {
-            CodeTypeDeclaration proxyClass = GetDefaultClass("ClientProxy", false);
-            proxyClass.BaseTypes.Add(new CodeTypeReference("ICommonProxy"));
+            CodeTypeDeclaration proxyClass = NewClassWithBases("ClientProxy", false, "ICommonProxy");
             CodeMemberMethod registerItemRendererMethod = CreateRegisterItemRendererMethod();
             registerItemRendererMethod.Attributes |= MemberAttributes.Override;
-            CodeObjectCreateExpression modelResourceLocation =
-                new CodeObjectCreateExpression("ModelResourceLocation", new CodeMethodInvokeExpression(new CodeVariableReferenceExpression("item"), "getRegistryName"), new CodeVariableReferenceExpression("id"));
-            CodeMethodInvokeExpression setCustomModelResourceLocation =
-                new CodeMethodInvokeExpression(new CodeTypeReferenceExpression("ModelLoader"),
-                                                "setCustomModelResourceLocation",
-                                                new CodeVariableReferenceExpression("item"),
-                                                new CodeVariableReferenceExpression("meta"),
-                                                modelResourceLocation);
-            registerItemRendererMethod.Statements.Add(setCustomModelResourceLocation);
+            CodeObjectCreateExpression modelResourceLocation = NewObject("ModelResourceLocation", NewMethodInvokeVar("item", "getRegistryName", NewVarReference("id")));
+            registerItemRendererMethod.Statements.Add(NewMethodInvokeType("ModelLoader", "setCustomModelResourceLocation", NewVarReference("item"), NewVarReference("meta"), modelResourceLocation));
             proxyClass.Members.Add(registerItemRendererMethod);
-            CodeNamespace package = GetDefaultPackage(proxyClass,
-                                                      "net.minecraft.client.renderer.block.model.ModelResourceLocation",
-                                                      "net.minecraft.item.Item",
-                                                      "net.minecraftforge.client.model.ModelLoader");
-            return GetDefaultCodeUnit(package);
+            return NewCodeUnit(proxyClass, "net.minecraft.client.renderer.block.model.ModelResourceLocation",
+                                           "net.minecraft.item.Item",
+                                           "net.minecraftforge.client.model.ModelLoader");
         }
 
         private CodeCompileUnit CreateServerProxyCodeUnit()
         {
-            CodeTypeDeclaration proxyClass = GetDefaultClass("ServerProxy", false);
-            proxyClass.BaseTypes.Add(new CodeTypeReference("ICommonProxy"));
+            CodeTypeDeclaration proxyClass = NewClassWithBases("ServerProxy", false, "ICommonProxy");
             CodeMemberMethod registerItemRendererMethod = CreateRegisterItemRendererMethod();
             registerItemRendererMethod.Attributes |= MemberAttributes.Override;
             proxyClass.Members.Add(registerItemRendererMethod);
-            CodeNamespace package = GetDefaultPackage(proxyClass, "net.minecraft.item.Item");
-            return GetDefaultCodeUnit(package);
+            return NewCodeUnit(proxyClass, "net.minecraft.item.Item");
         }
 
-        private CodeCompileUnit CreateICommonProxyCodeUnit()
-        {
-            CodeTypeDeclaration proxyInterface = GetDefaultInterface("ICommonProxy", false);
-            proxyInterface.Members.Add(CreateRegisterItemRendererMethod());
-            CodeNamespace package = GetDefaultPackage(proxyInterface, "net.minecraft.item.Item");
-            return GetDefaultCodeUnit(package);
-        }
+        private CodeCompileUnit CreateICommonProxyCodeUnit() => NewCodeUnit(NewInterface("ICommonProxy", CreateRegisterItemRendererMethod()), "net.minecraft.item.Item");
 
-        private CodeMemberMethod CreateRegisterItemRendererMethod()
-        {
-            CodeMemberMethod registerItemRenderer = new CodeMemberMethod() {
-                Attributes = MemberAttributes.Public
-            };
-            registerItemRenderer.Parameters.Add(new CodeParameterDeclarationExpression("Item", "item"));
-            registerItemRenderer.Parameters.Add(new CodeParameterDeclarationExpression(typeof(int), "meta"));
-            registerItemRenderer.Parameters.Add(new CodeParameterDeclarationExpression(typeof(string), "id"));
-            return registerItemRenderer;
-        }
+        private CodeMemberMethod CreateRegisterItemRendererMethod() => NewMethod("registerItemRenderer", typeof(void).FullName, MemberAttributes.Public, new Parameter("Item", "item"),
+                                                                                                                                                         new Parameter(typeof(int).FullName, "meta"),
+                                                                                                                                                         new Parameter(typeof(string).FullName, "id"));
     }
 }

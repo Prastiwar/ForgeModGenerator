@@ -14,10 +14,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
         private CodeMemberMethod CretePreInitMethod()
         {
             CodeMemberMethod preInitMethod = CreateEmptyEventHandler("preInit", "FMLPreInitializationEvent");
-            CodeVariableReferenceExpression loggerReference = new CodeVariableReferenceExpression("logger");
-            CodeMethodInvokeExpression getModLog = new CodeMethodInvokeExpression(new CodeTypeReferenceExpression("event"), "getModLog");
-            CodeAssignStatement assignLogger = new CodeAssignStatement(loggerReference, getModLog);
-            preInitMethod.Statements.Add(assignLogger);
+            preInitMethod.Statements.Add(new CodeAssignStatement(NewVarReference("logger"), NewMethodInvokeType("event", "getModLog")));
             //CodeMethodInvokeExpression registerWorldGenerator =
             //    new CodeMethodInvokeExpression(new CodeTypeReferenceExpression("GameRegistry"), "registerWorldGenerator", new CodeObjectCreateExpression($"{Modname}WorldGen"), new CodePrimitiveExpression(3));
             //preInitMethod.Statements.Add(registerWorldGenerator);
@@ -27,83 +24,53 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
         private CodeMemberMethod CreateInitMethod()
         {
             // TODO: Add annotation @EventHandler
-            CodeMemberMethod initMethod = new CodeMemberMethod() {
-                Name = "init",
-                Attributes = MemberAttributes.Public,
-                ReturnType = new CodeTypeReference(typeof(void)),
-            };
-            CodeMethodInvokeExpression initRecipes = new CodeMethodInvokeExpression(new CodeTypeReferenceExpression($"{Modname}Recipes"), "init");
-            initMethod.Statements.Add(initRecipes);
-            initMethod.Parameters.Add(new CodeParameterDeclarationExpression("FMLInitializationEvent", "event"));
+            CodeMemberMethod initMethod = NewMethod("init", typeof(void).FullName, MemberAttributes.Public, new Parameter("FMLInitializationEvent", "event"));
+            initMethod.Statements.Add(NewMethodInvokeType(Modname + "Recipes", "init"));
             return initMethod;
-        }
-
-        private CodeMemberMethod CreateGetProxyMethod()
-        {
-            // TODO: Add annotation @EventHandler
-            CodeMemberMethod getProxyMethod = new CodeMemberMethod() {
-                Name = "getProxy",
-                Attributes = MemberAttributes.Public | MemberAttributes.Static,
-                ReturnType = new CodeTypeReference("ICommonProxy"),
-            };
-            CodeMethodReturnStatement returnProxy = new CodeMethodReturnStatement(new CodeVariableReferenceExpression("proxy"));
-            getProxyMethod.Statements.Add(returnProxy);
-            return getProxyMethod;
         }
 
         private CodeMemberMethod CreateEmptyEventHandler(string name, string eventType)
         {
             // TODO: Add annotation @EventHandler
-            CodeMemberMethod method = new CodeMemberMethod() {
-                Name = name,
-                Attributes = MemberAttributes.Public,
-                ReturnType = new CodeTypeReference(typeof(void)),
-            };
-            method.Parameters.Add(new CodeParameterDeclarationExpression(eventType, "event"));
+            CodeMemberMethod method = NewMethod(name, typeof(void).FullName, MemberAttributes.Public, new Parameter(eventType, "event"));
             return method;
         }
 
         protected override CodeCompileUnit CreateTargetCodeUnit()
         {
-            CodeTypeDeclaration managerClass = GetDefaultClass(null, true);
+            CodeTypeDeclaration managerClass = NewClassWithMembers(null, true);
 
             // TODO: Add annotation @Instance
-            CodeMemberField instanceField = new CodeMemberField(Modname, "instance") {
-                Attributes = MemberAttributes.Private | MemberAttributes.Static
-            };
+            CodeMemberField instanceField = NewField(Modname, "instance", MemberAttributes.Private | MemberAttributes.Static);
             managerClass.Members.Add(instanceField);
 
             // TODO: Add annotation @SidedProxy(clientSide = {modname}Hook.CLIENTPROXYCLASS, serverSide = {modname}Hook.SERVERPROXYCLASS)
-            CodeMemberField proxyField = new CodeMemberField("CommonProxy", "proxy") {
-                Attributes = MemberAttributes.Private | MemberAttributes.Static
-            };
+            CodeMemberField proxyField = NewField("CommonProxy", "proxy", MemberAttributes.Private | MemberAttributes.Static);
             managerClass.Members.Add(proxyField);
 
-            CodeMemberField loggerField = new CodeMemberField("Logger", "logger") {
-                Attributes = MemberAttributes.Private | MemberAttributes.Static
-            };
-            managerClass.Members.Add(loggerField);
+            managerClass.Members.Add(NewField("Logger", "logger", MemberAttributes.Private | MemberAttributes.Static));
 
             managerClass.Members.Add(CretePreInitMethod());
             managerClass.Members.Add(CreateInitMethod());
             managerClass.Members.Add(CreateEmptyEventHandler("postInit", "FMLPostInitializationEvent"));
             managerClass.Members.Add(CreateEmptyEventHandler("serverStart", "FMLServerStartingEvent"));
-            managerClass.Members.Add(CreateGetProxyMethod());
 
-            CodeNamespace package = GetDefaultPackage(managerClass,
-                                                      "net.minecraftforge.fml.common.Mod",
-                                                      "net.minecraftforge.fml.common.SidedProxy",
-                                                      "net.minecraftforge.fml.common.Mod.EventHandler",
-                                                      "net.minecraftforge.fml.common.Mod.Instance",
-                                                      "net.minecraftforge.fml.common.event.FMLInitializationEvent",
-                                                      "net.minecraftforge.fml.common.event.FMLPostInitializationEvent",
-                                                      "net.minecraftforge.fml.common.event.FMLPreInitializationEvent",
-                                                      "net.minecraftforge.fml.common.event.FMLServerStartingEvent",
-                                                      $"com.{Organization}.{Modname}.{Modname}Recipes",
-                                                      $"com.{Organization}.{Modname}.proxy.CommonProxy",
-                                                      "org.apache.logging.log4j.Logger"
-            );
-            return GetDefaultCodeUnit(package);
+            // TODO: Add annotation @EventHandler
+            CodeMemberMethod getProxyMethod = NewMethod("getProxy", "ICommonProxy", MemberAttributes.Public | MemberAttributes.Static);
+            getProxyMethod.Statements.Add(NewReturnVar("proxy"));
+            managerClass.Members.Add(getProxyMethod);
+
+            return NewCodeUnit(managerClass, "net.minecraftforge.fml.common.Mod",
+                                             "net.minecraftforge.fml.common.SidedProxy",
+                                             "net.minecraftforge.fml.common.Mod.EventHandler",
+                                             "net.minecraftforge.fml.common.Mod.Instance",
+                                             "net.minecraftforge.fml.common.event.FMLInitializationEvent",
+                                             "net.minecraftforge.fml.common.event.FMLPostInitializationEvent",
+                                             "net.minecraftforge.fml.common.event.FMLPreInitializationEvent",
+                                             "net.minecraftforge.fml.common.event.FMLServerStartingEvent",
+                                             $"{GeneratedPackageName}.{Modname}Recipes",
+                                             $"{GeneratedPackageName}.proxy.CommonProxy",
+                                             "org.apache.logging.log4j.Logger");
         }
     }
 }
