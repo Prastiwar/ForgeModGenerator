@@ -129,10 +129,7 @@ namespace ForgeModGenerator.SoundGenerator.Models
             return false;
         }
 
-        public void FormatName()
-        {
-            Name = FormatSoundPathFromFullPath(Mod.GetModidFromPath(Name), Info.FullName);
-        }
+        public void FormatName() => Name = FormatSoundPathFromFullPath(Mod.GetModidFromPath(Name), Info.FullName);
 
         public ValidationResult IsValid(IEnumerable<Sound> sounds)
         {

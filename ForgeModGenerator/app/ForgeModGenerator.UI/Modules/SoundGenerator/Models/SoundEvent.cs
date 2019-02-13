@@ -101,16 +101,6 @@ namespace ForgeModGenerator.SoundGenerator.Models
 
         public override bool Remove(Sound item) => Remove(item, false);
 
-        private bool Remove(Sound item, bool ignoreMinValue)
-        {
-            if (!ignoreMinValue && Files.Count == 1)
-            {
-                Log.Warning("SoundEvent must have at least 1 sound", true);
-                return false;
-            }
-            return base.Remove(item);
-        }
-
         public override void Delete()
         {
             int length = Files.Count;
@@ -118,6 +108,16 @@ namespace ForgeModGenerator.SoundGenerator.Models
             {
                 Remove(Files[i], true);
             }
+        }
+
+        public bool Remove(Sound item, bool ignoreMinValue)
+        {
+            if (!ignoreMinValue && Files.Count == 1)
+            {
+                Log.Warning("SoundEvent must have at least 1 sound", true);
+                return false;
+            }
+            return base.Remove(item);
         }
 
         public override object DeepClone()

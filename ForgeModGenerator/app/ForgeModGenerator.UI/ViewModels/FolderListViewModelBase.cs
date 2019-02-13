@@ -27,15 +27,15 @@ namespace ForgeModGenerator.ViewModels
         #region EventArgs
         public class FileEditedEventArgs : EventArgs
         {
-            public FileEditedEventArgs(TFolder folder, TFile fileBeforeEdit, TFile fileAfterEdit)
+            public FileEditedEventArgs(TFolder folder, TFile cachedFile, TFile actualFile)
             {
                 Folder = folder;
-                FileBeforeEdit = fileBeforeEdit;
-                FileAfterEdit = fileAfterEdit;
+                CachedFile = cachedFile;
+                ActualFile = actualFile;
             }
             public TFolder Folder { get; }
-            public TFile FileBeforeEdit { get; }
-            public TFile FileAfterEdit { get; }
+            public TFile CachedFile { get; }
+            public TFile ActualFile { get; }
         }
 
         public class FileEditorClosingDialogEventArgs : DialogClosingEventArgs
@@ -156,102 +156,66 @@ namespace ForgeModGenerator.ViewModels
         protected virtual void OnFileEditorOpening(object sender, FileEditorOpeningDialogEventArgs eventArgs) { }
         protected virtual async void OpenFileEditor(Tuple<TFolder, TFile> param)
         {
+            SelectedFile = param.Item2;
+            if (FileEditForm == null)
+            {
+                return;
+            }
+            FileEditForm.DataContext = SelectedFile;
+            MemoryCache.Default.Set(EditFileCacheKey, SelectedFile.DeepClone(), ObjectCache.InfiniteAbsoluteExpiration); // cache file state so it can be restored later
+            bool result = false;
             try
             {
-                SelectedFile = param.Item2;
-                bool result = false;
-                try
-                {
-                    MemoryCache.Default.Set(EditFileCacheKey, SelectedFile.DeepClone(), ObjectCache.InfiniteAbsoluteExpiration);
-                    FileEditForm.DataContext = SelectedFile;
-                    result = (bool)await DialogHost.Show(FileEditForm,
-                        (s, a) => { OnFileEditorOpening(s, new FileEditorOpeningDialogEventArgs(a, param.Item1, param.Item2)); },
-                        (s, a) => { OnFileEditorClosing(s, new FileEditorClosingDialogEventArgs(a, param.Item1, param.Item2)); }
-                    );
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, $"Couldn't open edit form for {param.Item2.Info.Name}", true);
-                    return;
-                }
-                OnFileEdited(result, new FileEditedEventArgs(param.Item1, (TFile)MemoryCache.Default.Remove(EditFileCacheKey), param.Item2));
+                result = (bool)await DialogHost.Show(FileEditForm,
+                    (sender, args) => { OnFileEditorOpening(sender, new FileEditorOpeningDialogEventArgs(args, param.Item1, param.Item2)); },
+                    (sender, args) => { OnFileEditorClosing(sender, new FileEditorClosingDialogEventArgs(args, param.Item1, param.Item2)); });
             }
             catch (Exception ex)
             {
-                Log.Error(ex, Log.UnexpectedErrorMessage, true);
+                Log.Error(ex, $"Couldn't open edit form for {param.Item2.Info.Name}", true);
+                return;
             }
+            OnFileEdited(result, new FileEditedEventArgs(param.Item1, (TFile)MemoryCache.Default.Remove(EditFileCacheKey), param.Item2));
         }
 
         protected virtual void OnFileEdited(bool result, FileEditedEventArgs args)
         {
             if (!result)
             {
-                // TODO: Undo commands
-                args.FileAfterEdit.CopyValues(args.FileBeforeEdit);
+                args.ActualFile.CopyValues(args.CachedFile);
             }
         }
 
         protected virtual void AddNewFolder()
         {
-            try
+            DialogResult dialogResult = OpenFolderDialog.ShowDialog();
+            if (dialogResult == DialogResult.OK)
             {
-                DialogResult dialogResult = OpenFolderDialog.ShowDialog();
-                if (dialogResult == DialogResult.OK)
-                {
-                    string newfolderPath = OpenFolderDialog.SelectedPath;
-                    TFolder newFolder = WPFExtensions.CreateInstance<TFolder>(newfolderPath);
-                    Folders.Add(newFolder);
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, Log.UnexpectedErrorMessage, true);
+                string newfolderPath = OpenFolderDialog.SelectedPath;
+                TFolder newFolder = WPFExtensions.CreateInstance<TFolder>(newfolderPath);
+                Folders.Add(newFolder);
             }
         }
 
         protected virtual void RemoveFolder(TFolder folder)
         {
-            try
+            if (Folders.Remove(folder))
             {
-                if (Folders.Remove(folder))
-                {
-                    folder.Delete();
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, Log.UnexpectedErrorMessage, true);
+                folder.Delete();
             }
         }
 
-        protected virtual void RemoveFileFromFolder(Tuple<TFolder, TFile> param)
-        {
-            try
-            {
-                param.Item1.Remove(param.Item2);
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, Log.UnexpectedErrorMessage, true);
-            }
-        }
+        protected virtual void RemoveFileFromFolder(Tuple<TFolder, TFile> param) => param.Item1.Remove(param.Item2);
 
         protected virtual void AddNewFileToFolder(TFolder folder)
         {
-            try
+            DialogResult dialogResult = OpenFileDialog.ShowDialog();
+            if (dialogResult == DialogResult.OK)
             {
-                DialogResult dialogResult = OpenFileDialog.ShowDialog();
-                if (dialogResult == DialogResult.OK)
+                foreach (string filePath in OpenFileDialog.FileNames)
                 {
-                    foreach (string filePath in OpenFileDialog.FileNames)
-                    {
-                        folder.Add(filePath);
-                    }
+                    folder.Add(filePath);
                 }
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, Log.UnexpectedErrorMessage, true);
             }
         }
 
@@ -265,7 +229,7 @@ namespace ForgeModGenerator.ViewModels
             }
             else if (File.Exists(path))
             {
-                found = DeserializeCollectionFromFile(path);
+                found = FindFoldersFromFile(path);
             }
 
             bool isEmpty = found == null || found.Count <= 0;
@@ -276,37 +240,60 @@ namespace ForgeModGenerator.ViewModels
             return found;
         }
 
-        protected ObservableCollection<TFolder> CreateEmptyFoldersRoot(string path)
+        protected ObservableCollection<TFolder> CreateEmptyFoldersRoot(string folderPath)
         {
-            TFolder folder = WPFExtensions.CreateInstance<TFolder>(path);
-            SubscribeFolderEvents(folder);
-            return new ObservableCollection<TFolder>() { folder };
+            TFolder root = WPFExtensions.CreateInstance<TFolder>(folderPath);
+            SubscribeFolderEvents(root);
+            return new ObservableCollection<TFolder>() { root };
         }
 
-        protected ObservableCollection<TFolder> DeserializeCollectionFromFile(string path)
+        protected ObservableCollection<TFolder> FindFoldersFromFile(string path, bool loadOnlyExisting = true)
         {
             string json = File.ReadAllText(path);
+            ObservableCollection<TFolder> deserializedFolders = null;
             try
             {
-                ObservableCollection<TFolder> folders = JsonConvert.DeserializeObject<ObservableCollection<TFolder>>(json);
-                foreach (TFolder folder in folders)
-                {
-                    SubscribeFolderEvents(folder);
-                }
+                deserializedFolders = DeserializeFolders(json);
             }
             catch (Exception ex)
             {
-                Log.Error(ex, $"Couldnt load {typeof(ObservableCollection<TFolder>)} from {json}");
+                Log.Error(ex, $"Couldnt load {typeof(ObservableCollection<TFolder>)} from {json}", true);
+                return null;
             }
-            return null;
+            if (!loadOnlyExisting)
+            {
+                return deserializedFolders;
+            }
+            return FilterExistingFiles(deserializedFolders);
+        }
+
+        protected ObservableCollection<TFolder> FilterExistingFiles(ObservableCollection<TFolder> deserializedFolders, bool sendWarning = true)
+        {
+            ObservableCollection<TFolder> folders = new ObservableCollection<TFolder>();
+            foreach (TFolder folder in deserializedFolders)
+            {
+                for (int i = folder.Files.Count - 1; i >= 0; i--)
+                {
+                    if (!File.Exists(folder.Files[i].Info.FullName))
+                    {
+                        Log.Warning($"File was not loaded correctly { folder.Files[i].Info.FullName}", sendWarning);
+                        folder.Files.RemoveAt(i);
+                    }
+                }
+                if (folder.Files.Count > 0)
+                {
+                    folders.Add(folder);
+                }
+            }
+            return folders;
         }
 
         protected ObservableCollection<TFolder> FindFoldersFromDirectory(string path)
         {
-            List<TFolder> initCollection = new List<TFolder>(10);
+            ObservableCollection<TFolder> initCollection = new ObservableCollection<TFolder>();
 
             AddFilesToCollection(path);
-            foreach (string directory in Directory.EnumerateDirectories(path, "*", SearchOption.AllDirectories))
+            foreach (string directory in IOExtensions.EnumerateAllDirectories(path))
             {
                 AddFilesToCollection(directory);
             }
@@ -325,16 +312,17 @@ namespace ForgeModGenerator.ViewModels
                     initCollection.Add(folder);
                 }
             }
-            return new ObservableCollection<TFolder>(initCollection);
+            return initCollection;
         }
 
-        protected IEnumerable<string> EnumerateFilteredFiles(string directoryPath) => EnumerateFilteredFiles(directoryPath, SearchOption.TopDirectoryOnly);
-
-        protected IEnumerable<string> EnumerateFilteredFiles(string directoryPath, SearchOption searchOption) =>
+        // Returns file that use extension from AllowedFileExtensions
+        protected IEnumerable<string> EnumerateFilteredFiles(string directoryPath, SearchOption searchOption = SearchOption.TopDirectoryOnly) =>
             Directory.EnumerateFiles(directoryPath, "*", searchOption).Where(filePath => AllowedFileExtensions.Any(ext => ext == Path.GetExtension(filePath)));
 
         // Used on any folder initialization
         protected virtual void SubscribeFolderEvents(TFolder folder) { }
+
+        protected virtual ObservableCollection<TFolder> DeserializeFolders(string fileCotent) => JsonConvert.DeserializeObject<ObservableCollection<TFolder>>(fileCotent);
         #endregion
 
         protected virtual void OnSessionContexPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

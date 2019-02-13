@@ -31,7 +31,7 @@
 										 d:IsDataSource="True" />
 				</ResourceDictionary>
 				<ResourceDictionary>
-					<converters:BoolToTextWrap x:Key="BoolToTextWrap" />
+					<converters:BoolToTextWrapConverter x:Key="BoolToTextWrapConverter" />
 				</ResourceDictionary>
 				<ResourceDictionary>
 					<converters:PathToModidConverter x:Key="PathToModidConverter" />

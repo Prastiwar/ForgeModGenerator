@@ -39,7 +39,7 @@ namespace ForgeModGenerator.Converters
 
             JObject jo = new JObject {
                 { nameof(SoundEvent.Replace).ToLower(), value.Replace },
-                { nameof(SoundEvent.Subtitle).ToLower(), value.Subtitle },
+                { nameof(SoundEvent.Subtitle).ToLower(), value.Subtitle ?? "" },
                 { "sounds", JArray.FromObject(value.Files, serializer) }
             };
             jo.WriteTo(writer);

@@ -167,7 +167,7 @@ namespace ForgeModGenerator.Models
         {
             if (Files.Remove(item))
             {
-                if (!ReferenceCounter.IsReferenced(item.Info.FullName))
+                if (!ReferenceCounter.IsReferenced(item.Info.FullName) && File.Exists(item.Info.FullName))
                 {
                     try
                     {

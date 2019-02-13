@@ -20,6 +20,8 @@ namespace ForgeModGenerator.Utils
 
         public static bool IsFilePath(string path) => !IsDirectoryPath(path);
 
+        public static bool PathExists(string path) => File.Exists(path) || Directory.Exists(path);
+
         public static bool IsDirectoryPath(string path)
         {
             try

@@ -22,21 +22,30 @@ namespace ForgeModGenerator.Converters
                                                                                                         : (value is T val2 ? EqualityComparer<T>.Default.Equals(val2, TrueValue) ? false : true : true);
     }
 
-    public class BoolToScrollVisibility : BoolValueConverter<ScrollBarVisibility>
+    public class BoolToScrollVisibilityConverter : BoolValueConverter<ScrollBarVisibility>
     {
-        public BoolToScrollVisibility()
+        public BoolToScrollVisibilityConverter()
         {
             TrueValue = ScrollBarVisibility.Visible;
             FalseValue = ScrollBarVisibility.Hidden;
         }
     }
 
-    public class BoolToTextWrap : BoolValueConverter<TextWrapping>
+    public class BoolToTextWrapConverter : BoolValueConverter<TextWrapping>
     {
-        public BoolToTextWrap()
+        public BoolToTextWrapConverter()
         {
             TrueValue = TextWrapping.Wrap;
             FalseValue = TextWrapping.NoWrap;
+        }
+    }
+
+    public class BoolToVisibilityConverter : BoolValueConverter<Visibility>
+    {
+        public BoolToVisibilityConverter()
+        {
+            TrueValue = Visibility.Visible;
+            FalseValue = Visibility.Collapsed;
         }
     }
 }

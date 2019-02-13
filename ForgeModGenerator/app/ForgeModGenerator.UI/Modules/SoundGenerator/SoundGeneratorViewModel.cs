@@ -1,4 +1,5 @@
-﻿using ForgeModGenerator.ModGenerator.Models;
+﻿using ForgeModGenerator.Converters;
+using ForgeModGenerator.ModGenerator.Models;
 using ForgeModGenerator.Services;
 using ForgeModGenerator.SoundGenerator.Controls;
 using ForgeModGenerator.SoundGenerator.Models;
@@ -45,28 +46,24 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
 
         protected override void AddNewFolder()
         {
-            try
+            string soundsFolder = ModPaths.SoundsFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
+            OpenFolderDialog.SelectedPath = soundsFolder;
+            DialogResult dialogResult = OpenFolderDialog.ShowDialog();
+            if (dialogResult == DialogResult.OK)
             {
-                string soundsFolder = ModPaths.SoundsFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
-                OpenFolderDialog.SelectedPath = soundsFolder;
-                DialogResult dialogResult = OpenFolderDialog.ShowDialog();
-                if (dialogResult == DialogResult.OK)
+                string newfolderPath = OpenFolderDialog.SelectedPath;
+                if (!IOExtensions.IsSubPathOf(newfolderPath, soundsFolder))
                 {
-                    string newfolderPath = OpenFolderDialog.SelectedPath;
-                    if (!IOExtensions.IsSubPathOf(newfolderPath, soundsFolder))
-                    {
-                        Log.Warning($"You can choose only folder from sounds folder ({soundsFolder})", true);
-                        return;
-                    }
-                    SoundEvent newFolder = SoundEvent.CreateEmpty(newfolderPath);
-                    SubscribeFolderEvents(newFolder);
-                    AddNewFileToFolder(newFolder);
+                    Log.Warning($"You can choose only folder from sounds folder ({soundsFolder})", true);
+                    return;
+                }
+                SoundEvent newFolder = SoundEvent.CreateEmpty(newfolderPath);
+                SubscribeFolderEvents(newFolder);
+                AddNewFileToFolder(newFolder);
+                if (newFolder.Count > 0)
+                {
                     Folders.Add(newFolder);
                 }
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, Log.UnexpectedErrorMessage, true);
             }
         }
 
@@ -138,7 +135,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             bool canRefresh = base.Refresh();
             if (canRefresh)
             {
-                JsonUpdater = new SoundJsonUpdater(Folders, FoldersRootPath, Preferences.JsonFormatting, new Converters.SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid));
+                JsonUpdater = new SoundJsonUpdater(Folders, FoldersRootPath, Preferences.JsonFormatting, new SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid));
                 CheckForUpdate();
             }
             return canRefresh;
@@ -185,7 +182,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
                     Log.Warning($"Cannot save, your data is not valid", true);
                     return false;
                 }
-                System.Windows.Controls.ValidationResult validation = args.FileAfterEdit.IsValid(args.Folder.Files);
+                System.Windows.Controls.ValidationResult validation = args.ActualFile.IsValid(args.Folder.Files);
                 if (!validation.IsValid)
                 {
                     Log.Warning($"Cannot save, {validation.ErrorContent}", true);
@@ -194,7 +191,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             }
             else
             {
-                if (args.FileAfterEdit.IsDirty)
+                if (args.ActualFile.IsDirty)
                 {
                     DialogResult msgResult = MessageBox.Show("Are you sure you want to exit form? Changes won't be saved", "Unsaved changes", MessageBoxButtons.YesNo);
                     if (msgResult == DialogResult.No)
@@ -210,10 +207,10 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
         {
             if (result)
             {
-                if (args.FileBeforeEdit.Name != args.FileAfterEdit.Name)
+                if (args.CachedFile.Name != args.ActualFile.Name)
                 {
-                    ChangeSoundPath(new Tuple<SoundEvent, Sound>(args.Folder, args.FileAfterEdit));
-                    args.FileAfterEdit.FormatName();
+                    ChangeSoundPath(new Tuple<SoundEvent, Sound>(args.Folder, args.ActualFile));
+                    args.ActualFile.FormatName();
                 }
                 ForceUpdate();
             }
@@ -221,62 +218,48 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             {
                 base.OnFileEdited(result, args);
             }
-            args.FileAfterEdit.IsDirty = false;
+            args.ActualFile.IsDirty = false;
         }
 
         protected void CheckForUpdate() => ShouldUpdate = !IsJsonUpdated();
 
         protected override ObservableCollection<SoundEvent> FindFolders(string path, bool createRootIfEmpty = false)
         {
-            try
+            if (!File.Exists(path))
             {
-                string soundsFolder = ModPaths.SoundsFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
-                ObservableCollection<SoundEvent> rootCollection = null;
-                if (!File.Exists(path))
-                {
-                    File.AppendAllText(path, "{}");
-                    return createRootIfEmpty ? CreateEmptyFoldersRoot(soundsFolder) : null;
-                }
-                Converters.SoundCollectionConverter converter = new Converters.SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
-
-                rootCollection = JsonConvert.DeserializeObject<ObservableCollection<SoundEvent>>(File.ReadAllText(path), converter);
-
-                if (createRootIfEmpty && (rootCollection == null || rootCollection.Count <= 0))
-                {
-                    rootCollection = CreateEmptyFoldersRoot(soundsFolder);
-                }
-                else if (rootCollection != null)
-                {
-                    foreach (SoundEvent item in rootCollection)
-                    {
-                        SubscribeFolderEvents(item);
-                    }
-                }
-                return rootCollection;
+                File.AppendAllText(path, "{}");
+                return new ObservableCollection<SoundEvent>();
             }
-            catch (Exception ex)
+            ObservableCollection<SoundEvent> deserializedFolders = FindFoldersFromFile(path, false);
+            bool hasNotExistingFile = deserializedFolders.Any(folder => folder.Files.Any(file => !File.Exists(file.Info.FullName)));
+            ObservableCollection<SoundEvent> folders = hasNotExistingFile ? FilterExistingFiles(deserializedFolders) : deserializedFolders;
+            if (hasNotExistingFile)
             {
-                Log.Error(ex, Log.UnexpectedErrorMessage, true);
-                return null;
+                DialogResult result = MessageBox.Show("sounds.json file has occurencies that doesn't exists in sounds folder. Do you want to fix and overwrite sounds.json?", "Conflict found", MessageBoxButtons.YesNo);
+                if (result == DialogResult.Yes)
+                {
+                    JsonUpdater = new SoundJsonUpdater(folders, FoldersRootPath, Preferences.JsonFormatting, new SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid));
+                    ForceUpdate();
+                }
             }
+            return folders;
+        }
+
+        protected override ObservableCollection<SoundEvent> DeserializeFolders(string fileCotent)
+        {
+            SoundCollectionConverter converter = new SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
+            return JsonConvert.DeserializeObject<ObservableCollection<SoundEvent>>(fileCotent, converter);
         }
 
         protected override void SubscribeFolderEvents(SoundEvent soundEvent)
         {
-            try
-            {
-                soundEvent.CollectionChanged += (sender, args) => {
-                    ForceUpdate();
-                    CheckForUpdate();
-                };
-                soundEvent.PropertyChanged += (sender, args) => {
-                    ForceUpdate();
-                };
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, Log.UnexpectedErrorMessage, true);
-            }
+            soundEvent.CollectionChanged += (sender, args) => {
+                ForceUpdate();
+                CheckForUpdate();
+            };
+            soundEvent.PropertyChanged += (sender, args) => {
+                ForceUpdate();
+            };
         }
 
         protected void ForceUpdate() => JsonUpdater.ForceJsonUpdate();// GetCurrentSoundCodeGenerator().RegenerateScript();

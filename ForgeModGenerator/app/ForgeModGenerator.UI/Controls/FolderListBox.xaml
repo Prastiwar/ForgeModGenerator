@@ -5,9 +5,14 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:local="clr-namespace:ForgeModGenerator.Controls"
 			 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+			 xmlns:converters="clr-namespace:ForgeModGenerator.Converters"
 			 mc:Ignorable="d"
 			 d:DesignHeight="450"
 			 d:DesignWidth="800">
+	<UserControl.Resources>
+		<converters:BoolToVisibilityConverter x:Key="InvertedBoolToVisibility"
+											  Invert="True" />
+	</UserControl.Resources>
 	<Grid>
 		<Label Content="{Binding Path=EmptyMessage, RelativeSource={RelativeSource AncestorType=local:FolderListBox}}"
 			   Foreground="DarkGray"
@@ -26,7 +31,8 @@
 								Padding="0"
 								Content="{materialDesign:PackIcon Kind=FolderPlus}"
 								HorizontalAlignment="Left"
-								Command="{Binding Path=AddFolderCommand, RelativeSource={RelativeSource AncestorType=local:FolderListBox}}" />
+								Command="{Binding Path=AddFolderCommand, RelativeSource={RelativeSource AncestorType=local:FolderListBox}}"
+								Visibility="{Binding Path=ShowEmptyMessage, RelativeSource={RelativeSource AncestorType=local:FolderListBox}, Converter={StaticResource InvertedBoolToVisibility}}" />
 						<ListBox ItemsSource="{Binding Path=FoldersSource, RelativeSource={RelativeSource AncestorType=local:FolderListBox}}"
 								 SelectedItem="{Binding Path=SelectedFolder, RelativeSource={RelativeSource AncestorType=local:FolderListBox}}"
 								 HorizontalContentAlignment="Stretch"

@@ -13,9 +13,9 @@
 		Foreground="Wheat"
 		FontSize="13">
 	<Window.Resources>
-		<converters:BoolToScrollVisibility x:Key="BoolToScrollVisibility"
-										   Invert="True"
-										   FalseValue="Disabled" />
+		<converters:BoolToScrollVisibilityConverter x:Key="BoolToScrollVisibilityConverter"
+													Invert="True"
+													FalseValue="Disabled" />
 	</Window.Resources>
 	<Grid Background="{StaticResource PageBackground}">
 		<Grid Margin="5">
@@ -45,11 +45,19 @@
 					<materialDesgin:Card Grid.Row="1"
 										 Margin="5"
 										 VerticalAlignment="Stretch">
-						<ScrollViewer HorizontalScrollBarVisibility="{Binding IsChecked, ElementName=WrapTextCheckBox, Converter={StaticResource BoolToScrollVisibility}}">
-							<TextBlock TextWrapping="{Binding IsChecked, ElementName=WrapTextCheckBox, Converter={StaticResource BoolToTextWrap}}"
-									   Padding="10"
-									   Foreground="WhiteSmoke"
-									   Text="{Binding StackTrace}" />
+						<ScrollViewer HorizontalScrollBarVisibility="{Binding IsChecked, ElementName=WrapTextCheckBox, Converter={StaticResource BoolToScrollVisibilityConverter}}">
+							<StackPanel>
+								<TextBlock Margin="4, 1, 0, 0"
+										   Text="{Binding Source, StringFormat={}Source: {0}}" />
+								<TextBlock Margin="4, 1, 0, 0"
+										   Text="{Binding Message, StringFormat={}Message: {0}}" />
+								<TextBlock TextWrapping="{Binding IsChecked, ElementName=WrapTextCheckBox, Converter={StaticResource BoolToTextWrapConverter}}"
+										   Padding="10"
+										   Foreground="WhiteSmoke">
+										<Run Text="Stacktrace: " />
+										<LineBreak />
+										<Run Text="{Binding StackTrace, Mode=OneTime}" /></TextBlock>
+							</StackPanel>
 						</ScrollViewer>
 					</materialDesgin:Card>
 					<StackPanel Grid.Row="2"
