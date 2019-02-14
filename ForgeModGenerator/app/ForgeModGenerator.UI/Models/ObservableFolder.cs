@@ -209,7 +209,6 @@ namespace ForgeModGenerator.Models
 
         protected virtual void Files_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            System.Windows.MessageBox.Show("CollectionChanged " + (CollectionChanged != null).ToString());
             IsDirty = true;
             RaisePropertyChanged(nameof(Count));
             CollectionChanged?.Invoke(sender, e);
@@ -228,7 +227,6 @@ namespace ForgeModGenerator.Models
                     T file = (T)item;
                     //ReferenceCounter.RemoveReference(file.Info.FullName, file);
                     OnFileRemoved?.Invoke(file);
-                    System.Windows.MessageBox.Show("OnFileRemoved " + (OnFileRemoved != null).ToString());
                 }
             }
         }

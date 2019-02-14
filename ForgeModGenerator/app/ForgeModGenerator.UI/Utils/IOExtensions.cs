@@ -119,6 +119,8 @@ namespace ForgeModGenerator.Utils
 
         public static string NormalizePath(this string path, bool forwardSlash = true) => forwardSlash ? path.Replace("\\", "/") : path.Replace("/", "\\");
 
+        public static string NormalizeFullPath(this string path, bool forwardSlash = true) => forwardSlash ? Path.GetFullPath(path).Replace("\\", "/") : Path.GetFullPath(path).Replace("/", "\\");
+
         public static long GetLineCount(this Stream stream)
         {
             long lineCount = 0L;

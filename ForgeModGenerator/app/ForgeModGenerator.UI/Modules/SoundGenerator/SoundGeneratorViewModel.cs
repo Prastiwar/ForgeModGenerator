@@ -217,7 +217,6 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             soundEvent.CollectionChanged += (sender, args) => {
                 ForceUpdate();
                 CheckForUpdate();
-                MessageBox.Show("?");
             };
             soundEvent.PropertyChanged += (sender, args) => {
                 ForceUpdate();

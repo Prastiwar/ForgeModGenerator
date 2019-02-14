@@ -34,6 +34,17 @@ namespace ForgeModGenerator
             protected override FileSystemInfo CreateInstance(string path) => new DirectoryInfo(path);
         }
 
+        public FileSystemInfoReference(string path)
+        {
+            if (path == null)
+            {
+                throw new ArgumentNullException(nameof(path));
+            }
+            FileSystemInfo = GetOrCreate(path);
+        }
+
+        private static Dictionary<string, RefCounter> references = new Dictionary<string, RefCounter>();
+
         private FileSystemInfo fileSystemInfo;
         public FileSystemInfo FileSystemInfo {
             get => fileSystemInfo;
@@ -49,15 +60,7 @@ namespace ForgeModGenerator
         public string Name => FileSystemInfo.Name;
         public string FullName => FileSystemInfo.FullName;
 
-        public FileSystemInfoReference(string path)
-        {
-            if (path == null)
-            {
-                throw new ArgumentNullException(nameof(path));
-            }
-
-            FileSystemInfo = GetOrCreate(path);
-        }
+        public int GetReferenceCount() => GetReferenceCount(FullName);
 
         public virtual bool Rename(string newPath)
         {
@@ -65,13 +68,12 @@ namespace ForgeModGenerator
             {
                 return false;
             }
+            newPath = newPath.NormalizeFullPath();
             if (references.TryGetValue(newPath, out RefCounter newReference))
             {
-                if (!IsReferenced(FileSystemInfo.FullName))
-                {
-                    FileSystemInfo.DeleteToBin();
-                }
+                Remove();
                 FileSystemInfo = newReference.File;
+                AddReference(FullName);
             }
             else
             {
@@ -113,26 +115,17 @@ namespace ForgeModGenerator
 
         public virtual bool Remove()
         {
-            System.Windows.MessageBox.Show(GetReferenceCount(FullName).ToString());
-            return GetReferenceCount(FullName) > 1 ? true : FileSystemInfo.TryDeleteToBin();
+            string path = FullName.NormalizeFullPath();
+            RemoveReference(path);
+            return GetReferenceCount(path) >= 1 ? true : FileSystemInfo.TryDeleteToBin();
         }
 
-        protected FileSystemInfo GetOrCreate(string filePath)
+        protected virtual FileSystemInfo GetOrCreate(string filePath)
         {
-            if (references.TryGetValue(filePath, out RefCounter reference))
-            {
-                return reference.File;
-            }
+            filePath = filePath.NormalizeFullPath();
             AddReference(filePath);
             return references[filePath].File;
         }
-
-        public int GetReferenceCount() => GetReferenceCount(FullName);
-
-        private static Dictionary<string, RefCounter> references = new Dictionary<string, RefCounter>();
-
-        public static bool IsReferenced(string filePath) => references.ContainsKey(filePath);
-        public static int GetReferenceCount(string filePath) => references.TryGetValue(filePath, out RefCounter TFileSystemInfoReference) ? TFileSystemInfoReference.ReferenceCount : 0;
 
         protected void AddReference(string filePath)
         {
@@ -140,6 +133,7 @@ namespace ForgeModGenerator
             {
                 return;
             }
+            filePath = filePath.NormalizeFullPath();
             if (references.ContainsKey(filePath))
             {
                 references[filePath].ReferenceCount++;
@@ -150,12 +144,13 @@ namespace ForgeModGenerator
             }
         }
 
-        protected bool RemoveReference(string filePath)
+        protected static bool RemoveReference(string filePath)
         {
             if (filePath == null)
             {
                 return false;
             }
+            filePath = filePath.NormalizeFullPath();
             if (references.ContainsKey(filePath))
             {
                 references[filePath].ReferenceCount--;
@@ -167,6 +162,9 @@ namespace ForgeModGenerator
             }
             return false;
         }
+
+        public static bool IsReferenced(string filePath) => GetReferenceCount(filePath.NormalizeFullPath()) > 0;
+        public static int GetReferenceCount(string filePath) => references.TryGetValue(filePath.NormalizeFullPath(), out RefCounter refCounter) ? refCounter.ReferenceCount : 0;
 
         protected abstract RefCounter CreateRefCounter(string path);
     }
