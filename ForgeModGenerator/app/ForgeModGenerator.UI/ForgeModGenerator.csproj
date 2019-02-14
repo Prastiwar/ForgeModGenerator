@@ -132,7 +132,7 @@
     <Compile Include="CodeGeneration\JavaCodeDom\JavaCodeProvider.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Common\FileReference.cs" />
+    <Compile Include="Models\FileReference.cs" />
     <Compile Include="Controls\EditableList.cs" />
     <Compile Include="Controls\ScrollButton.cs" />
     <Compile Include="Converters\BoolValueConverter.cs" />

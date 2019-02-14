@@ -43,8 +43,7 @@ namespace ForgeModGenerator.Models
                 Log.Error(null, $"Called ObservableFolder constructor with invalid path parameter, {nameof(path)}");
                 throw new ArgumentException("Invalid Path", nameof(path));
             }
-
-            Info = new DirectoryInfoReference(IOExtensions.IsDirectoryPath(path) ? path : Path.GetDirectoryName(path));
+            SetInfo(path);
             Files = new ObservableCollection<T>();
             IsDirty = false;
         }
@@ -63,8 +62,7 @@ namespace ForgeModGenerator.Models
             }
 
             Files = new ObservableCollection<T>(files);
-            string path = Files[0].Info.FullName;
-            Info = new DirectoryInfoReference(IOExtensions.IsDirectoryPath(path) ? path : Path.GetDirectoryName(path));
+            SetInfo(Files[0].Info.FullName);
             IsDirty = false;
         }
 
@@ -80,14 +78,14 @@ namespace ForgeModGenerator.Models
                 throw new ArgumentNullException(nameof(files));
             }
 
-            Info = new DirectoryInfoReference(IOExtensions.IsDirectoryPath(path) ? path : Path.GetDirectoryName(path));
+            SetInfo(path);
             Files = new ObservableCollection<T>(files);
             IsDirty = false;
         }
 
-        public ObservableFolder(string path, System.IO.SearchOption searchOption) : this(path, "*", searchOption) { }
-        public ObservableFolder(string path, string fileSearchPattern) : this(path, fileSearchPattern, System.IO.SearchOption.TopDirectoryOnly) { }
-        public ObservableFolder(string path, string fileSearchPattern, System.IO.SearchOption searchOption) : this(path)
+        public ObservableFolder(string path, SearchOption searchOption) : this(path, "*", searchOption) { }
+        public ObservableFolder(string path, string fileSearchPattern) : this(path, fileSearchPattern, SearchOption.TopDirectoryOnly) { }
+        public ObservableFolder(string path, string fileSearchPattern, SearchOption searchOption) : this(path)
         {
             foreach (string filePath in Directory.EnumerateFiles(path, fileSearchPattern, searchOption))
             {
@@ -122,13 +120,19 @@ namespace ForgeModGenerator.Models
             }
         }
 
+        // Initialize DirectoryInfoReference or rename (move directory)
         public virtual bool SetInfo(string path)
         {
+            if (IOExtensions.IsFilePath(path))
+            {
+                path = new FileInfo(path).Directory.FullName;
+            }
             if (Info != null)
             {
                 return Info.Rename(path);
             }
             Info = new DirectoryInfoReference(path);
+            Info.PropertyChanged += Info_PropertyChanged;
             return true;
         }
 
@@ -207,6 +211,8 @@ namespace ForgeModGenerator.Models
             }
         }
 
+        protected virtual void Info_PropertyChanged(object sender, PropertyChangedEventArgs e) { }
+
         protected virtual void Files_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             IsDirty = true;
@@ -225,7 +231,6 @@ namespace ForgeModGenerator.Models
                 foreach (object item in e.OldItems)
                 {
                     T file = (T)item;
-                    //ReferenceCounter.RemoveReference(file.Info.FullName, file);
                     OnFileRemoved?.Invoke(file);
                 }
             }
@@ -240,7 +245,7 @@ namespace ForgeModGenerator.Models
                 cloneFiles.Add((T)file.DeepClone());
             }
             ObservableFolder<T> folder = new ObservableFolder<T>() { Files = cloneFiles };
-            folder.Info = new DirectoryInfoReference(IOExtensions.IsDirectoryPath(Info.FullName) ? Info.FullName : Path.GetDirectoryName(Info.FullName));
+            folder.SetInfo(Info.FullName);
             folder.IsDirty = false;
             return folder;
         }
@@ -250,7 +255,7 @@ namespace ForgeModGenerator.Models
             if (fromCopy is ObservableFolder<T> item)
             {
                 Files = item.Files;
-                Info = new DirectoryInfoReference(IOExtensions.IsDirectoryPath(item.Info.FullName) ? item.Info.FullName : Path.GetDirectoryName(item.Info.FullName));
+                SetInfo(item.Info.FullName);
                 return true;
             }
             return false;

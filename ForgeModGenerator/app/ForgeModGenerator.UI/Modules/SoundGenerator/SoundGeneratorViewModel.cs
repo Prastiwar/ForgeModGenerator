@@ -43,28 +43,14 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
         private ICommand updateSoundsJson;
         public ICommand UpdateSoundsJson => updateSoundsJson ?? (updateSoundsJson = new RelayCommand(FindAndAddNewFiles));
 
-        protected override void AddNewFolder()
+        protected bool IsJsonUpdated()
         {
-            string soundsFolder = ModPaths.SoundsFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
-            OpenFolderDialog.SelectedPath = soundsFolder;
-            DialogResult dialogResult = OpenFolderDialog.ShowDialog();
-            if (dialogResult == DialogResult.OK)
+            if (SessionContext.SelectedMod != null)
             {
-                string newfolderPath = OpenFolderDialog.SelectedPath;
-                // TODO: Allow adding folder from other path than soundsFolder (so add all sounds from there)
-                if (!IOExtensions.IsSubPathOf(newfolderPath, soundsFolder))
-                {
-                    Log.Warning($"You can choose only folder from sounds folder ({soundsFolder})", true);
-                    return;
-                }
-                SoundEvent newFolder = SoundEvent.CreateEmpty(newfolderPath);
-                SubscribeFolderEvents(newFolder);
-                AddNewFileToFolder(newFolder);
-                if (newFolder.Count > 0)
-                {
-                    Folders.Add(newFolder);
-                }
+                string soundsFolderPath = ModPaths.SoundsFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
+                return EnumerateFilteredFiles(soundsFolderPath, SearchOption.AllDirectories).All(filePath => FileSystemInfoReference.IsReferenced(filePath));
             }
+            return true;
         }
 
         protected void ChangeSoundPath(Tuple<SoundEvent, Sound> param)
@@ -90,29 +76,6 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             }
         }
 
-        protected override bool CanRefresh() => SessionContext.SelectedMod != null;
-
-        protected override bool Refresh()
-        {
-            bool canRefresh = base.Refresh();
-            if (canRefresh)
-            {
-                JsonUpdater = new SoundJsonUpdater(Folders, FoldersRootPath, Preferences.JsonFormatting, new SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid));
-                CheckForUpdate();
-            }
-            return canRefresh;
-        }
-
-        protected bool IsJsonUpdated()
-        {
-            if (SessionContext.SelectedMod != null)
-            {
-                string soundsFolderPath = ModPaths.SoundsFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
-                return EnumerateFilteredFiles(soundsFolderPath, SearchOption.AllDirectories).All(filePath => FileSystemInfoReference.IsReferenced(filePath));
-            }
-            return true;
-        }
-
         protected void FindAndAddNewFiles()
         {
             string soundsFolderPath = ModPaths.SoundsFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
@@ -131,6 +94,23 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             }
             ForceUpdate();
             CheckForUpdate();
+        }
+
+        protected void CheckForUpdate() => ShouldUpdate = !IsJsonUpdated();
+
+        protected void ForceUpdate() => JsonUpdater.ForceJsonUpdate();// GetCurrentSoundCodeGenerator().RegenerateScript();
+
+        protected override bool CanRefresh() => SessionContext.SelectedMod != null;
+
+        protected override bool Refresh()
+        {
+            bool canRefresh = base.Refresh();
+            if (canRefresh)
+            {
+                JsonUpdater = new SoundJsonUpdater(Folders, FoldersRootPath, Preferences.JsonFormatting, new SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid));
+                CheckForUpdate();
+            }
+            return canRefresh;
         }
 
         protected override void OnFileEditorOpening(object sender, FileEditorOpeningDialogEventArgs eventArgs) => (FileEditForm as SoundEditForm).AllSounds = eventArgs.Folder.Files;
@@ -182,7 +162,29 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             args.ActualFile.IsDirty = false;
         }
 
-        protected void CheckForUpdate() => ShouldUpdate = !IsJsonUpdated();
+        protected override void AddNewFolder()
+        {
+            string soundsFolder = ModPaths.SoundsFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
+            OpenFolderDialog.SelectedPath = soundsFolder;
+            DialogResult dialogResult = OpenFolderDialog.ShowDialog();
+            if (dialogResult == DialogResult.OK)
+            {
+                string newfolderPath = OpenFolderDialog.SelectedPath;
+                // TODO: Allow adding folder from other path than soundsFolder (so add all sounds from there)
+                if (!IOExtensions.IsSubPathOf(newfolderPath, soundsFolder))
+                {
+                    Log.Warning($"You can choose only folder from sounds folder ({soundsFolder})", true);
+                    return;
+                }
+                SoundEvent newFolder = SoundEvent.CreateEmpty(newfolderPath);
+                SubscribeFolderEvents(newFolder);
+                AddNewFileToFolder(newFolder);
+                if (newFolder.Count > 0)
+                {
+                    Folders.Add(newFolder);
+                }
+            }
+        }
 
         protected override ObservableCollection<SoundEvent> FindFolders(string path, bool createRootIfEmpty = false)
         {
@@ -222,7 +224,5 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
                 ForceUpdate();
             };
         }
-
-        protected void ForceUpdate() => JsonUpdater.ForceJsonUpdate();// GetCurrentSoundCodeGenerator().RegenerateScript();
     }
 }

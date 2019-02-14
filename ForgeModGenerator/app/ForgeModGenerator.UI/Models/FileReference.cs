@@ -7,6 +7,7 @@ using System.Linq;
 
 namespace ForgeModGenerator
 {
+    // Base class that manages file references in application and synchronizes it with explorer
     public abstract class FileSystemInfoReference : ObservableDirtyObject
     {
         protected abstract class RefCounter
@@ -22,13 +23,13 @@ namespace ForgeModGenerator
             protected abstract FileSystemInfo CreateInstance(string path);
         }
 
-        protected class FileRefCounter : RefCounter
+        protected sealed class FileRefCounter : RefCounter
         {
             public FileRefCounter(string filePath) : base(filePath) { }
             protected override FileSystemInfo CreateInstance(string path) => new FileInfo(path);
         }
 
-        protected class DirectoryRefCounter : RefCounter
+        protected sealed class DirectoryRefCounter : RefCounter
         {
             public DirectoryRefCounter(string filePath) : base(filePath) { }
             protected override FileSystemInfo CreateInstance(string path) => new DirectoryInfo(path);
@@ -169,13 +170,15 @@ namespace ForgeModGenerator
         protected abstract RefCounter CreateRefCounter(string path);
     }
 
-    public class FileInfoReference : FileSystemInfoReference
+    // Wrapper for file references
+    public sealed class FileInfoReference : FileSystemInfoReference
     {
         public FileInfoReference(string filePath) : base(filePath) { }
         protected override RefCounter CreateRefCounter(string path) => new FileRefCounter(path);
     }
 
-    public class DirectoryInfoReference : FileSystemInfoReference
+    // Wrapper for directory references
+    public sealed class DirectoryInfoReference : FileSystemInfoReference
     {
         public DirectoryInfoReference(string filePath) : base(filePath) { }
         protected override RefCounter CreateRefCounter(string path) => new DirectoryRefCounter(path);
