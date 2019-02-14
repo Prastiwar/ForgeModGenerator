@@ -6,7 +6,6 @@ using ForgeModGenerator.SoundGenerator.Models;
 using ForgeModGenerator.Utils;
 using ForgeModGenerator.ViewModels;
 using GalaSoft.MvvmLight.Command;
-using Microsoft.VisualBasic.FileIO;
 using Newtonsoft.Json;
 using System;
 using System.Collections.ObjectModel;
@@ -69,62 +68,30 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
 
         protected void ChangeSoundPath(Tuple<SoundEvent, Sound> param)
         {
-            try
+            System.Windows.Controls.ValidationResult validation = param.Item2.IsValid(param.Item1.Files);
+            if (!validation.IsValid)
             {
-                string modname = Mod.GetModnameFromPath(param.Item2.Info.FullName);
-                string modid = Mod.GetModidFromPath(param.Item2.Name);
-                string soundsFolderPath = ModPaths.SoundsFolder(modname, modid);
-                string oldFilePath = param.Item2.Info.FullName.Replace("\\", "/");
-                string extension = Path.GetExtension(oldFilePath);
-                string newFileName = Sound.GetRelativePathFromSoundPath(param.Item2.Name);
-                string newFilePathToValidate = null;
-                string newFilePath = null;
-                try
-                {
-                    newFilePathToValidate = $"{Path.Combine(soundsFolderPath, newFileName)}{extension}";
-                    newFilePath = Path.GetFullPath(newFilePathToValidate).Replace("\\", "/");
-                }
-                catch (Exception pathEx)
-                {
-                    Log.Error(pathEx, $"Path is not valid {newFilePathToValidate}", true);
-                    return;
-                }
-                if (!IOExtensions.IsSubPathOf(newFilePath, soundsFolderPath))
-                {
-                    Log.Warning($"Path must be in {soundsFolderPath}", true);
-                    return;
-                }
-
-                if (oldFilePath != newFilePath)
-                {
-                    try
-                    {
-                        if (param.Item1.Files.Any(x => x.Info.FullName == newFilePath))
-                        {
-                            Log.Warning($"{param.Item1.EventName} already has this sound", true);
-                            return;
-                        }
-                        else if (!File.Exists(newFilePath))
-                        {
-                            new FileInfo(newFilePath).Directory.Create();
-                            File.Move(oldFilePath, newFilePath);
-                        }
-                        else if (ReferenceCounter.GetReferenceCount(oldFilePath) > 1)
-                        {
-                            FileSystem.DeleteFile(oldFilePath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
-                        }
-                        param.Item2.SetInfo(newFilePath);
-                        param.Item2.Name = Sound.FormatSoundPath(Mod.GetModidFromPath(param.Item2.Name), newFilePath);
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error(ex, $"Couldn't change {param.Item2.Info.Name} to {newFileName}. Make sure the file is not opened by any process", true);
-                    }
-                }
+                return;
             }
-            catch (Exception ex)
+            string soundsFolderPath = ModPaths.SoundsFolder(Mod.GetModnameFromPath(param.Item2.Info.FullName), Mod.GetModidFromPath(param.Item2.Name));
+            string oldFilePath = param.Item2.Info.FullName.Replace("\\", "/");
+            string relativePath = Sound.GetRelativePathFromSoundPath(param.Item2.Name);
+            string newFileName = relativePath.EndsWith("/") ? relativePath.Substring(0, relativePath.Length - 1) : relativePath;
+            string newFilePathToValidate = $"{Path.Combine(soundsFolderPath, newFileName)}{Path.GetExtension(oldFilePath)}";
+            string newFilePath = Path.GetFullPath(newFilePathToValidate).Replace("\\", "/");
+
+            if (oldFilePath != newFilePath)
             {
-                Log.Error(ex, Log.UnexpectedErrorMessage, true);
+                if (param.Item1.Files.Any(x => x.Info.FullName == newFilePath))
+                {
+                    Log.Warning($"{param.Item1.EventName} already has this sound", true);
+                    return;
+                }
+                if (RenameFile(param.Item2, newFilePath))
+                {
+                    string formattedSound = Sound.FormatSoundPath(Mod.GetModidFromPath(param.Item2.Name), newFileName);
+                    param.Item2.Name = formattedSound;
+                }
             }
         }
 
@@ -154,7 +121,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
         protected void FindAndAddNewFiles()
         {
             string soundsFolderPath = ModPaths.SoundsFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
-            foreach (string filePath in EnumerateFilteredFiles(soundsFolderPath, System.IO.SearchOption.AllDirectories).Where(filePath => !ReferenceCounter.IsReferenced(filePath)))
+            foreach (string filePath in EnumerateFilteredFiles(soundsFolderPath, SearchOption.AllDirectories).Where(filePath => !ReferenceCounter.IsReferenced(filePath)))
             {
                 SoundEvent newFolder = new SoundEvent(SessionContext.SelectedMod.ModInfo.Modid, filePath);
                 string cachedName = newFolder.EventName;

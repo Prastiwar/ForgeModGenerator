@@ -15,8 +15,8 @@ namespace ForgeModGenerator.Utils
         public static IEnumerable<string> EnumerateAllFiles(string path) => Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories);
         public static IEnumerable<string> EnumerateAllDirectories(string path) => Directory.EnumerateDirectories(path, "*", SearchOption.AllDirectories);
 
-        public static void DeleteFileToBin(string filePath) => FileSystem.DeleteDirectory(filePath, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
-        public static void DeleteDirectoryToBin(string directoryPath) => FileSystem.DeleteFile(directoryPath, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
+        public static void DeleteFileToBin(string filePath) => FileSystem.DeleteFile(filePath, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
+        public static void DeleteDirectoryToBin(string directoryPath) => FileSystem.DeleteDirectory(directoryPath, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
 
         public static bool IsFilePath(string path) => !IsDirectoryPath(path);
 
@@ -29,7 +29,7 @@ namespace ForgeModGenerator.Utils
                 FileAttributes attr = File.GetAttributes(path);
                 return attr.HasFlag(FileAttributes.Directory);
             }
-            catch (System.Exception)
+            catch (Exception)
             {
                 return IsPathValid(path) ? string.IsNullOrEmpty(Path.GetExtension(path)) : false;
             }
@@ -42,7 +42,7 @@ namespace ForgeModGenerator.Utils
                 Path.GetFullPath(path);
                 return true;
             }
-            catch (System.Exception)
+            catch (Exception)
             {
                 return false;
             }
@@ -68,6 +68,9 @@ namespace ForgeModGenerator.Utils
                 File.Move(file, Path.Combine(destination, new FileInfo(file).Name));
             }
         }
+
+        public static void DeleteToBin(this FileInfo file) => DeleteFileToBin(file.FullName);
+        public static void DeleteToBin(this DirectoryInfo directory) => DeleteDirectoryToBin(directory.FullName);
 
         public static long GetLineCount(this Stream stream)
         {

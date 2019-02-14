@@ -17,15 +17,15 @@ namespace ForgeModGenerator.SoundGenerator.Validations
         public static readonly DependencyProperty SoundBeforeChangeProperty =
             DependencyProperty.Register("SoundBeforeChange", typeof(Sound), typeof(SoundValidationDependencyWrapper), new PropertyMetadata(null));
         public Sound SoundBeforeChange {
-            get { return (Sound)GetValue(SoundBeforeChangeProperty); }
-            set { SetValue(SoundBeforeChangeProperty, value); }
+            get => (Sound)GetValue(SoundBeforeChangeProperty);
+            set => SetValue(SoundBeforeChangeProperty, value);
         }
 
         public static readonly DependencyProperty SoundsProperty =
             DependencyProperty.Register("Sounds", typeof(IEnumerable<Sound>), typeof(SoundValidationDependencyWrapper), new PropertyMetadata(null));
         public IEnumerable<Sound> Sounds {
-            get { return (IEnumerable<Sound>)GetValue(SoundsProperty); }
-            set { SetValue(SoundsProperty, value); }
+            get => (IEnumerable<Sound>)GetValue(SoundsProperty);
+            set => SetValue(SoundsProperty, value);
         }
     }
 
@@ -70,16 +70,19 @@ namespace ForgeModGenerator.SoundGenerator.Validations
             string modid = Mod.GetModidFromPath(parameters.SoundBeforeChange.Name);
             string soundsFolderPath = ModPaths.SoundsFolder(modname, modid);
             string oldFilePath = parameters.SoundBeforeChange.Info.FullName.Replace("\\", "/");
-            string extension = Path.GetExtension(oldFilePath);
+            if (newShortPath.EndsWith("/"))
+            {
+                newShortPath = newShortPath.Substring(0, newShortPath.Length - 1);
+            }
             string newFilePath = null;
             try
             {
-                string newFilePathToValidate = $"{Path.Combine(soundsFolderPath, newShortPath)}{extension}";
+                string newFilePathToValidate = $"{Path.Combine(soundsFolderPath, newShortPath)}{ Path.GetExtension(oldFilePath)}";
                 newFilePath = Path.GetFullPath(newFilePathToValidate).Replace("\\", "/");
             }
             catch (Exception)
             {
-                return new ValidationResult(false, $"Path {newShortPath} is not valid for");
+                return new ValidationResult(false, $"Path {newShortPath} is not valid");
             }
             if (!IOExtensions.IsSubPathOf(newFilePath, soundsFolderPath))
             {

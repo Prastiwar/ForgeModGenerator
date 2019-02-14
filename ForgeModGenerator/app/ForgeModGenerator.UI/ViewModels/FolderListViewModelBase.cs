@@ -143,6 +143,7 @@ namespace ForgeModGenerator.ViewModels
             return false;
         }
 
+        #region FileEditor
         protected virtual bool CanCloseFileEditor(bool result, FileEditedEventArgs args) => true;
         protected virtual void OnFileEditorClosing(object sender, FileEditorClosingDialogEventArgs eventArgs)
         {
@@ -185,6 +186,7 @@ namespace ForgeModGenerator.ViewModels
                 args.ActualFile.CopyValues(args.CachedFile);
             }
         }
+        #endregion
 
         protected virtual void AddNewFolder()
         {
@@ -324,6 +326,33 @@ namespace ForgeModGenerator.ViewModels
 
         protected virtual ObservableCollection<TFolder> DeserializeFolders(string fileCotent) => JsonConvert.DeserializeObject<ObservableCollection<TFolder>>(fileCotent);
         #endregion
+
+        protected virtual bool RenameFile(TFile file, string newFilePath)
+        {
+            if (!IOExtensions.IsFilePath(newFilePath))
+            {
+                return false;
+            }
+            try
+            {
+                if (!File.Exists(newFilePath))
+                {
+                    new FileInfo(newFilePath).Directory.Create();
+                    File.Move(file.Info.FullName, newFilePath);
+                }
+                else if (ReferenceCounter.GetReferenceCount(file.Info.FullName) <= 1)
+                {
+                    IOExtensions.DeleteFileToBin(file.Info.FullName);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, $"Couldn't change {file.Info.Name} to {Path.GetFileName(newFilePath)}. Make sure the file is not opened by any process", true);
+                return false;
+            }
+            file.SetInfo(newFilePath);
+            return true;
+        }
 
         protected virtual void OnSessionContexPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
