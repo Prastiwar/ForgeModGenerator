@@ -66,19 +66,14 @@ namespace ForgeModGenerator.SoundGenerator.Validations
             {
                 return new ValidationResult(false, "Validation failed, one of parameters was null");
             }
-            string modname = Mod.GetModnameFromPath(parameters.SoundBeforeChange.Info.FullName);
-            string modid = Mod.GetModidFromPath(parameters.SoundBeforeChange.Name);
-            string soundsFolderPath = ModPaths.SoundsFolder(modname, modid);
-            string oldFilePath = parameters.SoundBeforeChange.Info.FullName.Replace("\\", "/");
-            if (newShortPath.EndsWith("/"))
-            {
-                newShortPath = newShortPath.Substring(0, newShortPath.Length - 1);
-            }
+            string soundsFolderPath = parameters.SoundBeforeChange.GetSoundsFolder();
+            string oldFilePath = parameters.SoundBeforeChange.Info.FullName;
+            newShortPath = newShortPath.EndsWith("/") ? newShortPath.Substring(0, newShortPath.Length - 1) : newShortPath;
             string newFilePath = null;
             try
             {
                 string newFilePathToValidate = $"{Path.Combine(soundsFolderPath, newShortPath)}{ Path.GetExtension(oldFilePath)}";
-                newFilePath = Path.GetFullPath(newFilePathToValidate).Replace("\\", "/");
+                newFilePath = Path.GetFullPath(newFilePathToValidate);
             }
             catch (Exception)
             {

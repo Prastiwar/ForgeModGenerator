@@ -1,5 +1,4 @@
 ﻿using ForgeModGenerator.Utils;
-using Microsoft.VisualBasic.FileIO;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -45,7 +44,7 @@ namespace ForgeModGenerator.Models
                 throw new ArgumentException("Invalid Path", nameof(path));
             }
 
-            SetInfo(path);
+            Info = new DirectoryInfoReference(IOExtensions.IsDirectoryPath(path) ? path : Path.GetDirectoryName(path));
             Files = new ObservableCollection<T>();
             IsDirty = false;
         }
@@ -64,7 +63,8 @@ namespace ForgeModGenerator.Models
             }
 
             Files = new ObservableCollection<T>(files);
-            SetInfo(Files[0].Info.FullName);
+            string path = Files[0].Info.FullName;
+            Info = new DirectoryInfoReference(IOExtensions.IsDirectoryPath(path) ? path : Path.GetDirectoryName(path));
             IsDirty = false;
         }
 
@@ -80,7 +80,7 @@ namespace ForgeModGenerator.Models
                 throw new ArgumentNullException(nameof(files));
             }
 
-            SetInfo(path);
+            Info = new DirectoryInfoReference(IOExtensions.IsDirectoryPath(path) ? path : Path.GetDirectoryName(path));
             Files = new ObservableCollection<T>(files);
             IsDirty = false;
         }
@@ -101,10 +101,10 @@ namespace ForgeModGenerator.Models
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 
-        private FileSystemInfo info;
-        public FileSystemInfo Info {
+        private FileSystemInfoReference info;
+        public FileSystemInfoReference Info {
             get => info;
-            set => DirtSet(ref info, value);
+            private set => DirtSet(ref info, value);
         }
 
         private ObservableCollection<T> files;
@@ -122,11 +122,14 @@ namespace ForgeModGenerator.Models
             }
         }
 
-        public virtual void SetInfo(string path)
+        public virtual bool SetInfo(string path)
         {
-            ReferenceCounter.RemoveReference(info?.FullName, this);
-            Info = new DirectoryInfo(IOExtensions.IsDirectoryPath(path) ? path : Path.GetDirectoryName(path));
-            ReferenceCounter.AddReference(info.FullName, this);
+            if (Info != null)
+            {
+                return Info.Rename(path);
+            }
+            Info = new DirectoryInfoReference(path);
+            return true;
         }
 
         [JsonIgnore]
@@ -167,15 +170,11 @@ namespace ForgeModGenerator.Models
         {
             if (Files.Remove(item))
             {
-                if (!ReferenceCounter.IsReferenced(item.Info.FullName) && File.Exists(item.Info.FullName))
+                if (File.Exists(item.Info.FullName))
                 {
-                    try
+                    if (!item.Info.Remove())
                     {
-                        FileSystem.DeleteFile(item.Info.FullName, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error(ex, $"Couldn't delete {item.Info.FullName}. Make sure it's not used by any process", true);
+                        Log.Warning($"Couldn't delete {item.Info.FullName}. Make sure it's not used by any process", true);
                         Files.Add(item); // delete failed, so get item back to collection
                         return false;
                     }
@@ -210,6 +209,7 @@ namespace ForgeModGenerator.Models
 
         protected virtual void Files_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
+            System.Windows.MessageBox.Show("CollectionChanged " + (CollectionChanged != null).ToString());
             IsDirty = true;
             RaisePropertyChanged(nameof(Count));
             CollectionChanged?.Invoke(sender, e);
@@ -226,8 +226,9 @@ namespace ForgeModGenerator.Models
                 foreach (object item in e.OldItems)
                 {
                     T file = (T)item;
-                    ReferenceCounter.RemoveReference(file.Info.FullName, file);
+                    //ReferenceCounter.RemoveReference(file.Info.FullName, file);
                     OnFileRemoved?.Invoke(file);
+                    System.Windows.MessageBox.Show("OnFileRemoved " + (OnFileRemoved != null).ToString());
                 }
             }
         }
@@ -241,7 +242,7 @@ namespace ForgeModGenerator.Models
                 cloneFiles.Add((T)file.DeepClone());
             }
             ObservableFolder<T> folder = new ObservableFolder<T>() { Files = cloneFiles };
-            folder.SetInfo(Info.FullName);
+            folder.Info = new DirectoryInfoReference(IOExtensions.IsDirectoryPath(Info.FullName) ? Info.FullName : Path.GetDirectoryName(Info.FullName));
             folder.IsDirty = false;
             return folder;
         }
@@ -251,7 +252,7 @@ namespace ForgeModGenerator.Models
             if (fromCopy is ObservableFolder<T> item)
             {
                 Files = item.Files;
-                SetInfo(item.Info.FullName);
+                Info = new DirectoryInfoReference(IOExtensions.IsDirectoryPath(item.Info.FullName) ? item.Info.FullName : Path.GetDirectoryName(item.Info.FullName));
                 return true;
             }
             return false;

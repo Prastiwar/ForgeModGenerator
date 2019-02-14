@@ -1,10 +1,10 @@
 ﻿using ForgeModGenerator.Converters;
 using ForgeModGenerator.Models;
-using ForgeModGenerator.ModGenerator.Models;
 using ForgeModGenerator.SoundGenerator.Validations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Windows.Controls;
 
@@ -16,14 +16,11 @@ namespace ForgeModGenerator.SoundGenerator.Models
         [JsonConverter(typeof(StringEnumConverter))]
         public enum SoundType { file, @event }
 
-        private Sound() { }
+        private Sound() => PropertyChanged += Sound_PropertyChanged;
 
-        public Sound(string modid, string filePath)
+        public Sound(string modid, string filePath) : this()
         {
-            if (modid == null)
-            {
-                throw new System.ArgumentNullException(nameof(modid));
-            }
+            this.modid = modid ?? throw new System.ArgumentNullException(nameof(modid));
 
             if (File.Exists(filePath))
             {
@@ -37,17 +34,21 @@ namespace ForgeModGenerator.SoundGenerator.Models
             IsDirty = false;
         }
 
+        private readonly string modid;
+
         public string ShortPath {
             get => GetRelativePathFromSoundPath(Name);
-            set => Name = FormatSoundPath(Mod.GetModidFromPath(Name), value);
+            set => Name = FormatSoundPath(modid, value);
         }
 
         private string name;
         public string Name {
             get => name;
-            set {
-                DirtSet(ref name, value);
-                RaisePropertyChanged(nameof(ShortPath));
+            private set {
+                if (DirtSet(ref name, value))
+                {
+                    RaisePropertyChanged(nameof(ShortPath));
+                }
             }
         }
 
@@ -109,6 +110,8 @@ namespace ForgeModGenerator.SoundGenerator.Models
             return sound;
         }
 
+        internal string GetSoundsFolder() => ModPaths.SoundsFolder(ModGenerator.Models.Mod.GetModnameFromPath(Info.FullName), modid);
+
         public override bool CopyValues(object fromCopy)
         {
             if (fromCopy is Sound sound)
@@ -129,7 +132,7 @@ namespace ForgeModGenerator.SoundGenerator.Models
             return false;
         }
 
-        public void FormatName() => Name = FormatSoundPathFromFullPath(Mod.GetModidFromPath(Name), Info.FullName);
+        public void FormatName() => Name = FormatSoundPathFromFullPath(modid, Info.FullName);
 
         public ValidationResult IsValid(IEnumerable<Sound> sounds)
         {
@@ -142,7 +145,18 @@ namespace ForgeModGenerator.SoundGenerator.Models
             return result;
         }
 
+        protected override void Info_PropertyChanged(object sender, PropertyChangedEventArgs e) => FormatName();
+        protected virtual void Sound_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Info))
+            {
+                FormatName();
+            }
+        }
+
         public static string GetModidFromSoundPath(string path) => path.Substring(0, path.IndexOf(":"));
+
+        // Get "shortpath" if path is formatted as "modid:shortpath"
         public static string GetRelativePathFromSoundPath(string path) => path.Remove(0, path.IndexOf(":") + 1);
 
         // Get formatted sound from short path, "modid:shortPath"

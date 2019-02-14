@@ -12,8 +12,23 @@ namespace ForgeModGenerator.Utils
         private const char LF = '\n';
         private const char NULLCHAR = (char)0;
 
-        public static IEnumerable<string> EnumerateAllFiles(string path) => Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories);
-        public static IEnumerable<string> EnumerateAllDirectories(string path) => Directory.EnumerateDirectories(path, "*", SearchOption.AllDirectories);
+        public static IEnumerable<string> EnumerateAllFiles(string path)
+        {
+            if (IsFilePath(path))
+            {
+                path = new FileInfo(path).Directory.FullName;
+            }
+            return Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories);
+        }
+
+        public static IEnumerable<string> EnumerateAllDirectories(string path)
+        {
+            if (IsFilePath(path))
+            {
+                path = new FileInfo(path).Directory.FullName;
+            }
+            return Directory.EnumerateDirectories(path, "*", SearchOption.AllDirectories);
+        }
 
         public static void DeleteFileToBin(string filePath) => FileSystem.DeleteFile(filePath, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
         public static void DeleteDirectoryToBin(string directoryPath) => FileSystem.DeleteDirectory(directoryPath, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
@@ -69,8 +84,40 @@ namespace ForgeModGenerator.Utils
             }
         }
 
-        public static void DeleteToBin(this FileInfo file) => DeleteFileToBin(file.FullName);
-        public static void DeleteToBin(this DirectoryInfo directory) => DeleteDirectoryToBin(directory.FullName);
+        public static bool TryDeleteToBin(this FileSystemInfo fileSystemInfo)
+        {
+            if (PathExists(fileSystemInfo.FullName))
+            {
+                try
+                {
+                    DeleteToBin(fileSystemInfo);
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+                return true;
+            }
+            return false;
+        }
+
+        public static void DeleteToBin(this FileSystemInfo fileSystemInfo)
+        {
+            if (IsFilePath(fileSystemInfo.FullName))
+            {
+                DeleteFileToBin(fileSystemInfo.FullName);
+            }
+            else if (IsDirectoryPath(fileSystemInfo.FullName))
+            {
+                DeleteDirectoryToBin(fileSystemInfo.FullName);
+            }
+            else
+            {
+                throw new NotSupportedException(nameof(fileSystemInfo) + " is not valid path");
+            }
+        }
+
+        public static string NormalizePath(this string path, bool forwardSlash = true) => forwardSlash ? path.Replace("\\", "/") : path.Replace("/", "\\");
 
         public static long GetLineCount(this Stream stream)
         {

@@ -1,5 +1,4 @@
 ﻿using ForgeModGenerator.Converters;
-using ForgeModGenerator.ModGenerator.Models;
 using ForgeModGenerator.Services;
 using ForgeModGenerator.SoundGenerator.Controls;
 using ForgeModGenerator.SoundGenerator.Models;
@@ -11,6 +10,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 
@@ -51,6 +51,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             if (dialogResult == DialogResult.OK)
             {
                 string newfolderPath = OpenFolderDialog.SelectedPath;
+                // TODO: Allow adding folder from other path than soundsFolder (so add all sounds from there)
                 if (!IOExtensions.IsSubPathOf(newfolderPath, soundsFolder))
                 {
                     Log.Warning($"You can choose only folder from sounds folder ({soundsFolder})", true);
@@ -68,29 +69,23 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
 
         protected void ChangeSoundPath(Tuple<SoundEvent, Sound> param)
         {
-            System.Windows.Controls.ValidationResult validation = param.Item2.IsValid(param.Item1.Files);
+            ValidationResult validation = param.Item2.IsValid(param.Item1.Files);
             if (!validation.IsValid)
             {
                 return;
             }
-            string soundsFolderPath = ModPaths.SoundsFolder(Mod.GetModnameFromPath(param.Item2.Info.FullName), Mod.GetModidFromPath(param.Item2.Name));
-            string oldFilePath = param.Item2.Info.FullName.Replace("\\", "/");
-            string relativePath = Sound.GetRelativePathFromSoundPath(param.Item2.Name);
-            string newFileName = relativePath.EndsWith("/") ? relativePath.Substring(0, relativePath.Length - 1) : relativePath;
-            string newFilePathToValidate = $"{Path.Combine(soundsFolderPath, newFileName)}{Path.GetExtension(oldFilePath)}";
+            string soundsFolderPath = param.Item2.GetSoundsFolder();
+            string oldFilePath = param.Item2.Info.FullName;
+            string relativePath = param.Item2.ShortPath;
+            string newRelativePath = relativePath.EndsWith("/") ? relativePath.Substring(0, relativePath.Length - 1) : relativePath;
+            string newFilePathToValidate = $"{Path.Combine(soundsFolderPath, newRelativePath)}{Path.GetExtension(oldFilePath)}";
             string newFilePath = Path.GetFullPath(newFilePathToValidate).Replace("\\", "/");
 
             if (oldFilePath != newFilePath)
             {
-                if (param.Item1.Files.Any(x => x.Info.FullName == newFilePath))
+                if (!param.Item2.Info.Rename(newFilePath))
                 {
-                    Log.Warning($"{param.Item1.EventName} already has this sound", true);
-                    return;
-                }
-                if (RenameFile(param.Item2, newFilePath))
-                {
-                    string formattedSound = Sound.FormatSoundPath(Mod.GetModidFromPath(param.Item2.Name), newFileName);
-                    param.Item2.Name = formattedSound;
+                    Log.Warning($"Couldn't rename {param.Item2.Info.Name} to {newFilePath}", true);
                 }
             }
         }
@@ -113,7 +108,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             if (SessionContext.SelectedMod != null)
             {
                 string soundsFolderPath = ModPaths.SoundsFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
-                return EnumerateFilteredFiles(soundsFolderPath, System.IO.SearchOption.AllDirectories).All(filePath => ReferenceCounter.IsReferenced(filePath));
+                return EnumerateFilteredFiles(soundsFolderPath, SearchOption.AllDirectories).All(filePath => FileSystemInfoReference.IsReferenced(filePath));
             }
             return true;
         }
@@ -121,12 +116,12 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
         protected void FindAndAddNewFiles()
         {
             string soundsFolderPath = ModPaths.SoundsFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
-            foreach (string filePath in EnumerateFilteredFiles(soundsFolderPath, SearchOption.AllDirectories).Where(filePath => !ReferenceCounter.IsReferenced(filePath)))
+            foreach (string filePath in EnumerateFilteredFiles(soundsFolderPath, SearchOption.AllDirectories).Where(filePath => !FileSystemInfoReference.IsReferenced(filePath)))
             {
                 SoundEvent newFolder = new SoundEvent(SessionContext.SelectedMod.ModInfo.Modid, filePath);
                 string cachedName = newFolder.EventName;
                 int i = 1;
-                while (ReferenceCounter.GetReferenceCount(newFolder.EventName) > 1)
+                while (Folders.Any(folder => folder.EventName == newFolder.EventName))
                 {
                     newFolder.EventName = $"{cachedName}({i})";
                     i++;
@@ -149,7 +144,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
                     Log.Warning($"Cannot save, your data is not valid", true);
                     return false;
                 }
-                System.Windows.Controls.ValidationResult validation = args.ActualFile.IsValid(args.Folder.Files);
+                ValidationResult validation = args.ActualFile.IsValid(args.Folder.Files);
                 if (!validation.IsValid)
                 {
                     Log.Warning($"Cannot save, {validation.ErrorContent}", true);
@@ -177,7 +172,6 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
                 if (args.CachedFile.Name != args.ActualFile.Name)
                 {
                     ChangeSoundPath(new Tuple<SoundEvent, Sound>(args.Folder, args.ActualFile));
-                    args.ActualFile.FormatName();
                 }
                 ForceUpdate();
             }
@@ -223,6 +217,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             soundEvent.CollectionChanged += (sender, args) => {
                 ForceUpdate();
                 CheckForUpdate();
+                MessageBox.Show("?");
             };
             soundEvent.PropertyChanged += (sender, args) => {
                 ForceUpdate();

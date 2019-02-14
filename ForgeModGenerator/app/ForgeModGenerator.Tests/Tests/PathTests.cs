@@ -84,16 +84,19 @@ namespace ForgeModGenerator.Tests
             string path1 = @"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis\src\main\resources\assets\craftpolis";
             string path2 = @"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis";
             string path3 = @"\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis";
+            string path4 = "C:\\Dev\\ForgeModGenerator\\ForgeModGenerator\\mods\\Craftpolis\\src\\main\\resources\\assets\\craftpolis\\sounds\\test.ogg";
 
             string resultModid = GetModnameFromPath(path);
             string resultModid1 = GetModnameFromPath(path1);
             string resultModid2 = GetModnameFromPath(path2);
             string resultModid3 = GetModnameFromPath(path3);
+            string resultModid4 = GetModnameFromPath(path4);
 
             Assert.AreEqual("Craftpolis", resultModid);
             Assert.AreEqual("Craftpolis", resultModid1);
             Assert.AreEqual("Craftpolis", resultModid2);
             Assert.AreEqual(null, resultModid3);
+            Assert.AreEqual("Craftpolis", resultModid4);
         }
 
         public static string GetModidFromPath(string path)
@@ -122,13 +125,12 @@ namespace ForgeModGenerator.Tests
 
         public static string GetModnameFromPath(string path)
         {
-            bool invalidPath = path == null;
-            if (invalidPath)
+            if (!IOExtensions.IsPathValid(path))
             {
                 return null;
             }
-            path = path.Replace("\\", "/");
-            string modsPath = @"C:/Dev/ForgeModGenerator/ForgeModGenerator/mods";
+            path = path.NormalizePath();
+            string modsPath = @"C:/Dev/ForgeModGenerator/ForgeModGenerator/mods".NormalizePath();
             int length = modsPath.Length;
             if (!path.StartsWith(modsPath))
             {

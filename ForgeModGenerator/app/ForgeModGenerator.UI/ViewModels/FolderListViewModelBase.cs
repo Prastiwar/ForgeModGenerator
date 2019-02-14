@@ -262,11 +262,15 @@ namespace ForgeModGenerator.ViewModels
                 Log.Error(ex, $"Couldnt load {typeof(ObservableCollection<TFolder>)} from {json}", true);
                 return null;
             }
-            if (!loadOnlyExisting)
+            if (loadOnlyExisting)
             {
-                return deserializedFolders;
+                deserializedFolders = FilterExistingFiles(deserializedFolders);
             }
-            return FilterExistingFiles(deserializedFolders);
+            foreach (TFolder folder in deserializedFolders)
+            {
+                SubscribeFolderEvents(folder);
+            }
+            return deserializedFolders;
         }
 
         protected ObservableCollection<TFolder> FilterExistingFiles(ObservableCollection<TFolder> deserializedFolders, bool sendWarning = true)
@@ -326,33 +330,6 @@ namespace ForgeModGenerator.ViewModels
 
         protected virtual ObservableCollection<TFolder> DeserializeFolders(string fileCotent) => JsonConvert.DeserializeObject<ObservableCollection<TFolder>>(fileCotent);
         #endregion
-
-        protected virtual bool RenameFile(TFile file, string newFilePath)
-        {
-            if (!IOExtensions.IsFilePath(newFilePath))
-            {
-                return false;
-            }
-            try
-            {
-                if (!File.Exists(newFilePath))
-                {
-                    new FileInfo(newFilePath).Directory.Create();
-                    File.Move(file.Info.FullName, newFilePath);
-                }
-                else if (ReferenceCounter.GetReferenceCount(file.Info.FullName) <= 1)
-                {
-                    IOExtensions.DeleteFileToBin(file.Info.FullName);
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, $"Couldn't change {file.Info.Name} to {Path.GetFileName(newFilePath)}. Make sure the file is not opened by any process", true);
-                return false;
-            }
-            file.SetInfo(newFilePath);
-            return true;
-        }
 
         protected virtual void OnSessionContexPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {

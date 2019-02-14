@@ -6,7 +6,12 @@ namespace ForgeModGenerator
 {
     public partial class App : Application
     {
-        public App() => DispatcherUnhandledException += App_DispatcherUnhandledException;
+        public App()
+        {
+#if !DEBUG
+            DispatcherUnhandledException += App_DispatcherUnhandledException;
+#endif
+        }
 
         public static bool IsDataDirty {
             get => ServiceLocator.Current.GetInstance<ISessionContextService>().AskBeforeClose;

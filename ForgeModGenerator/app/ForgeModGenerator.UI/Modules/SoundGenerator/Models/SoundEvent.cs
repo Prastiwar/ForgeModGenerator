@@ -52,12 +52,12 @@ namespace ForgeModGenerator.SoundGenerator.Models
             if (sounds == null)
             {
                 Log.Error(null, "Called SoundEvent with null sounds parameter");
-                throw new System.ArgumentNullException(nameof(sounds));
+                throw new ArgumentNullException(nameof(sounds));
             }
             else if (sounds.Count() <= 0)
             {
                 Log.Error(null, "Called SoundEvent with sounds count <= 0 parameter");
-                throw new System.Exception($"{nameof(sounds)} must have at least one occurency.");
+                throw new Exception($"{nameof(sounds)} must have at least one occurency.");
             }
 
             Files = new ObservableCollection<Sound>(sounds);
@@ -73,16 +73,15 @@ namespace ForgeModGenerator.SoundGenerator.Models
             IsDirty = false;
         }
 
-        ~SoundEvent() { ReferenceCounter.RemoveReference(EventName, this); }
+        //~SoundEvent() { ReferenceCounter.RemoveReference(EventName, this); }
 
         private string eventName;
         public string EventName {
             get => eventName;
-            set {
-                ReferenceCounter.RemoveReference(EventName, this);
-                ReferenceCounter.AddReference(value, this);
+            set =>
+                //ReferenceCounter.RemoveReference(EventName, this);
+                //ReferenceCounter.AddReference(value, this);
                 DirtSet(ref eventName, value);
-            }
         }
 
         private bool replace = false;

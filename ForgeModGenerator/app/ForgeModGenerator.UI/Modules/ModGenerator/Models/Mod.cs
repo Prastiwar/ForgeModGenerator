@@ -1,5 +1,6 @@
 ﻿using ForgeModGenerator.Converters;
 using ForgeModGenerator.ModGenerator.Validations;
+using ForgeModGenerator.Utils;
 using GalaSoft.MvvmLight;
 using Newtonsoft.Json;
 using System.ComponentModel;
@@ -126,13 +127,12 @@ namespace ForgeModGenerator.ModGenerator.Models
 
         public static string GetModnameFromPath(string path)
         {
-            bool invalidPath = path == null || (!File.Exists(path) && !Directory.Exists(path));
-            if (invalidPath)
+            if (!IOExtensions.IsPathValid(path))
             {
                 return null;
             }
-            path = path.Replace("\\", "/");
-            string modsPath = AppPaths.Mods.Replace("\\", "/");
+            path = path.NormalizePath();
+            string modsPath = AppPaths.Mods.NormalizePath();
             int length = modsPath.Length;
             if (!path.StartsWith(modsPath))
             {

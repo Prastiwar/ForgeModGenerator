@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.IO;
 
 namespace ForgeModGenerator.Models
 {
@@ -12,8 +11,8 @@ namespace ForgeModGenerator.Models
 
     public interface IFileSystemInfo : INotifyPropertyChanged, ICopiable, IDirty
     {
-        FileSystemInfo Info { get; }
-        void SetInfo(string path);
+        FileSystemInfoReference Info { get; }
+        bool SetInfo(string path);
     }
 
     public interface IFileItem : IFileSystemInfo { }
@@ -24,23 +23,27 @@ namespace ForgeModGenerator.Models
 
         public FileItem(string filePath) => SetInfo(filePath);
 
-        ~FileItem() => ReferenceCounter.RemoveReference(info?.FullName, this);
-
-        private FileSystemInfo info;
-        public FileSystemInfo Info {
+        private FileSystemInfoReference info;
+        public FileSystemInfoReference Info {
             get => info;
             private set => DirtSet(ref info, value);
         }
 
-        public virtual void SetInfo(string filePath)
+        public virtual bool SetInfo(string path)
         {
-            ReferenceCounter.RemoveReference(info?.FullName, this);
-            Info = new FileInfo(filePath);
-            ReferenceCounter.AddReference(info.FullName, this);
+            if (Info != null)
+            {
+                return Info.Rename(path);
+            }
+            Info = new FileInfoReference(path);
+            Info.PropertyChanged += Info_PropertyChanged;
+            return true;
         }
 
+        protected virtual void Info_PropertyChanged(object sender, PropertyChangedEventArgs e) { }
+
         public virtual object Clone() => MemberwiseClone();
-        public virtual object DeepClone() => new FileInfo(Info.FullName);
+        public virtual object DeepClone() => new FileItem(Info.FullName);
 
         public virtual bool CopyValues(object fromCopy)
         {
