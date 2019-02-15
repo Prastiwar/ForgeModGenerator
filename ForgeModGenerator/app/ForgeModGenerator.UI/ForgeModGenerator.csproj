@@ -164,6 +164,7 @@
     <Compile Include="Modules\ModGenerator\SourceCodeGeneration\ProxyCodeGenerator.cs" />
     <Compile Include="Modules\ModGenerator\SourceCodeGeneration\RegistryHandlerCodeGenerator.cs" />
     <Compile Include="Modules\SoundGenerator\SoundCodeGenerator.cs" />
+    <Compile Include="Utils\CollectionExtensions.cs" />
     <Compile Include="Utils\IOExtensions.cs" />
     <Compile Include="Common\Log.cs" />
     <Compile Include="Utils\PrimitiveExtensions.cs" />

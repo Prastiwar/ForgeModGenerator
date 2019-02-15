@@ -11,8 +11,8 @@ namespace ForgeModGenerator.Converters
         {
             JObject item = JObject.Load(reader);
             string name = item.GetValue("name").ToObject<string>();
-            string modid = name.Substring(0, name.IndexOf(":"));
-            Sound sound = new Sound(modid, name);
+            string modid = Sound.GetModidFromSoundPath(name);
+            Sound sound = Sound.CreateEmpty(name, modid);
             if (item.TryGetValue("volume", out JToken volume))
             {
                 sound.Volume = volume.ToObject<float>();
@@ -42,7 +42,7 @@ namespace ForgeModGenerator.Converters
                 sound.Type = preload.ToObject<Sound.SoundType>();
             }
             sound.IsDirty = false;
-            return sound;
+            return sound; // NOTE: This is not properly initialized Sound, Info is not initialized
         }
 
         public override void WriteJson(JsonWriter writer, Sound value, JsonSerializer serializer)

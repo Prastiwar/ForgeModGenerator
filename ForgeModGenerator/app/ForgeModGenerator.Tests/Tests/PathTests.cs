@@ -45,8 +45,12 @@ namespace ForgeModGenerator.Tests
             Assert.IsTrue(IOExtensions.IsDirectoryPath(@"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis\src\main\resources"));
             Assert.IsTrue(IOExtensions.IsDirectoryPath(@"\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis"));
 
+            Assert.IsTrue(IOExtensions.IsDirectoryPath(@"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis\src\main\resources"));
+            Assert.IsTrue(IOExtensions.IsDirectoryPath(@"Craftpolis"));
+
             Assert.IsTrue(IOExtensions.IsFilePath(@"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis\src\main\resources\smth.png"));
             Assert.IsTrue(IOExtensions.IsFilePath(@"\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis.png"));
+            Assert.IsTrue(IOExtensions.IsFilePath(@"Craftpolis.png"));
 
             Assert.IsTrue(IOExtensions.IsPathValid(@"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis\src\main\resources"));
             Assert.IsTrue(IOExtensions.IsPathValid(@"\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis"));

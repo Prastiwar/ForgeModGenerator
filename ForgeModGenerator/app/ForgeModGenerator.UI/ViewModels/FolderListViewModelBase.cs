@@ -263,7 +263,7 @@ namespace ForgeModGenerator.ViewModels
 
         protected ObservableCollection<TFolder> CreateEmptyFoldersRoot(string folderPath)
         {
-            TFolder root = WPFExtensions.CreateInstance<TFolder>(folderPath);
+            TFolder root = ConstructFolderInstance(folderPath, null);
             SubscribeFolderEvents(root);
             return new ObservableCollection<TFolder>() { root };
         }
@@ -328,16 +328,25 @@ namespace ForgeModGenerator.ViewModels
                 IEnumerable<string> files = EnumerateFilteredFiles(directoryPath);
                 if (files.Any())
                 {
-                    TFolder folder = WPFExtensions.CreateInstance<TFolder>(directoryPath);
-                    foreach (string filePath in files)
-                    {
-                        folder.Add(filePath);
-                    }
+                    TFolder folder = ConstructFolderInstance(directoryPath, files);
                     SubscribeFolderEvents(folder);
                     foundFolders.Add(folder);
                 }
             }
             return foundFolders;
+        }
+
+        protected virtual TFolder ConstructFolderInstance(string path, IEnumerable<string> filePaths)
+        {
+            TFolder folder = WPFExtensions.CreateInstance<TFolder>(path);
+            if (filePaths != null)
+            {
+                foreach (string filePath in filePaths)
+                {
+                    folder.Add(filePath);
+                }
+            }
+            return folder;
         }
 
         // Returns file that use extension from AllowedFileExtensions

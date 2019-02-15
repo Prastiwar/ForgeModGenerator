@@ -11,12 +11,12 @@ namespace ForgeModGenerator.Converters
         public override SoundEvent ReadJson(JsonReader reader, Type objectType, SoundEvent existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
             JObject item = JObject.Load(reader);
-
             string soundsJson = item.GetValue("sounds", StringComparison.OrdinalIgnoreCase).ToString();
             List<Sound> sounds = JsonConvert.DeserializeObject<List<Sound>>(soundsJson);
 
-            string name = item.TryGetValue(nameof(SoundEvent.EventName), StringComparison.OrdinalIgnoreCase, out JToken eventName) ? eventName.ToObject<string>() : "";
-            SoundEvent soundEvent = new SoundEvent(name, sounds);
+            SoundEvent soundEvent = SoundEvent.CreateEmpty(sounds);
+            soundEvent.EventName = SoundEvent.FormatDottedSoundNameFromSoundName(sounds[0].Name);
+
             if (item.TryGetValue(nameof(SoundEvent.Replace), StringComparison.OrdinalIgnoreCase, out JToken replace))
             {
                 soundEvent.Replace = replace.ToObject<bool>();
@@ -26,7 +26,7 @@ namespace ForgeModGenerator.Converters
                 soundEvent.Subtitle = subtitle.ToObject<string>();
             }
             soundEvent.IsDirty = false;
-            return soundEvent;
+            return soundEvent; // NOTE: This is not properly initialized SoundEvent, Info is not initialized
         }
 
         public override void WriteJson(JsonWriter writer, SoundEvent value, JsonSerializer serializer)

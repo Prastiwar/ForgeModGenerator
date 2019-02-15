@@ -17,7 +17,8 @@ namespace ForgeModGenerator.Utils
         public static IEnumerable<FileInfo> EnumerateAllFileInfos(string path) => new DirectoryInfo(GetDirectoryPath(path)).EnumerateFiles("*", SearchOption.AllDirectories);
         public static IEnumerable<DirectoryInfo> EnumerateAllDirectoryInfos(string path) => new DirectoryInfo(GetDirectoryPath(path)).EnumerateDirectories("*", SearchOption.AllDirectories);
 
-        // Directory.EnumerateFiles with multiple patterns splitted by "|" (e.g *.txt|*.log)
+
+        /// <summary> Directory.EnumerateFiles with multiple patterns splitted by "|" (e.g *.txt|*.log) </summary>
         public static IEnumerable<string> EnumerateFiles(string path, string patterns, SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
             foreach (string pattern in patterns.Split('|'))
@@ -29,7 +30,7 @@ namespace ForgeModGenerator.Utils
             }
         }
 
-        // DirectoryInfo.EnumerateFiles with multiple patterns splitted by "|" (e.g *.txt|*.log)
+        /// <summary> DirectoryInfo.EnumerateFiles with multiple patterns splitted by "|" (e.g *.txt|*.log) </summary>
         public static IEnumerable<FileInfo> EnumerateFileInfos(string path, string patterns, SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
             foreach (string pattern in patterns.Split('|'))
@@ -41,7 +42,7 @@ namespace ForgeModGenerator.Utils
             }
         }
 
-        // Directory.EnumerateDirectories with multiple patterns splitted by "|" (e.g a*|b*)
+        /// <summary> Directory.EnumerateDirectories with multiple patterns splitted by "|" (e.g a*|b*) </summary>
         public static IEnumerable<string> EnumerateDirectories(string path, string patterns, SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
             foreach (string pattern in patterns.Split('|'))
@@ -53,7 +54,7 @@ namespace ForgeModGenerator.Utils
             }
         }
 
-        // DirectoryInfo.EnumerateDirectories with multiple patterns splitted by "|" (e.g a*|b*)
+        /// <summary> DirectoryInfo.EnumerateDirectories with multiple patterns splitted by "|" (e.g a*|b*) </summary>
         public static IEnumerable<DirectoryInfo> EnumerateDirectoryInfos(string path, string patterns, SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
             foreach (string pattern in patterns.Split('|'))
@@ -65,7 +66,7 @@ namespace ForgeModGenerator.Utils
             }
         }
 
-        // if path is file, return it's directory, else return path
+        /// <summary> if path is file, return it's directory, else return path </summary>
         public static string GetDirectoryPath(string path) => IsFilePath(path) ? new FileInfo(path).Directory.FullName : path;
 
         public static bool IsFilePath(string path) => !IsDirectoryPath(path);
@@ -89,8 +90,7 @@ namespace ForgeModGenerator.Utils
         {
             try
             {
-                Path.GetFullPath(path);
-                return true;
+                return !string.IsNullOrEmpty(Path.GetFullPath(path));
             }
             catch (Exception)
             {
@@ -100,7 +100,7 @@ namespace ForgeModGenerator.Utils
 
         public static void DirectoryCopy(string sourceDirPath, string destDirPath, bool copySubDirs = true) => DirectoryCopy(sourceDirPath, destDirPath, "*", copySubDirs);
 
-        // fileSearchPatterns accepts multiple patterns splitted by "|"
+        /// <summary> fileSearchPatterns accepts multiple patterns splitted by "|" </summary>
         public static void DirectoryCopy(string sourceDirPath, string destDirPath, string fileSearchPatterns, bool copySubDirs = true)
         {
             DirectoryInfo dir = new DirectoryInfo(sourceDirPath);

@@ -14,7 +14,7 @@ namespace ForgeModGenerator.Models
 
     public interface IFileFolder : IFileSystemInfo, IDirty, INotifyCollectionChanged, INotifyPropertyChanged
     {
-        void Add(string filePath);
+        void Add(string filePath, bool overwrite = false);
         void Clear();
     }
 
@@ -38,56 +38,35 @@ namespace ForgeModGenerator.Models
 
         public ObservableFolder(string path)
         {
-            if (!IOExtensions.IsPathValid(path))
-            {
-                Log.Error(null, $"Called ObservableFolder constructor with invalid path parameter, {nameof(path)}");
-                throw new ArgumentException("Invalid Path", nameof(path));
-            }
-            SetInfo(path);
+            ThrowExceptionIfInvalid(path);
             Files = new ObservableCollection<T>();
-            IsDirty = false;
-        }
-
-        public ObservableFolder(IEnumerable<T> files)
-        {
-            if (files == null)
-            {
-                Log.Error(null, "Called ObservableFolder constructor with null files parameter");
-                throw new ArgumentNullException(nameof(files));
-            }
-            else if (files.Count() <= 0)
-            {
-                Log.Error(null, "Called ObservableFolder constructor with files count <= 0 parameter");
-                throw new Exception($"{nameof(files)} must have at least one occurency.");
-            }
-
-            Files = new ObservableCollection<T>(files);
-            SetInfo(Files[0].Info.FullName);
-            IsDirty = false;
-        }
-
-        public ObservableFolder(string path, IEnumerable<T> files)
-        {
-            if (!IOExtensions.IsPathValid(path))
-            {
-                throw new ArgumentException("Invalid Path", nameof(path));
-            }
-            else if (files == null)
-            {
-                Log.Error(null, "Called ObservableFolder constructor with null files parameter");
-                throw new ArgumentNullException(nameof(files));
-            }
-
             SetInfo(path);
-            Files = new ObservableCollection<T>(files);
+            IsDirty = false;
+        }
+
+        public ObservableFolder(IEnumerable<string> filePaths) : this(filePaths?.First(), filePaths) { }
+        public ObservableFolder(string path, IEnumerable<string> filePaths)
+        {
+            ThrowExceptionIfInvalid(path, filePaths);
+            Files = new ObservableCollection<T>();
+            SetInfo(path);
+            AddRange(filePaths);
+            IsDirty = false;
+        }
+
+        public ObservableFolder(IEnumerable<T> files) : this(files?.FirstOrDefault()?.Info.FullName, files) { }
+        public ObservableFolder(string path, IEnumerable<T> files) : this(path)
+        {
+            ThrowExceptionIfInvalid(files);
+            AddRange(files);
             IsDirty = false;
         }
 
         public ObservableFolder(string path, SearchOption searchOption) : this(path, "*", searchOption) { }
-        public ObservableFolder(string path, string fileSearchPattern) : this(path, fileSearchPattern, SearchOption.TopDirectoryOnly) { }
-        public ObservableFolder(string path, string fileSearchPattern, SearchOption searchOption) : this(path)
+        public ObservableFolder(string path, string fileSearchPatterns) : this(path, fileSearchPatterns, SearchOption.TopDirectoryOnly) { }
+        public ObservableFolder(string path, string fileSearchPatterns, SearchOption searchOption) : this(path)
         {
-            foreach (string filePath in Directory.EnumerateFiles(path, fileSearchPattern, searchOption))
+            foreach (string filePath in IOExtensions.EnumerateFiles(path, fileSearchPatterns, searchOption))
             {
                 Add(filePath);
             }
@@ -120,53 +99,70 @@ namespace ForgeModGenerator.Models
             }
         }
 
-        // Initialize DirectoryInfoReference or rename (move directory)
-        public virtual bool SetInfo(string path)
-        {
-            if (IOExtensions.IsFilePath(path))
-            {
-                path = new FileInfo(path).Directory.FullName;
-            }
-            if (Info != null)
-            {
-                return Info.Rename(path);
-            }
-            Info = new DirectoryInfoReference(path);
-            Info.PropertyChanged += Info_PropertyChanged;
-            return true;
-        }
-
         [JsonIgnore]
         public int Count => Files.Count;
+
+        [JsonIgnore]
+        protected DirectoryInfo DirInfo => (DirectoryInfo)Info.FileSystemInfo;
 
         public void Clear() => Files.Clear();
         public bool Contains(T item) => Files.Contains(item);
 
         public void Add(T item) => Files.Add(item);
 
-        // Copy file from filePath to folder path and add to collection
-        public virtual void Add(string filePath)
+        public void AddRange(IEnumerable<T> items)
         {
-            string fileName = new FileInfo(filePath).Name;
+            foreach (T item in items)
+            {
+                Add(item);
+            }
+        }
+
+        public void AddRange(IEnumerable<string> filePaths)
+        {
+            foreach (string filePath in filePaths)
+            {
+                Add(filePath);
+            }
+        }
+
+        // Copy file from filePath to folder path and add to collection
+        public virtual void Add(string filePath, bool overwrite = false)
+        {
+            string fileName = Path.GetFileName(filePath);
             string newFilePath = Path.Combine(Info.FullName, fileName);
             try
             {
                 if (!File.Exists(newFilePath))
                 {
-                    File.Copy(filePath, newFilePath);
+                    File.Copy(filePath, newFilePath, overwrite);
+                    Add(CreateFileFromPath(newFilePath));
                 }
-                else if (Files.Any(x => x.Info.FullName == newFilePath))
+                else
                 {
-                    Log.Warning($"File {newFilePath} already exists.", true);
-                    return;
+                    int index = Files.FindIndex(x => x.Info.FullName == newFilePath);
+                    if (index != -1)
+                    {
+                        if (overwrite)
+                        {
+                            File.Copy(filePath, newFilePath, overwrite);
+                            Files[index] = CreateFileFromPath(newFilePath);
+                        }
+                        else
+                        {
+                            Log.Warning($"File {newFilePath} already exists.", true);
+                        }
+                    }
+                    else
+                    {
+                        Add(CreateFileFromPath(newFilePath));
+                    }
                 }
             }
             catch (Exception ex)
             {
                 Log.Error(ex, $"Couldn't add {fileName} to {Info.Name}. Make sure the file is not opened by any process.", true);
-                return;
             }
-            Add(CreateFileFromPath(newFilePath));
         }
 
         // Removes file from collection and if is not referenced in application, remove from explorer
@@ -191,11 +187,30 @@ namespace ForgeModGenerator.Models
         // Removes folder with all his content
         public virtual void Delete()
         {
-            int length = Files.Count;
-            for (int i = 0; i < length; i++)
+            for (int i = Files.Count - 1; i > 0; i--)
             {
                 Remove(Files[i]);
             }
+            if (!DirInfo.EnumerateDirectories().Any() && !DirInfo.EnumerateFiles().Any())
+            {
+                DirInfo.Delete();
+            }
+        }
+
+        // Initialize DirectoryInfoReference or rename (move directory)
+        public virtual bool SetInfo(string path)
+        {
+            if (IOExtensions.IsFilePath(path))
+            {
+                path = new FileInfo(path).Directory.FullName;
+            }
+            if (Info != null)
+            {
+                return Info.Rename(path);
+            }
+            Info = new DirectoryInfoReference(path);
+            Info.PropertyChanged += Info_PropertyChanged;
+            return true;
         }
 
         protected virtual T CreateFileFromPath(string filePath)
@@ -260,5 +275,36 @@ namespace ForgeModGenerator.Models
             }
             return false;
         }
+
+        #region Constructor Checks
+        protected void ThrowExceptionIfInvalid(string path)
+        {
+            if (!IOExtensions.IsPathValid(path))
+            {
+                Log.Error(null, $"Called ObservableFolder constructor with invalid path parameter, {nameof(path)}");
+                throw new ArgumentException("Invalid Path", nameof(path));
+            }
+        }
+
+        protected void ThrowExceptionIfInvalid<TElement>(IEnumerable<TElement> collection)
+        {
+            if (collection == null)
+            {
+                Log.Error(null, $"Called ObservableFolder constructor with null {nameof(collection)} parameter");
+                throw new ArgumentNullException(nameof(collection));
+            }
+            else if (!collection.Any())
+            {
+                Log.Error(null, $"Called ObservableFolder constructor with empty {nameof(collection)} parameter");
+                throw new NotSupportedException($"{nameof(collection)} must have at least one occurency.");
+            }
+        }
+
+        protected void ThrowExceptionIfInvalid<TElement>(string path, IEnumerable<TElement> collection)
+        {
+            ThrowExceptionIfInvalid(path);
+            ThrowExceptionIfInvalid(collection);
+        }
+        #endregion
     }
 }

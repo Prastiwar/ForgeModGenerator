@@ -16,7 +16,12 @@ namespace ForgeModGenerator.SoundGenerator.Models
         [JsonConverter(typeof(StringEnumConverter))]
         public enum SoundType { file, @event }
 
-        private Sound() => PropertyChanged += Sound_PropertyChanged;
+        protected Sound() => PropertyChanged += Sound_PropertyChanged;
+
+        /// <summary> IMPORTANT: Prefer to use ctor, this is used for serialization purposes </summary>
+        internal static Sound CreateEmpty(string name = null, string modid = null) => new Sound() { Name = name, modid = modid };
+
+        public Sound(string filePath) : this(ModGenerator.Models.Mod.GetModidFromPath(filePath), filePath) { }
 
         public Sound(string modid, string filePath) : this()
         {
@@ -34,7 +39,7 @@ namespace ForgeModGenerator.SoundGenerator.Models
             IsDirty = false;
         }
 
-        private readonly string modid;
+        private string modid;
 
         public string ShortPath {
             get => GetRelativePathFromSoundPath(Name);

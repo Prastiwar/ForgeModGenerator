@@ -7,6 +7,7 @@ using ForgeModGenerator.ViewModels;
 using GalaSoft.MvvmLight.Command;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -83,7 +84,8 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             string soundsFolderPath = ModPaths.SoundsFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
             foreach (string filePath in EnumerateFilteredFiles(soundsFolderPath, SearchOption.AllDirectories).Where(filePath => !FileSystemInfoReference.IsReferenced(filePath)))
             {
-                SoundEvent newFolder = new SoundEvent(SessionContext.SelectedMod.ModInfo.Modid, filePath);
+                SoundEvent newFolder = new SoundEvent(IOExtensions.GetDirectoryPath(filePath));
+                newFolder.Add(filePath);
                 string cachedName = newFolder.EventName;
                 int i = 1;
                 while (Folders.Any(folder => folder.EventName == newFolder.EventName))
@@ -165,28 +167,26 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             args.ActualFile.IsDirty = false;
         }
 
+        protected override SoundEvent ConstructFolderInstance(string path, IEnumerable<string> filePaths)
+        {
+            if (filePaths == null)
+            {
+                throw new ArgumentNullException(nameof(filePaths));
+            }
+            List<Sound> sounds = new List<Sound>();
+            foreach (string filePath in filePaths)
+            {
+                sounds.Add(new Sound(ModGenerator.Models.Mod.GetModidFromPath(filePath), filePath));
+            }
+            SoundEvent soundEvent = new SoundEvent(path, sounds);
+            return soundEvent;
+        }
+
         protected override void AddNewFolder()
         {
             string soundsFolder = ModPaths.SoundsFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
             OpenFolderDialog.SelectedPath = soundsFolder;
-            DialogResult dialogResult = OpenFolderDialog.ShowDialog();
-            if (dialogResult == DialogResult.OK)
-            {
-                string newfolderPath = OpenFolderDialog.SelectedPath;
-                // TODO: Allow adding folder from other path than soundsFolder (so add all sounds from there)
-                if (!IOExtensions.IsSubPathOf(newfolderPath, soundsFolder))
-                {
-                    Log.Warning($"You can choose only folder from sounds folder ({soundsFolder})", true);
-                    return;
-                }
-                SoundEvent newFolder = SoundEvent.CreateEmpty(newfolderPath);
-                SubscribeFolderEvents(newFolder);
-                AddNewFileToFolder(newFolder);
-                if (newFolder.Count > 0)
-                {
-                    Folders.Add(newFolder);
-                }
-            }
+            base.AddNewFolder();
         }
 
         protected override ObservableCollection<SoundEvent> FindFolders(string path, bool createRootIfEmpty = false)

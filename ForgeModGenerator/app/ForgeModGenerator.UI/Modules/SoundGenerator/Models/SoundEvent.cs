@@ -2,12 +2,9 @@
 using ForgeModGenerator.Models;
 using ForgeModGenerator.ModGenerator.Models;
 using ForgeModGenerator.SoundGenerator.Validations;
-using ForgeModGenerator.Utils;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
+using System.IO;
 using System.Windows.Controls;
 
 namespace ForgeModGenerator.SoundGenerator.Models
@@ -15,73 +12,44 @@ namespace ForgeModGenerator.SoundGenerator.Models
     [JsonConverter(typeof(SoundEventConverter))]
     public class SoundEvent : ObservableFolder<Sound>
     {
-        private SoundEvent() { }
+        /// <summary> IMPORTANT: Prefer other ctor, this is used for serialization purposes </summary>
+        protected SoundEvent() { }
 
-        // Create SoundEvent without any sound
-        public static SoundEvent CreateEmpty(string folderPath)
+        /// <summary> IMPORTANT: Prefer to use ctor, this is used for serialization purposes </summary>
+        internal static SoundEvent CreateEmpty(IEnumerable<Sound> files = null)
         {
-            if (!IOExtensions.IsPathValid(folderPath))
+            SoundEvent soundEvent = new SoundEvent();
+            if (files != null)
             {
-                Log.Error(null, $"Called ObservableFolder constructor with invalid path parameter, {nameof(folderPath)}");
-                throw new ArgumentException("Invalid Path", nameof(folderPath));
+                soundEvent.Files = new System.Collections.ObjectModel.ObservableCollection<Sound>(files);
             }
-            SoundEvent soundEvent = new SoundEvent {
-                Files = new ObservableCollection<Sound>()
-            };
-            soundEvent.SetInfo(folderPath);
-            soundEvent.EventName = soundEvent.Info.Name;
-            soundEvent.IsDirty = false;
             return soundEvent;
         }
 
-        // Create SoundEvent from single sound, path must be in sounds folder (will get modid from soundFilePath)
-        public SoundEvent(string soundFilePath) : this(Mod.GetModidFromPath(soundFilePath), soundFilePath) { }
+        public SoundEvent(string path) : base(path) { }
 
-        // Create SoundEvent from single sound, path must be in sounds folder
-        public SoundEvent(string modid, string soundFilePath) : this(soundFilePath, new List<Sound>() { new Sound(modid, soundFilePath) }) { }
-
-        // Create SoundEvent from Sound collection. SoundEvent will be folder of first sound
-        public SoundEvent(IEnumerable<Sound> files) : base(files)
+        public SoundEvent(IEnumerable<string> filePaths) : base(filePaths)
         {
-            EventName = FormatDottedSoundName(Info.FullName);
+            EventName = FormatDottedSoundNameFromFullPath(Info.FullName);
             IsDirty = false;
         }
 
-        public SoundEvent(string folderPath, IEnumerable<Sound> sounds)
-        {
-            if (sounds == null)
-            {
-                Log.Error(null, "Called SoundEvent with null sounds parameter");
-                throw new ArgumentNullException(nameof(sounds));
-            }
-            else if (sounds.Count() <= 0)
-            {
-                Log.Error(null, "Called SoundEvent with sounds count <= 0 parameter");
-                throw new Exception($"{nameof(sounds)} must have at least one occurency.");
-            }
+        public SoundEvent(IEnumerable<Sound> files) : base(files) { }
 
-            Files = new ObservableCollection<Sound>(sounds);
-            if (IOExtensions.IsPathValid(folderPath))
-            {
-                SetInfo(folderPath);
-                EventName = FormatDottedSoundName(folderPath);
-            }
-            else
-            {
-                EventName = folderPath;
-            }
+        public SoundEvent(string path, IEnumerable<Sound> files) : base(path, files)
+        {
+            EventName = FormatDottedSoundNameFromFullPath(Info.FullName);
             IsDirty = false;
         }
 
-        //~SoundEvent() { ReferenceCounter.RemoveReference(EventName, this); }
+        public SoundEvent(string path, SearchOption searchOption) : base(path, searchOption) { }
+        public SoundEvent(string path, string fileSearchPattern) : base(path, fileSearchPattern) { }
+        public SoundEvent(string path, string fileSearchPattern, SearchOption searchOption) : base(path, fileSearchPattern, searchOption) { }
 
         private string eventName;
         public string EventName {
             get => eventName;
-            set =>
-                //ReferenceCounter.RemoveReference(EventName, this);
-                //ReferenceCounter.AddReference(value, this);
-                DirtSet(ref eventName, value);
+            set => DirtSet(ref eventName, value);
         }
 
         private bool replace = false;
@@ -162,6 +130,9 @@ namespace ForgeModGenerator.SoundGenerator.Models
         }
 
         // Get formatted sound from full path, "shorten.path.toFile"
-        public static string FormatDottedSoundName(string path) => Sound.FormatSoundPathFromFullPath(null, path).Remove(0, 1).Replace("/", ".");
+        public static string FormatDottedSoundNameFromFullPath(string path) => Sound.FormatSoundPathFromFullPath(null, path).Remove(0, 1).Replace("/", ".");
+
+        // Get formatted sound from sound path modid:shorten/path/toFile to "shorten.path.toFile"
+        public static string FormatDottedSoundNameFromSoundName(string name) => Sound.GetRelativePathFromSoundPath(name).Replace("/", ".");
     }
 }
