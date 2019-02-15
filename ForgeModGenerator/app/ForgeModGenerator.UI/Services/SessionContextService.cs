@@ -1,5 +1,6 @@
 ﻿using ForgeModGenerator.Models;
 using ForgeModGenerator.ModGenerator.Models;
+using GalaSoft.MvvmLight;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -35,11 +36,13 @@ namespace ForgeModGenerator.Services
     {
         public SessionContextService()
         {
+            if (ViewModelBase.IsInDesignModeStatic)
+            {
+                return;
+            }
             Log.Info("Session loading..");
             StartPage = new Uri("../ApplicationModule/DashboardPage.xaml", UriKind.Relative);
-
             Refresh();
-
             Log.Info("Session loaded");
         }
 

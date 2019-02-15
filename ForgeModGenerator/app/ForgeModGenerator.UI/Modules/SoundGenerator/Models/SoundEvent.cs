@@ -5,6 +5,7 @@ using ForgeModGenerator.SoundGenerator.Validations;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Controls;
 
 namespace ForgeModGenerator.SoundGenerator.Models
@@ -26,7 +27,7 @@ namespace ForgeModGenerator.SoundGenerator.Models
             return soundEvent;
         }
 
-        public SoundEvent(string path) : base(path) { }
+        public SoundEvent(string path) : base(path) => EventName = Info.Name;
 
         public SoundEvent(IEnumerable<string> filePaths) : base(filePaths)
         {
@@ -70,10 +71,13 @@ namespace ForgeModGenerator.SoundGenerator.Models
 
         public override void Delete()
         {
-            int length = Files.Count;
-            for (int i = 0; i < length; i++)
+            for (int i = Files.Count - 1; i > 0; i--)
             {
                 Remove(Files[i], true);
+            }
+            if (!DirInfo.EnumerateDirectories().Any() && !DirInfo.EnumerateFiles().Any())
+            {
+                DirInfo.Delete();
             }
         }
 

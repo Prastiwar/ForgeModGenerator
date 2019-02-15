@@ -71,6 +71,10 @@ namespace ForgeModGenerator.ViewModels
         {
             SessionContext = sessionContext;
             FolderFileConverter = new TupleValueConverter<TFolder, TFile>();
+            if (IsInDesignMode)
+            {
+                return;
+            }
             OpenFileDialog = new OpenFileDialog() {
                 Multiselect = true,
                 CheckFileExists = true,
@@ -197,23 +201,15 @@ namespace ForgeModGenerator.ViewModels
             DialogResult dialogResult = OpenFolderDialog.ShowDialog();
             if (dialogResult == DialogResult.OK)
             {
-                if (IOExtensions.IsSubPathOf(OpenFolderDialog.SelectedPath, FoldersRootPath))
+                DirectoryInfo selectedPath = new DirectoryInfo(OpenFolderDialog.SelectedPath);
+                string newFolderPath = IOExtensions.GetUniqueName(Path.Combine(FoldersRootPath, selectedPath.Name), (name) => !Directory.Exists(name));
+
+                string fileSearchPattern = "*" + string.Join("|*", AllowedFileExtensions);
+                IOExtensions.DirectoryCopy(OpenFolderDialog.SelectedPath, newFolderPath, fileSearchPattern);
+
+                foreach (TFolder newFolder in FindFoldersFromDirectory(newFolderPath))
                 {
-                    TFolder newFolder = WPFExtensions.CreateInstance<TFolder>(OpenFolderDialog.SelectedPath);
                     Folders.Add(newFolder);
-                }
-                else
-                {
-                    DirectoryInfo selectedPath = new DirectoryInfo(OpenFolderDialog.SelectedPath);
-                    string newFolderPath = Path.Combine(FoldersRootPath, selectedPath.Name);
-
-                    string fileSearchPattern = "*" + string.Join("|*", AllowedFileExtensions);
-                    IOExtensions.DirectoryCopy(OpenFolderDialog.SelectedPath, newFolderPath, fileSearchPattern);
-
-                    foreach (TFolder newFolder in FindFoldersFromDirectory(newFolderPath))
-                    {
-                        Folders.Add(newFolder);
-                    }
                 }
             }
         }

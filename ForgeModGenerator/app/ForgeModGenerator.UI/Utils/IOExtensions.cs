@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows;
 using SearchOption = System.IO.SearchOption;
 
 namespace ForgeModGenerator.Utils
@@ -17,6 +18,18 @@ namespace ForgeModGenerator.Utils
         public static IEnumerable<FileInfo> EnumerateAllFileInfos(string path) => new DirectoryInfo(GetDirectoryPath(path)).EnumerateFiles("*", SearchOption.AllDirectories);
         public static IEnumerable<DirectoryInfo> EnumerateAllDirectoryInfos(string path) => new DirectoryInfo(GetDirectoryPath(path)).EnumerateDirectories("*", SearchOption.AllDirectories);
 
+        /// <summary> Increments Name(i) till isUnique is true </summary>
+        public static string GetUniqueName(string name, Func<string, bool> isUnique)
+        {
+            string uniqueName = name;
+            int i = 1;
+            while (!isUnique(uniqueName))
+            {
+                uniqueName = $"{name}({i})";
+                i++;
+            }
+            return uniqueName;
+        }
 
         /// <summary> Directory.EnumerateFiles with multiple patterns splitted by "|" (e.g *.txt|*.log) </summary>
         public static IEnumerable<string> EnumerateFiles(string path, string patterns, SearchOption searchOption = SearchOption.TopDirectoryOnly)
@@ -124,6 +137,12 @@ namespace ForgeModGenerator.Utils
                     DirectoryCopy(subDir.FullName, destSubDirPath, fileSearchPatterns, copySubDirs);
                 }
             }
+        }
+
+        public static bool ShowOverwriteDialog(string filePath)
+        {
+            MessageBoxResult result = MessageBox.Show($"File {filePath} already exists.\nDo you want to overwrite it?", "Existing file conflict", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            return result == MessageBoxResult.Yes;
         }
 
         public static void DirectoryCopy(string sourceDirPath, string destDirPath, HashSet<string> searchFileExtensions, bool copySubDirs = true)

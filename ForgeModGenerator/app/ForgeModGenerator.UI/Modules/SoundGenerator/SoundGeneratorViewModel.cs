@@ -22,8 +22,12 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
     {
         public SoundGeneratorViewModel(ISessionContextService sessionContext) : base(sessionContext)
         {
+            if (IsInDesignMode)
+            {
+                return;
+            }
             OpenFileDialog.Filter = "Sound file (*.ogg) | *.ogg";
-            AllowedFileExtensions = new System.Collections.Generic.HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".ogg" };
+            AllowedFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".ogg" };
             FileEditForm = new SoundEditForm();
             Preferences = sessionContext.GetOrCreatePreferences<SoundsGeneratorPreferences>();
             Refresh();
@@ -86,13 +90,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             {
                 SoundEvent newFolder = new SoundEvent(IOExtensions.GetDirectoryPath(filePath));
                 newFolder.Add(filePath);
-                string cachedName = newFolder.EventName;
-                int i = 1;
-                while (Folders.Any(folder => folder.EventName == newFolder.EventName))
-                {
-                    newFolder.EventName = $"{cachedName}({i})";
-                    i++;
-                }
+                newFolder.EventName = IOExtensions.GetUniqueName(SoundEvent.FormatDottedSoundNameFromFullPath(filePath), (name) => Folders.All(folder => folder.EventName != name));
                 SubscribeFolderEvents(newFolder);
                 Folders.Add(newFolder);
             }

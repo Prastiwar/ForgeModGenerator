@@ -1,6 +1,7 @@
 ﻿using ForgeModGenerator.SoundGenerator.Models;
 using ForgeModGenerator.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -9,6 +10,14 @@ namespace ForgeModGenerator.Tests
     [TestClass]
     public class PathTests
     {
+        [TestMethod]
+        public void GetUniqueName()
+        {
+            Assert.AreEqual("smth(5)", IOExtensions.GetUniqueName("smth", (name) => name == "smth(5)"));
+            HashSet<string> strings = new HashSet<string> { "test", "test(1)", "test(2)" };
+            Assert.AreEqual("test(3)", IOExtensions.GetUniqueName("test", (name) => !strings.Contains(name)));
+        }
+
         [TestMethod]
         public void Subpaths()
         {
