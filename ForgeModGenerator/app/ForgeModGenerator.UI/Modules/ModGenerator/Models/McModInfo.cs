@@ -95,7 +95,7 @@ namespace ForgeModGenerator.ModGenerator.Models
         public static McModInfo Import(string modPath)
         {
             string modname = new DirectoryInfo(modPath).Name;
-            string modInfoFilePath = ModPaths.McModInfo(modname).Replace("\\", "/");
+            string modInfoFilePath = ModPaths.McModInfoFile(modname).Replace("\\", "/");
             string infoTextFormat = File.ReadAllText(modInfoFilePath);
             string fixedJson = infoTextFormat.Remove(0, 2).Remove(infoTextFormat.Length - 4, 2); // remove [\n and \n]
             return JsonConvert.DeserializeObject<McModInfo>(fixedJson);
@@ -103,7 +103,7 @@ namespace ForgeModGenerator.ModGenerator.Models
 
         public static void Export(McModInfo modInfo)
         {
-            string modInfoPath = ModPaths.McModInfo(modInfo.Name);
+            string modInfoPath = ModPaths.McModInfoFile(modInfo.Name);
             string serializedModInfo = JsonConvert.SerializeObject(modInfo, Formatting.Indented);
             using (StreamWriter writer = new StreamWriter(modInfoPath))
             {

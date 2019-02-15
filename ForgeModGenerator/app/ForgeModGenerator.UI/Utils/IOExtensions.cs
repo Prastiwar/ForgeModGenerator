@@ -12,26 +12,61 @@ namespace ForgeModGenerator.Utils
         private const char LF = '\n';
         private const char NULLCHAR = (char)0;
 
-        public static IEnumerable<string> EnumerateAllFiles(string path)
+        public static IEnumerable<string> EnumerateAllFiles(string path) => Directory.EnumerateFiles(GetDirectoryPath(path), "*", SearchOption.AllDirectories);
+        public static IEnumerable<string> EnumerateAllDirectories(string path) => Directory.EnumerateDirectories(GetDirectoryPath(path), "*", SearchOption.AllDirectories);
+        public static IEnumerable<FileInfo> EnumerateAllFileInfos(string path) => new DirectoryInfo(GetDirectoryPath(path)).EnumerateFiles("*", SearchOption.AllDirectories);
+        public static IEnumerable<DirectoryInfo> EnumerateAllDirectoryInfos(string path) => new DirectoryInfo(GetDirectoryPath(path)).EnumerateDirectories("*", SearchOption.AllDirectories);
+
+        // Directory.EnumerateFiles with multiple patterns splitted by "|" (e.g *.txt|*.log)
+        public static IEnumerable<string> EnumerateFiles(string path, string patterns, SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
-            if (IsFilePath(path))
+            foreach (string pattern in patterns.Split('|'))
             {
-                path = new FileInfo(path).Directory.FullName;
+                foreach (string file in Directory.EnumerateFiles(path, pattern, searchOption))
+                {
+                    yield return file;
+                }
             }
-            return Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories);
         }
 
-        public static IEnumerable<string> EnumerateAllDirectories(string path)
+        // DirectoryInfo.EnumerateFiles with multiple patterns splitted by "|" (e.g *.txt|*.log)
+        public static IEnumerable<FileInfo> EnumerateFileInfos(string path, string patterns, SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
-            if (IsFilePath(path))
+            foreach (string pattern in patterns.Split('|'))
             {
-                path = new FileInfo(path).Directory.FullName;
+                foreach (FileInfo file in new DirectoryInfo(path).EnumerateFiles(pattern, searchOption))
+                {
+                    yield return file;
+                }
             }
-            return Directory.EnumerateDirectories(path, "*", SearchOption.AllDirectories);
         }
 
-        public static void DeleteFileToBin(string filePath) => FileSystem.DeleteFile(filePath, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
-        public static void DeleteDirectoryToBin(string directoryPath) => FileSystem.DeleteDirectory(directoryPath, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
+        // Directory.EnumerateDirectories with multiple patterns splitted by "|" (e.g a*|b*)
+        public static IEnumerable<string> EnumerateDirectories(string path, string patterns, SearchOption searchOption = SearchOption.TopDirectoryOnly)
+        {
+            foreach (string pattern in patterns.Split('|'))
+            {
+                foreach (string file in Directory.EnumerateDirectories(path, pattern, searchOption))
+                {
+                    yield return file;
+                }
+            }
+        }
+
+        // DirectoryInfo.EnumerateDirectories with multiple patterns splitted by "|" (e.g a*|b*)
+        public static IEnumerable<DirectoryInfo> EnumerateDirectoryInfos(string path, string patterns, SearchOption searchOption = SearchOption.TopDirectoryOnly)
+        {
+            foreach (string pattern in patterns.Split('|'))
+            {
+                foreach (DirectoryInfo file in new DirectoryInfo(path).EnumerateDirectories(pattern, searchOption))
+                {
+                    yield return file;
+                }
+            }
+        }
+
+        // if path is file, return it's directory, else return path
+        public static string GetDirectoryPath(string path) => IsFilePath(path) ? new FileInfo(path).Directory.FullName : path;
 
         public static bool IsFilePath(string path) => !IsDirectoryPath(path);
 
@@ -63,12 +98,59 @@ namespace ForgeModGenerator.Utils
             }
         }
 
-        public static void GenerateFolders(string rootPath, params string[] generatedFolders)
+        public static void DirectoryCopy(string sourceDirPath, string destDirPath, bool copySubDirs = true) => DirectoryCopy(sourceDirPath, destDirPath, "*", copySubDirs);
+
+        // fileSearchPatterns accepts multiple patterns splitted by "|"
+        public static void DirectoryCopy(string sourceDirPath, string destDirPath, string fileSearchPatterns, bool copySubDirs = true)
         {
-            Directory.CreateDirectory(rootPath); // create root even if generatedFolders is null
-            foreach (string folder in generatedFolders)
+            DirectoryInfo dir = new DirectoryInfo(sourceDirPath);
+            if (!dir.Exists)
             {
-                Directory.CreateDirectory(Path.Combine(rootPath, folder));
+                throw new DirectoryNotFoundException("Source directory does not exist or could not be found: " + nameof(sourceDirPath));
+            }
+
+            Directory.CreateDirectory(destDirPath);
+            foreach (FileInfo file in EnumerateFileInfos(sourceDirPath, fileSearchPatterns))
+            {
+                string destFilePath = Path.Combine(destDirPath, file.Name);
+                file.CopyTo(destFilePath, false);
+            }
+
+            if (copySubDirs)
+            {
+                foreach (DirectoryInfo subDir in dir.EnumerateDirectories())
+                {
+                    string destSubDirPath = Path.Combine(destDirPath, subDir.Name);
+                    DirectoryCopy(subDir.FullName, destSubDirPath, fileSearchPatterns, copySubDirs);
+                }
+            }
+        }
+
+        public static void DirectoryCopy(string sourceDirPath, string destDirPath, HashSet<string> searchFileExtensions, bool copySubDirs = true)
+        {
+            DirectoryInfo dir = new DirectoryInfo(sourceDirPath);
+            if (!dir.Exists)
+            {
+                throw new DirectoryNotFoundException("Source directory does not exist or could not be found: " + nameof(sourceDirPath));
+            }
+
+            Directory.CreateDirectory(destDirPath);
+            foreach (FileInfo file in dir.EnumerateFiles())
+            {
+                if (searchFileExtensions.Contains(file.Extension))
+                {
+                    string destFilePath = Path.Combine(destDirPath, file.Name);
+                    file.CopyTo(destFilePath, false);
+                }
+            }
+
+            if (copySubDirs)
+            {
+                foreach (DirectoryInfo subDir in dir.EnumerateDirectories())
+                {
+                    string destSubDirPath = Path.Combine(destDirPath, subDir.Name);
+                    DirectoryCopy(subDir.FullName, destSubDirPath, searchFileExtensions, copySubDirs);
+                }
             }
         }
 
@@ -83,6 +165,18 @@ namespace ForgeModGenerator.Utils
                 File.Move(file, Path.Combine(destination, new FileInfo(file).Name));
             }
         }
+
+        public static void GenerateFolders(string rootPath, params string[] generatedFolders)
+        {
+            Directory.CreateDirectory(rootPath); // create root even if generatedFolders is null
+            foreach (string folder in generatedFolders)
+            {
+                Directory.CreateDirectory(Path.Combine(rootPath, folder));
+            }
+        }
+
+        public static void DeleteFileToBin(string filePath) => FileSystem.DeleteFile(filePath, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
+        public static void DeleteDirectoryToBin(string directoryPath) => FileSystem.DeleteDirectory(directoryPath, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
 
         public static bool TryDeleteToBin(this FileSystemInfo fileSystemInfo)
         {

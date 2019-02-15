@@ -1,6 +1,8 @@
 ﻿using ForgeModGenerator.Models;
 using ForgeModGenerator.Services;
 using ForgeModGenerator.ViewModels;
+using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace ForgeModGenerator.TextureGenerator.ViewModels
@@ -11,10 +13,10 @@ namespace ForgeModGenerator.TextureGenerator.ViewModels
         public TextureGeneratorViewModel(ISessionContextService sessionContext) : base(sessionContext)
         {
             OpenFileDialog.Filter = "Image (*.png) | *.png";
-            AllowedFileExtensions = new string[] { ".png" };
+            AllowedFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".png" };
             Refresh();
         }
 
-        public override string FoldersRootPath => SessionContext.SelectedMod != null ? ModPaths.Textures(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid) : null;
+        public override string FoldersRootPath => SessionContext.SelectedMod != null ? ModPaths.TexturesFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid) : null;
     }
 }

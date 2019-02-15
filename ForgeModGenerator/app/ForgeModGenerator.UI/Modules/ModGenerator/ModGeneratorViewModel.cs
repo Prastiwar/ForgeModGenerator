@@ -81,7 +81,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
                 Log.Warning($"Selected mod is not valid. Reason: {validation.ErrorContent}", true);
                 return;
             }
-            string newModPath = ModPaths.ModRoot(mod.ModInfo.Name);
+            string newModPath = ModPaths.ModRootFolder(mod.ModInfo.Name);
             if (Directory.Exists(newModPath))
             {
                 Log.Warning($"{newModPath} already exists", true);
@@ -90,7 +90,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
             mod.ForgeVersion.UnZip(newModPath);
             RemoveDumpExample(mod);
 
-            string assetsPath = ModPaths.Assets(mod.ModInfo.Name, mod.ModInfo.Modid);
+            string assetsPath = ModPaths.AssetsFolder(mod.ModInfo.Name, mod.ModInfo.Modid);
             IOExtensions.GenerateFolders(assetsPath, assetsFolerToGenerate);
             RegenerateSourceCode(mod);
 
@@ -112,7 +112,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
 
         private void RemoveDumpExample(Mod mod)
         {
-            string javaSource = ModPaths.JavaSource(mod.ModInfo.Name);
+            string javaSource = ModPaths.JavaSourceFolder(mod.ModInfo.Name);
             string[] organizationPaths = Directory.GetDirectories(javaSource);
             foreach (string organization in organizationPaths)
             {
@@ -128,7 +128,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
                 Log.Warning($"Selected mod is not valid. Reason: {validation.ErrorContent}", true);
                 return;
             }
-            Mod oldValues = Mod.Import(ModPaths.ModRoot(mod.CachedName));
+            Mod oldValues = Mod.Import(ModPaths.ModRootFolder(mod.CachedName));
             try
             {
                 bool organizationChanged = mod.Organization != oldValues.Organization;
@@ -174,7 +174,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
 
         private void ChangeForgeVersion(Mod mod)
         {
-            string modRoot = ModPaths.ModRoot(mod.ModInfo.Name);
+            string modRoot = ModPaths.ModRootFolder(mod.ModInfo.Name);
 
             // remove every folder except 'src'
             foreach (string directory in Directory.EnumerateDirectories(modRoot))

@@ -22,13 +22,15 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
         public SoundGeneratorViewModel(ISessionContextService sessionContext) : base(sessionContext)
         {
             OpenFileDialog.Filter = "Sound file (*.ogg) | *.ogg";
-            AllowedFileExtensions = new string[] { ".ogg" };
+            AllowedFileExtensions = new System.Collections.Generic.HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".ogg" };
             FileEditForm = new SoundEditForm();
             Preferences = sessionContext.GetOrCreatePreferences<SoundsGeneratorPreferences>();
             Refresh();
         }
 
-        public override string FoldersRootPath => SessionContext.SelectedMod != null ? ModPaths.SoundsJson(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid) : null;
+        public override string FoldersRootPath => SessionContext.SelectedMod != null ? ModPaths.SoundsFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid) : null;
+
+        public override string FoldersSerializeFilePath => SessionContext.SelectedMod != null ? ModPaths.SoundsJson(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid) : null;
 
         public SoundsGeneratorPreferences Preferences { get; }
 
@@ -104,13 +106,14 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
 
         protected override bool Refresh()
         {
-            bool canRefresh = base.Refresh();
-            if (canRefresh)
+            if (CanRefresh())
             {
-                JsonUpdater = new SoundJsonUpdater(Folders, FoldersRootPath, Preferences.JsonFormatting, new SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid));
+                Folders = FindFolders(FoldersSerializeFilePath, true);
+                JsonUpdater = new SoundJsonUpdater(Folders, FoldersSerializeFilePath, Preferences.JsonFormatting, new SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid));
                 CheckForUpdate();
+                return true;
             }
-            return canRefresh;
+            return false;
         }
 
         protected override void OnFileEditorOpening(object sender, FileEditorOpeningDialogEventArgs eventArgs) => (FileEditForm as SoundEditForm).AllSounds = eventArgs.Folder.Files;
@@ -201,7 +204,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
                 DialogResult result = MessageBox.Show("sounds.json file has occurencies that doesn't exists in sounds folder. Do you want to fix and overwrite sounds.json?", "Conflict found", MessageBoxButtons.YesNo);
                 if (result == DialogResult.Yes)
                 {
-                    JsonUpdater = new SoundJsonUpdater(folders, FoldersRootPath, Preferences.JsonFormatting, new SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid));
+                    JsonUpdater = new SoundJsonUpdater(folders, FoldersSerializeFilePath, Preferences.JsonFormatting, new SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid));
                     ForceUpdate();
                 }
             }

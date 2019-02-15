@@ -15,16 +15,16 @@
 		<DataTemplate x:Key="FolderTemplate">
 			<StackPanel>
 				<controls:FolderExpanderControl HeaderText="{Binding Path=Info.Name}"
-											   Folder="{Binding}"
-											   AddFileCommand="{Binding Path=DataContext.AddFileCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
-											   RemoveFileCommand="{Binding Path=DataContext.RemoveFileCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
-											   FolderFileConverter="{Binding Path=DataContext.FolderFileConverter, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
-											   RemoveFolderCommand="{Binding Path=DataContext.RemoveFolderCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
-											   EditFileCommand="{Binding Path=DataContext.EditFileCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}">
+												Folder="{Binding}"
+												AddFileCommand="{Binding Path=DataContext.AddFileCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
+												RemoveFileCommand="{Binding Path=DataContext.RemoveFileCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
+												FolderFileConverter="{Binding Path=DataContext.FolderFileConverter, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
+												RemoveFolderCommand="{Binding Path=DataContext.RemoveFolderCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
+												EditFileCommand="{Binding Path=DataContext.EditFileCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}">
 					<controls:FolderExpanderControl.FileItemTemplate>
 						<DataTemplate>
 							<StackPanel>
-								<Image Tag="{Binding ElementName=ThisWindow}"
+								<Image Tag="{Binding RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
 									   ContextMenu="{StaticResource DefaultFileItemContext}"
 									   Width="32"
 									   Height="32">
@@ -44,11 +44,11 @@
 	<materialDesign:DialogHost>
 		<Grid Background="{StaticResource PageBackground}">
 			<controls:FolderListBox Grid.Row="1"
-								   FoldersSource="{Binding Folders}"
-								   SelectedFolder="{Binding SelectedFolder}"
-								   AddFolderCommand="{Binding AddFolderCommand}"
-								   ShowEmptyMessage="{Binding SessionContext.IsModSelected, Converter={StaticResource InvertBooleanConverter}}"
-								   FolderTemplate="{StaticResource FolderTemplate}" />
+									FoldersSource="{Binding Folders}"
+									SelectedFolder="{Binding SelectedFolder}"
+									AddFolderCommand="{Binding AddFolderCommand}"
+									ShowEmptyMessage="{Binding SessionContext.IsModSelected, Converter={StaticResource InvertBooleanConverter}}"
+									FolderTemplate="{StaticResource FolderTemplate}" />
 		</Grid>
 	</materialDesign:DialogHost>
 </Page>

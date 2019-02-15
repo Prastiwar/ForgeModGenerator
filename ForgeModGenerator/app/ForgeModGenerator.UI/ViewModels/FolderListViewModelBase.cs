@@ -77,17 +77,21 @@ namespace ForgeModGenerator.ViewModels
                 ValidateNames = true
             };
             OpenFolderDialog = new FolderBrowserDialog() { ShowNewFolderButton = true };
-            AllowedFileExtensions = new string[] { OpenFileDialog.DefaultExt };
+            AllowedFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { OpenFileDialog.DefaultExt };
             SessionContext.PropertyChanged += OnSessionContexPropertyChanged;
         }
 
+        // Path to folder root where are all files localized
         public abstract string FoldersRootPath { get; }
+
+        // Path to file that can be deserialized to folders
+        public virtual string FoldersSerializeFilePath { get; }
 
         public ISessionContextService SessionContext { get; }
 
         public IMultiValueConverter FolderFileConverter { get; }
 
-        public string[] AllowedFileExtensions { get; protected set; }
+        public HashSet<string> AllowedFileExtensions { get; protected set; }
 
         protected OpenFileDialog OpenFileDialog { get; }
 
@@ -132,12 +136,12 @@ namespace ForgeModGenerator.ViewModels
         public ICommand AddFolderCommand => addFolderCommand ?? (addFolderCommand = new RelayCommand(AddNewFolder));
         #endregion
 
-        protected virtual bool CanRefresh() => SessionContext.SelectedMod != null && (Directory.Exists(FoldersRootPath) || File.Exists(FoldersRootPath));
+        protected virtual bool CanRefresh() => SessionContext.SelectedMod != null && (Directory.Exists(FoldersRootPath) || File.Exists(FoldersSerializeFilePath));
         protected virtual bool Refresh()
         {
             if (CanRefresh())
             {
-                Folders = FindFolders(FoldersRootPath, true);
+                Folders = FindFolders(FoldersRootPath ?? FoldersSerializeFilePath, true);
                 return true;
             }
             return false;
@@ -193,9 +197,24 @@ namespace ForgeModGenerator.ViewModels
             DialogResult dialogResult = OpenFolderDialog.ShowDialog();
             if (dialogResult == DialogResult.OK)
             {
-                string newfolderPath = OpenFolderDialog.SelectedPath;
-                TFolder newFolder = WPFExtensions.CreateInstance<TFolder>(newfolderPath);
-                Folders.Add(newFolder);
+                if (IOExtensions.IsSubPathOf(OpenFolderDialog.SelectedPath, FoldersRootPath))
+                {
+                    TFolder newFolder = WPFExtensions.CreateInstance<TFolder>(OpenFolderDialog.SelectedPath);
+                    Folders.Add(newFolder);
+                }
+                else
+                {
+                    DirectoryInfo selectedPath = new DirectoryInfo(OpenFolderDialog.SelectedPath);
+                    string newFolderPath = Path.Combine(FoldersRootPath, selectedPath.Name);
+
+                    string fileSearchPattern = "*" + string.Join("|*", AllowedFileExtensions);
+                    IOExtensions.DirectoryCopy(OpenFolderDialog.SelectedPath, newFolderPath, fileSearchPattern);
+
+                    foreach (TFolder newFolder in FindFoldersFromDirectory(newFolderPath))
+                    {
+                        Folders.Add(newFolder);
+                    }
+                }
             }
         }
 
@@ -296,7 +315,7 @@ namespace ForgeModGenerator.ViewModels
 
         protected ObservableCollection<TFolder> FindFoldersFromDirectory(string path)
         {
-            ObservableCollection<TFolder> initCollection = new ObservableCollection<TFolder>();
+            ObservableCollection<TFolder> foundFolders = new ObservableCollection<TFolder>();
 
             AddFilesToCollection(path);
             foreach (string directory in IOExtensions.EnumerateAllDirectories(path))
@@ -315,15 +334,15 @@ namespace ForgeModGenerator.ViewModels
                         folder.Add(filePath);
                     }
                     SubscribeFolderEvents(folder);
-                    initCollection.Add(folder);
+                    foundFolders.Add(folder);
                 }
             }
-            return initCollection;
+            return foundFolders;
         }
 
         // Returns file that use extension from AllowedFileExtensions
         protected IEnumerable<string> EnumerateFilteredFiles(string directoryPath, SearchOption searchOption = SearchOption.TopDirectoryOnly) =>
-            Directory.EnumerateFiles(directoryPath, "*", searchOption).Where(filePath => AllowedFileExtensions.Any(ext => ext == Path.GetExtension(filePath)));
+            Directory.EnumerateFiles(directoryPath, "*", searchOption).Where(filePath => AllowedFileExtensions.Contains(Path.GetExtension(filePath)));
 
         // Used on any folder initialization
         protected virtual void SubscribeFolderEvents(TFolder folder) { }

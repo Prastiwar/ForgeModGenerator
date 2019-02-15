@@ -109,7 +109,7 @@ namespace ForgeModGenerator.ModGenerator.Models
             string modname = GetModnameFromPath(path);
             if (modname != null)
             {
-                string assetsPath = ModPaths.Assets(modname).Replace("\\", "/"); // in assets folder there should be always folder with modid
+                string assetsPath = ModPaths.AssetsFolder(modname).Replace("\\", "/"); // in assets folder there should be always folder with modid
                 int assetsPathLength = assetsPath.Length;
                 try
                 {
@@ -168,11 +168,11 @@ namespace ForgeModGenerator.ModGenerator.Models
         }
 
         // Writes to FmgModInfo file
-        public static void Export(Mod mod) => File.WriteAllText(ModPaths.FmgModInfo(mod.ModInfo.Name), JsonConvert.SerializeObject(mod, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All }));
+        public static void Export(Mod mod) => File.WriteAllText(ModPaths.FmgModInfoFile(mod.ModInfo.Name), JsonConvert.SerializeObject(mod, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All }));
 
         public static Mod Import(string modPath)
         {
-            string fmgModInfoPath = ModPaths.FmgModInfo(new DirectoryInfo(modPath).Name);
+            string fmgModInfoPath = ModPaths.FmgModInfoFile(new DirectoryInfo(modPath).Name);
             try
             {
                 return JsonConvert.DeserializeObject<Mod>(File.ReadAllText(fmgModInfoPath), new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All });

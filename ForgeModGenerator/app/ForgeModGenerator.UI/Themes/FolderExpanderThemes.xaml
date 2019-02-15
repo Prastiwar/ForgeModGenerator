@@ -33,6 +33,14 @@
 												Height="20"
 												Padding="0"
 												Margin="8,0"
+												Command="{Binding Path=RemoveFolderCommand, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
+												CommandParameter="{Binding Path=Folder, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}">
+											<materialDesign:PackIcon Kind="Trash" />
+										</Button>
+										<Button Width="20"
+												Height="20"
+												Padding="0"
+												Margin="8,0"
 												Command="{Binding Path=ShowContainerCommand, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}">
 											<materialDesign:PackIcon Kind="FolderOpen" />
 										</Button>
