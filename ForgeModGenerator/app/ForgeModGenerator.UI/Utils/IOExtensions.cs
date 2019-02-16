@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using SearchOption = System.IO.SearchOption;
 
@@ -78,6 +79,12 @@ namespace ForgeModGenerator.Utils
                 }
             }
         }
+
+        public static bool HasAnyFile(string path) => Directory.EnumerateFiles(path).Any();
+
+        public static bool HasSubDirectories(string path) => Directory.EnumerateDirectories(path).Any();
+
+        public static bool IsEmpty(string path) => !Directory.EnumerateFileSystemEntries(path).Any();
 
         /// <summary> if path is file, return it's directory, else return path </summary>
         public static string GetDirectoryPath(string path) => IsFilePath(path) ? new FileInfo(path).Directory.FullName : path;
@@ -215,6 +222,17 @@ namespace ForgeModGenerator.Utils
 
         public static void DeleteFileToBin(string filePath) => FileSystem.DeleteFile(filePath, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
         public static void DeleteDirectoryToBin(string directoryPath) => FileSystem.DeleteDirectory(directoryPath, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
+        public static void DeleteToBin(string path)
+        {
+            if (IsDirectoryPath(path))
+            {
+                DeleteDirectoryToBin(path);
+            }
+            else
+            {
+                DeleteFileToBin(path);
+            }
+        }
 
         public static bool TryDeleteToBin(this FileSystemInfo fileSystemInfo)
         {

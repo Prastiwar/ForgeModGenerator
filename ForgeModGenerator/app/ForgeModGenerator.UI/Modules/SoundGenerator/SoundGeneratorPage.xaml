@@ -39,38 +39,7 @@
 										CommandParameter="{Binding}">
 									<materialDesign:PackIcon Kind="Play" />
 								</Button>
-								<controls:SubmitTextBox IsTabStop="True">
-									<Validation.ErrorTemplate>
-										<ControlTemplate>
-											<StackPanel>
-												<AdornedElementPlaceholder />
-												<ItemsControl ItemsSource="{Binding}">
-													<ItemsControl.ItemTemplate>
-														<DataTemplate>
-															<TextBlock Text="{Binding ErrorContent}"
-																	   Foreground="Red" />
-														</DataTemplate>
-													</ItemsControl.ItemTemplate>
-												</ItemsControl>
-											</StackPanel>
-										</ControlTemplate>
-									</Validation.ErrorTemplate>
-									<controls:SubmitTextBox.Resources>
-										<controls:BindingProxy x:Key="DataProxy"
-															   Data="{Binding DataContext, RelativeSource={RelativeSource AncestorType=controls:SubmitTextBox}}" />
-									</controls:SubmitTextBox.Resources>
-									<controls:SubmitTextBox.Text>
-										<Binding Path="Info.ChangeName">
-											<Binding.ValidationRules>
-												<rules:CanMoveFileSystemInfoRule ValidatesOnTargetUpdated="True">
-													<rules:CanMoveFileSystemInfoRule.Parameters>
-														<rules:CanMoveFileSystemInfoDependencyWrapper RootPath="{Binding Path=Data.Info.FileSystemInfo.FullName, Source={StaticResource DataProxy}}" />
-													</rules:CanMoveFileSystemInfoRule.Parameters>
-												</rules:CanMoveFileSystemInfoRule>
-											</Binding.ValidationRules>
-										</Binding>
-									</controls:SubmitTextBox.Text>
-								</controls:SubmitTextBox>
+								<controls:SubmitTextBox Style="{StaticResource FileRenameStyle}" />
 							</StackPanel>
 						</DataTemplate>
 					</sControls:SoundFolderExpanderControl.FileItemTemplate>

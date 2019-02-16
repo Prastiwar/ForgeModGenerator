@@ -336,7 +336,26 @@ namespace ForgeModGenerator.ViewModels
             {
                 foreach (string filePath in OpenFileDialog.FileNames)
                 {
-                    File.Copy(filePath, Path.Combine(folder.Info.FullName, Path.GetFileName(filePath)));
+                    string newPath = Path.Combine(folder.Info.FullName, Path.GetFileName(filePath));
+                    if (File.Exists(newPath))
+                    {
+                        if (filePath != newPath)
+                        {
+                            bool overwrite = IOExtensions.ShowOverwriteDialog(newPath);
+                            if (overwrite)
+                            {
+                                File.Copy(filePath, newPath, true);
+                            }
+                        }
+                        else
+                        {
+                            folder.Add(newPath);
+                        }
+                    }
+                    else
+                    {
+                        File.Copy(filePath, newPath);
+                    }
                 }
             }
         }

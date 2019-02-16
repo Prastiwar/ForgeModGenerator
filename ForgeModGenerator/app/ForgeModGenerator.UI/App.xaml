@@ -10,7 +10,8 @@
 			 xmlns:vm="clr-namespace:ForgeModGenerator.ViewModels"
 			 xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
 			 xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-			 xmlns:system="clr-namespace:System;assembly=mscorlib">
+			 xmlns:system="clr-namespace:System;assembly=mscorlib"
+			 xmlns:rules="clr-namespace:ForgeModGenerator.Validations">
 	<Application.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
@@ -50,6 +51,21 @@
 				</ResourceDictionary>
 				<ResourceDictionary>
 					<converters:BindMultiValueConverter x:Key="BindMultiValueConverter" />
+				</ResourceDictionary>
+				<ResourceDictionary>
+					<ControlTemplate x:Key="ErrorContentTemplate">
+						<StackPanel>
+							<AdornedElementPlaceholder />
+							<ItemsControl ItemsSource="{Binding}">
+								<ItemsControl.ItemTemplate>
+									<DataTemplate>
+										<TextBlock Text="{Binding ErrorContent}"
+												   Foreground="Red" />
+									</DataTemplate>
+								</ItemsControl.ItemTemplate>
+							</ItemsControl>
+						</StackPanel>
+					</ControlTemplate>
 				</ResourceDictionary>
 				<ResourceDictionary>
 					<ContextMenu x:Key="DefaultFileItemContext">

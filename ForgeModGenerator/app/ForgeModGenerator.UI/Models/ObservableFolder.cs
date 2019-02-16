@@ -154,6 +154,10 @@ namespace ForgeModGenerator.Models
             if (Files.Remove(item))
             {
                 item.Info.Remove();
+                if (File.Exists(item.Info.FullName))
+                {
+                    IOExtensions.DeleteFileToBin(item.Info.FullName);
+                }
                 return true;
             }
             return false;
@@ -162,9 +166,14 @@ namespace ForgeModGenerator.Models
         // Removes folder with all his content
         public virtual void Delete()
         {
-            for (int i = Files.Count - 1; i > 0; i--)
+            for (int i = Files.Count - 1; i >= 0; i--)
             {
                 Remove(Files[i]);
+            }
+            
+            if (Directory.Exists(Info.FullName) && IOExtensions.IsEmpty(Info.FullName))
+            {
+                IOExtensions.DeleteDirectoryToBin(Info.FullName);
             }
         }
 

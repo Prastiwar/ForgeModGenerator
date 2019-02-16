@@ -6,10 +6,7 @@ namespace ForgeModGenerator.Controls
 {
     public class SubmitTextBox : TextBox
     {
-        public SubmitTextBox() : base()
-        {
-            PreviewKeyDown += new KeyEventHandler(SubmitTextBox_PreviewKeyDown);
-        }
+        public SubmitTextBox() : base() => PreviewKeyDown += new KeyEventHandler(SubmitTextBox_PreviewKeyDown);
 
         private void SubmitTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
