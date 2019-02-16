@@ -115,8 +115,6 @@ namespace ForgeModGenerator.SoundGenerator.Models
             return sound;
         }
 
-        internal string GetSoundsFolder() => ModPaths.SoundsFolder(ModGenerator.Models.Mod.GetModnameFromPath(Info.FullName), modid);
-
         public override bool CopyValues(object fromCopy)
         {
             if (fromCopy is Sound sound)
@@ -136,6 +134,8 @@ namespace ForgeModGenerator.SoundGenerator.Models
             }
             return false;
         }
+
+        internal string GetSoundsFolder() => ModPaths.SoundsFolder(ModGenerator.Models.Mod.GetModnameFromPath(Info.FullName), modid);
 
         public void FormatName() => Name = FormatSoundPathFromFullPath(modid, Info.FullName);
 

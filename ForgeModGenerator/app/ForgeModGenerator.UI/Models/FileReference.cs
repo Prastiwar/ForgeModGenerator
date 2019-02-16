@@ -3,7 +3,6 @@ using ForgeModGenerator.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace ForgeModGenerator
 {
@@ -63,62 +62,26 @@ namespace ForgeModGenerator
 
         public int GetReferenceCount() => GetReferenceCount(FullName);
 
-        public virtual bool Rename(string newPath)
+        public virtual void Set(string newPath)
         {
-            if (newPath == null)
-            {
-                return false;
-            }
             newPath = newPath.NormalizeFullPath();
             if (references.TryGetValue(newPath, out RefCounter newReference))
             {
                 Remove();
                 FileSystemInfo = newReference.File;
-                AddReference(FullName);
+                newReference.ReferenceCount++;
             }
             else
             {
-                try
-                {
-                    if (IOExtensions.IsDirectoryPath(newPath))
-                    {
-                        Directory.CreateDirectory(newPath);
-                        Directory.Move(FullName, newPath);
-                    }
-                    else
-                    {
-                        new FileInfo(newPath).Directory.Create();
-                        File.Move(FullName, newPath);
-                        try
-                        {
-                            bool noFilesLeft = !IOExtensions.EnumerateAllFiles(FullName).Any();
-                            if (noFilesLeft)
-                            {
-                                new FileInfo(FullName).Directory.Delete(true);
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            File.Move(newPath, FullName);
-                            return false;
-                        }
-                    }
-                    AddReference(newPath);
-                    FileSystemInfo = references[newPath].File;
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
+                AddReference(newPath);
+                FileSystemInfo = references[newPath].File;
             }
-            return true;
         }
 
-        public virtual bool Remove()
+        public void Remove()
         {
             string path = FullName.NormalizeFullPath();
             RemoveReference(path);
-            return GetReferenceCount(path) >= 1 ? true : FileSystemInfo.TryDeleteToBin();
         }
 
         protected virtual FileSystemInfo GetOrCreate(string filePath)

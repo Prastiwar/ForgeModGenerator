@@ -5,7 +5,6 @@ using ForgeModGenerator.SoundGenerator.Validations;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Windows.Controls;
 
 namespace ForgeModGenerator.SoundGenerator.Models
@@ -64,33 +63,7 @@ namespace ForgeModGenerator.SoundGenerator.Models
             get => subtitle;
             set => DirtSet(ref subtitle, value);
         }
-
-        protected override Sound CreateFileFromPath(string filePath) => new Sound(Mod.GetModidFromPath(filePath), filePath);
-
-        public override bool Remove(Sound item) => Remove(item, false);
-
-        public override void Delete()
-        {
-            for (int i = Files.Count - 1; i > 0; i--)
-            {
-                Remove(Files[i], true);
-            }
-            if (!DirInfo.EnumerateDirectories().Any() && !DirInfo.EnumerateFiles().Any())
-            {
-                DirInfo.Delete();
-            }
-        }
-
-        public bool Remove(Sound item, bool ignoreMinValue)
-        {
-            if (!ignoreMinValue && Files.Count == 1)
-            {
-                Log.Warning("SoundEvent must have at least 1 sound", true);
-                return false;
-            }
-            return base.Remove(item);
-        }
-
+        
         public override object DeepClone()
         {
             ObservableFolder<Sound> baseClone = (ObservableFolder<Sound>)base.DeepClone();

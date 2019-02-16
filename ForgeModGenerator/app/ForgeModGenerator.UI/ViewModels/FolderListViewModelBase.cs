@@ -86,7 +86,8 @@ namespace ForgeModGenerator.ViewModels
             FileWatcher = new FileSystemWatcherExtended(FoldersRootPath, AllowedFileExtensionsPatterns) {
                 IncludeSubdirectories = true,
                 MonitorDirectoryChanges = true,
-                EnableRaisingEvents = true
+                EnableRaisingEvents = true,
+                NotifyFilter = NotifyFilters.DirectoryName | NotifyFilters.FileName
             };
             FileWatcher.Created += FileWatcher_Created;
             FileWatcher.Deleted += FileWatcher_Deleted;
@@ -100,48 +101,78 @@ namespace ForgeModGenerator.ViewModels
         {
             if (IOExtensions.IsDirectoryPath(e.FullPath))
             {
-                //foreach (TFolder folder in FindFoldersFromDirectory(e.FullPath))
-                //{
-                //    Folders.Add(folder);
-                //}
+                System.Windows.Application.Current.Dispatcher.Invoke(() => {
+                    ObservableCollection<TFolder> foundFolders = FindFoldersFromDirectory(e.FullPath);
+                    if (foundFolders.Count > 0)
+                    {
+                        foreach (TFolder folder in FindFoldersFromDirectory(e.FullPath))
+                        {
+                            Folders.Add(folder);
+                        }
+                    }
+                    else
+                    {
+                        Folders.Add(ConstructFolderInstance(e.FullPath, null));
+                    }
+                });
             }
-            else
+            else // is file
             {
                 string folderPath = IOExtensions.GetDirectoryPath(e.FullPath);
-                TFolder folder;
-                //folder.Add(e.FullPath);
+                TFolder folder = Folders.Find(x => x.Info.FullName == folderPath);
+
+                System.Windows.Application.Current.Dispatcher.Invoke(() => {
+                    if (folder != null)
+                    {
+                        folder.Add(e.FullPath);
+                    }
+                });
             }
         }
 
         protected virtual void FileWatcher_Deleted(object sender, FileSystemEventArgs e)
         {
             string folderPath = IOExtensions.GetDirectoryPath(e.FullPath);
-            TFolder folder;
+            TFolder folder = Folders.Find(x => x.Info.FullName == folderPath);
+            if (folder == null)
+            {
+                return;
+            }
             if (IOExtensions.IsDirectoryPath(e.FullPath))
             {
-                //folder.Delete();
+                System.Windows.Application.Current.Dispatcher.Invoke(() => {
+                    if (Folders.Remove(folder))
+                    {
+                        folder.Delete();
+                    }
+                });
             }
-            else
+            else // is file
             {
-                TFile file;
-                //folder.Remove(file);
+                TFile file = folder.Files.Find(x => x.Info.FullName == e.FullPath);
+                System.Windows.Application.Current.Dispatcher.Invoke(() => {
+                    folder.Remove(file);
+                });
             }
         }
 
         protected virtual void FileWatcher_Renamed(object sender, RenamedEventArgs e)
         {
+            string oldFolderPath = IOExtensions.GetDirectoryPath(e.OldFullPath);
             string folderPath = IOExtensions.GetDirectoryPath(e.FullPath);
+            TFolder oldFolder = Folders.Find(x => x.Info.FullName == oldFolderPath);
             if (IOExtensions.IsDirectoryPath(e.FullPath))
             {
-                // TODO: Find TFolder
-                TFolder folder;
-                //folder.SetInfo(e.FullPath);
+                System.Windows.Application.Current.Dispatcher.Invoke(() => {
+                    oldFolder.SetInfo(folderPath);
+                });
             }
-            else
+            else // is file
             {
-                // TODO: Find TFile
-                TFile file;
-                //file.SetInfo(e.FullPath);
+                TFile file = oldFolder.Files.Find(x => x.Info.FullName == e.OldFullPath);
+                System.Windows.Application.Current.Dispatcher.Invoke(() => {
+                    file.SetInfo(e.FullPath);
+                });
             }
         }
 
@@ -272,13 +303,7 @@ namespace ForgeModGenerator.ViewModels
             {
                 DirectoryInfo selectedPath = new DirectoryInfo(OpenFolderDialog.SelectedPath);
                 string newFolderPath = IOExtensions.GetUniqueName(Path.Combine(FoldersRootPath, selectedPath.Name), (name) => !Directory.Exists(name));
-
                 IOExtensions.DirectoryCopy(OpenFolderDialog.SelectedPath, newFolderPath, AllowedFileExtensionsPatterns);
-
-                foreach (TFolder newFolder in FindFoldersFromDirectory(newFolderPath))
-                {
-                    Folders.Add(newFolder);
-                }
             }
         }
 
@@ -299,7 +324,7 @@ namespace ForgeModGenerator.ViewModels
             {
                 foreach (string filePath in OpenFileDialog.FileNames)
                 {
-                    folder.Add(filePath);
+                    File.Copy(filePath, Path.Combine(folder.Info.FullName, Path.GetFileName(filePath)));
                 }
             }
         }
@@ -414,8 +439,7 @@ namespace ForgeModGenerator.ViewModels
         }
 
         // Returns file that use extension from AllowedFileExtensions
-        protected IEnumerable<string> EnumerateFilteredFiles(string directoryPath, SearchOption searchOption = SearchOption.TopDirectoryOnly) =>
-            Directory.EnumerateFiles(directoryPath, "*", searchOption).Where(filePath => AllowedFileExtensions.Contains(Path.GetExtension(filePath)));
+        protected IEnumerable<string> EnumerateFilteredFiles(string directoryPath, SearchOption searchOption = SearchOption.TopDirectoryOnly) => IOExtensions.EnumerateFiles(directoryPath, AllowedFileExtensionsPatterns, searchOption);
 
         // Used on any folder initialization
         protected virtual void SubscribeFolderEvents(TFolder folder) { }

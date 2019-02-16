@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace ForgeModGenerator.Converters
@@ -62,9 +63,9 @@ namespace ForgeModGenerator.Converters
 
             if (value is ObservableCollection<SoundEvent> folders)
             {
-                for (int i = 0; i < folders.Count; i++)
+                int i = 0;
+                foreach (SoundEvent item in folders.Where(folder => folder.Files.Count > 0))
                 {
-                    SoundEvent item = folders[i];
                     itemBuilder.Clear();
                     string json = JsonConvert.SerializeObject(item, Formatting.Indented);
                     itemBuilder.Append(json);
@@ -75,6 +76,7 @@ namespace ForgeModGenerator.Converters
                         itemBuilder.Append(',');
                     }
                     builder.Append(itemBuilder);
+                    i++;
                 }
             }
             else

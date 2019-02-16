@@ -76,10 +76,9 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
 
             if (oldFilePath != newFilePath)
             {
-                if (!param.Item2.Info.Rename(newFilePath))
-                {
-                    Log.Warning($"Couldn't rename {param.Item2.Info.Name} to {newFilePath}", true);
-                }
+                FileInfo newFile = new FileInfo(newFilePath);
+                newFile.Directory.Create();
+                File.Move(param.Item2.Info.FileSystemInfo.FullName, newFile.FullName);
             }
         }
 
@@ -88,11 +87,17 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             string soundsFolderPath = ModPaths.SoundsFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
             foreach (string filePath in EnumerateFilteredFiles(soundsFolderPath, SearchOption.AllDirectories).Where(filePath => !FileSystemInfoReference.IsReferenced(filePath)))
             {
-                SoundEvent newFolder = new SoundEvent(IOExtensions.GetDirectoryPath(filePath));
-                newFolder.Add(filePath);
-                newFolder.EventName = IOExtensions.GetUniqueName(SoundEvent.FormatDottedSoundNameFromFullPath(filePath), (name) => Folders.All(folder => folder.EventName != name));
-                SubscribeFolderEvents(newFolder);
-                Folders.Add(newFolder);
+                string dirPath = IOExtensions.GetDirectoryPath(filePath);
+                SoundEvent folder = Folders.Find(x => x.Info.FullName == dirPath);
+                if (folder == null)
+                {
+                    folder = new SoundEvent(dirPath) {
+                        EventName = IOExtensions.GetUniqueName(SoundEvent.FormatDottedSoundNameFromFullPath(filePath), (name) => Folders.All(inFolder => inFolder.EventName != name))
+                    };
+                    SubscribeFolderEvents(folder);
+                    Folders.Add(folder);
+                }
+                folder.Add(filePath);
             }
             ForceUpdate();
             CheckForUpdate();
@@ -163,21 +168,6 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
                 base.OnFileEdited(result, args);
             }
             args.ActualFile.IsDirty = false;
-        }
-
-        protected override SoundEvent ConstructFolderInstance(string path, IEnumerable<string> filePaths)
-        {
-            if (filePaths == null)
-            {
-                throw new ArgumentNullException(nameof(filePaths));
-            }
-            List<Sound> sounds = new List<Sound>();
-            foreach (string filePath in filePaths)
-            {
-                sounds.Add(new Sound(ModGenerator.Models.Mod.GetModidFromPath(filePath), filePath));
-            }
-            SoundEvent soundEvent = new SoundEvent(path, sounds);
-            return soundEvent;
         }
 
         protected override void AddNewFolder()

@@ -31,6 +31,10 @@ namespace ForgeModGenerator.Converters
 
         public override void WriteJson(JsonWriter writer, SoundEvent value, JsonSerializer serializer)
         {
+            if (value.Files.Count <= 0)
+            {
+                return;
+            }
             writer.WriteRawValue($"\"{value.EventName}\":");
             if (serializer.Formatting == Formatting.Indented)
             {

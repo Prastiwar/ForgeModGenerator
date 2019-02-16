@@ -12,7 +12,7 @@ namespace ForgeModGenerator.Models
     public interface IFileSystemInfo : INotifyPropertyChanged, ICopiable, IDirty
     {
         FileSystemInfoReference Info { get; }
-        bool SetInfo(string path);
+        void SetInfo(string path);
     }
 
     public interface IFileItem : IFileSystemInfo { }
@@ -29,15 +29,17 @@ namespace ForgeModGenerator.Models
             private set => DirtSet(ref info, value);
         }
 
-        public virtual bool SetInfo(string path)
+        public virtual void SetInfo(string path)
         {
             if (Info != null)
             {
-                return Info.Rename(path);
+                Info.Set(path);
             }
-            Info = new FileInfoReference(path);
-            Info.PropertyChanged += Info_PropertyChanged;
-            return true;
+            else
+            {
+                Info = new FileInfoReference(path);
+                Info.PropertyChanged += Info_PropertyChanged;
+            }
         }
 
         protected virtual void Info_PropertyChanged(object sender, PropertyChangedEventArgs e) { }
