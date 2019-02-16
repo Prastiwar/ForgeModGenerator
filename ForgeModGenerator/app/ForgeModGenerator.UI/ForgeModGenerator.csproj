@@ -132,6 +132,9 @@
     <Compile Include="CodeGeneration\JavaCodeDom\JavaCodeProvider.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Common\FileSystemWatcherExtended.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Models\FileReference.cs" />
     <Compile Include="Controls\EditableList.cs" />
     <Compile Include="Controls\ScrollButton.cs" />

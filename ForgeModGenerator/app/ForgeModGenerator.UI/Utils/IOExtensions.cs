@@ -82,10 +82,29 @@ namespace ForgeModGenerator.Utils
         /// <summary> if path is file, return it's directory, else return path </summary>
         public static string GetDirectoryPath(string path) => IsFilePath(path) ? new FileInfo(path).Directory.FullName : path;
 
-        public static bool IsFilePath(string path) => !IsDirectoryPath(path);
-
         public static bool PathExists(string path) => File.Exists(path) || Directory.Exists(path);
 
+        /// <summary> 
+        /// Defines is path is (or could be if not exists) file.
+        /// IMPORTANT: If not exists, name without extension is not considered to be file
+        /// </summary>
+        public static bool IsFilePath(string path)
+        {
+            try
+            {
+                FileAttributes attr = File.GetAttributes(path);
+                return !attr.HasFlag(FileAttributes.Directory);
+            }
+            catch (Exception)
+            {
+                return IsPathValid(path) ? !string.IsNullOrEmpty(Path.GetExtension(path)) : false;
+            }
+        }
+
+        /// <summary> 
+        /// Defines is path is (or could be if not exists) directory.
+        /// IMPORTANT: If not exists, name with extension is not considered to be directory
+        /// </summary>
         public static bool IsDirectoryPath(string path)
         {
             try

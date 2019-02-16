@@ -83,7 +83,73 @@ namespace ForgeModGenerator.ViewModels
             OpenFolderDialog = new FolderBrowserDialog() { ShowNewFolderButton = true };
             AllowedFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { OpenFileDialog.DefaultExt };
             SessionContext.PropertyChanged += OnSessionContexPropertyChanged;
+            FileWatcher = new FileSystemWatcherExtended(FoldersRootPath, AllowedFileExtensionsPatterns) {
+                IncludeSubdirectories = true,
+                MonitorDirectoryChanges = true,
+                EnableRaisingEvents = true
+            };
+            FileWatcher.Created += FileWatcher_Created;
+            FileWatcher.Deleted += FileWatcher_Deleted;
+            FileWatcher.Renamed += FileWatcher_Renamed;
+            FileWatcher.Changed += FileWatcher_Changed;
+            FileWatcher.Disposed += FileWatcher_Disposed;
+            FileWatcher.Error += FileWatcher_Error;
         }
+
+        protected virtual void FileWatcher_Created(object sender, FileSystemEventArgs e)
+        {
+            if (IOExtensions.IsDirectoryPath(e.FullPath))
+            {
+                //foreach (TFolder folder in FindFoldersFromDirectory(e.FullPath))
+                //{
+                //    Folders.Add(folder);
+                //}
+            }
+            else
+            {
+                string folderPath = IOExtensions.GetDirectoryPath(e.FullPath);
+                TFolder folder;
+                //folder.Add(e.FullPath);
+            }
+        }
+
+        protected virtual void FileWatcher_Deleted(object sender, FileSystemEventArgs e)
+        {
+            string folderPath = IOExtensions.GetDirectoryPath(e.FullPath);
+            TFolder folder;
+            if (IOExtensions.IsDirectoryPath(e.FullPath))
+            {
+                //folder.Delete();
+            }
+            else
+            {
+                TFile file;
+                //folder.Remove(file);
+            }
+        }
+
+        protected virtual void FileWatcher_Renamed(object sender, RenamedEventArgs e)
+        {
+            string folderPath = IOExtensions.GetDirectoryPath(e.FullPath);
+            if (IOExtensions.IsDirectoryPath(e.FullPath))
+            {
+                // TODO: Find TFolder
+                TFolder folder;
+                //folder.SetInfo(e.FullPath);
+            }
+            else
+            {
+                // TODO: Find TFile
+                TFile file;
+                //file.SetInfo(e.FullPath);
+            }
+        }
+
+        protected virtual void FileWatcher_Changed(object sender, FileSystemEventArgs e) { }
+        protected virtual void FileWatcher_Disposed(object sender, EventArgs e) { }
+        protected virtual void FileWatcher_Error(object sender, ErrorEventArgs e) { }
+
+        protected FileSystemWatcherExtended FileWatcher { get; set; }
 
         // Path to folder root where are all files localized
         public abstract string FoldersRootPath { get; }
@@ -95,7 +161,9 @@ namespace ForgeModGenerator.ViewModels
 
         public IMultiValueConverter FolderFileConverter { get; }
 
-        public HashSet<string> AllowedFileExtensions { get; protected set; }
+        protected HashSet<string> AllowedFileExtensions { get; set; }
+
+        protected string AllowedFileExtensionsPatterns => "*" + string.Join("|*", AllowedFileExtensions);
 
         protected OpenFileDialog OpenFileDialog { get; }
 
@@ -146,6 +214,7 @@ namespace ForgeModGenerator.ViewModels
             if (CanRefresh())
             {
                 Folders = FindFolders(FoldersRootPath ?? FoldersSerializeFilePath, true);
+                FileWatcher.Path = FoldersRootPath;
                 return true;
             }
             return false;
@@ -204,8 +273,7 @@ namespace ForgeModGenerator.ViewModels
                 DirectoryInfo selectedPath = new DirectoryInfo(OpenFolderDialog.SelectedPath);
                 string newFolderPath = IOExtensions.GetUniqueName(Path.Combine(FoldersRootPath, selectedPath.Name), (name) => !Directory.Exists(name));
 
-                string fileSearchPattern = "*" + string.Join("|*", AllowedFileExtensions);
-                IOExtensions.DirectoryCopy(OpenFolderDialog.SelectedPath, newFolderPath, fileSearchPattern);
+                IOExtensions.DirectoryCopy(OpenFolderDialog.SelectedPath, newFolderPath, AllowedFileExtensionsPatterns);
 
                 foreach (TFolder newFolder in FindFoldersFromDirectory(newFolderPath))
                 {

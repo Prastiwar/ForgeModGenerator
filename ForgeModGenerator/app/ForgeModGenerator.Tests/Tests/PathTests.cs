@@ -53,13 +53,21 @@ namespace ForgeModGenerator.Tests
         {
             Assert.IsTrue(IOExtensions.IsDirectoryPath(@"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis\src\main\resources"));
             Assert.IsTrue(IOExtensions.IsDirectoryPath(@"\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis"));
-
             Assert.IsTrue(IOExtensions.IsDirectoryPath(@"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis\src\main\resources"));
             Assert.IsTrue(IOExtensions.IsDirectoryPath(@"Craftpolis"));
+
+            Assert.IsFalse(IOExtensions.IsDirectoryPath(@"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis\src\main\resources.smth"));
+            Assert.IsFalse(IOExtensions.IsDirectoryPath(@"Craftpolis.lol"));
+
+            Assert.IsFalse(IOExtensions.IsDirectoryPath(@"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis\src\main\resou:;<>rcessmth"));
+            Assert.IsFalse(IOExtensions.IsDirectoryPath(@"<>?:32"));
 
             Assert.IsTrue(IOExtensions.IsFilePath(@"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis\src\main\resources\smth.png"));
             Assert.IsTrue(IOExtensions.IsFilePath(@"\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis.png"));
             Assert.IsTrue(IOExtensions.IsFilePath(@"Craftpolis.png"));
+
+            Assert.IsFalse(IOExtensions.IsFilePath(@"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis\src\main\resou:;<>rces.smth"));
+            Assert.IsFalse(IOExtensions.IsFilePath(@"<>?:32.png"));
 
             Assert.IsTrue(IOExtensions.IsPathValid(@"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis\src\main\resources"));
             Assert.IsTrue(IOExtensions.IsPathValid(@"\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis"));
