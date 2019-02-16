@@ -138,6 +138,7 @@ namespace ForgeModGenerator.ViewModels
             {
                 return;
             }
+
             if (IOExtensions.IsDirectoryPath(e.FullPath))
             {
                 System.Windows.Application.Current.Dispatcher.Invoke(() => {
@@ -150,9 +151,12 @@ namespace ForgeModGenerator.ViewModels
             else // is file
             {
                 TFile file = folder.Files.Find(x => x.Info.FullName == e.FullPath);
-                System.Windows.Application.Current.Dispatcher.Invoke(() => {
-                    folder.Remove(file);
-                });
+                if (file != null)
+                {
+                    System.Windows.Application.Current.Dispatcher.Invoke(() => {
+                        folder.Remove(file);
+                    });
+                }
             }
         }
 
@@ -161,6 +165,11 @@ namespace ForgeModGenerator.ViewModels
             string oldFolderPath = IOExtensions.GetDirectoryPath(e.OldFullPath);
             string folderPath = IOExtensions.GetDirectoryPath(e.FullPath);
             TFolder oldFolder = Folders.Find(x => x.Info.FullName == oldFolderPath);
+            if (oldFolder == null)
+            {
+                return;
+            }
+
             if (IOExtensions.IsDirectoryPath(e.FullPath))
             {
                 System.Windows.Application.Current.Dispatcher.Invoke(() => {
@@ -170,9 +179,12 @@ namespace ForgeModGenerator.ViewModels
             else // is file
             {
                 TFile file = oldFolder.Files.Find(x => x.Info.FullName == e.OldFullPath);
-                System.Windows.Application.Current.Dispatcher.Invoke(() => {
-                    file.SetInfo(e.FullPath);
-                });
+                if (file != null)
+                {
+                    System.Windows.Application.Current.Dispatcher.Invoke(() => {
+                        file.SetInfo(e.FullPath);
+                    });
+                }
             }
         }
 

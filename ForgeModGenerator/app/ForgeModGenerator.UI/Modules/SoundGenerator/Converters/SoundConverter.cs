@@ -11,7 +11,7 @@ namespace ForgeModGenerator.Converters
         {
             JObject item = JObject.Load(reader);
             string name = item.GetValue("name").ToObject<string>();
-            string modid = Sound.GetModidFromSoundPath(name);
+            string modid = Sound.GetModidFromSoundName(name);
             Sound sound = Sound.CreateEmpty(name, modid);
             if (item.TryGetValue("volume", out JToken volume))
             {

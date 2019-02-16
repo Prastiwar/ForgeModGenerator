@@ -8,6 +8,7 @@
 	  xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
 	  xmlns:sControls="clr-namespace:ForgeModGenerator.SoundGenerator.Controls"
 	  xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+	  xmlns:rules="clr-namespace:ForgeModGenerator.Validations"
 	  mc:Ignorable="d"
 	  d:DesignHeight="450"
 	  d:DesignWidth="800"
@@ -26,7 +27,7 @@
 													  EditFileCommand="{Binding Path=DataContext.EditFileCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}">
 					<sControls:SoundFolderExpanderControl.FileItemTemplate>
 						<DataTemplate>
-							<StackPanel>
+							<StackPanel Margin="5,5,5,10">
 								<Button Tag="{Binding RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
 										Width="32"
 										Height="32"
@@ -38,7 +39,38 @@
 										CommandParameter="{Binding}">
 									<materialDesign:PackIcon Kind="Play" />
 								</Button>
-								<TextBlock Text="{Binding Info.Name}" />
+								<controls:SubmitTextBox IsTabStop="True">
+									<Validation.ErrorTemplate>
+										<ControlTemplate>
+											<StackPanel>
+												<AdornedElementPlaceholder />
+												<ItemsControl ItemsSource="{Binding}">
+													<ItemsControl.ItemTemplate>
+														<DataTemplate>
+															<TextBlock Text="{Binding ErrorContent}"
+																	   Foreground="Red" />
+														</DataTemplate>
+													</ItemsControl.ItemTemplate>
+												</ItemsControl>
+											</StackPanel>
+										</ControlTemplate>
+									</Validation.ErrorTemplate>
+									<controls:SubmitTextBox.Resources>
+										<controls:BindingProxy x:Key="DataProxy"
+															   Data="{Binding DataContext, RelativeSource={RelativeSource AncestorType=controls:SubmitTextBox}}" />
+									</controls:SubmitTextBox.Resources>
+									<controls:SubmitTextBox.Text>
+										<Binding Path="Info.ChangeName">
+											<Binding.ValidationRules>
+												<rules:CanMoveFileSystemInfoRule ValidatesOnTargetUpdated="True">
+													<rules:CanMoveFileSystemInfoRule.Parameters>
+														<rules:CanMoveFileSystemInfoDependencyWrapper RootPath="{Binding Path=Data.Info.FileSystemInfo.FullName, Source={StaticResource DataProxy}}" />
+													</rules:CanMoveFileSystemInfoRule.Parameters>
+												</rules:CanMoveFileSystemInfoRule>
+											</Binding.ValidationRules>
+										</Binding>
+									</controls:SubmitTextBox.Text>
+								</controls:SubmitTextBox>
 							</StackPanel>
 						</DataTemplate>
 					</sControls:SoundFolderExpanderControl.FileItemTemplate>

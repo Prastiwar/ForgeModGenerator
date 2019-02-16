@@ -1,11 +1,9 @@
-﻿using ForgeModGenerator.ModGenerator.Models;
-using ForgeModGenerator.SoundGenerator.Models;
+﻿using ForgeModGenerator.SoundGenerator.Models;
 using ForgeModGenerator.Utils;
 using ForgeModGenerator.Validations;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -47,7 +45,7 @@ namespace ForgeModGenerator.SoundGenerator.Validations
             switch (PropertyName)
             {
                 case nameof(Sound.Name):
-                    return ValidateShortPath(value.ToString(), Parameters);
+                    return ValidateName(value.ToString(), Parameters);
                 case nameof(Sound.Type):
                     return ValidateType(value.ToString());
                 default:
@@ -55,38 +53,26 @@ namespace ForgeModGenerator.SoundGenerator.Validations
             }
         }
 
-        public ValidationResult ValidateShortPath(string newShortPath, SoundValidationDependencyWrapper parameters)
+        public ValidationResult ValidateName(string name, SoundValidationDependencyWrapper parameters)
         {
-            ValidationResult emptyResult = new NotEmptyRule().Validate(newShortPath, null);
+            ValidationResult emptyResult = new NotEmptyRule().Validate(name, null);
             if (!emptyResult.IsValid)
             {
                 return emptyResult;
             }
-            if (parameters == null || parameters.Sounds == null || parameters.SoundBeforeChange == null)
+            else if (parameters == null || parameters.Sounds == null || parameters.SoundBeforeChange == null)
             {
                 return new ValidationResult(false, "Validation failed, one of parameters was null");
             }
-            string soundsFolderPath = parameters.SoundBeforeChange.GetSoundsFolder();
-            string oldFilePath = parameters.SoundBeforeChange.Info.FullName;
-            newShortPath = newShortPath.EndsWith("/") ? newShortPath.Substring(0, newShortPath.Length - 1) : newShortPath;
-            string newFilePath = null;
-            try
+            string relativePath = Sound.GetRelativePathFromSoundName(name);
+            if (!IOExtensions.IsPathValid(relativePath))
             {
-                string newFilePathToValidate = $"{Path.Combine(soundsFolderPath, newShortPath)}{ Path.GetExtension(oldFilePath)}";
-                newFilePath = Path.GetFullPath(newFilePathToValidate);
+                return new ValidationResult(false, $"Filename {name} has invalid characters");
             }
-            catch (Exception)
+            else if (parameters.SoundBeforeChange.Name != name)
             {
-                return new ValidationResult(false, $"Path {newShortPath} is not valid");
-            }
-            if (!IOExtensions.IsSubPathOf(newFilePath, soundsFolderPath))
-            {
-                return new ValidationResult(false, $"Path must be in {soundsFolderPath}");
-            }
-            if (parameters.SoundBeforeChange.ShortPath != newShortPath)
-            {
-                int nameCount = parameters.Sounds.Count(x => x.ShortPath == newShortPath) + 1;
-                ValidationResult existResult = new ValidationResult(nameCount <= 1, $"{newShortPath} already exists");
+                int nameCount = parameters.Sounds.Count(x => x.Name == name) + 1;
+                ValidationResult existResult = new ValidationResult(nameCount <= 1, $"{name} already exists");
                 if (!existResult.IsValid)
                 {
                     return existResult;

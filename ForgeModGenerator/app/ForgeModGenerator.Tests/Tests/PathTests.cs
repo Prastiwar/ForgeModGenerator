@@ -44,8 +44,8 @@ namespace ForgeModGenerator.Tests
         [TestMethod]
         public void SoundPath()
         {
-            Assert.AreEqual("craftpolis", Sound.GetModidFromSoundPath("craftpolis:entity/jump"));
-            Assert.AreEqual("entity/jump", Sound.GetRelativePathFromSoundPath("craftpolis:entity/jump"));
+            Assert.AreEqual("craftpolis", Sound.GetModidFromSoundName("craftpolis:entity/jump"));
+            Assert.AreEqual("entity/jump", Sound.GetRelativePathFromSoundName("craftpolis:entity/jump"));
         }
 
         [TestMethod]

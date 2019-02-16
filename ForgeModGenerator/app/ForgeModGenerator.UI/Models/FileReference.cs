@@ -1,5 +1,5 @@
-﻿using ForgeModGenerator.Models;
-using ForgeModGenerator.Utils;
+﻿using ForgeModGenerator.Utils;
+using GalaSoft.MvvmLight;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,7 +7,7 @@ using System.IO;
 namespace ForgeModGenerator
 {
     // Base class that manages file references in application and synchronizes it with explorer
-    public abstract class FileSystemInfoReference : ObservableDirtyObject
+    public abstract class FileSystemInfoReference : ObservableObject
     {
         protected abstract class RefCounter
         {
@@ -49,11 +49,34 @@ namespace ForgeModGenerator
         public FileSystemInfo FileSystemInfo {
             get => fileSystemInfo;
             protected set {
-                if (DirtSet(ref fileSystemInfo, value))
+                if (Set(ref fileSystemInfo, value))
                 {
+                    changeName = FileSystemInfo is DirectoryInfo ? Name : Path.GetFileNameWithoutExtension(Name);
                     RaisePropertyChanged(nameof(Name));
                     RaisePropertyChanged(nameof(FullName));
+                    RaisePropertyChanged(nameof(ChangeName));
                 }
+            }
+        }
+
+        private string changeName;
+        public virtual string ChangeName {
+            get => changeName;
+            set {
+                string newPath = null;
+                if (FileSystemInfo is DirectoryInfo dirInfo)
+                {
+                    newPath = Path.Combine(dirInfo.Parent.FullName, value);
+                    dirInfo.MoveTo(newPath);
+                }
+                else if (FileSystemInfo is FileInfo fileInfo)
+                {
+                    string valueWithExt = value + Path.GetExtension(Name);
+                    newPath = Path.Combine(fileInfo.Directory.FullName, valueWithExt);
+                    fileInfo.MoveTo(newPath);
+                }
+                SetInfo(newPath);
+                Set(ref changeName, value);
             }
         }
 
@@ -62,7 +85,7 @@ namespace ForgeModGenerator
 
         public int GetReferenceCount() => GetReferenceCount(FullName);
 
-        public virtual void Set(string newPath)
+        public virtual void SetInfo(string newPath)
         {
             newPath = newPath.NormalizeFullPath();
             if (references.TryGetValue(newPath, out RefCounter newReference))

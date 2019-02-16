@@ -18,48 +18,15 @@
 			<Border BorderThickness="0.7"
 					BorderBrush="Black">
 				<StackPanel Background="WhiteSmoke">
-					<TextBlock Text="Name: "
-							   FontSize="14"
-							   FontWeight="Bold"
-							   Margin="3,0,3,0"
-							   VerticalAlignment="Center" />
-					<Grid>
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="auto" />
-							<ColumnDefinition Width="auto" />
-							<ColumnDefinition Width="*" />
-						</Grid.ColumnDefinitions>
-						<TextBlock Text="{Binding Name, Mode=OneTime, Converter={StaticResource PathToModidConverter}}"
+					<StackPanel Orientation="Horizontal">
+						<TextBlock Text="Name: "
+								   FontSize="14"
+								   FontWeight="Bold"
+								   Margin="3,0,3,0"
 								   VerticalAlignment="Center" />
-						<TextBlock Text=":"
-								   Grid.Column="1"
+						<TextBlock Text="{Binding Name, Mode=OneTime}"
 								   VerticalAlignment="Center" />
-						<controls:SubmitTextBox x:Name="NameBox"
-												Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-												Grid.Column="2"
-												Margin="3,0,0,0"
-												wpf:HintAssist.Hint="Relative path"
-												IsTabStop="True">
-							<controls:SubmitTextBox.Resources>
-								<controls:BindingProxy x:Key="DataProxy"
-													   Data="{Binding RelativeSource={RelativeSource AncestorType=local:SoundEditForm}}" />
-							</controls:SubmitTextBox.Resources>
-							<controls:SubmitTextBox.Text>
-								<Binding Path="ShortPath"
-										 UpdateSourceTrigger="PropertyChanged">
-									<Binding.ValidationRules>
-										<rules:SoundRules ValidatesOnTargetUpdated="True"
-														  PropertyName="Name">
-											<rules:SoundRules.Parameters>
-												<rules:SoundValidationDependencyWrapper Sounds="{Binding Path=Data.AllSounds, Source={StaticResource DataProxy}}"
-																						SoundBeforeChange="{Binding Path=Data.DataContext, Source={StaticResource DataProxy}}" />
-											</rules:SoundRules.Parameters>
-										</rules:SoundRules>
-									</Binding.ValidationRules>
-								</Binding>
-							</controls:SubmitTextBox.Text>
-						</controls:SubmitTextBox>
-					</Grid>
+					</StackPanel>
 					<Separator MinWidth="350" />
 					<Grid Margin="0,10,0,0">
 						<Grid.ColumnDefinitions>

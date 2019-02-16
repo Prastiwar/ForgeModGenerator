@@ -33,7 +33,7 @@ namespace ForgeModGenerator.Models
         {
             if (Info != null)
             {
-                Info.Set(path);
+                Info.SetInfo(path);
             }
             else
             {

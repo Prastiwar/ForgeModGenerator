@@ -29,7 +29,7 @@ namespace ForgeModGenerator.SoundGenerator.Models
 
             if (File.Exists(filePath))
             {
-                Name = FormatSoundPathFromFullPath(modid, filePath);
+                Name = FormatSoundNameFromFullPath(modid, filePath);
                 SetInfo(filePath);
             }
             else
@@ -41,20 +41,10 @@ namespace ForgeModGenerator.SoundGenerator.Models
 
         private string modid;
 
-        public string ShortPath {
-            get => GetRelativePathFromSoundPath(Name);
-            set => Name = FormatSoundPath(modid, value);
-        }
-
         private string name;
         public string Name {
             get => name;
-            private set {
-                if (DirtSet(ref name, value))
-                {
-                    RaisePropertyChanged(nameof(ShortPath));
-                }
-            }
+            private set => DirtSet(ref name, value);
         }
 
         private float volume = 1.0f;
@@ -137,7 +127,7 @@ namespace ForgeModGenerator.SoundGenerator.Models
 
         internal string GetSoundsFolder() => ModPaths.SoundsFolder(ModGenerator.Models.Mod.GetModnameFromPath(Info.FullName), modid);
 
-        public void FormatName() => Name = FormatSoundPathFromFullPath(modid, Info.FullName);
+        public void FormatName() => Name = FormatSoundNameFromFullPath(modid, Info.FullName);
 
         public ValidationResult IsValid(IEnumerable<Sound> sounds)
         {
@@ -146,8 +136,7 @@ namespace ForgeModGenerator.SoundGenerator.Models
                 Sounds = sounds,
                 SoundBeforeChange = this
             };
-            ValidationResult result = rules.ValidateShortPath(ShortPath, parameters);
-            return result;
+            return rules.ValidateName(Name, parameters);
         }
 
         protected override void Info_PropertyChanged(object sender, PropertyChangedEventArgs e) => FormatName();
@@ -159,23 +148,23 @@ namespace ForgeModGenerator.SoundGenerator.Models
             }
         }
 
-        public static string GetModidFromSoundPath(string path) => path.Substring(0, path.IndexOf(":"));
+        public static string GetModidFromSoundName(string name) => name.Substring(0, name.IndexOf(":"));
 
         // Get "shortpath" if path is formatted as "modid:shortpath"
-        public static string GetRelativePathFromSoundPath(string path) => path.Remove(0, path.IndexOf(":") + 1);
+        public static string GetRelativePathFromSoundName(string name) => name.Remove(0, name.IndexOf(":") + 1);
 
         // Get formatted sound from short path, "modid:shortPath"
-        public static string FormatSoundPath(string modid, string shortPath) => $"{modid}:{shortPath}";
+        public static string FormatSoundName(string modid, string shortPath) => $"{modid}:{shortPath}";
 
         // Get formatted sound from full path, "modid:shorten/path/toFile"
-        public static string FormatSoundPathFromFullPath(string modid, string path)
+        public static string FormatSoundNameFromFullPath(string modid, string path)
         {
-            string shortPath = FormatSoundShortPath(path);
+            string shortPath = FormatSoundRelativePath(path);
             return $"{modid}:{shortPath}";
         }
 
         // Get formatted sound from full path, "shorten/path/toFile"
-        public static string FormatSoundShortPath(string fullPath)
+        public static string FormatSoundRelativePath(string fullPath)
         {
             int startIndex = fullPath.IndexOf("sounds") + 7;
             if (startIndex == -1)

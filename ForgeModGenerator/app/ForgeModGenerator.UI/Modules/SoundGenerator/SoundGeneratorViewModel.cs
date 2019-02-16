@@ -69,7 +69,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             }
             string soundsFolderPath = param.Item2.GetSoundsFolder();
             string oldFilePath = param.Item2.Info.FullName;
-            string relativePath = param.Item2.ShortPath;
+            string relativePath = Sound.GetRelativePathFromSoundName(param.Item2.Name);
             string newRelativePath = relativePath.EndsWith("/") ? relativePath.Substring(0, relativePath.Length - 1) : relativePath;
             string newFilePathToValidate = $"{Path.Combine(soundsFolderPath, newRelativePath)}{Path.GetExtension(oldFilePath)}";
             string newFilePath = Path.GetFullPath(newFilePathToValidate).Replace("\\", "/");
@@ -105,7 +105,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
 
         protected void CheckForUpdate() => ShouldUpdate = !IsJsonUpdated();
 
-        protected void ForceUpdate() => JsonUpdater.ForceJsonUpdate();// GetCurrentSoundCodeGenerator().RegenerateScript();
+        protected void ForceUpdate() => JsonUpdater?.ForceJsonUpdate();// GetCurrentSoundCodeGenerator().RegenerateScript();
 
         protected override bool CanRefresh() => SessionContext.SelectedMod != null;
 
@@ -127,11 +127,6 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
         {
             if (result)
             {
-                if (!(FileEditForm as SoundEditForm).IsValid())
-                {
-                    Log.Warning($"Cannot save, your data is not valid", true);
-                    return false;
-                }
                 ValidationResult validation = args.ActualFile.IsValid(args.Folder.Files);
                 if (!validation.IsValid)
                 {

@@ -218,6 +218,7 @@
     </Compile>
     <Compile Include="Modules\SoundGenerator\Controls\SoundFolderExpanderControl.cs" />
     <Compile Include="Controls\SubmitTextBox.cs" />
+    <Compile Include="Validations\CanMoveFileSystemInfoRule.cs" />
     <Compile Include="Validations\NotEmptyRule.cs" />
     <Compile Include="Modules\SoundGenerator\Validation\SoundEventRules.cs" />
     <Compile Include="Modules\SoundGenerator\Validation\SoundRules.cs" />

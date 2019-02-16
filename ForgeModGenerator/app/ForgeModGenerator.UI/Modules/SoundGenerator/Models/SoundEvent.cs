@@ -107,9 +107,9 @@ namespace ForgeModGenerator.SoundGenerator.Models
         }
 
         // Get formatted sound from full path, "shorten.path.toFile"
-        public static string FormatDottedSoundNameFromFullPath(string path) => Sound.FormatSoundPathFromFullPath(null, path).Remove(0, 1).Replace("/", ".");
+        public static string FormatDottedSoundNameFromFullPath(string path) => Sound.FormatSoundNameFromFullPath(null, path).Remove(0, 1).Replace("/", ".");
 
         // Get formatted sound from sound path modid:shorten/path/toFile to "shorten.path.toFile"
-        public static string FormatDottedSoundNameFromSoundName(string name) => Sound.GetRelativePathFromSoundPath(name).Replace("/", ".");
+        public static string FormatDottedSoundNameFromSoundName(string name) => Sound.GetRelativePathFromSoundName(name).Replace("/", ".");
     }
 }
