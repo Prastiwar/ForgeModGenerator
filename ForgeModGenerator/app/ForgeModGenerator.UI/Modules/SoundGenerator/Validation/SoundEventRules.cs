@@ -45,25 +45,9 @@ namespace ForgeModGenerator.SoundGenerator.Validations
             {
                 case nameof(SoundEvent.EventName):
                     return ValidateEventName(value.ToString(), Parameters);
-                case nameof(SoundEvent.Files):
-                    return ValidateSounds(Parameters.SoundEventBeforeChange.Files);
                 default:
                     throw new NotImplementedException($"Validation of paremeter: {PropertyName} is not implemented");
             }
-        }
-
-        public ValidationResult ValidateSounds(IEnumerable<Sound> sounds)
-        {
-            SoundRules soundRules = new SoundRules();
-            foreach (Sound sound in sounds)
-            {
-                ValidationResult result = sound.IsValid(sounds);
-                if (!result.IsValid)
-                {
-                    return result;
-                }
-            }
-            return ValidationResult.ValidResult;
         }
 
         public ValidationResult ValidateEventName(string newEventName, SoundEventValidationDependencyWrapper parameters)

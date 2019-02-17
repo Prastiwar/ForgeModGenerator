@@ -1,9 +1,9 @@
 ﻿using ForgeModGenerator.Converters;
 using ForgeModGenerator.Models;
-using ForgeModGenerator.ModGenerator.Models;
 using ForgeModGenerator.SoundGenerator.Validations;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows.Controls;
 
@@ -21,7 +21,7 @@ namespace ForgeModGenerator.SoundGenerator.Models
             SoundEvent soundEvent = new SoundEvent();
             if (files != null)
             {
-                soundEvent.Files = new System.Collections.ObjectModel.ObservableCollection<Sound>(files);
+                soundEvent.Files = new ObservableCollection<Sound>(files);
             }
             return soundEvent;
         }
@@ -63,7 +63,7 @@ namespace ForgeModGenerator.SoundGenerator.Models
             get => subtitle;
             set => DirtSet(ref subtitle, value);
         }
-        
+
         public override object DeepClone()
         {
             ObservableFolder<Sound> baseClone = (ObservableFolder<Sound>)base.DeepClone();
@@ -98,12 +98,7 @@ namespace ForgeModGenerator.SoundGenerator.Models
                 SoundEvents = soundEvents,
                 SoundEventBeforeChange = this
             };
-            ValidationResult eventResult = soundEventRules.ValidateEventName(EventName, parameters);
-            if (!eventResult.IsValid)
-            {
-                return eventResult;
-            }
-            return soundEventRules.ValidateSounds(Files);
+            return soundEventRules.ValidateEventName(EventName, parameters);
         }
 
         // Get formatted sound from full path, "shorten.path.toFile"

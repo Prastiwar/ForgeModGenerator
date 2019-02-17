@@ -14,7 +14,7 @@ namespace ForgeModGenerator.Models
 
     public interface IFileFolder : IFileSystemInfo, IDirty, INotifyCollectionChanged, INotifyPropertyChanged
     {
-        void Add(string filePath, bool overwrite = false);
+        bool Add(string filePath);
         void Clear();
     }
 
@@ -25,10 +25,9 @@ namespace ForgeModGenerator.Models
 
         ObservableCollection<T> Files { get; }
 
-        void Add(T item);
+        bool Add(T item);
         bool Remove(T item);
         bool Contains(T item);
-        void Delete();
     }
 
     public class ObservableFolder<T> : ObservableDirtyObject, IFileFolder<T>
@@ -107,10 +106,27 @@ namespace ForgeModGenerator.Models
         [JsonIgnore]
         protected DirectoryInfo DirInfo => (DirectoryInfo)Info.FileSystemInfo;
 
-        public void Clear() => Files.Clear();
         public bool Contains(T item) => Files.Contains(item);
 
-        public void Add(T item) => Files.Add(item);
+        public bool Add(T item)
+        {
+            bool canAdd = !Files.Exists(file => file.Info.FullName == item.Info.FullName);
+            if (canAdd)
+            {
+                Files.Add(item);
+            }
+            return canAdd;
+        }
+
+        public bool Add(string filePath)
+        {
+            bool canAdd = !Files.Exists(file => file.Info.FullName == Path.GetFullPath(filePath));
+            if (canAdd)
+            {
+                Add(CreateFileFromPath(filePath));
+            }
+            return canAdd;
+        }
 
         public void AddRange(IEnumerable<T> items)
         {
@@ -128,62 +144,28 @@ namespace ForgeModGenerator.Models
             }
         }
 
-        public virtual void Add(string filePath, bool overwrite = false)
-        {
-            FileInfo fileInfo = new FileInfo(filePath);
-            int index = Files.FindIndex(x => x.Info.FullName == fileInfo.FullName);
-            if (index != -1)
-            {
-                if (overwrite)
-                {
-                    Files[index] = CreateFileFromPath(fileInfo.FullName);
-                }
-                else
-                {
-                    Log.Warning($"File {fileInfo.FullName} already exists.", true);
-                }
-            }
-            else
-            {
-                Add(CreateFileFromPath(fileInfo.FullName));
-            }
-        }
-
-        public virtual bool Remove(T item)
+        public bool Remove(T item)
         {
             if (Files.Remove(item))
             {
                 item.Info.Remove();
-                if (File.Exists(item.Info.FullName))
-                {
-                    IOExtensions.DeleteFileToBin(item.Info.FullName);
-                }
                 return true;
             }
             return false;
         }
 
-        // Removes folder with all his content
-        public virtual void Delete()
+        public void Clear()
         {
             for (int i = Files.Count - 1; i >= 0; i--)
             {
                 Remove(Files[i]);
             }
-            
-            if (Directory.Exists(Info.FullName) && IOExtensions.IsEmpty(Info.FullName))
-            {
-                IOExtensions.DeleteDirectoryToBin(Info.FullName);
-            }
         }
 
-        // Initialize DirectoryInfoReference or rename
-        public virtual void SetInfo(string path)
+        /// <summary> Initialize DirectoryInfoReference or rename </summary>
+        public void SetInfo(string path)
         {
-            if (IOExtensions.IsFilePath(path))
-            {
-                path = new FileInfo(path).Directory.FullName;
-            }
+            path = IOExtensions.GetDirectoryPath(path);
             if (Info != null)
             {
                 Info.SetInfo(path);
@@ -195,7 +177,7 @@ namespace ForgeModGenerator.Models
             }
         }
 
-        protected virtual T CreateFileFromPath(string filePath)
+        protected T CreateFileFromPath(string filePath)
         {
             try
             {

@@ -1,12 +1,9 @@
 ﻿using ForgeModGenerator.Converters;
 using ForgeModGenerator.Models;
-using ForgeModGenerator.SoundGenerator.Validations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Windows.Controls;
 
 namespace ForgeModGenerator.SoundGenerator.Models
 {
@@ -129,22 +126,21 @@ namespace ForgeModGenerator.SoundGenerator.Models
 
         public void FormatName() => Name = FormatSoundNameFromFullPath(modid, Info.FullName);
 
-        public ValidationResult IsValid(IEnumerable<Sound> sounds)
+        protected override void Info_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            SoundRules rules = new SoundRules();
-            SoundValidationDependencyWrapper parameters = new SoundValidationDependencyWrapper() {
-                Sounds = sounds,
-                SoundBeforeChange = this
-            };
-            return rules.ValidateName(Name, parameters);
+            if (e.PropertyName == nameof(FileSystemInfoReference.FullName))
+            {
+                FormatName();
+                IsDirty = false;
+            }
         }
 
-        protected override void Info_PropertyChanged(object sender, PropertyChangedEventArgs e) => FormatName();
         protected virtual void Sound_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(Info))
             {
                 FormatName();
+                IsDirty = false;
             }
         }
 

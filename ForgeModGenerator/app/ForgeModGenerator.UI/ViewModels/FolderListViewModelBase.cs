@@ -21,8 +21,8 @@ namespace ForgeModGenerator.ViewModels
 {
     /// <summary> Business ViewModel Base class for making file list </summary>
     public abstract class FolderListViewModelBase<TFolder, TFile> : ViewModelBase
-        where TFolder : IFileFolder<TFile>
-        where TFile : IFileItem
+        where TFolder : class, IFileFolder<TFile>
+        where TFile : class, IFileItem
     {
         #region EventArgs
         public class FileEditedEventArgs : EventArgs
@@ -97,94 +97,143 @@ namespace ForgeModGenerator.ViewModels
             FileWatcher.Error += FileWatcher_Error;
         }
 
+        protected void SyncCreateFolder(string path, bool includeSubDirectories = true)
+        {
+            if (!IOExtensions.IsSubPathOf(path, FoldersRootPath))
+            {
+                throw new InvalidOperationException($"You cannot synchronize folder outside root path: {FoldersRootPath}. The actual folder path: {path}");
+            }
+            Folders.Add(ConstructFolderInstance(path, null));
+            if (includeSubDirectories)
+            {
+                ObservableCollection<TFolder> foundFolders = FindFoldersFromDirectory(path);
+                if (foundFolders.Count > 0)
+                {
+                    foreach (TFolder folder in foundFolders)
+                    {
+                        Folders.Add(folder);
+                    }
+                }
+            }
+        }
+
+        protected void SyncCreateFile(string path)
+        {
+            if (!IOExtensions.IsSubPathOf(path, FoldersRootPath))
+            {
+                throw new InvalidOperationException($"You cannot synchronize file outside root path: {FoldersRootPath}. The actual file path: {path}");
+            }
+            string folderPath = IOExtensions.GetDirectoryPath(path);
+            if (TryGetFolder(folderPath, out TFolder folder))
+            {
+                folder.Add(path);
+            }
+        }
+
+        protected void SyncRemoveFolder(string path)
+        {
+            if (!IOExtensions.IsSubPathOf(path, FoldersRootPath))
+            {
+                throw new InvalidOperationException($"You cannot synchronize folder outside root path: {FoldersRootPath}. The actual folder path: {path}");
+            }
+            if (TryGetFolder(path, out TFolder folder))
+            {
+                if (Folders.Remove(folder))
+                {
+                    folder.Clear();
+                }
+            }
+        }
+
+        protected void SyncRemoveFile(string path)
+        {
+            if (!IOExtensions.IsSubPathOf(path, FoldersRootPath))
+            {
+                throw new InvalidOperationException($"You cannot synchronize file outside root path: {FoldersRootPath}. The actual file path: {path}");
+            }
+            if (TryGetFile(path, out TFile file, out TFolder folder))
+            {
+                folder.Remove(file);
+            }
+        }
+
+        protected void SyncRenameFolder(string oldPath, string newPath)
+        {
+            if (!IOExtensions.IsSubPathOf(oldPath, FoldersRootPath))
+            {
+                throw new InvalidOperationException($"You cannot synchronize folder outside root path: {FoldersRootPath}. The actual folder path: {oldPath}");
+            }
+            string oldFolderPath = IOExtensions.GetDirectoryPath(oldPath);
+            string folderPath = IOExtensions.GetDirectoryPath(newPath);
+            if (TryGetFolder(oldFolderPath, out TFolder oldFolder))
+            {
+                oldFolder.SetInfo(folderPath);
+            }
+        }
+
+        protected void SyncRenameFile(string oldPath, string newPath)
+        {
+            if (!IOExtensions.IsSubPathOf(oldPath, FoldersRootPath))
+            {
+                throw new InvalidOperationException($"You cannot synchronize file outside root path: {FoldersRootPath}. The actual file path: {oldPath}");
+            }
+            if (TryGetFile(oldPath, out TFile file, out TFolder folder))
+            {
+                file.SetInfo(newPath);
+            }
+        }
+
+        protected bool TryGetFolder(string path, out TFolder folder)
+        {
+            string folderPath = IOExtensions.GetDirectoryPath(path);
+            folder = Folders.Find(x => x.Info.FullName == folderPath);
+            return folder != null;
+        }
+
+        protected bool TryGetFile(string path, out TFile file, out TFolder folder)
+        {
+            if (TryGetFolder(path, out folder))
+            {
+                file = folder.Files.Find(x => x.Info.FullName == path);
+                return file != null;
+            }
+            file = null;
+            return false;
+        }
+
         protected virtual void FileWatcher_Created(object sender, FileSystemEventArgs e)
         {
             if (IOExtensions.IsDirectoryPath(e.FullPath))
             {
-                System.Windows.Application.Current.Dispatcher.Invoke(() => {
-                    ObservableCollection<TFolder> foundFolders = FindFoldersFromDirectory(e.FullPath);
-                    if (foundFolders.Count > 0)
-                    {
-                        foreach (TFolder folder in FindFoldersFromDirectory(e.FullPath))
-                        {
-                            Folders.Add(folder);
-                        }
-                    }
-                    else
-                    {
-                        Folders.Add(ConstructFolderInstance(e.FullPath, null));
-                    }
-                });
+                System.Windows.Application.Current.Dispatcher.Invoke(() => { SyncCreateFolder(e.FullPath, true); });
             }
             else // is file
             {
-                string folderPath = IOExtensions.GetDirectoryPath(e.FullPath);
-                TFolder folder = Folders.Find(x => x.Info.FullName == folderPath);
-
-                System.Windows.Application.Current.Dispatcher.Invoke(() => {
-                    if (folder != null)
-                    {
-                        folder.Add(e.FullPath);
-                    }
-                });
+                System.Windows.Application.Current.Dispatcher.Invoke(() => { SyncCreateFile(e.FullPath); });
             }
         }
 
         protected virtual void FileWatcher_Deleted(object sender, FileSystemEventArgs e)
         {
-            string folderPath = IOExtensions.GetDirectoryPath(e.FullPath);
-            TFolder folder = Folders.Find(x => x.Info.FullName == folderPath);
-            if (folder == null)
-            {
-                return;
-            }
-
             if (IOExtensions.IsDirectoryPath(e.FullPath))
             {
-                System.Windows.Application.Current.Dispatcher.Invoke(() => {
-                    if (Folders.Remove(folder))
-                    {
-                        folder.Delete();
-                    }
-                });
+                System.Windows.Application.Current.Dispatcher.Invoke(() => { SyncRemoveFolder(e.FullPath); });
             }
             else // is file
             {
-                TFile file = folder.Files.Find(x => x.Info.FullName == e.FullPath);
-                if (file != null)
-                {
-                    System.Windows.Application.Current.Dispatcher.Invoke(() => {
-                        folder.Remove(file);
-                    });
-                }
+                System.Windows.Application.Current.Dispatcher.Invoke(() => { SyncRemoveFile(e.FullPath); });
             }
         }
 
         protected virtual void FileWatcher_Renamed(object sender, RenamedEventArgs e)
         {
-            string oldFolderPath = IOExtensions.GetDirectoryPath(e.OldFullPath);
-            string folderPath = IOExtensions.GetDirectoryPath(e.FullPath);
-            TFolder oldFolder = Folders.Find(x => x.Info.FullName == oldFolderPath);
-            if (oldFolder == null)
-            {
-                return;
-            }
-
             if (IOExtensions.IsDirectoryPath(e.FullPath))
             {
-                System.Windows.Application.Current.Dispatcher.Invoke(() => {
-                    oldFolder.SetInfo(folderPath);
-                });
+                System.Windows.Application.Current.Dispatcher.Invoke(() => { SyncRenameFolder(e.OldFullPath, e.FullPath); });
             }
             else // is file
             {
-                TFile file = oldFolder.Files.Find(x => x.Info.FullName == e.OldFullPath);
-                if (file != null)
-                {
-                    System.Windows.Application.Current.Dispatcher.Invoke(() => {
-                        file.SetInfo(e.FullPath);
-                    });
-                }
+                System.Windows.Application.Current.Dispatcher.Invoke(() => { SyncRenameFile(e.OldFullPath, e.FullPath); });
             }
         }
 
@@ -239,7 +288,7 @@ namespace ForgeModGenerator.ViewModels
         public ICommand EditFileCommand => editFileCommand ?? (editFileCommand = new RelayCommand<Tuple<TFolder, TFile>>(OpenFileEditor));
 
         private ICommand addFileCommand;
-        public ICommand AddFileCommand => addFileCommand ?? (addFileCommand = new RelayCommand<TFolder>(AddNewFileToFolder));
+        public ICommand AddFileCommand => addFileCommand ?? (addFileCommand = new RelayCommand<TFolder>(ShowFileDialogAndCopyToFolder));
 
         private ICommand removeFileCommand;
         public ICommand RemoveFileCommand => removeFileCommand ?? (removeFileCommand = new RelayCommand<Tuple<TFolder, TFile>>(RemoveFileFromFolder));
@@ -248,7 +297,7 @@ namespace ForgeModGenerator.ViewModels
         public ICommand RemoveFolderCommand => removeFolderCommand ?? (removeFolderCommand = new RelayCommand<TFolder>(RemoveFolder));
 
         private ICommand addFolderCommand;
-        public ICommand AddFolderCommand => addFolderCommand ?? (addFolderCommand = new RelayCommand(AddNewFolder));
+        public ICommand AddFolderCommand => addFolderCommand ?? (addFolderCommand = new RelayCommand(ShowFolderDialogAndCopyToRoot));
         #endregion
 
         protected virtual bool CanRefresh() => SessionContext.SelectedMod != null && (Directory.Exists(FoldersRootPath) || File.Exists(FoldersSerializeFilePath));
@@ -264,7 +313,22 @@ namespace ForgeModGenerator.ViewModels
         }
 
         #region FileEditor
-        protected virtual bool CanCloseFileEditor(bool result, FileEditedEventArgs args) => true;
+        protected virtual bool CanCloseFileEditor(bool result, FileEditedEventArgs args)
+        {
+            if (!result)
+            {
+                if (args.ActualFile.IsDirty)
+                {
+                    DialogResult msgResult = System.Windows.Forms.MessageBox.Show("Are you sure you want to exit form? Changes won't be saved", "Unsaved changes", MessageBoxButtons.YesNo);
+                    if (msgResult == DialogResult.No)
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
         protected virtual void OnFileEditorClosing(object sender, FileEditorClosingDialogEventArgs eventArgs)
         {
             bool result = (bool)eventArgs.Parameter;
@@ -308,61 +372,89 @@ namespace ForgeModGenerator.ViewModels
         }
         #endregion
 
-        protected virtual void AddNewFolder()
+        protected void ShowFolderDialogAndCopyToRoot()
         {
             DialogResult dialogResult = OpenFolderDialog.ShowDialog();
             if (dialogResult == DialogResult.OK)
             {
-                DirectoryInfo selectedPath = new DirectoryInfo(OpenFolderDialog.SelectedPath);
-                string newFolderPath = IOExtensions.GetUniqueName(Path.Combine(FoldersRootPath, selectedPath.Name), (name) => !Directory.Exists(name));
-                IOExtensions.DirectoryCopy(OpenFolderDialog.SelectedPath, newFolderPath, AllowedFileExtensionsPatterns);
+                CopyFolderToRoot(OpenFolderDialog.SelectedPath);
             }
         }
 
-        protected virtual void RemoveFolder(TFolder folder)
+        /// <summary> Copies directory to root path, if directory with given name exists, incrementally change its name </summary>
+        protected void CopyFolderToRoot(string path)
+        {
+            path = IOExtensions.GetDirectoryPath(path);
+            string newFolderPath = IOExtensions.GetUniqueName(Path.Combine(FoldersRootPath, new DirectoryInfo(path).Name), (name) => !Directory.Exists(name));
+            IOExtensions.DirectoryCopy(path, newFolderPath, AllowedFileExtensionsPatterns);
+        }
+
+        /// <summary> Removes folder and if it's empty, sends it to RecycleBin  </summary>
+        protected void RemoveFolder(TFolder folder)
         {
             if (Folders.Remove(folder))
             {
-                folder.Delete();
+                for (int i = folder.Files.Count - 1; i >= 0; i--)
+                {
+                    if (File.Exists(folder.Files[i].Info.FullName))
+                    {
+                        IOExtensions.DeleteFileToBin(folder.Files[i].Info.FullName);
+                    }
+                    folder.Remove(folder.Files[i]);
+                }
+                if (Directory.Exists(folder.Info.FullName) && IOExtensions.IsEmpty(folder.Info.FullName))
+                {
+                    IOExtensions.DeleteDirectoryToBin(folder.Info.FullName);
+                }
             }
         }
 
         protected virtual void RemoveFileFromFolder(Tuple<TFolder, TFile> param) => param.Item1.Remove(param.Item2);
 
-        protected virtual void AddNewFileToFolder(TFolder folder)
+        /// <summary> Copies files to folder path, if file with given name exists, prompt for overwriting </summary>
+        protected void CopyFilesToFolder(TFolder folder, params string[] fileNames)
         {
-            DialogResult dialogResult = OpenFileDialog.ShowDialog();
-            if (dialogResult == DialogResult.OK)
+            foreach (string filePath in fileNames)
             {
-                foreach (string filePath in OpenFileDialog.FileNames)
+                string newPath = Path.Combine(folder.Info.FullName, Path.GetFileName(filePath));
+                if (File.Exists(newPath))
                 {
-                    string newPath = Path.Combine(folder.Info.FullName, Path.GetFileName(filePath));
-                    if (File.Exists(newPath))
+                    if (filePath != newPath)
                     {
-                        if (filePath != newPath)
+                        bool overwrite = IOExtensions.ShowOverwriteDialog(newPath);
+                        if (overwrite)
                         {
-                            bool overwrite = IOExtensions.ShowOverwriteDialog(newPath);
-                            if (overwrite)
-                            {
-                                File.Copy(filePath, newPath, true);
-                            }
-                        }
-                        else
-                        {
-                            folder.Add(newPath);
+                            File.Copy(filePath, newPath, true);
                         }
                     }
                     else
                     {
-                        File.Copy(filePath, newPath);
+                        folder.Add(newPath);
                     }
                 }
+                else
+                {
+                    File.Copy(filePath, newPath);
+                }
+            }
+        }
+
+        protected virtual void ShowFileDialogAndCopyToFolder(TFolder folder)
+        {
+            DialogResult dialogResult = OpenFileDialog.ShowDialog();
+            if (dialogResult == DialogResult.OK)
+            {
+                CopyFilesToFolder(folder, OpenFileDialog.FileNames);
             }
         }
 
         #region Folders Initializers
         protected virtual ObservableCollection<TFolder> FindFolders(string path, bool createRootIfEmpty = false)
         {
+            if (!IOExtensions.IsPathValid(path))
+            {
+                throw new InvalidOperationException($"Path is not valid {path}");
+            }
             ObservableCollection<TFolder> found = null;
             if (Directory.Exists(path))
             {
@@ -376,16 +468,32 @@ namespace ForgeModGenerator.ViewModels
             bool isEmpty = found == null || found.Count <= 0;
             if (isEmpty && createRootIfEmpty)
             {
-                found = CreateEmptyFoldersRoot(path);
+                found = CreateEmptyFoldersRoot(IOExtensions.GetDirectoryPath(path));
             }
             return found;
         }
 
-        protected ObservableCollection<TFolder> CreateEmptyFoldersRoot(string folderPath)
+        /// <summary> Creates TFolder with found TFile's for each subdirectory </summary>
+        protected ObservableCollection<TFolder> FindFoldersFromDirectory(string path)
         {
-            TFolder root = ConstructFolderInstance(folderPath, null);
-            SubscribeFolderEvents(root);
-            return new ObservableCollection<TFolder>() { root };
+            ObservableCollection<TFolder> foundFolders = new ObservableCollection<TFolder>();
+
+            AddFilesToCollection(path);
+            foreach (string directory in IOExtensions.EnumerateAllDirectories(path))
+            {
+                AddFilesToCollection(directory);
+            }
+
+            void AddFilesToCollection(string directoryPath)
+            {
+                IEnumerable<string> filePaths = EnumerateAllowedFiles(directoryPath);
+                if (filePaths.Any())
+                {
+                    TFolder folder = ConstructFolderInstance(directoryPath, filePaths);
+                    foundFolders.Add(folder);
+                }
+            }
+            return foundFolders;
         }
 
         protected ObservableCollection<TFolder> FindFoldersFromFile(string path, bool loadOnlyExisting = true)
@@ -401,80 +509,74 @@ namespace ForgeModGenerator.ViewModels
                 Log.Error(ex, $"Couldnt load {typeof(ObservableCollection<TFolder>)} from {json}", true);
                 return null;
             }
-            if (loadOnlyExisting)
-            {
-                deserializedFolders = FilterExistingFiles(deserializedFolders);
-            }
             foreach (TFolder folder in deserializedFolders)
             {
                 SubscribeFolderEvents(folder);
             }
+            if (loadOnlyExisting)
+            {
+                deserializedFolders = FilterToOnlyExistingFiles(deserializedFolders);
+            }
             return deserializedFolders;
         }
 
-        protected ObservableCollection<TFolder> FilterExistingFiles(ObservableCollection<TFolder> deserializedFolders, bool sendWarning = true)
+        /// <summary> Returns file that use extension from AllowedFileExtensions </summary>
+        protected IEnumerable<string> EnumerateAllowedFiles(string directoryPath, SearchOption searchOption = SearchOption.TopDirectoryOnly) => IOExtensions.EnumerateFiles(directoryPath, AllowedFileExtensionsPatterns, searchOption);
+
+        protected ObservableCollection<TFolder> CreateEmptyFoldersRoot(string folderPath) => new ObservableCollection<TFolder>() { ConstructFolderInstance(folderPath, null) };
+
+        protected ObservableCollection<TFolder> FilterToOnlyNotExistingFiles(IEnumerable<TFolder> foldersToFilter) => FilterFolderFiles(foldersToFilter, file => !File.Exists(file.Info.FullName));
+        protected ObservableCollection<TFolder> FilterToOnlyExistingFiles(IEnumerable<TFolder> foldersToFilter) => FilterFolderFiles(foldersToFilter, file => File.Exists(file.Info.FullName));
+
+        /// <summary> Returns folders which files matches fileFilter </summary>
+        protected ObservableCollection<TFolder> FilterFolderFiles(IEnumerable<TFolder> foldersToFilter, Func<TFile, bool> fileFilter)
         {
             ObservableCollection<TFolder> folders = new ObservableCollection<TFolder>();
-            foreach (TFolder folder in deserializedFolders)
+            foreach (TFolder folder in foldersToFilter.Where(dir => Directory.Exists(dir.Info.FullName)))
             {
-                for (int i = folder.Files.Count - 1; i >= 0; i--)
+                TFolder copyFolder = (TFolder)folder.DeepClone();
+                for (int i = copyFolder.Files.Count - 1; i >= 0; i--)
                 {
-                    if (!File.Exists(folder.Files[i].Info.FullName))
+                    TFile file = copyFolder.Files[i];
+                    if (!fileFilter(file))
                     {
-                        Log.Warning($"File was not loaded correctly { folder.Files[i].Info.FullName}", sendWarning);
-                        folder.Files.RemoveAt(i);
+                        copyFolder.Remove(file);
                     }
                 }
-                if (folder.Files.Count > 0)
+                if (copyFolder.Files.Count > 0)
                 {
-                    folders.Add(folder);
+                    folders.Add(copyFolder);
                 }
             }
             return folders;
         }
 
-        protected ObservableCollection<TFolder> FindFoldersFromDirectory(string path)
-        {
-            ObservableCollection<TFolder> foundFolders = new ObservableCollection<TFolder>();
-
-            AddFilesToCollection(path);
-            foreach (string directory in IOExtensions.EnumerateAllDirectories(path))
-            {
-                AddFilesToCollection(directory);
-            }
-
-            void AddFilesToCollection(string directoryPath)
-            {
-                IEnumerable<string> files = EnumerateFilteredFiles(directoryPath);
-                if (files.Any())
-                {
-                    TFolder folder = ConstructFolderInstance(directoryPath, files);
-                    SubscribeFolderEvents(folder);
-                    foundFolders.Add(folder);
-                }
-            }
-            return foundFolders;
-        }
-
         protected virtual TFolder ConstructFolderInstance(string path, IEnumerable<string> filePaths)
         {
-            TFolder folder = WPFExtensions.CreateInstance<TFolder>(path);
-            if (filePaths != null)
+            TFolder folder = null;
+            try
             {
-                foreach (string filePath in filePaths)
+                folder = WPFExtensions.CreateInstance<TFolder>(path, filePaths);
+            }
+            catch (Exception)
+            {
+                folder = WPFExtensions.CreateInstance<TFolder>(path);
+                if (filePaths != null)
                 {
-                    folder.Add(filePath);
+                    foreach (string filePath in filePaths)
+                    {
+                        folder.Add(filePath);
+                    }
                 }
             }
+            SubscribeFolderEvents(folder);
             return folder;
         }
 
-        // Returns file that use extension from AllowedFileExtensions
-        protected IEnumerable<string> EnumerateFilteredFiles(string directoryPath, SearchOption searchOption = SearchOption.TopDirectoryOnly) => IOExtensions.EnumerateFiles(directoryPath, AllowedFileExtensionsPatterns, searchOption);
-
-        // Used on any folder initialization
+        /// <summary> Used on any folder initialization (e.g ConstructFolderInstance(..)) </summary>
         protected virtual void SubscribeFolderEvents(TFolder folder) { }
 
+        /// <summary> Deserializes Json content to ObservableCollection<TFolder> </summary>
         protected virtual ObservableCollection<TFolder> DeserializeFolders(string fileCotent) => JsonConvert.DeserializeObject<ObservableCollection<TFolder>>(fileCotent);
         #endregion
 

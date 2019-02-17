@@ -11,7 +11,7 @@ namespace ForgeModGenerator
     {
         protected abstract class RefCounter
         {
-            public FileSystemInfo File;
+            public FileSystemInfo File { get; }
             public int ReferenceCount;
 
             public RefCounter(string filePath)
@@ -40,7 +40,7 @@ namespace ForgeModGenerator
             {
                 throw new ArgumentNullException(nameof(path));
             }
-            FileSystemInfo = GetOrCreate(path);
+            FileSystemInfo = GetOrCreateInfo(path);
         }
 
         private static Dictionary<string, RefCounter> references = new Dictionary<string, RefCounter>();
@@ -60,20 +60,20 @@ namespace ForgeModGenerator
         }
 
         private string changeName;
-        public virtual string ChangeName {
+        public string ChangeName {
             get => changeName;
             set {
                 string newPath = null;
-                if (FileSystemInfo is DirectoryInfo dirInfo)
+                if (FileSystemInfo is DirectoryInfo)
                 {
-                    newPath = Path.Combine(dirInfo.Parent.FullName, value);
-                    dirInfo.MoveTo(newPath);
+                    newPath = Path.Combine(new DirectoryInfo(FullName).Parent.FullName, value);
+                    Directory.Move(FullName, newPath);
                 }
-                else if (FileSystemInfo is FileInfo fileInfo)
+                else if (FileSystemInfo is FileInfo)
                 {
                     string valueWithExt = value + Path.GetExtension(Name);
-                    newPath = Path.Combine(fileInfo.Directory.FullName, valueWithExt);
-                    fileInfo.MoveTo(newPath);
+                    newPath = Path.Combine(new FileInfo(FullName).Directory.FullName, valueWithExt);
+                    File.Move(FullName, newPath);
                 }
                 SetInfo(newPath);
                 Set(ref changeName, value);
@@ -88,9 +88,9 @@ namespace ForgeModGenerator
         public virtual void SetInfo(string newPath)
         {
             newPath = newPath.NormalizeFullPath();
+            Remove();
             if (references.TryGetValue(newPath, out RefCounter newReference))
             {
-                Remove();
                 FileSystemInfo = newReference.File;
                 newReference.ReferenceCount++;
             }
@@ -101,13 +101,14 @@ namespace ForgeModGenerator
             }
         }
 
+        /// <summary> Removes file reference </summary>
         public void Remove()
         {
             string path = FullName.NormalizeFullPath();
             RemoveReference(path);
         }
 
-        protected virtual FileSystemInfo GetOrCreate(string filePath)
+        protected virtual FileSystemInfo GetOrCreateInfo(string filePath)
         {
             filePath = filePath.NormalizeFullPath();
             AddReference(filePath);
@@ -166,7 +167,7 @@ namespace ForgeModGenerator
     // Wrapper for directory references
     public sealed class DirectoryInfoReference : FileSystemInfoReference
     {
-        public DirectoryInfoReference(string filePath) : base(filePath) { }
-        protected override RefCounter CreateRefCounter(string path) => new DirectoryRefCounter(path);
+        public DirectoryInfoReference(string path) : base(IOExtensions.GetDirectoryPath(path)) { }
+        protected override RefCounter CreateRefCounter(string path) => new DirectoryRefCounter(IOExtensions.GetDirectoryPath(path));
     }
 }
