@@ -56,13 +56,16 @@
     <Compile Include="Tests\PathTests.cs" />
     <Compile Include="Tests\SoundGeneratorTests.cs" />
     <Compile Include="Tests\ModGeneratorTests.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\SharedAssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ForgeModGenerator.UI\ForgeModGenerator.csproj">
+    <ProjectReference Include="..\ForgeModGenerator\ForgeModGenerator.csproj">
       <Project>{6bd77961-44de-4365-b1a2-8b281464648d}</Project>
       <Name>ForgeModGenerator</Name>
     </ProjectReference>

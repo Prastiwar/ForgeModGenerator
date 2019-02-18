@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.168
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForgeModGenerator", "ForgeModGenerator.UI\ForgeModGenerator.csproj", "{6BD77961-44DE-4365-B1A2-8B281464648D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForgeModGenerator", "ForgeModGenerator\ForgeModGenerator.csproj", "{6BD77961-44DE-4365-B1A2-8B281464648D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForgeModGenerator.Tests", "ForgeModGenerator.Tests\ForgeModGenerator.Tests.csproj", "{8A08D269-C232-4743-9551-9ADF3649C19B}"
 EndProject

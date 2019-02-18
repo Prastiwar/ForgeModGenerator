@@ -13,9 +13,9 @@ namespace ForgeModGenerator.Tests
         [TestMethod]
         public void GetUniqueName()
         {
-            Assert.AreEqual("smth(5)", IOExtensions.GetUniqueName("smth", (name) => name == "smth(5)"));
+            Assert.AreEqual("smth(5)", IOHelper.GetUniqueName("smth", (name) => name == "smth(5)"));
             HashSet<string> strings = new HashSet<string> { "test", "test(1)", "test(2)" };
-            Assert.AreEqual("test(3)", IOExtensions.GetUniqueName("test", (name) => !strings.Contains(name)));
+            Assert.AreEqual("test(3)", IOHelper.GetUniqueName("test", (name) => !strings.Contains(name)));
         }
 
         [TestMethod]
@@ -51,16 +51,16 @@ namespace ForgeModGenerator.Tests
         [TestMethod]
         public void PathValidation()
         {
-            Assert.IsTrue(IOExtensions.IsDirectoryPath(@"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis\src\main\resources"));
-            Assert.IsTrue(IOExtensions.IsDirectoryPath(@"\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis"));
-            Assert.IsTrue(IOExtensions.IsDirectoryPath(@"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis\src\main\resources"));
-            Assert.IsTrue(IOExtensions.IsDirectoryPath(@"Craftpolis"));
+            Assert.IsTrue(IOHelper.IsDirectoryPath(@"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis\src\main\resources"));
+            Assert.IsTrue(IOHelper.IsDirectoryPath(@"\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis"));
+            Assert.IsTrue(IOHelper.IsDirectoryPath(@"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis\src\main\resources"));
+            Assert.IsTrue(IOHelper.IsDirectoryPath(@"Craftpolis"));
 
-            Assert.IsFalse(IOExtensions.IsDirectoryPath(@"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis\src\main\resources.smth"));
-            Assert.IsFalse(IOExtensions.IsDirectoryPath(@"Craftpolis.lol"));
+            Assert.IsFalse(IOHelper.IsDirectoryPath(@"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis\src\main\resources.smth"));
+            Assert.IsFalse(IOHelper.IsDirectoryPath(@"Craftpolis.lol"));
 
-            Assert.IsFalse(IOExtensions.IsDirectoryPath(@"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis\src\main\resou:;<>rcessmth"));
-            Assert.IsFalse(IOExtensions.IsDirectoryPath(@"<>?:32"));
+            Assert.IsFalse(IOHelper.IsDirectoryPath(@"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis\src\main\resou:;<>rcessmth"));
+            Assert.IsFalse(IOHelper.IsDirectoryPath(@"<>?:32"));
 
             Assert.IsTrue(IOExtensions.IsFilePath(@"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis\src\main\resources\smth.png"));
             Assert.IsTrue(IOExtensions.IsFilePath(@"\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis.png"));
@@ -69,8 +69,8 @@ namespace ForgeModGenerator.Tests
             Assert.IsFalse(IOExtensions.IsFilePath(@"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis\src\main\resou:;<>rces.smth"));
             Assert.IsFalse(IOExtensions.IsFilePath(@"<>?:32.png"));
 
-            Assert.IsTrue(IOExtensions.IsPathValid(@"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis\src\main\resources"));
-            Assert.IsTrue(IOExtensions.IsPathValid(@"\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis"));
+            Assert.IsTrue(IOHelper.IsPathValid(@"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis\src\main\resources"));
+            Assert.IsTrue(IOHelper.IsPathValid(@"\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis"));
         }
 
         [TestMethod]
@@ -146,7 +146,7 @@ namespace ForgeModGenerator.Tests
 
         public static string GetModnameFromPath(string path)
         {
-            if (!IOExtensions.IsPathValid(path))
+            if (!IOHelper.IsPathValid(path))
             {
                 return null;
             }

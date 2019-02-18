@@ -1,0 +1,437 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{6BD77961-44DE-4365-B1A2-8B281464648D}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>ForgeModGenerator</RootNamespace>
+    <AssemblyName>ForgeModGenerator</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>7.3</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>fmg_icon_6o5_icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CommonServiceLocator, Version=2.0.4.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommonServiceLocator.2.0.4\lib\net46\CommonServiceLocator.dll</HintPath>
+    </Reference>
+    <Reference Include="ControlzEx, Version=3.0.2.4, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net45\ControlzEx.dll</HintPath>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight, Version=5.4.1.0, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight.Extras, Version=5.4.1.0, Culture=neutral, PublicKeyToken=669f0b5e8f868abf, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.Extras.dll</HintPath>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight.Platform, Version=5.4.1.0, Culture=neutral, PublicKeyToken=5f873c45e98af8a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="MahApps.Metro, Version=1.6.0.362, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MahApps.Metro.1.6.0\lib\net45\MahApps.Metro.dll</HintPath>
+    </Reference>
+    <Reference Include="MaterialDesignColors, Version=1.1.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MaterialDesignColors.1.1.3\lib\net45\MaterialDesignColors.dll</HintPath>
+    </Reference>
+    <Reference Include="MaterialDesignThemes.MahApps, Version=0.0.10.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MaterialDesignThemes.MahApps.0.0.12\lib\net45\MaterialDesignThemes.MahApps.dll</HintPath>
+    </Reference>
+    <Reference Include="MaterialDesignThemes.Wpf, Version=2.5.0.1205, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MaterialDesignThemes.2.5.0.1205\lib\net45\MaterialDesignThemes.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.5.11\lib\net45\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net45\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="Source\App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Source\CodeGeneration\CodeDom\CodeForeachStatement.cs" />
+    <Compile Include="Source\CodeGeneration\CodeDom\CodeSuperInvokeExpression.cs" />
+    <Compile Include="Source\CodeGeneration\CodeDom\JavaCodeGenerator.cs" />
+    <Compile Include="Source\CodeGeneration\CodeDom\JavaCodeProvider.cs" />
+    <Compile Include="Source\CodeGeneration\CodeDom\JavaMemberAttributeConverter.cs" />
+    <Compile Include="Source\CodeGeneration\CodeDom\JavaModifierAttributeConverter.cs" />
+    <Compile Include="Source\CodeGeneration\CodeDom\JavaTypeAttributeConverter.cs" />
+    <Compile Include="Source\CodeGeneration\InitVariablesCodeGenerator.cs" />
+    <Compile Include="Source\CodeGeneration\MultiScriptsCodeGenerator.cs" />
+    <Compile Include="Source\CodeGeneration\ScriptCodeGenerator.cs" />
+    <Compile Include="Source\Common\AppPaths.cs" />
+    <Compile Include="Source\Common\ICopiable.cs" />
+    <Compile Include="Source\Common\Log.cs" />
+    <Compile Include="Source\Common\Math.cs" />
+    <Compile Include="Source\Common\ModPaths.cs" />
+    <Compile Include="Source\Controls\EditableList.cs" />
+    <Compile Include="Source\Controls\ScrollButton.cs" />
+    <Compile Include="Source\Converters\BoolValueConverter.cs" />
+    <Compile Include="Source\Converters\InvertIntToVisibilityConverter.cs" />
+    <Compile Include="Source\Converters\IntToVisibilityConverter.cs" />
+    <Compile Include="Source\Converters\InvertBooleanConverter.cs" />
+    <Compile Include="Source\Controls\NavButton.cs" />
+    <Compile Include="Source\Exceptions\InvalidSynchronizationArgument.cs" />
+    <Compile Include="Source\Services\DialogService.cs" />
+    <Compile Include="Source\Utility\Extensions\CollectionExtensions.cs" />
+    <Compile Include="Source\Utility\Extensions\IOExtensions.cs" />
+    <Compile Include="Source\Utility\Extensions\PrimitiveExtensions.cs" />
+    <Compile Include="Source\Utility\Extensions\ReflectionExtensions.cs" />
+    <Compile Include="Source\FileSystem\FileItem.cs" />
+    <Compile Include="Source\FileSystem\FileReference.cs" />
+    <Compile Include="Source\FileSystem\FileSystemWatcherExtended.cs" />
+    <Compile Include="Source\FileSystem\ObservableFolder.cs" />
+    <Compile Include="Source\Utility\Helpers\IOHelper.cs" />
+    <Compile Include="Source\Utility\Helpers\ReflectionHelper.cs" />
+    <Compile Include="Source\Models\JsonUpdater.cs" />
+    <Compile Include="Source\Models\ObservableDirtyObject.cs" />
+    <Compile Include="Source\Models\PreferenceData.cs" />
+    <Compile Include="Source\Modules\ApplicationModule\BugReporter.xaml.cs">
+      <DependentUpon>BugReporter.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Modules\SoundGenerator\Converters\SoundCollectionConverter.cs" />
+    <Compile Include="Source\Modules\SoundGenerator\Converters\SoundConverter.cs" />
+    <Compile Include="Source\Modules\SoundGenerator\Converters\SoundEventConverter.cs" />
+    <Compile Include="Source\Converters\Json\PropertyRenameIgnoreResolver.cs" />
+    <Compile Include="Source\Converters\ModidPathToPathConverter.cs" />
+    <Compile Include="Source\Converters\MultiValues\BindMultiValueConverter.cs" />
+    <Compile Include="Source\Converters\MultiValues\GenericMultiValueConverter.cs" />
+    <Compile Include="Source\Converters\MultiValues\TupleValueConverter.cs" />
+    <Compile Include="Source\Converters\PathToModidConverter.cs" />
+    <Compile Include="Source\Controls\BindingProxy.cs" />
+    <Compile Include="Source\Modules\GUIGenerator\CreativeTabCodeGenerator.cs" />
+    <Compile Include="Source\Modules\ModGenerator\ModRules.cs" />
+    <Compile Include="Source\Modules\ModGenerator\SourceCodeGeneration\BaseTypes\OtherBasesCodeGenerator.cs" />
+    <Compile Include="Source\Modules\ModGenerator\SourceCodeGeneration\BaseTypes\BlockBasesCodeGenerator.cs" />
+    <Compile Include="Source\Modules\ModGenerator\SourceCodeGeneration\BaseTypes\ItemBasesCodeGenerator.cs" />
+    <Compile Include="Source\Modules\ModGenerator\SourceCodeGeneration\ModelCodeGenerator.cs" />
+    <Compile Include="Source\Modules\ModGenerator\SourceCodeGeneration\ModHookCodeGenerator.cs" />
+    <Compile Include="Source\Modules\ModGenerator\SourceCodeGeneration\ManagerCodeGenerator.cs" />
+    <Compile Include="Source\Modules\ModGenerator\SourceCodeGeneration\ProxyCodeGenerator.cs" />
+    <Compile Include="Source\Modules\ModGenerator\SourceCodeGeneration\RegistryHandlerCodeGenerator.cs" />
+    <Compile Include="Source\Modules\SoundGenerator\SoundCodeGenerator.cs" />
+    <Compile Include="Source\Modules\SoundGenerator\Models\SoundJsonUpdater.cs" />
+    <Compile Include="Source\Modules\ModGenerator\Models\LaunchSetup.cs" />
+    <Compile Include="Source\Modules\SoundGenerator\Models\SoundsGeneratorPreferences.cs" />
+    <Compile Include="Source\Modules\SoundGenerator\Models\SoundEvent.cs" />
+    <Compile Include="Source\Services\CommandTracker.cs" />
+    <Compile Include="Source\Services\ModBuildService.cs" />
+    <Compile Include="Source\Controls\FolderExpanderControl.cs" />
+    <Compile Include="Source\Controls\FolderListBox.xaml.cs">
+      <DependentUpon>FolderListBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Modules\ModGenerator\BuildConfiguration\ModBuildForm.xaml.cs">
+      <DependentUpon>ModBuildForm.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Modules\ModGenerator\ModForm.xaml.cs">
+      <DependentUpon>ModForm.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Converters\EnumToCollectionConverter.cs" />
+    <Compile Include="Source\Converters\PathToNameConverter.cs" />
+    <Compile Include="Source\Modules\ModGenerator\Models\ForgeVersion.cs" />
+    <Compile Include="Source\Modules\ModGenerator\Models\McModInfo.cs" />
+    <Compile Include="Source\Utility\Extensions\JsonExtensions.cs" />
+    <Compile Include="Source\Utility\Helpers\WPFHelper.cs" />
+    <Compile Include="Source\Modules\AchievementGenerator\Achievement.cs" />
+    <Compile Include="Source\Modules\BlockGenerator\Block.cs" />
+    <Compile Include="Source\Modules\CommandGenerator\Command.cs" />
+    <Compile Include="Source\Modules\ItemGenerator\Item.cs" />
+    <Compile Include="Source\Modules\ModGenerator\Models\Mod.cs" />
+    <Compile Include="Source\Modules\RecipeGenerator\Recipe.cs" />
+    <Compile Include="Source\Modules\SoundGenerator\Models\Sound.cs" />
+    <Compile Include="Source\Modules\ModGenerator\Models\WorkspaceSetup.cs" />
+    <Compile Include="Source\Services\NavigationService.cs" />
+    <Compile Include="Source\Services\SessionContextService.cs" />
+    <Compile Include="Source\Services\WorkspaceSetupService.cs" />
+    <Compile Include="Source\Modules\SoundGenerator\Controls\SoundEditForm.xaml.cs">
+      <DependentUpon>SoundEditForm.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Modules\SoundGenerator\Controls\SoundFolderExpanderControl.cs" />
+    <Compile Include="Source\Controls\SubmitTextBox.cs" />
+    <Compile Include="Source\Validations\CanMoveFileSystemInfoRule.cs" />
+    <Compile Include="Source\Validations\NotEmptyRule.cs" />
+    <Compile Include="Source\Modules\SoundGenerator\Validation\SoundEventRules.cs" />
+    <Compile Include="Source\Modules\ModGenerator\BuildConfiguration\BuildConfigurationViewModel.cs" />
+    <Compile Include="Source\Modules\AchievementGenerator\AchievementGeneratorViewModel.cs" />
+    <Compile Include="Source\Modules\BlockGenerator\BlockGeneratorViewModel.cs" />
+    <Compile Include="Source\Modules\CommandGenerator\CommandGeneratorViewModel.cs" />
+    <Compile Include="Source\Modules\ItemGenerator\ItemGeneratorViewModel.cs" />
+    <Compile Include="Source\ViewModels\FolderListViewModelBase.cs" />
+    <Compile Include="Source\Modules\ModGenerator\ModGeneratorViewModel.cs" />
+    <Compile Include="Source\Modules\RecipeGenerator\RecipeGeneratorViewModel.cs" />
+    <Compile Include="Source\Modules\SoundGenerator\SoundGeneratorViewModel.cs" />
+    <Compile Include="Source\Modules\ApplicationModule\SettingsViewModel.cs" />
+    <Compile Include="Source\Modules\ApplicationModule\DashboardViewModel.cs" />
+    <Compile Include="Source\Modules\ApplicationModule\MainWindowViewModel.cs" />
+    <Compile Include="Source\Modules\ApplicationModule\NavigationMenuViewModel.cs" />
+    <Compile Include="Source\Modules\TextureGenerator\TextureGeneratorPage.xaml.cs">
+      <DependentUpon>TextureGeneratorPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Modules\TextureGenerator\TextureGeneratorViewModel.cs" />
+    <Compile Include="Source\ViewModels\ViewModelLocator.cs" />
+    <Compile Include="Source\Modules\RecipeGenerator\RecipeGeneratorPage.xaml.cs">
+      <DependentUpon>RecipeGeneratorPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Modules\ApplicationModule\SettingsPage.xaml.cs">
+      <DependentUpon>SettingsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Modules\AchievementGenerator\AchievementGeneratorPage.xaml.cs">
+      <DependentUpon>AchievementGeneratorPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Modules\CommandGenerator\CommandGeneratorPage.xaml.cs">
+      <DependentUpon>CommandGeneratorPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Modules\SoundGenerator\SoundGeneratorPage.xaml.cs">
+      <DependentUpon>SoundGeneratorPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Modules\ItemGenerator\ItemGeneratorPage.xaml.cs">
+      <DependentUpon>ItemGeneratorPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Modules\BlockGenerator\BlockGeneratorPage.xaml.cs">
+      <DependentUpon>BlockGeneratorPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Modules\ModGenerator\ModGeneratorPage.xaml.cs">
+      <DependentUpon>ModGeneratorPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Modules\ModGenerator\BuildConfiguration\BuildConfigurationPage.xaml.cs">
+      <DependentUpon>BuildConfigurationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Modules\ApplicationModule\NavigationMenu.xaml.cs">
+      <DependentUpon>NavigationMenu.xaml</DependentUpon>
+    </Compile>
+    <Page Include="Source\Modules\ApplicationModule\BugReporter.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\FolderExpanderThemes.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Controls\FolderListBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Source\Modules\ModGenerator\BuildConfiguration\ModBuildForm.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Source\Modules\ModGenerator\ModForm.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Source\Modules\SoundGenerator\Controls\SoundEditForm.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Source\Modules\RecipeGenerator\RecipeGeneratorPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Modules\ApplicationModule\SettingsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Modules\AchievementGenerator\AchievementGeneratorPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Modules\CommandGenerator\CommandGeneratorPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Modules\SoundGenerator\SoundGeneratorPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Modules\ItemGenerator\ItemGeneratorPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Modules\BlockGenerator\BlockGeneratorPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Modules\ModGenerator\ModGeneratorPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Modules\ApplicationModule\Controls\AppMenu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Source\Controls\DraggableRectangle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Source\Modules\ModGenerator\BuildConfiguration\BuildConfigurationPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Modules\ApplicationModule\DashboardPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Source\Modules\ApplicationModule\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="Source\App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Source\Modules\ApplicationModule\Controls\AppMenu.xaml.cs">
+      <DependentUpon>AppMenu.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Controls\DraggableRectangle.xaml.cs">
+      <DependentUpon>DraggableRectangle.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Animations\GridLengthAnimation.cs" />
+    <Compile Include="Source\Components\MenuComponent.cs" />
+    <Compile Include="Source\Components\MenuSettings.cs" />
+    <Compile Include="Source\Modules\ApplicationModule\DashboardPage.xaml.cs">
+      <DependentUpon>DashboardPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Modules\ApplicationModule\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="Source\Modules\ApplicationModule\NavigationMenu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Source\Modules\TextureGenerator\TextureGeneratorPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\SharedAssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <Content Include="Config\NLog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <None Include="Config\packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Config\App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="fmg_icon_6o5_icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.6.1 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Config\NLog.xsd">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
