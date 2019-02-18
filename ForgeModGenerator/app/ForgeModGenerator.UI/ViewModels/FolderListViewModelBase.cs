@@ -1,4 +1,5 @@
 ﻿using ForgeModGenerator.Converters;
+using ForgeModGenerator.Exceptions;
 using ForgeModGenerator.Models;
 using ForgeModGenerator.Services;
 using ForgeModGenerator.Utils;
@@ -97,12 +98,77 @@ namespace ForgeModGenerator.ViewModels
             FileWatcher.Error += FileWatcher_Error;
         }
 
+        /// <summary> Path to folder root where are all files localized </summary>
+        public abstract string FoldersRootPath { get; }
+
+        /// <summary> Path to file that can be deserialized to folders </summary>
+        public virtual string FoldersSerializeFilePath { get; }
+
+        public ISessionContextService SessionContext { get; }
+
+        public IMultiValueConverter FolderFileConverter { get; }
+
+        private ObservableCollection<TFolder> folders;
+        public ObservableCollection<TFolder> Folders {
+            get => folders;
+            set => Set(ref folders, value);
+        }
+
+        private TFolder selectedFolder;
+        public TFolder SelectedFolder {
+            get => selectedFolder;
+            set => Set(ref selectedFolder, value);
+        }
+
+        private TFile selectedFile;
+        public TFile SelectedFile {
+            get => selectedFile;
+            set => Set(ref selectedFile, value);
+        }
+
+        #region Commands
+        private ICommand editFileCommand;
+        public ICommand EditFileCommand => editFileCommand ?? (editFileCommand = new RelayCommand<Tuple<TFolder, TFile>>(OpenFileEditor));
+
+        private ICommand addFileCommand;
+        public ICommand AddFileCommand => addFileCommand ?? (addFileCommand = new RelayCommand<TFolder>(ShowFileDialogAndCopyToFolder));
+
+        private ICommand removeFileCommand;
+        public ICommand RemoveFileCommand => removeFileCommand ?? (removeFileCommand = new RelayCommand<Tuple<TFolder, TFile>>(RemoveFileFromFolder));
+
+        private ICommand removeFolderCommand;
+        public ICommand RemoveFolderCommand => removeFolderCommand ?? (removeFolderCommand = new RelayCommand<TFolder>(RemoveFolder));
+
+        private ICommand addFolderCommand;
+        public ICommand AddFolderCommand => addFolderCommand ?? (addFolderCommand = new RelayCommand(ShowFolderDialogAndCopyToRoot));
+        #endregion
+
+        protected FileSystemWatcherExtended FileWatcher { get; set; }
+
+        protected HashSet<string> AllowedFileExtensions { get; set; }
+
+        protected string AllowedFileExtensionsPatterns => "*" + string.Join("|*", AllowedFileExtensions);
+
+        protected OpenFileDialog OpenFileDialog { get; }
+
+        protected FolderBrowserDialog OpenFolderDialog { get; }
+
+        protected FrameworkElement FileEditForm { get; set; }
+
+        protected string EditFileCacheKey => "EditFileCacheKey";
+
+        #region FileWatcherSystem
+        protected void SynchronizationCheck(string rootPath, string actualPath)
+        {
+            if (!IOExtensions.IsSubPathOf(actualPath, rootPath))
+            {
+                throw new InvalidSynchronizationArgument(rootPath, actualPath);
+            }
+        }
+
         protected void SyncCreateFolder(string path, bool includeSubDirectories = true)
         {
-            if (!IOExtensions.IsSubPathOf(path, FoldersRootPath))
-            {
-                throw new InvalidOperationException($"You cannot synchronize folder outside root path: {FoldersRootPath}. The actual folder path: {path}");
-            }
+            SynchronizationCheck(FoldersRootPath, path);
             Folders.Add(ConstructFolderInstance(path, null));
             if (includeSubDirectories)
             {
@@ -119,10 +185,7 @@ namespace ForgeModGenerator.ViewModels
 
         protected void SyncCreateFile(string path)
         {
-            if (!IOExtensions.IsSubPathOf(path, FoldersRootPath))
-            {
-                throw new InvalidOperationException($"You cannot synchronize file outside root path: {FoldersRootPath}. The actual file path: {path}");
-            }
+            SynchronizationCheck(FoldersRootPath, path);
             string folderPath = IOExtensions.GetDirectoryPath(path);
             if (TryGetFolder(folderPath, out TFolder folder))
             {
@@ -132,10 +195,7 @@ namespace ForgeModGenerator.ViewModels
 
         protected void SyncRemoveFolder(string path)
         {
-            if (!IOExtensions.IsSubPathOf(path, FoldersRootPath))
-            {
-                throw new InvalidOperationException($"You cannot synchronize folder outside root path: {FoldersRootPath}. The actual folder path: {path}");
-            }
+            SynchronizationCheck(FoldersRootPath, path);
             if (TryGetFolder(path, out TFolder folder))
             {
                 if (Folders.Remove(folder))
@@ -147,10 +207,7 @@ namespace ForgeModGenerator.ViewModels
 
         protected void SyncRemoveFile(string path)
         {
-            if (!IOExtensions.IsSubPathOf(path, FoldersRootPath))
-            {
-                throw new InvalidOperationException($"You cannot synchronize file outside root path: {FoldersRootPath}. The actual file path: {path}");
-            }
+            SynchronizationCheck(FoldersRootPath, path);
             if (TryGetFile(path, out TFile file, out TFolder folder))
             {
                 folder.Remove(file);
@@ -159,10 +216,7 @@ namespace ForgeModGenerator.ViewModels
 
         protected void SyncRenameFolder(string oldPath, string newPath)
         {
-            if (!IOExtensions.IsSubPathOf(oldPath, FoldersRootPath))
-            {
-                throw new InvalidOperationException($"You cannot synchronize folder outside root path: {FoldersRootPath}. The actual folder path: {oldPath}");
-            }
+            SynchronizationCheck(FoldersRootPath, oldPath);
             string oldFolderPath = IOExtensions.GetDirectoryPath(oldPath);
             string folderPath = IOExtensions.GetDirectoryPath(newPath);
             if (TryGetFolder(oldFolderPath, out TFolder oldFolder))
@@ -173,32 +227,11 @@ namespace ForgeModGenerator.ViewModels
 
         protected void SyncRenameFile(string oldPath, string newPath)
         {
-            if (!IOExtensions.IsSubPathOf(oldPath, FoldersRootPath))
-            {
-                throw new InvalidOperationException($"You cannot synchronize file outside root path: {FoldersRootPath}. The actual file path: {oldPath}");
-            }
+            SynchronizationCheck(FoldersRootPath, oldPath);
             if (TryGetFile(oldPath, out TFile file, out TFolder folder))
             {
                 file.SetInfo(newPath);
             }
-        }
-
-        protected bool TryGetFolder(string path, out TFolder folder)
-        {
-            string folderPath = IOExtensions.GetDirectoryPath(path);
-            folder = Folders.Find(x => x.Info.FullName == folderPath);
-            return folder != null;
-        }
-
-        protected bool TryGetFile(string path, out TFile file, out TFolder folder)
-        {
-            if (TryGetFolder(path, out folder))
-            {
-                file = folder.Files.Find(x => x.Info.FullName == path);
-                return file != null;
-            }
-            file = null;
-            return false;
         }
 
         protected virtual void FileWatcher_Created(object sender, FileSystemEventArgs e)
@@ -240,64 +273,6 @@ namespace ForgeModGenerator.ViewModels
         protected virtual void FileWatcher_Changed(object sender, FileSystemEventArgs e) { }
         protected virtual void FileWatcher_Disposed(object sender, EventArgs e) { }
         protected virtual void FileWatcher_Error(object sender, ErrorEventArgs e) { }
-
-        protected FileSystemWatcherExtended FileWatcher { get; set; }
-
-        // Path to folder root where are all files localized
-        public abstract string FoldersRootPath { get; }
-
-        // Path to file that can be deserialized to folders
-        public virtual string FoldersSerializeFilePath { get; }
-
-        public ISessionContextService SessionContext { get; }
-
-        public IMultiValueConverter FolderFileConverter { get; }
-
-        protected HashSet<string> AllowedFileExtensions { get; set; }
-
-        protected string AllowedFileExtensionsPatterns => "*" + string.Join("|*", AllowedFileExtensions);
-
-        protected OpenFileDialog OpenFileDialog { get; }
-
-        protected FolderBrowserDialog OpenFolderDialog { get; }
-
-        protected FrameworkElement FileEditForm { get; set; }
-
-        protected string EditFileCacheKey => "EditFileCacheKey";
-
-        private ObservableCollection<TFolder> folders;
-        public ObservableCollection<TFolder> Folders {
-            get => folders;
-            set => Set(ref folders, value);
-        }
-
-        private TFolder selectedFolder;
-        public TFolder SelectedFolder {
-            get => selectedFolder;
-            set => Set(ref selectedFolder, value);
-        }
-
-        private TFile selectedFile;
-        public TFile SelectedFile {
-            get => selectedFile;
-            set => Set(ref selectedFile, value);
-        }
-
-        #region Commands
-        private ICommand editFileCommand;
-        public ICommand EditFileCommand => editFileCommand ?? (editFileCommand = new RelayCommand<Tuple<TFolder, TFile>>(OpenFileEditor));
-
-        private ICommand addFileCommand;
-        public ICommand AddFileCommand => addFileCommand ?? (addFileCommand = new RelayCommand<TFolder>(ShowFileDialogAndCopyToFolder));
-
-        private ICommand removeFileCommand;
-        public ICommand RemoveFileCommand => removeFileCommand ?? (removeFileCommand = new RelayCommand<Tuple<TFolder, TFile>>(RemoveFileFromFolder));
-
-        private ICommand removeFolderCommand;
-        public ICommand RemoveFolderCommand => removeFolderCommand ?? (removeFolderCommand = new RelayCommand<TFolder>(RemoveFolder));
-
-        private ICommand addFolderCommand;
-        public ICommand AddFolderCommand => addFolderCommand ?? (addFolderCommand = new RelayCommand(ShowFolderDialogAndCopyToRoot));
         #endregion
 
         protected virtual bool CanRefresh() => SessionContext.SelectedMod != null && (Directory.Exists(FoldersRootPath) || File.Exists(FoldersSerializeFilePath));
@@ -496,17 +471,18 @@ namespace ForgeModGenerator.ViewModels
             return foundFolders;
         }
 
+        /// <summary> Returns folders by deserializing them from file in given path </summary>
         protected ObservableCollection<TFolder> FindFoldersFromFile(string path, bool loadOnlyExisting = true)
         {
-            string json = File.ReadAllText(path);
+            string content = File.ReadAllText(path);
             ObservableCollection<TFolder> deserializedFolders = null;
             try
             {
-                deserializedFolders = DeserializeFolders(json);
+                deserializedFolders = DeserializeFolders(content);
             }
             catch (Exception ex)
             {
-                Log.Error(ex, $"Couldnt load {typeof(ObservableCollection<TFolder>)} from {json}", true);
+                Log.Error(ex, $"Couldnt load {typeof(ObservableCollection<TFolder>)} from {content}", true);
                 return null;
             }
             foreach (TFolder folder in deserializedFolders)
@@ -523,7 +499,7 @@ namespace ForgeModGenerator.ViewModels
         /// <summary> Returns file that use extension from AllowedFileExtensions </summary>
         protected IEnumerable<string> EnumerateAllowedFiles(string directoryPath, SearchOption searchOption = SearchOption.TopDirectoryOnly) => IOExtensions.EnumerateFiles(directoryPath, AllowedFileExtensionsPatterns, searchOption);
 
-        protected ObservableCollection<TFolder> CreateEmptyFoldersRoot(string folderPath) => new ObservableCollection<TFolder>() { ConstructFolderInstance(folderPath, null) };
+        protected ObservableCollection<TFolder> CreateEmptyFoldersRoot(string folderPath) => new ObservableCollection<TFolder>() { ConstructFolderInstance(IOExtensions.GetDirectoryPath(folderPath), null) };
 
         protected ObservableCollection<TFolder> FilterToOnlyNotExistingFiles(IEnumerable<TFolder> foldersToFilter) => FilterFolderFiles(foldersToFilter, file => !File.Exists(file.Info.FullName));
         protected ObservableCollection<TFolder> FilterToOnlyExistingFiles(IEnumerable<TFolder> foldersToFilter) => FilterFolderFiles(foldersToFilter, file => File.Exists(file.Info.FullName));
@@ -586,6 +562,24 @@ namespace ForgeModGenerator.ViewModels
             {
                 Refresh();
             }
+        }
+
+        protected bool TryGetFolder(string path, out TFolder folder)
+        {
+            string folderPath = IOExtensions.GetDirectoryPath(path);
+            folder = Folders.Find(x => x.Info.FullName == folderPath);
+            return folder != null;
+        }
+
+        protected bool TryGetFile(string path, out TFile file, out TFolder folder)
+        {
+            if (TryGetFolder(path, out folder))
+            {
+                file = folder.Files.Find(x => x.Info.FullName == path);
+                return file != null;
+            }
+            file = null;
+            return false;
         }
     }
 }

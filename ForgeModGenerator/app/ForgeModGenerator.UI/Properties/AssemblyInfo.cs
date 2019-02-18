@@ -8,7 +8,7 @@ using System.Windows;
 [assembly: AssemblyTitle("ForgeModGenerator")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Tomasz Piowczyk")]
 [assembly: AssemblyProduct("ForgeModGenerator")]
 [assembly: AssemblyCopyright("Copyright ©  2019")]
 [assembly: AssemblyTrademark("")]

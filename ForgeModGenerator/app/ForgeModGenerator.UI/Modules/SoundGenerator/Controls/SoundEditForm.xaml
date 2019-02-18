@@ -24,7 +24,7 @@
 								   FontWeight="Bold"
 								   Margin="3,0,3,0"
 								   VerticalAlignment="Center" />
-						<TextBlock Text="{Binding Name, Mode=OneTime}"
+						<TextBlock Text="{Binding Name}"
 								   VerticalAlignment="Center" />
 					</StackPanel>
 					<Separator MinWidth="350" />

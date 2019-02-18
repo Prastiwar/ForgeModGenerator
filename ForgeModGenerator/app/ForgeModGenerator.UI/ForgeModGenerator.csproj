@@ -39,6 +39,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -135,6 +136,7 @@
     <Compile Include="Common\FileSystemWatcherExtended.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Exceptions\InvalidSynchronizationArgument.cs" />
     <Compile Include="Models\FileReference.cs" />
     <Compile Include="Controls\EditableList.cs" />
     <Compile Include="Controls\ScrollButton.cs" />

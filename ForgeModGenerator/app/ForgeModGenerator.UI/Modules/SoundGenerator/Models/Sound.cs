@@ -86,6 +86,28 @@ namespace ForgeModGenerator.SoundGenerator.Models
             set => DirtSet(ref type, value);
         }
 
+        internal string GetSoundsFolder() => ModPaths.SoundsFolder(ModGenerator.Models.Mod.GetModnameFromPath(Info.FullName), modid);
+
+        public void FormatName() => Name = FormatSoundNameFromFullPath(modid, Info.FullName);
+
+        protected override void Info_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(FileSystemInfoReference.FullName))
+            {
+                FormatName();
+                IsDirty = false;
+            }
+        }
+
+        protected virtual void Sound_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Info))
+            {
+                FormatName();
+                IsDirty = false;
+            }
+        }
+
         public override object DeepClone()
         {
             Sound sound = new Sound() {
@@ -122,44 +144,23 @@ namespace ForgeModGenerator.SoundGenerator.Models
             return false;
         }
 
-        internal string GetSoundsFolder() => ModPaths.SoundsFolder(ModGenerator.Models.Mod.GetModnameFromPath(Info.FullName), modid);
-
-        public void FormatName() => Name = FormatSoundNameFromFullPath(modid, Info.FullName);
-
-        protected override void Info_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(FileSystemInfoReference.FullName))
-            {
-                FormatName();
-                IsDirty = false;
-            }
-        }
-
-        protected virtual void Sound_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(Info))
-            {
-                FormatName();
-                IsDirty = false;
-            }
-        }
-
+        /// <summary> Get modid from sound name "modid:shortPath"  </summary>
         public static string GetModidFromSoundName(string name) => name.Substring(0, name.IndexOf(":"));
 
-        // Get "shortpath" if path is formatted as "modid:shortpath"
+        /// <summary> Get "shortpath" if path is formatted as "modid:shortpath" </summary>
         public static string GetRelativePathFromSoundName(string name) => name.Remove(0, name.IndexOf(":") + 1);
 
-        // Get formatted sound from short path, "modid:shortPath"
+        /// <summary> Get formatted sound from short path, "modid:shortPath" </summary>
         public static string FormatSoundName(string modid, string shortPath) => $"{modid}:{shortPath}";
 
-        // Get formatted sound from full path, "modid:shorten/path/toFile"
+        /// <summary> Get formatted sound from full path, "modid:shorten/path/toFile" </summary>
         public static string FormatSoundNameFromFullPath(string modid, string path)
         {
             string shortPath = FormatSoundRelativePath(path);
             return $"{modid}:{shortPath}";
         }
 
-        // Get formatted sound from full path, "shorten/path/toFile"
+        /// <summary> Get formatted sound from full path, "shorten/path/toFile" </summary>
         public static string FormatSoundRelativePath(string fullPath)
         {
             int startIndex = fullPath.IndexOf("sounds") + 7;
