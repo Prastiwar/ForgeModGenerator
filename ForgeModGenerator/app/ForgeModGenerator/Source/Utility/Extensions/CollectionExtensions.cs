@@ -21,7 +21,7 @@ namespace ForgeModGenerator.Utility
                     return items[i];
                 }
             }
-            return default(T);
+            return default;
         }
 
         public static ObservableCollection<T> FindAll<T>(this ObservableCollection<T> items, Predicate<T> match)
@@ -64,7 +64,10 @@ namespace ForgeModGenerator.Utility
             int endIndex = startIndex + count;
             for (int i = startIndex; i < endIndex; i++)
             {
-                if (match(items[i])) return i;
+                if (match(items[i]))
+                {
+                    return i;
+                }
             }
             return -1;
         }
@@ -83,7 +86,7 @@ namespace ForgeModGenerator.Utility
                     return items[i];
                 }
             }
-            return default(T);
+            return default;
         }
 
         public static int FindLastIndex<T>(this ObservableCollection<T> items, Predicate<T> match) => items.FindLastIndex(items.Count - 1, items.Count, match);

@@ -1,5 +1,5 @@
 ﻿using ForgeModGenerator.CodeGeneration;
-using ForgeModGenerator.ModGenerator.Models;
+using ForgeModGenerator.Models;
 using ForgeModGenerator.ModGenerator.SourceCodeGeneration;
 using ForgeModGenerator.Services;
 using ForgeModGenerator.Utility;

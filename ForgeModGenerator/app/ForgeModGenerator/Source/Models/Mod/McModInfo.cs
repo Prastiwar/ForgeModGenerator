@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 using System.IO;
 
-namespace ForgeModGenerator.ModGenerator.Models
+namespace ForgeModGenerator.Models
 {
     // struct for mcmod.info file
     public class McModInfo : ObservableObject

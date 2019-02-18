@@ -14,15 +14,15 @@ namespace ForgeModGenerator.SoundGenerator.Validations
         public static readonly DependencyProperty SoundEventBeforeChangeProperty =
             DependencyProperty.Register("SoundEventBeforeChange", typeof(SoundEvent), typeof(SoundEventValidationDependencyWrapper), new PropertyMetadata(null));
         public SoundEvent SoundEventBeforeChange {
-            get { return (SoundEvent)GetValue(SoundEventBeforeChangeProperty); }
-            set { SetValue(SoundEventBeforeChangeProperty, value); }
+            get => (SoundEvent)GetValue(SoundEventBeforeChangeProperty);
+            set => SetValue(SoundEventBeforeChangeProperty, value);
         }
 
         public static readonly DependencyProperty SoundEventsProperty =
             DependencyProperty.Register("SoundEvents", typeof(IEnumerable<SoundEvent>), typeof(SoundEventValidationDependencyWrapper), new PropertyMetadata(null));
         public IEnumerable<SoundEvent> SoundEvents {
-            get { return (IEnumerable<SoundEvent>)GetValue(SoundEventsProperty); }
-            set { SetValue(SoundEventsProperty, value); }
+            get => (IEnumerable<SoundEvent>)GetValue(SoundEventsProperty);
+            set => SetValue(SoundEventsProperty, value);
         }
     }
 

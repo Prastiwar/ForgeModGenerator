@@ -6,10 +6,7 @@ namespace ForgeModGenerator.Controls
 {
     public partial class DraggableRectangle : UserControl
     {
-        public DraggableRectangle()
-        {
-            InitializeComponent();
-        }
+        public DraggableRectangle() => InitializeComponent();
 
         private void DragWindow(object sender, MouseButtonEventArgs e)
         {

@@ -1,5 +1,5 @@
 ﻿using ForgeModGenerator.Models;
-using ForgeModGenerator.ModGenerator.Models;
+using ForgeModGenerator.Persistence;
 using GalaSoft.MvvmLight;
 using Newtonsoft.Json;
 using System;

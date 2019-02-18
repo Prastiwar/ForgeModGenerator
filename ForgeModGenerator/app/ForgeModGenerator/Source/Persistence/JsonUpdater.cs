@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace ForgeModGenerator.Models
+namespace ForgeModGenerator.Persistence
 {
     public abstract class JsonUpdater<T>
     {

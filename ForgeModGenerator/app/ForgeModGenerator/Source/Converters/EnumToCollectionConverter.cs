@@ -7,9 +7,7 @@ namespace ForgeModGenerator.Converters
     public class EnumDescriptionTypeConverter : EnumConverter
     {
         public EnumDescriptionTypeConverter(Type type)
-               : base(type)
-        {
-        }
+               : base(type) { }
 
         public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
         {

@@ -1,5 +1,4 @@
-﻿using ForgeModGenerator.Models;
-using GalaSoft.MvvmLight.CommandWpf;
+﻿using GalaSoft.MvvmLight.CommandWpf;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;

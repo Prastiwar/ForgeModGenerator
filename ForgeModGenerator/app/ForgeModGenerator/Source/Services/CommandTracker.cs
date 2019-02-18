@@ -49,10 +49,7 @@ namespace ForgeModGenerator.Services
 
         public object LastUsedArguments { get; protected set; }
 
-        protected TrackedCommand(ICommandTracker tracker)
-        {
-            Tracker = tracker;
-        }
+        protected TrackedCommand(ICommandTracker tracker) => Tracker = tracker;
 
         protected TrackedCommand(ICommandTracker tracker, ICommand executeCommand, ICommand undoCommand)
         {

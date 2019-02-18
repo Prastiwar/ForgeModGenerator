@@ -1,8 +1,9 @@
-﻿using ForgeModGenerator.Models;
+﻿using ForgeModGenerator.Persistence;
+using ForgeModGenerator.SoundGenerator.Models;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace ForgeModGenerator.SoundGenerator.Models
+namespace ForgeModGenerator.SoundGenerator.Persistence
 {
     public class SoundJsonUpdater : JsonUpdater<SoundEvent>
     {

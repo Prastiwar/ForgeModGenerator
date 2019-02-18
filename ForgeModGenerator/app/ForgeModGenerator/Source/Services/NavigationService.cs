@@ -21,15 +21,12 @@ namespace ForgeModGenerator.Services
                 }
                 return _frame;
             }
-            set { _frame = value; }
+            set => _frame = value;
         }
 
         public string CurrentPageKey { get; protected set; }
 
-        public NavigationService(Frame frame = null)
-        {
-            NavFrame = frame;
-        }
+        public NavigationService(Frame frame = null) => NavFrame = frame;
 
         public void GoBack() => NavFrame.GoBack();
 

@@ -1,4 +1,4 @@
-﻿using ForgeModGenerator.ModGenerator.Models;
+﻿using ForgeModGenerator.Models;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;

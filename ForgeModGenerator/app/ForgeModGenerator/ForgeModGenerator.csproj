@@ -134,6 +134,7 @@
     <Compile Include="Source\CodeGeneration\ScriptCodeGenerator.cs" />
     <Compile Include="Source\Common\AppPaths.cs" />
     <Compile Include="Source\Common\ICopiable.cs" />
+    <Compile Include="Source\Common\IDirty.cs" />
     <Compile Include="Source\Common\Log.cs" />
     <Compile Include="Source\Common\Math.cs" />
     <Compile Include="Source\Common\ModPaths.cs" />
@@ -156,9 +157,9 @@
     <Compile Include="Source\FileSystem\ObservableFolder.cs" />
     <Compile Include="Source\Utility\Helpers\IOHelper.cs" />
     <Compile Include="Source\Utility\Helpers\ReflectionHelper.cs" />
-    <Compile Include="Source\Models\JsonUpdater.cs" />
+    <Compile Include="Source\Persistence\JsonUpdater.cs" />
     <Compile Include="Source\Models\ObservableDirtyObject.cs" />
-    <Compile Include="Source\Models\PreferenceData.cs" />
+    <Compile Include="Source\Persistence\PreferenceData.cs" />
     <Compile Include="Source\Modules\ApplicationModule\BugReporter.xaml.cs">
       <DependentUpon>BugReporter.xaml</DependentUpon>
     </Compile>
@@ -184,7 +185,7 @@
     <Compile Include="Source\Modules\ModGenerator\SourceCodeGeneration\RegistryHandlerCodeGenerator.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundCodeGenerator.cs" />
     <Compile Include="Source\Modules\SoundGenerator\Models\SoundJsonUpdater.cs" />
-    <Compile Include="Source\Modules\ModGenerator\Models\LaunchSetup.cs" />
+    <Compile Include="Source\Models\Mod\LaunchSetup.cs" />
     <Compile Include="Source\Modules\SoundGenerator\Models\SoundsGeneratorPreferences.cs" />
     <Compile Include="Source\Modules\SoundGenerator\Models\SoundEvent.cs" />
     <Compile Include="Source\Services\CommandTracker.cs" />
@@ -201,18 +202,18 @@
     </Compile>
     <Compile Include="Source\Converters\EnumToCollectionConverter.cs" />
     <Compile Include="Source\Converters\PathToNameConverter.cs" />
-    <Compile Include="Source\Modules\ModGenerator\Models\ForgeVersion.cs" />
-    <Compile Include="Source\Modules\ModGenerator\Models\McModInfo.cs" />
+    <Compile Include="Source\Models\Mod\ForgeVersion.cs" />
+    <Compile Include="Source\Models\Mod\McModInfo.cs" />
     <Compile Include="Source\Utility\Extensions\JsonExtensions.cs" />
     <Compile Include="Source\Utility\Helpers\WPFHelper.cs" />
     <Compile Include="Source\Modules\AchievementGenerator\Achievement.cs" />
     <Compile Include="Source\Modules\BlockGenerator\Block.cs" />
     <Compile Include="Source\Modules\CommandGenerator\Command.cs" />
     <Compile Include="Source\Modules\ItemGenerator\Item.cs" />
-    <Compile Include="Source\Modules\ModGenerator\Models\Mod.cs" />
+    <Compile Include="Source\Models\Mod\Mod.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\Recipe.cs" />
     <Compile Include="Source\Modules\SoundGenerator\Models\Sound.cs" />
-    <Compile Include="Source\Modules\ModGenerator\Models\WorkspaceSetup.cs" />
+    <Compile Include="Source\Models\Mod\WorkspaceSetup.cs" />
     <Compile Include="Source\Services\NavigationService.cs" />
     <Compile Include="Source\Services\SessionContextService.cs" />
     <Compile Include="Source\Services\WorkspaceSetupService.cs" />

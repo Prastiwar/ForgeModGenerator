@@ -8,7 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Controls;
 
-namespace ForgeModGenerator.ModGenerator.Models
+namespace ForgeModGenerator.Models
 {
     [TypeConverter(typeof(EnumDescriptionTypeConverter))]
     public enum ModSide
@@ -168,7 +168,8 @@ namespace ForgeModGenerator.ModGenerator.Models
         }
 
         // Writes to FmgModInfo file
-        public static void Export(Mod mod) => File.WriteAllText(ModPaths.FmgModInfoFile(mod.ModInfo.Name), JsonConvert.SerializeObject(mod, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All }));
+        public static void Export(Mod mod)
+            => File.WriteAllText(ModPaths.FmgModInfoFile(mod.ModInfo.Name), JsonConvert.SerializeObject(mod, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All }));
 
         public static Mod Import(string modPath)
         {

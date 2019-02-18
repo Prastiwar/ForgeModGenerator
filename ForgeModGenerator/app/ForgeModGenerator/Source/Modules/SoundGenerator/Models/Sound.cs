@@ -18,7 +18,7 @@ namespace ForgeModGenerator.SoundGenerator.Models
         /// <summary> IMPORTANT: Prefer to use ctor, this is used for serialization purposes </summary>
         internal static Sound CreateEmpty(string name = null, string modid = null) => new Sound() { Name = name, modid = modid };
 
-        public Sound(string filePath) : this(ModGenerator.Models.Mod.GetModidFromPath(filePath), filePath) { }
+        public Sound(string filePath) : this(Mod.GetModidFromPath(filePath), filePath) { }
 
         public Sound(string modid, string filePath) : this()
         {
@@ -86,7 +86,7 @@ namespace ForgeModGenerator.SoundGenerator.Models
             set => DirtSet(ref type, value);
         }
 
-        internal string GetSoundsFolder() => ModPaths.SoundsFolder(ModGenerator.Models.Mod.GetModnameFromPath(Info.FullName), modid);
+        internal string GetSoundsFolder() => ModPaths.SoundsFolder(Mod.GetModnameFromPath(Info.FullName), modid);
 
         public void FormatName() => Name = FormatSoundNameFromFullPath(modid, Info.FullName);
 

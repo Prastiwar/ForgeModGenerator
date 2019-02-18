@@ -1,6 +1,6 @@
 ﻿using ForgeModGenerator.CodeGeneration;
 using ForgeModGenerator.CodeGeneration.CodeDom;
-using ForgeModGenerator.ModGenerator.Models;
+using ForgeModGenerator.Models;
 using System.CodeDom;
 using System.IO;
 

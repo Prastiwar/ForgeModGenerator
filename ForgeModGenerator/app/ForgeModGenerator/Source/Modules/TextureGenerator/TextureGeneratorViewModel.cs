@@ -1,5 +1,4 @@
-﻿using ForgeModGenerator.Models;
-using ForgeModGenerator.Services;
+﻿using ForgeModGenerator.Services;
 using ForgeModGenerator.ViewModels;
 using GalaSoft.MvvmLight.Views;
 using System;

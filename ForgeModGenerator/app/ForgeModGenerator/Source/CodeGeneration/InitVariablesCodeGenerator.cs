@@ -1,4 +1,4 @@
-﻿using ForgeModGenerator.ModGenerator.Models;
+﻿using ForgeModGenerator.Models;
 using System.CodeDom;
 using System.Collections.Generic;
 

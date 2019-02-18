@@ -1,4 +1,4 @@
-﻿using ForgeModGenerator.ModGenerator.Models;
+﻿using ForgeModGenerator.Models;
 using System;
 using System.Globalization;
 using System.Text.RegularExpressions;

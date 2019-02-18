@@ -1,4 +1,4 @@
-using ForgeModGenerator.ModGenerator.Models;
+using ForgeModGenerator.Models;
 using ForgeModGenerator.Services;
 using ForgeModGenerator.ViewModels;
 using GalaSoft.MvvmLight;
@@ -44,10 +44,7 @@ namespace ForgeModGenerator.ApplicationModule.ViewModels
             }
         }
 
-        private void RunSelectedMod(Mod mod)
-        {
-            modBuilder.Run(mod);
-        }
+        private void RunSelectedMod(Mod mod) => modBuilder.Run(mod);
 
         private void ForceRefresh()
         {

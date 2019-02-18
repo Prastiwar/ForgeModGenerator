@@ -1,6 +1,5 @@
 ﻿using ForgeModGenerator.Converters;
 using ForgeModGenerator.Exceptions;
-using ForgeModGenerator.Models;
 using ForgeModGenerator.Services;
 using ForgeModGenerator.Utility;
 using GalaSoft.MvvmLight;
@@ -389,7 +388,7 @@ namespace ForgeModGenerator.ViewModels
         protected virtual void RemoveFileFromFolder(Tuple<TFolder, TFile> param) => param.Item1.Remove(param.Item2);
 
         /// <summary> Copies files to folder path, if file with given name exists, prompt for overwriting </summary>
-        protected void CopyFilesToFolder(TFolder folder, params string[] fileNames)
+        protected async void CopyFilesToFolderAsync(TFolder folder, params string[] fileNames)
         {
             foreach (string filePath in fileNames)
             {
@@ -398,7 +397,7 @@ namespace ForgeModGenerator.ViewModels
                 {
                     if (filePath != newPath)
                     {
-                        bool overwrite = WPFHelper.ShowOverwriteDialog(newPath);
+                        bool overwrite = await DialogService.ShowMessage($"File {newPath} already exists.\nDo you want to overwrite it?", "Existing file conflict", "Yes", "No", null);
                         if (overwrite)
                         {
                             File.Copy(filePath, newPath, true);
@@ -421,7 +420,7 @@ namespace ForgeModGenerator.ViewModels
             DialogResult dialogResult = OpenFileDialog.ShowDialog();
             if (dialogResult == DialogResult.OK)
             {
-                CopyFilesToFolder(folder, OpenFileDialog.FileNames);
+                CopyFilesToFolderAsync(folder, OpenFileDialog.FileNames);
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using ForgeModGenerator.Utility;
+﻿using ForgeModGenerator.Models;
+using ForgeModGenerator.Utility;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 
-namespace ForgeModGenerator.Models
+namespace ForgeModGenerator
 {
     public delegate void OnFileChangedEventHandler<T>(T file);
 

@@ -1,7 +1,7 @@
-﻿using System;
+﻿using ForgeModGenerator.Models;
 using System.ComponentModel;
 
-namespace ForgeModGenerator.Models
+namespace ForgeModGenerator
 {
     public interface IFileSystemInfo : INotifyPropertyChanged, ICopiable, IDirty
     {

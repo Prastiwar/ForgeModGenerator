@@ -1,11 +1,11 @@
 ﻿using ForgeModGenerator.CodeGeneration;
-using ForgeModGenerator.ModGenerator.Models;
+using ForgeModGenerator.Models;
 using ForgeModGenerator.SoundGenerator.Models;
 using System.CodeDom;
 using System.Collections.Generic;
 using System.IO;
 
-namespace ForgeModGenerator.SoundGenerator
+namespace ForgeModGenerator.SoundGenerator.CodeGeneration
 {
     public class SoundCodeGenerator : InitVariablesCodeGenerator<SoundEvent>
     {

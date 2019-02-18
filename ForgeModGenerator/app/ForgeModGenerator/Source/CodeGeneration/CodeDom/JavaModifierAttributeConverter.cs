@@ -9,9 +9,9 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
         protected abstract object[] Values { get; }
         protected abstract string[] Names { get; }
         protected abstract object DefaultValue { get; }
-        
+
         public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType) => sourceType == typeof(string) ? true : base.CanConvertFrom(context, sourceType);
-        
+
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
             if (value is string name)
@@ -27,7 +27,7 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
             }
             return DefaultValue;
         }
-        
+
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
             if (destinationType == null)
@@ -49,7 +49,7 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
             }
             return base.ConvertTo(context, culture, value, destinationType);
         }
-        
+
         public override bool GetStandardValuesExclusive(ITypeDescriptorContext context) => true;
         public override bool GetStandardValuesSupported(ITypeDescriptorContext context) => true;
         public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context) => new StandardValuesCollection(Values);

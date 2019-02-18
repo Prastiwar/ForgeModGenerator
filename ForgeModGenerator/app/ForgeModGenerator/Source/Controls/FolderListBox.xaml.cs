@@ -6,10 +6,7 @@ namespace ForgeModGenerator.Controls
 {
     public partial class FolderListBox : UserControl
     {
-        public FolderListBox()
-        {
-            InitializeComponent();
-        }
+        public FolderListBox() => InitializeComponent();
 
         public static readonly DependencyProperty FolderTemplateProperty =
             DependencyProperty.Register("FolderTemplate", typeof(DataTemplate), typeof(FolderListBox), new PropertyMetadata(null));

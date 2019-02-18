@@ -32,11 +32,5 @@ namespace ForgeModGenerator.Utility
             }
             return null;
         }
-
-        public static bool ShowOverwriteDialog(string filePath)
-        {
-            MessageBoxResult result = MessageBox.Show($"File {filePath} already exists.\nDo you want to overwrite it?", "Existing file conflict", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            return result == MessageBoxResult.Yes;
-        }
     }
 }

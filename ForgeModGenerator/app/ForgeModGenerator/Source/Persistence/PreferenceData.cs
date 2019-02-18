@@ -1,7 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using ForgeModGenerator.Models;
+using Newtonsoft.Json;
 using System.IO;
 
-namespace ForgeModGenerator.Models
+namespace ForgeModGenerator.Persistence
 {
     public abstract class PreferenceData : ObservableDirtyObject
     {

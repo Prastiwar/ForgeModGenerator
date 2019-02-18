@@ -1,4 +1,4 @@
-﻿using ForgeModGenerator.ModGenerator.Models;
+﻿using ForgeModGenerator.Models;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -12,15 +12,12 @@ namespace ForgeModGenerator.Services
 
     public class WorkspaceSetupService : IWorkspaceSetupService
     {
-        public WorkspaceSetupService()
-        {
-            Setups = new ObservableCollection<WorkspaceSetup>() {
-                WorkspaceSetup.NONE,
-                new EclipseWorkspace(),
-                new IntelliJIDEAWorkspace(),
-                new VSCodeWorkspace()
-            };
-        }
+        public WorkspaceSetupService() => Setups = new ObservableCollection<WorkspaceSetup>() {
+                                                        WorkspaceSetup.NONE,
+                                                        new EclipseWorkspace(),
+                                                        new IntelliJIDEAWorkspace(),
+                                                        new VSCodeWorkspace()
+                                                   };
 
         private ObservableCollection<WorkspaceSetup> setups;
         public ObservableCollection<WorkspaceSetup> Setups {

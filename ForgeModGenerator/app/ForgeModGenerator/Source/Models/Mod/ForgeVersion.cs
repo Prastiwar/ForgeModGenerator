@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.IO.Compression;
 
-namespace ForgeModGenerator.ModGenerator.Models
+namespace ForgeModGenerator.Models
 {
     public class ForgeVersion
     {
@@ -21,10 +21,7 @@ namespace ForgeModGenerator.ModGenerator.Models
             Name = Path.GetFileNameWithoutExtension(zipPath).Replace("-mdk", "");
         }
 
-        public void UnZip(string destination)
-        {
-            ZipFile.ExtractToDirectory(ZipPath, destination);
-        }
+        public void UnZip(string destination) => ZipFile.ExtractToDirectory(ZipPath, destination);
 
         public override bool Equals(object obj) => obj is ForgeVersion objForgeVersion && (objForgeVersion.Name == Name && objForgeVersion.ZipPath == ZipPath);
         public override int GetHashCode() => base.GetHashCode();

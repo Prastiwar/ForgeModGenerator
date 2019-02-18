@@ -4,11 +4,6 @@ using System.Runtime.CompilerServices;
 
 namespace ForgeModGenerator.Models
 {
-    public interface IDirty
-    {
-        bool IsDirty { get; set; }
-    }
-
     public class ObservableDirtyObject : ObservableObject, IDirty
     {
         [JsonIgnore]

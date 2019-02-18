@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace ForgeModGenerator.ModGenerator.Models
+namespace ForgeModGenerator.Models
 {
     public abstract class WorkspaceSetup
     {
@@ -10,10 +10,7 @@ namespace ForgeModGenerator.ModGenerator.Models
         [JsonProperty(Required = Required.Always)]
         public string Name { get; protected set; }
 
-        public WorkspaceSetup(string name)
-        {
-            Name = name;
-        }
+        public WorkspaceSetup(string name) => Name = name;
 
         public abstract void Setup(Mod mod);
 
@@ -32,29 +29,20 @@ namespace ForgeModGenerator.ModGenerator.Models
     {
         public EclipseWorkspace() : base("Eclipse") { }
 
-        public override void Setup(Mod mod)
-        {
-            throw new NotImplementedException();
-        }
+        public override void Setup(Mod mod) => throw new NotImplementedException();
     }
 
     public class IntelliJIDEAWorkspace : WorkspaceSetup
     {
         public IntelliJIDEAWorkspace() : base("IntelliJIDEA") { }
 
-        public override void Setup(Mod mod)
-        {
-            throw new NotImplementedException();
-        }
+        public override void Setup(Mod mod) => throw new NotImplementedException();
     }
 
     public class VSCodeWorkspace : WorkspaceSetup
     {
         public VSCodeWorkspace() : base("VSCode") { }
 
-        public override void Setup(Mod mod)
-        {
-            throw new NotImplementedException();
-        }
+        public override void Setup(Mod mod) => throw new NotImplementedException();
     }
 }

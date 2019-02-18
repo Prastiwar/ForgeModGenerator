@@ -1,6 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 
-namespace ForgeModGenerator.ModGenerator.Models
+namespace ForgeModGenerator.Models
 {
     public class LaunchSetup : ObservableObject
     {
