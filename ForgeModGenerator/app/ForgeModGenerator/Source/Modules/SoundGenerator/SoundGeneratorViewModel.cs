@@ -174,6 +174,12 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
                     ForceUpdate();
                 }
             };
+            soundEvent.OnFilePropertyChanged += (sender, e) => {
+                if (e.PropertyName == nameof(Sound.Name))
+                {
+                    ForceUpdate();
+                }
+            };
         }
     }
 }

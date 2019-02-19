@@ -23,6 +23,10 @@ namespace ForgeModGenerator.SoundGenerator.Models
             if (files != null)
             {
                 soundEvent.Files = new ObservableCollection<Sound>(files);
+                foreach (Sound file in soundEvent.Files)
+                {
+                    file.PropertyChanged += soundEvent.File_PropertyChanged;
+                }
             }
             return soundEvent;
         }
@@ -92,7 +96,12 @@ namespace ForgeModGenerator.SoundGenerator.Models
             return false;
         }
 
-        public ValidationResult IsValid => new ValidationResult(Validate(nameof(EventName)) != null, "Event Name is not valid");
+        public ValidationResult IsValid {
+            get {
+                string errorString = Validate(nameof(EventName));
+                return new ValidationResult(string.IsNullOrEmpty(errorString), errorString);
+            }
+        }
 
         string IDataErrorInfo.Error => null;
         string IDataErrorInfo.this[string propertyName] => Validate(propertyName);

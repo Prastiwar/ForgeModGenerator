@@ -12,6 +12,7 @@ using System.Linq;
 namespace ForgeModGenerator
 {
     public delegate void OnFileChangedEventHandler<T>(T file);
+    public delegate void OnFilePropertyChangedEventHandler<T>(T file, PropertyChangedEventArgs e);
 
     public interface IFileFolder : IFileSystemInfo, IDirty, INotifyCollectionChanged, INotifyPropertyChanged
     {
@@ -23,6 +24,7 @@ namespace ForgeModGenerator
     {
         event OnFileChangedEventHandler<T> OnFileAdded;
         event OnFileChangedEventHandler<T> OnFileRemoved;
+        event OnFilePropertyChangedEventHandler<T> OnFilePropertyChanged;
 
         ObservableCollection<T> Files { get; }
 
@@ -77,6 +79,7 @@ namespace ForgeModGenerator
 
         public event OnFileChangedEventHandler<T> OnFileAdded;
         public event OnFileChangedEventHandler<T> OnFileRemoved;
+        public event OnFilePropertyChangedEventHandler<T> OnFilePropertyChanged;
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 
@@ -96,13 +99,21 @@ namespace ForgeModGenerator
                     {
                         Files.CollectionChanged -= Files_CollectionChanged;
                         Files.CollectionChanged += Files_CollectionChanged;
+                        if (Files.Count > 0)
+                        {
+                            foreach (T file in Files)
+                            {
+                                file.PropertyChanged -= File_PropertyChanged;
+                                file.PropertyChanged += File_PropertyChanged;
+                            }
+                        }
                     }
                 }
             }
         }
 
         [JsonIgnore]
-        public int Count => Files.Count;
+        public int Count => Files != null ? Files.Count : 0;
 
         [JsonIgnore]
         protected DirectoryInfo DirInfo => (DirectoryInfo)Info.FileSystemInfo;
@@ -115,6 +126,7 @@ namespace ForgeModGenerator
             if (canAdd)
             {
                 Files.Add(item);
+                item.PropertyChanged += File_PropertyChanged;
             }
             return canAdd;
         }
@@ -149,6 +161,7 @@ namespace ForgeModGenerator
         {
             if (Files.Remove(item))
             {
+                item.PropertyChanged -= File_PropertyChanged;
                 item.Info.Remove();
                 return true;
             }
@@ -191,6 +204,8 @@ namespace ForgeModGenerator
             }
         }
 
+        protected virtual void File_PropertyChanged(object sender, PropertyChangedEventArgs e) => OnFilePropertyChanged?.Invoke((T)sender, e);
+
         protected virtual void Info_PropertyChanged(object sender, PropertyChangedEventArgs e) { }
 
         protected virtual void Files_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -224,7 +239,8 @@ namespace ForgeModGenerator
             {
                 cloneFiles.Add((T)file.DeepClone());
             }
-            ObservableFolder<T> folder = new ObservableFolder<T>() { Files = cloneFiles };
+            ObservableFolder<T> folder = new ObservableFolder<T>() { Files = new ObservableCollection<T>() };
+            folder.AddRange(cloneFiles);
             folder.SetInfo(Info.FullName);
             folder.IsDirty = false;
             return folder;

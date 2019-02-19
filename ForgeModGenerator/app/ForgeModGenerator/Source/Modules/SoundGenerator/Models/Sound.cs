@@ -111,6 +111,7 @@ namespace ForgeModGenerator.SoundGenerator.Models
         public override object DeepClone()
         {
             Sound sound = new Sound() {
+                modid = modid,
                 Name = Name,
                 Volume = Volume,
                 Pitch = Pitch,
@@ -128,6 +129,7 @@ namespace ForgeModGenerator.SoundGenerator.Models
         {
             if (fromCopy is Sound sound)
             {
+                modid = sound.modid;
                 Name = sound.Name;
                 Volume = sound.Volume;
                 Pitch = sound.Pitch;

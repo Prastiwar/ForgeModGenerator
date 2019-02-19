@@ -21,16 +21,18 @@ namespace ForgeModGenerator.Converters
 
         public SoundCollectionConverter(string modname, string modid)
         {
-            ModName = modname;
-            Modid = modid;
+            ModName = modname ?? throw new ArgumentNullException(nameof(modname));
+            Modid = modid ?? throw new ArgumentNullException(nameof(modid));
         }
 
-        public override bool CanConvert(Type objectType) => typeof(ObservableCollection<SoundEvent>).IsAssignableFrom(objectType);
+        public override bool CanConvert(Type objectType) => objectType.IsAssignableFrom(typeof(Collection<SoundEvent>)) 
+                                                        || objectType.IsAssignableFrom(typeof(ObservableCollection<SoundEvent>))
+                                                        || objectType.IsAssignableFrom(typeof(List<SoundEvent>));
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             string soundsPath = ModPaths.SoundsFolder(ModName, Modid);
-            ObservableCollection<SoundEvent> folders = new ObservableCollection<SoundEvent>();
+            Collection<SoundEvent> folders = new Collection<SoundEvent>();
             JObject item = JObject.Load(reader);
 
             foreach (KeyValuePair<string, JToken> property in item)
@@ -38,7 +40,6 @@ namespace ForgeModGenerator.Converters
                 SoundEvent soundEvent = item.GetValue(property.Key).ToObject<SoundEvent>();
                 soundEvent.EventName = property.Key;
                 soundEvent.SetInfo(soundsPath);
-
                 foreach (Sound sound in soundEvent.Files)
                 {
                     string soundName = sound.Name;
@@ -53,6 +54,14 @@ namespace ForgeModGenerator.Converters
                 soundEvent.IsDirty = false;
                 folders.Add(soundEvent);
             }
+            if (objectType.IsAssignableFrom(typeof(ObservableCollection<SoundEvent>)))
+            {
+                return new ObservableCollection<SoundEvent>(folders);
+            }
+            else if(objectType.IsAssignableFrom(typeof(List<SoundEvent>)))
+            {
+                return new List<SoundEvent>(folders);
+            }
             return folders;
         }
 
@@ -61,27 +70,25 @@ namespace ForgeModGenerator.Converters
             builder.Clear();
             builder.Append("{\n");
 
-            if (value is ObservableCollection<SoundEvent> folders)
+            if (value == null)
             {
-                int i = 0;
-                foreach (SoundEvent item in folders.Where(folder => folder.Files.Count > 0))
-                {
-                    itemBuilder.Clear();
-                    string json = JsonConvert.SerializeObject(item, Formatting.Indented);
-                    itemBuilder.Append(json);
-
-                    bool isLastElement = i < folders.Count - 1;
-                    if (isLastElement)
-                    {
-                        itemBuilder.Append(',');
-                    }
-                    builder.Append(itemBuilder);
-                    i++;
-                }
+                throw new ArgumentNullException(nameof(value));
             }
-            else
+            IEnumerable<SoundEvent> folders = value as IEnumerable<SoundEvent>;
+            int i = 0;
+            foreach (SoundEvent item in folders.Where(folder => folder.Files.Count > 0))
             {
-                throw new JsonWriterException($"Object type was null, or not type of {typeof(ObservableCollection<SoundEvent>)}");
+                itemBuilder.Clear();
+                string json = JsonConvert.SerializeObject(item, Formatting.Indented);
+                itemBuilder.Append(json);
+
+                bool isLastElement = i < folders.Count() - 1;
+                if (isLastElement)
+                {
+                    itemBuilder.Append(',');
+                }
+                builder.Append(itemBuilder);
+                i++;
             }
 
             builder.Append("\n}");

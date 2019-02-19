@@ -53,7 +53,7 @@ namespace ForgeModGenerator.Converters
                 { nameof(Sound.Pitch).ToLower(), value.Pitch },
                 { nameof(Sound.Weight).ToLower(), value.Weight },
                 { nameof(Sound.Stream).ToLower(), value.Stream },
-                { nameof(Sound.AttenuationDistance).ToLower(), value.AttenuationDistance },
+                { "attenuation_distance", value.AttenuationDistance },
                 { nameof(Sound.Preload).ToLower(), value.Preload },
                 { nameof(Sound.Type).ToLower(), JToken.FromObject(value.Type, serializer) }
             };
