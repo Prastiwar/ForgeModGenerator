@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace ForgeModGenerator.Utility
 {
     public static class CollectionExtensions
     {
+        public static bool HasOnlyOne<T>(this IEnumerable<T> items, Func<T, bool> match) => items.Where(match).Take(2).Count() == 1;
+
         public static bool Exists<T>(this ObservableCollection<T> items, Predicate<T> match) => items.FindIndex(match) != -1;
 
         public static T Find<T>(this ObservableCollection<T> items, Predicate<T> match)

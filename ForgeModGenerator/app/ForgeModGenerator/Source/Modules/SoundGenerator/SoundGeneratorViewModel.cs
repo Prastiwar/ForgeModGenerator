@@ -1,8 +1,10 @@
-﻿using ForgeModGenerator.Converters;
+﻿using FluentValidation;
+using ForgeModGenerator.Converters;
 using ForgeModGenerator.Services;
 using ForgeModGenerator.SoundGenerator.Controls;
 using ForgeModGenerator.SoundGenerator.Models;
 using ForgeModGenerator.SoundGenerator.Persistence;
+using ForgeModGenerator.SoundGenerator.Validations;
 using ForgeModGenerator.Utility;
 using ForgeModGenerator.ViewModels;
 using GalaSoft.MvvmLight.Command;
@@ -38,18 +40,24 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
 
         public override string FoldersSerializeFilePath => SessionContext.SelectedMod != null ? ModPaths.SoundsJson(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid) : null;
 
-        public SoundsGeneratorPreferences Preferences { get; }
-
-        public SoundJsonUpdater JsonUpdater { get; protected set; }
-
         private bool shouldUpdate;
         public bool ShouldUpdate {
             get => shouldUpdate;
             set => Set(ref shouldUpdate, value);
         }
 
+        protected SoundsGeneratorPreferences Preferences { get; }
+
+        private SoundEventValidator soundEventValidator;
+        public SoundEventValidator SoundEventValidator => soundEventValidator ?? (soundEventValidator = new SoundEventValidator(Folders));
+
+        private SoundJsonUpdater jsonUpdater;
+        protected SoundJsonUpdater JsonUpdater => jsonUpdater ?? (jsonUpdater = new SoundJsonUpdater(Folders, FoldersSerializeFilePath, Preferences.JsonFormatting, GetActualConverter()));
+
         private ICommand updateSoundsJson;
         public ICommand UpdateSoundsJson => updateSoundsJson ?? (updateSoundsJson = new RelayCommand(FindAndAddNewFiles));
+
+        protected SoundCollectionConverter GetActualConverter() => new SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
 
         protected bool IsJsonUpdated()
         {
@@ -92,7 +100,8 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             if (CanRefresh())
             {
                 Folders = FindFolders(FoldersSerializeFilePath, true);
-                JsonUpdater = new SoundJsonUpdater(Folders, FoldersSerializeFilePath, Preferences.JsonFormatting, new SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid));
+                jsonUpdater = null; // will lazy load itself when needed
+                soundEventValidator = null; // will lazy load itself when needed
                 CheckSerializationFileMismatch(FoldersSerializeFilePath);
                 CheckForUpdate();
                 return true;
@@ -155,8 +164,15 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
                 ForceUpdate();
                 CheckForUpdate();
             };
+            soundEvent.OnValidate += (sender, propertyName) => {
+                return new SoundEventValidator(Folders).Validate(sender, propertyName).ToString();
+            };
             soundEvent.PropertyChanged += (sender, args) => {
-                ForceUpdate();
+                FluentValidation.Results.ValidationResult validateResult = SoundEventValidator.Validate((SoundEvent)sender);
+                if (validateResult.IsValid)
+                {
+                    ForceUpdate();
+                }
             };
         }
     }

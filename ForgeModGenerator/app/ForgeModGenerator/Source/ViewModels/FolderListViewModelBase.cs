@@ -164,7 +164,7 @@ namespace ForgeModGenerator.ViewModels
         #region FileWatcherSystem
         protected void SynchronizationCheck(string rootPath, string actualPath)
         {
-            if (!IOExtensions.IsSubPathOf(actualPath, rootPath))
+            if (!IOHelper.IsSubPathOf(actualPath, rootPath))
             {
                 throw new InvalidSynchronizationArgument(rootPath, actualPath);
             }

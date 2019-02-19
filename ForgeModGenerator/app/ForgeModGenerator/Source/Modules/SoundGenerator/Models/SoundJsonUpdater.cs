@@ -17,7 +17,7 @@ namespace ForgeModGenerator.SoundGenerator.Persistence
         {
             foreach (SoundEvent soundEvent in Target)
             {
-                System.Windows.Controls.ValidationResult result = soundEvent.IsValid(Target);
+                System.Windows.Controls.ValidationResult result = soundEvent.IsValid;
                 if (!result.IsValid)
                 {
                     Log.Warning($"Cannot serialize json. {soundEvent.EventName} is not valid. Reason: {result.ErrorContent}", true);

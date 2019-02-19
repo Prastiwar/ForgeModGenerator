@@ -6,7 +6,7 @@
 					xmlns:vm="clr-namespace:ForgeModGenerator.ViewModels"
 					xmlns:rules="clr-namespace:ForgeModGenerator.Validations"
 					xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-					xmlns:misc="clr-namespace:ForgeModGenerator.Utils"
+					xmlns:misc="clr-namespace:ForgeModGenerator.Utility"
 					xmlns:soundRules="clr-namespace:ForgeModGenerator.SoundGenerator.Validations">
 	<Style TargetType="{x:Type controls:FolderExpanderControl}">
 		<Setter Property="Template">
@@ -113,26 +113,8 @@
 										<controls:SubmitTextBox Style="{StaticResource MaterialDesignFloatingHintTextBox}"
 																Margin="5,0,10,0"
 																materialDesign:HintAssist.Hint="Event Name"
-																IsTabStop="True">
-											<controls:SubmitTextBox.Resources>
-												<controls:BindingProxy x:Key="ControlProxy"
-																	   Data="{Binding Path=., RelativeSource={RelativeSource AncestorType=soundControls:SoundFolderExpanderControl}}" />
-											</controls:SubmitTextBox.Resources>
-											<controls:SubmitTextBox.Text>
-												<Binding Path="DataContext.EventName"
-														 RelativeSource="{RelativeSource AncestorType=soundControls:SoundFolderExpanderControl}">
-													<Binding.ValidationRules>
-														<soundRules:SoundEventRules ValidatesOnTargetUpdated="True"
-																					PropertyName="EventName">
-															<soundRules:SoundEventRules.Parameters>
-																<soundRules:SoundEventValidationDependencyWrapper SoundEvents="{Binding Path=Data.AllFolders, Source={StaticResource ControlProxy}}"
-																												  SoundEventBeforeChange="{Binding Path=Data.DataContext, Source={StaticResource ControlProxy}}" />
-															</soundRules:SoundEventRules.Parameters>
-														</soundRules:SoundEventRules>
-													</Binding.ValidationRules>
-												</Binding>
-											</controls:SubmitTextBox.Text>
-										</controls:SubmitTextBox>
+																IsTabStop="True"
+																Text="{Binding DataContext.EventName, RelativeSource={RelativeSource AncestorType=soundControls:SoundFolderExpanderControl}, ValidatesOnDataErrors=True}" />
 										<controls:SubmitTextBox Style="{StaticResource MaterialDesignFloatingHintTextBox}"
 																Margin="10,0,10,0"
 																materialDesign:HintAssist.Hint="Subtitle"

@@ -1,14 +1,23 @@
 ﻿using ForgeModGenerator.Utility;
+using ForgeModGenerator.Validations;
 using GalaSoft.MvvmLight;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
+using System.Windows.Controls;
 
 namespace ForgeModGenerator
 {
     // Base class that manages file references in application and synchronizes it with explorer
-    public abstract class FileSystemInfoReference : ObservableObject
+    public abstract class FileSystemInfoReference : ObservableObject, IDataErrorInfo
     {
+        public ValidationResult IsValid => new ValidationResult(((IDataErrorInfo)this)[nameof(ChangeName)] != null, "Path is not valid");
+
+        private string error;
+        string IDataErrorInfo.Error => error;
+        string IDataErrorInfo.this[string propertyName] => ((IDataErrorInfo)this).Error;
+
         protected abstract class RefCounter
         {
             public FileSystemInfo File { get; }
@@ -63,20 +72,38 @@ namespace ForgeModGenerator
         public string ChangeName {
             get => changeName;
             set {
+                if (!Set(ref changeName, value))
+                {
+                    return;
+                }
                 string newPath = null;
                 if (FileSystemInfo is DirectoryInfo)
                 {
-                    newPath = Path.Combine(new DirectoryInfo(FullName).Parent.FullName, value);
-                    Directory.Move(FullName, newPath);
+                    newPath = new DirectoryInfo(FullName).Parent.FullName + "\\" + value;
                 }
-                else if (FileSystemInfo is FileInfo)
+                else
                 {
                     string valueWithExt = value + Path.GetExtension(Name);
-                    newPath = Path.Combine(new FileInfo(FullName).Directory.FullName, valueWithExt);
-                    File.Move(FullName, newPath);
+                    newPath = new FileInfo(FullName).Directory.FullName + "\\" + valueWithExt;
                 }
-                SetInfo(newPath);
-                Set(ref changeName, value);
+                if (FullName != newPath)
+                {
+                    FluentValidation.Results.ValidationResult validationResults = new FullPathValidator().Validate(newPath);
+                    if (validationResults.IsValid)
+                    {
+                        IOHelper.Move(FullName, newPath);
+                        SetInfo(newPath);
+                        error = null;
+                    }
+                    else
+                    {
+                        error = validationResults.ToString();
+                    }
+                }
+                else
+                {
+                    error = null;
+                }
             }
         }
 

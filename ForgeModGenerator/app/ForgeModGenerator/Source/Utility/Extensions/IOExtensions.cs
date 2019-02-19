@@ -85,18 +85,6 @@ namespace ForgeModGenerator.Utility
         }
 
         /// <summary>
-        /// Returns true if <paramref name="path"/> starts with the path <paramref name="baseDirPath"/>.
-        /// The comparison is case-insensitive, handles / and \ slashes as folder separators and
-        /// only matches if the base dir folder name is matched exactly ("c:\foobar\file.txt" is not a sub path of "c:\foo").
-        /// </summary>
-        public static bool IsSubPathOf(string path, string baseDirPath)
-        {
-            string normalizedPath = Path.GetFullPath(path.Replace('/', '\\').WithEnding("\\"));
-            string normalizedBaseDirPath = Path.GetFullPath(baseDirPath.Replace('/', '\\').WithEnding("\\"));
-            return normalizedPath.StartsWith(normalizedBaseDirPath, StringComparison.OrdinalIgnoreCase);
-        }
-
-        /// <summary>
         /// Returns <paramref name="str"/> with the minimal concatenation of <paramref name="ending"/> (starting from end) that
         /// results in satisfying .EndsWith(ending).
         /// </summary>

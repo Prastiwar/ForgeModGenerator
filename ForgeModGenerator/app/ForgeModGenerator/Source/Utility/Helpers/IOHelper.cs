@@ -14,19 +14,6 @@ namespace ForgeModGenerator.Utility
         public static IEnumerable<FileInfo> EnumerateAllFileInfos(string path) => new DirectoryInfo(GetDirectoryPath(path)).EnumerateFiles("*", SearchOption.AllDirectories);
         public static IEnumerable<DirectoryInfo> EnumerateAllDirectoryInfos(string path) => new DirectoryInfo(GetDirectoryPath(path)).EnumerateDirectories("*", SearchOption.AllDirectories);
 
-        /// <summary> Increments Name(i) till isUnique is true </summary>
-        public static string GetUniqueName(string name, Func<string, bool> isUnique)
-        {
-            string uniqueName = name;
-            int i = 1;
-            while (!isUnique(uniqueName))
-            {
-                uniqueName = $"{name}({i})";
-                i++;
-            }
-            return uniqueName;
-        }
-
         /// <summary> Directory.EnumerateFiles with multiple patterns splitted by "|" (e.g *.txt|*.log) </summary>
         public static IEnumerable<string> EnumerateFiles(string path, string patterns, SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
@@ -221,6 +208,43 @@ namespace ForgeModGenerator.Utility
             {
                 DeleteFileToBin(path);
             }
+        }
+
+        public static void Move(string path, string newPath)
+        {
+            if (IsFilePath(path))
+            {
+                File.Move(path, newPath);
+            }
+            else
+            {
+                Directory.Move(path, newPath);
+            }
+        }
+
+        /// <summary>
+        /// Returns true if <paramref name="path"/> starts with the path <paramref name="baseDirPath"/>.
+        /// The comparison is case-insensitive, handles / and \ slashes as folder separators and
+        /// only matches if the base dir folder name is matched exactly ("c:\foobar\file.txt" is not a sub path of "c:\foo").
+        /// </summary>
+        public static bool IsSubPathOf(string path, string baseDirPath)
+        {
+            string normalizedPath = Path.GetFullPath(path.Replace('/', '\\').WithEnding("\\"));
+            string normalizedBaseDirPath = Path.GetFullPath(baseDirPath.Replace('/', '\\').WithEnding("\\"));
+            return normalizedPath.StartsWith(normalizedBaseDirPath, StringComparison.OrdinalIgnoreCase);
+        }
+
+        /// <summary> Increments Name(i) till isUnique is true </summary>
+        public static string GetUniqueName(string name, Func<string, bool> isUnique)
+        {
+            string uniqueName = name;
+            int i = 1;
+            while (!isUnique(uniqueName))
+            {
+                uniqueName = $"{name}({i})";
+                i++;
+            }
+            return uniqueName;
         }
     }
 }

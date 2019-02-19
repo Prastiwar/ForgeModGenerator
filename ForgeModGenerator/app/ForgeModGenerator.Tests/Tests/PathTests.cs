@@ -1,5 +1,5 @@
 ﻿using ForgeModGenerator.SoundGenerator.Models;
-using ForgeModGenerator.Utils;
+using ForgeModGenerator.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.IO;
@@ -21,24 +21,24 @@ namespace ForgeModGenerator.Tests
         [TestMethod]
         public void Subpaths()
         {
-            Assert.IsTrue(IOExtensions.IsSubPathOf(@"c:\foo", @"c:"));
-            Assert.IsTrue(IOExtensions.IsSubPathOf(@"c:\foo", @"c:\"));
-            Assert.IsTrue(IOExtensions.IsSubPathOf(@"c:\foo", @"c:\foo"));
-            Assert.IsTrue(IOExtensions.IsSubPathOf(@"c:\foo", @"c:\foo\"));
-            Assert.IsTrue(IOExtensions.IsSubPathOf(@"c:\foo\", @"c:\foo"));
-            Assert.IsTrue(IOExtensions.IsSubPathOf(@"c:\foo\bar\", @"c:\foo\"));
-            Assert.IsTrue(IOExtensions.IsSubPathOf(@"c:\foo\bar", @"c:\foo\"));
-            Assert.IsTrue(IOExtensions.IsSubPathOf(@"c:\foo\a.txt", @"c:\foo"));
-            Assert.IsTrue(IOExtensions.IsSubPathOf(@"c:\FOO\a.txt", @"c:\foo"));
-            Assert.IsTrue(IOExtensions.IsSubPathOf(@"c:/foo/a.txt", @"c:\foo"));
-            Assert.IsTrue(IOExtensions.IsSubPathOf(@"c:\foo\..\bar\baz", @"c:\bar"));
-            Assert.IsFalse(IOExtensions.IsSubPathOf(@"c:\foobar", @"c:\foo"));
-            Assert.IsFalse(IOExtensions.IsSubPathOf(@"c:\foobar\a.txt", @"c:\foo"));
-            Assert.IsFalse(IOExtensions.IsSubPathOf(@"c:\foobar\a.txt", @"c:\foo\"));
-            Assert.IsFalse(IOExtensions.IsSubPathOf(@"c:\foo\a.txt", @"c:\foobar"));
-            Assert.IsFalse(IOExtensions.IsSubPathOf(@"c:\foo\a.txt", @"c:\foobar\"));
-            Assert.IsFalse(IOExtensions.IsSubPathOf(@"c:\foo\..\bar\baz", @"c:\foo"));
-            Assert.IsFalse(IOExtensions.IsSubPathOf(@"c:\foo\..\bar\baz", @"c:\barr"));
+            Assert.IsTrue(IOHelper.IsSubPathOf(@"c:\foo", @"c:"));
+            Assert.IsTrue(IOHelper.IsSubPathOf(@"c:\foo", @"c:\"));
+            Assert.IsTrue(IOHelper.IsSubPathOf(@"c:\foo", @"c:\foo"));
+            Assert.IsTrue(IOHelper.IsSubPathOf(@"c:\foo", @"c:\foo\"));
+            Assert.IsTrue(IOHelper.IsSubPathOf(@"c:\foo\", @"c:\foo"));
+            Assert.IsTrue(IOHelper.IsSubPathOf(@"c:\foo\bar\", @"c:\foo\"));
+            Assert.IsTrue(IOHelper.IsSubPathOf(@"c:\foo\bar", @"c:\foo\"));
+            Assert.IsTrue(IOHelper.IsSubPathOf(@"c:\foo\a.txt", @"c:\foo"));
+            Assert.IsTrue(IOHelper.IsSubPathOf(@"c:\FOO\a.txt", @"c:\foo"));
+            Assert.IsTrue(IOHelper.IsSubPathOf(@"c:/foo/a.txt", @"c:\foo"));
+            Assert.IsTrue(IOHelper.IsSubPathOf(@"c:\foo\..\bar\baz", @"c:\bar"));
+            Assert.IsFalse(IOHelper.IsSubPathOf(@"c:\foobar", @"c:\foo"));
+            Assert.IsFalse(IOHelper.IsSubPathOf(@"c:\foobar\a.txt", @"c:\foo"));
+            Assert.IsFalse(IOHelper.IsSubPathOf(@"c:\foobar\a.txt", @"c:\foo\"));
+            Assert.IsFalse(IOHelper.IsSubPathOf(@"c:\foo\a.txt", @"c:\foobar"));
+            Assert.IsFalse(IOHelper.IsSubPathOf(@"c:\foo\a.txt", @"c:\foobar\"));
+            Assert.IsFalse(IOHelper.IsSubPathOf(@"c:\foo\..\bar\baz", @"c:\foo"));
+            Assert.IsFalse(IOHelper.IsSubPathOf(@"c:\foo\..\bar\baz", @"c:\barr"));
         }
 
         [TestMethod]
@@ -62,12 +62,12 @@ namespace ForgeModGenerator.Tests
             Assert.IsFalse(IOHelper.IsDirectoryPath(@"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis\src\main\resou:;<>rcessmth"));
             Assert.IsFalse(IOHelper.IsDirectoryPath(@"<>?:32"));
 
-            Assert.IsTrue(IOExtensions.IsFilePath(@"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis\src\main\resources\smth.png"));
-            Assert.IsTrue(IOExtensions.IsFilePath(@"\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis.png"));
-            Assert.IsTrue(IOExtensions.IsFilePath(@"Craftpolis.png"));
+            Assert.IsTrue(IOHelper.IsFilePath(@"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis\src\main\resources\smth.png"));
+            Assert.IsTrue(IOHelper.IsFilePath(@"\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis.png"));
+            Assert.IsTrue(IOHelper.IsFilePath(@"Craftpolis.png"));
 
-            Assert.IsFalse(IOExtensions.IsFilePath(@"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis\src\main\resou:;<>rces.smth"));
-            Assert.IsFalse(IOExtensions.IsFilePath(@"<>?:32.png"));
+            Assert.IsFalse(IOHelper.IsFilePath(@"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis\src\main\resou:;<>rces.smth"));
+            Assert.IsFalse(IOHelper.IsFilePath(@"<>?:32.png"));
 
             Assert.IsTrue(IOHelper.IsPathValid(@"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis\src\main\resources"));
             Assert.IsTrue(IOHelper.IsPathValid(@"\ForgeModGenerator\ForgeModGenerator\mods\Craftpolis"));

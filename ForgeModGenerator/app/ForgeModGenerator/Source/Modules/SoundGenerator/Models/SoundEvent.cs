@@ -1,15 +1,17 @@
 ﻿using ForgeModGenerator.Converters;
-using ForgeModGenerator.SoundGenerator.Validations;
+using ForgeModGenerator.Validations;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Windows.Controls;
 
 namespace ForgeModGenerator.SoundGenerator.Models
 {
     [JsonConverter(typeof(SoundEventConverter))]
-    public class SoundEvent : ObservableFolder<Sound>
+    public class SoundEvent : ObservableFolder<Sound>, IDataErrorInfo
     {
         /// <summary> IMPORTANT: Prefer other ctor, this is used for serialization purposes </summary>
         protected SoundEvent() { }
@@ -90,14 +92,28 @@ namespace ForgeModGenerator.SoundGenerator.Models
             return false;
         }
 
-        public ValidationResult IsValid(IEnumerable<SoundEvent> soundEvents)
+        public ValidationResult IsValid => new ValidationResult(Validate(nameof(EventName)) != null, "Event Name is not valid");
+
+        string IDataErrorInfo.Error => null;
+        string IDataErrorInfo.this[string propertyName] => Validate(propertyName);
+
+        private event ValidationEventHandler<SoundEvent> onValidate;
+        public event ValidationEventHandler<SoundEvent> OnValidate {
+            add => onValidate += value;
+            remove => onValidate -= value;
+        }
+
+        private string Validate(string propertyName)
         {
-            SoundEventRules soundEventRules = new SoundEventRules();
-            SoundEventValidationDependencyWrapper parameters = new SoundEventValidationDependencyWrapper() {
-                SoundEvents = soundEvents,
-                SoundEventBeforeChange = this
-            };
-            return soundEventRules.ValidateEventName(EventName, parameters);
+            foreach (Delegate handler in onValidate?.GetInvocationList())
+            {
+                string error = ((ValidationEventHandler<SoundEvent>)handler).Invoke(this, propertyName);
+                if (!string.IsNullOrEmpty(error))
+                {
+                    return error;
+                }
+            }
+            return null;
         }
 
         // Get formatted sound from full path, "shorten.path.toFile"
