@@ -35,9 +35,19 @@
 								Visibility="{Binding Path=ShowEmptyMessage, RelativeSource={RelativeSource AncestorType=local:FolderListBox}, Converter={StaticResource InvertedBoolToVisibility}}" />
 						<ListBox ItemsSource="{Binding Path=FoldersSource, RelativeSource={RelativeSource AncestorType=local:FolderListBox}}"
 								 SelectedItem="{Binding Path=SelectedFolder, RelativeSource={RelativeSource AncestorType=local:FolderListBox}}"
+								 ItemTemplate="{Binding Path=FolderTemplate, RelativeSource={RelativeSource AncestorType=local:FolderListBox}}"
 								 HorizontalContentAlignment="Stretch"
 								 VerticalContentAlignment="Stretch"
-								 ItemTemplate="{Binding Path=FolderTemplate, RelativeSource={RelativeSource AncestorType=local:FolderListBox}}" />
+								 ScrollViewer.VerticalScrollBarVisibility="Disabled"
+								 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+								 VirtualizingPanel.IsVirtualizing="True"
+								 VirtualizingPanel.VirtualizationMode="Recycling">
+							<ListBox.ItemsPanel>
+								<ItemsPanelTemplate>
+									<VirtualizingStackPanel></VirtualizingStackPanel>
+								</ItemsPanelTemplate>
+							</ListBox.ItemsPanel>
+						</ListBox>
 					</StackPanel>
 				</materialDesign:Card>
 			</StackPanel>

@@ -14,10 +14,6 @@ namespace ForgeModGenerator.TextureGenerator.ViewModels
         {
             OpenFileDialog.Filter = "Image (*.png) | *.png";
             AllowedFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".png" };
-            if (!IsInDesignMode)
-            {
-                Refresh();
-            }
         }
 
         public override string FoldersRootPath => SessionContext.SelectedMod != null ? ModPaths.TexturesFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid) : null;

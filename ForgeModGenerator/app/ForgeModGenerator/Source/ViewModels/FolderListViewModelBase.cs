@@ -129,6 +129,9 @@ namespace ForgeModGenerator.ViewModels
         }
 
         #region Commands
+        private ICommand onLoadedCommand;
+        public ICommand OnLoadedCommand => onLoadedCommand ?? (onLoadedCommand = new RelayCommand(OnLoaded));
+
         private ICommand editFileCommand;
         public ICommand EditFileCommand => editFileCommand ?? (editFileCommand = new RelayCommand<Tuple<TFolder, TFile>>(OpenFileEditor));
 
@@ -144,6 +147,13 @@ namespace ForgeModGenerator.ViewModels
         private ICommand addFolderCommand;
         public ICommand AddFolderCommand => addFolderCommand ?? (addFolderCommand = new RelayCommand(ShowFolderDialogAndCopyToRoot));
         #endregion
+
+        private bool isLoading;
+        /// <summary> Determines when folders are loading - used to show loading circle </summary>
+        public bool IsLoading {
+            get => isLoading;
+            set => Set(ref isLoading, value);
+        }
 
         protected FileSystemWatcherExtended FileWatcher { get; set; }
 
@@ -161,6 +171,8 @@ namespace ForgeModGenerator.ViewModels
 
         protected string EditFileCacheKey => "EditFileCacheKey";
 
+        protected virtual async void OnLoaded() => await Refresh();
+
         #region FileWatcherSystem
         protected void SynchronizationCheck(string rootPath, string actualPath)
         {
@@ -170,13 +182,13 @@ namespace ForgeModGenerator.ViewModels
             }
         }
 
-        protected void SyncCreateFolder(string path, bool includeSubDirectories = true)
+        protected async void SyncCreateFolder(string path, bool includeSubDirectories = true)
         {
             SynchronizationCheck(FoldersRootPath, path);
             Folders.Add(ConstructFolderInstance(path, null));
             if (includeSubDirectories)
             {
-                ObservableCollection<TFolder> foundFolders = FindFoldersFromDirectory(path);
+                ObservableCollection<TFolder> foundFolders = await FindFoldersFromDirectory(path);
                 if (foundFolders.Count > 0)
                 {
                     foreach (TFolder folder in foundFolders)
@@ -280,11 +292,13 @@ namespace ForgeModGenerator.ViewModels
         #endregion
 
         protected virtual bool CanRefresh() => SessionContext.SelectedMod != null && (Directory.Exists(FoldersRootPath) || File.Exists(FoldersSerializeFilePath));
-        protected virtual bool Refresh()
+        protected virtual async Task<bool> Refresh()
         {
             if (CanRefresh())
             {
-                Folders = FindFolders(FoldersRootPath ?? FoldersSerializeFilePath, true);
+                IsLoading = true;
+                Folders = await FindFolders(FoldersRootPath ?? FoldersSerializeFilePath, true);
+                IsLoading = false;
                 FileWatcher.Path = FoldersRootPath;
                 return true;
             }
@@ -425,7 +439,7 @@ namespace ForgeModGenerator.ViewModels
         }
 
         #region Folders Initializers
-        protected virtual ObservableCollection<TFolder> FindFolders(string path, bool createRootIfEmpty = false)
+        protected virtual async Task<ObservableCollection<TFolder>> FindFolders(string path, bool createRootIfEmpty = false)
         {
             if (!IOHelper.IsPathValid(path))
             {
@@ -434,11 +448,11 @@ namespace ForgeModGenerator.ViewModels
             ObservableCollection<TFolder> found = null;
             if (Directory.Exists(path))
             {
-                found = FindFoldersFromDirectory(path);
+                found = await FindFoldersFromDirectory(path);
             }
             else if (File.Exists(path))
             {
-                found = FindFoldersFromFile(path);
+                found = await FindFoldersFromFile(path);
             }
 
             bool isEmpty = found == null || found.Count <= 0;
@@ -450,8 +464,7 @@ namespace ForgeModGenerator.ViewModels
         }
 
         /// <summary> Creates TFolder with found TFile's for each subdirectory </summary>
-        protected ObservableCollection<TFolder> FindFoldersFromDirectory(string path)
-        {
+        protected async Task<ObservableCollection<TFolder>> FindFoldersFromDirectory(string path) => await Task.Run(() => {
             ObservableCollection<TFolder> foundFolders = new ObservableCollection<TFolder>();
 
             AddFilesToCollection(path);
@@ -470,11 +483,10 @@ namespace ForgeModGenerator.ViewModels
                 }
             }
             return foundFolders;
-        }
+        });
 
         /// <summary> Returns folders by deserializing them from file in given path </summary>
-        protected ObservableCollection<TFolder> FindFoldersFromFile(string path, bool loadOnlyExisting = true)
-        {
+        protected async Task<ObservableCollection<TFolder>> FindFoldersFromFile(string path, bool loadOnlyExisting = true) => await Task.Run(() => {
             string content = File.ReadAllText(path);
             ObservableCollection<TFolder> deserializedFolders = null;
             try
@@ -495,7 +507,7 @@ namespace ForgeModGenerator.ViewModels
                 deserializedFolders = FilterToOnlyExistingFiles(deserializedFolders);
             }
             return deserializedFolders;
-        }
+        });
 
         /// <summary> Returns file that use extension from AllowedFileExtensions </summary>
         protected IEnumerable<string> EnumerateAllowedFiles(string directoryPath, SearchOption searchOption = SearchOption.TopDirectoryOnly) => IOHelper.EnumerateFiles(directoryPath, AllowedFileExtensionsPatterns, searchOption);
@@ -528,6 +540,7 @@ namespace ForgeModGenerator.ViewModels
             return folders;
         }
 
+        /// <summary> Create TFolder instance and subscrive its events </summary>
         protected virtual TFolder ConstructFolderInstance(string path, IEnumerable<string> filePaths)
         {
             TFolder folder = null;
@@ -557,11 +570,11 @@ namespace ForgeModGenerator.ViewModels
         protected virtual ObservableCollection<TFolder> DeserializeFolders(string fileCotent) => JsonConvert.DeserializeObject<ObservableCollection<TFolder>>(fileCotent);
         #endregion
 
-        protected virtual void OnSessionContexPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        protected virtual async void OnSessionContexPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(SessionContext.SelectedMod))
             {
-                Refresh();
+                await Refresh();
             }
         }
 

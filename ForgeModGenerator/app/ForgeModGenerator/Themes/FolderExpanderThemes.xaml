@@ -56,10 +56,14 @@
 									</StackPanel>
 								</DataTemplate>
 							</Expander.HeaderTemplate>
-							<ListBox ItemsSource="{Binding Path=Folder.Files, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
+							<ListBox Visibility="{Binding Path=IsExpanded, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource AncestorType=Expander}}"
+									 ItemsSource="{Binding Path=Folder.Files, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
 									 SelectedItem="{Binding Path=SelectedFile, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
 									 ItemTemplate="{Binding Path=FileItemTemplate, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
-									 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+									 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+									 ScrollViewer.VerticalScrollBarVisibility="Disabled"
+									 VirtualizingPanel.IsVirtualizing="True"
+									 VirtualizingPanel.VirtualizationMode="Recycling">
 								<ListBox.ItemsPanel>
 									<ItemsPanelTemplate>
 										<WrapPanel IsItemsHost="True" />
@@ -130,7 +134,9 @@
 							<ListBox ItemsSource="{Binding Path=Folder.Files, RelativeSource={RelativeSource AncestorType=soundControls:SoundFolderExpanderControl}}"
 									 SelectedItem="{Binding Path=SelectedFile, RelativeSource={RelativeSource AncestorType=soundControls:SoundFolderExpanderControl}}"
 									 ItemTemplate="{Binding Path=FileItemTemplate, RelativeSource={RelativeSource AncestorType=soundControls:SoundFolderExpanderControl}}"
-									 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+									 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+									 VirtualizingPanel.IsVirtualizing="True"
+									 VirtualizingPanel.VirtualizationMode="Recycling">
 								<ListBox.ItemsPanel>
 									<ItemsPanelTemplate>
 										<WrapPanel IsItemsHost="True" />

@@ -9,6 +9,7 @@
 	  xmlns:sControls="clr-namespace:ForgeModGenerator.SoundGenerator.Controls"
 	  xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 	  xmlns:rules="clr-namespace:ForgeModGenerator.Validations"
+	  xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
 	  mc:Ignorable="d"
 	  d:DesignHeight="450"
 	  d:DesignWidth="800"
@@ -47,6 +48,11 @@
 			</StackPanel>
 		</DataTemplate>
 	</Page.Resources>
+	<i:Interaction.Triggers>
+		<i:EventTrigger EventName="Loaded">
+			<i:InvokeCommandAction Command="{Binding OnLoadedCommand}" />
+		</i:EventTrigger>
+	</i:Interaction.Triggers>
 	<materialDesign:DialogHost>
 		<Grid Background="{StaticResource PageBackground}">
 			<Grid.RowDefinitions>
@@ -72,6 +78,14 @@
 						VerticalAlignment="Top"
 						Command="{Binding UpdateSoundsJson}" />
 			</StackPanel>
+			<ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}"
+						 Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"
+						 Grid.Row="1"
+						 Width="150"
+						 Height="150"
+						 Foreground="White"
+						 Value="0"
+						 IsIndeterminate="True" />
 			<controls:FolderListBox Grid.Row="1"
 									FoldersSource="{Binding Folders}"
 									SelectedFolder="{Binding SelectedFolder}"

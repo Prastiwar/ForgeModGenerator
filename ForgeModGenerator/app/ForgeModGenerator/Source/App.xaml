@@ -32,6 +32,9 @@
 										 d:IsDataSource="True" />
 				</ResourceDictionary>
 				<ResourceDictionary>
+					<converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+				</ResourceDictionary>
+				<ResourceDictionary>
 					<converters:BoolToTextWrapConverter x:Key="BoolToTextWrapConverter" />
 				</ResourceDictionary>
 				<ResourceDictionary>

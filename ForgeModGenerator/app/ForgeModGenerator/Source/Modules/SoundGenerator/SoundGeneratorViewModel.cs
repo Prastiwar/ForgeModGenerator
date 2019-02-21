@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;
 
@@ -32,8 +33,6 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             OpenFileDialog.Filter = "Sound file (*.ogg) | *.ogg";
             AllowedFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".ogg" };
             FileEditForm = new SoundEditForm();
-            Preferences = sessionContext.GetOrCreatePreferences<SoundsGeneratorPreferences>();
-            Refresh();
         }
 
         public override string FoldersRootPath => SessionContext.SelectedMod != null ? ModPaths.SoundsFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid) : null;
@@ -46,7 +45,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             set => Set(ref shouldUpdate, value);
         }
 
-        protected SoundsGeneratorPreferences Preferences { get; }
+        protected SoundsGeneratorPreferences Preferences { get; set; }
 
         private SoundEventValidator soundEventValidator;
         public SoundEventValidator SoundEventValidator => soundEventValidator ?? (soundEventValidator = new SoundEventValidator(Folders));
@@ -95,11 +94,12 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
 
         protected override bool CanRefresh() => SessionContext.SelectedMod != null;
 
-        protected override bool Refresh()
+        protected override async Task<bool> Refresh()
         {
             if (CanRefresh())
             {
-                Folders = FindFolders(FoldersSerializeFilePath, true);
+                Folders = await FindFolders(FoldersSerializeFilePath, true);
+                Preferences = SessionContext.GetOrCreatePreferences<SoundsGeneratorPreferences>();
                 jsonUpdater = null; // will lazy load itself when needed
                 soundEventValidator = null; // will lazy load itself when needed
                 CheckSerializationFileMismatch(FoldersSerializeFilePath);
@@ -124,14 +124,14 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             args.ActualFile.IsDirty = false;
         }
 
-        protected override ObservableCollection<SoundEvent> FindFolders(string path, bool createRootIfEmpty = false)
+        protected override async Task<ObservableCollection<SoundEvent>> FindFolders(string path, bool createRootIfEmpty = false)
         {
             if (!File.Exists(path))
             {
                 File.AppendAllText(path, "{}");
                 return new ObservableCollection<SoundEvent>();
             }
-            ObservableCollection<SoundEvent> deserializedFolders = FindFoldersFromFile(path, false);
+            ObservableCollection<SoundEvent> deserializedFolders = await FindFoldersFromFile(path, false);
             bool hasNotExistingFile = deserializedFolders.Any(folder => folder.Files.Any(file => !File.Exists(file.Info.FullName)));
             return hasNotExistingFile ? FilterToOnlyExistingFiles(deserializedFolders) : deserializedFolders;
         }
@@ -139,7 +139,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
         /// <summary> Deserialized folders from "filePath" and checks if any file doesn't exists, if so, prompt if should fix this </summary>
         protected async void CheckSerializationFileMismatch(string filePath)
         {
-            ObservableCollection<SoundEvent> deserializedFolders = FindFoldersFromFile(filePath, false);
+            ObservableCollection<SoundEvent> deserializedFolders = await FindFoldersFromFile(filePath, false);
             bool hasNotExistingFile = deserializedFolders.Any(folder => folder.Files.Any(file => !File.Exists(file.Info.FullName)));
             if (hasNotExistingFile)
             {
