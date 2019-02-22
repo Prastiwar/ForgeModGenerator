@@ -4,7 +4,7 @@ using System.IO;
 
 namespace ForgeModGenerator.Validations
 {
-    public delegate string ValidationEventHandler<T>(T instance, string propertyName);
+    public delegate string ValidationEventHandler<T>(T sender, string propertyName);
 
     public class FullPathValidator : AbstractValidator<string>
     {

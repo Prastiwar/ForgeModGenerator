@@ -106,15 +106,15 @@ namespace ForgeModGenerator.SoundGenerator.Models
         string IDataErrorInfo.Error => null;
         string IDataErrorInfo.this[string propertyName] => Validate(propertyName);
 
-        private event ValidationEventHandler<SoundEvent> onValidate;
+        private event ValidationEventHandler<SoundEvent> OnValidateHandler;
         public event ValidationEventHandler<SoundEvent> OnValidate {
-            add => onValidate += value;
-            remove => onValidate -= value;
+            add => OnValidateHandler += value;
+            remove => OnValidateHandler -= value;
         }
 
         private string Validate(string propertyName)
         {
-            foreach (Delegate handler in onValidate?.GetInvocationList())
+            foreach (Delegate handler in OnValidateHandler?.GetInvocationList())
             {
                 string error = ((ValidationEventHandler<SoundEvent>)handler).Invoke(this, propertyName);
                 if (!string.IsNullOrEmpty(error))

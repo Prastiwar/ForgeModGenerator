@@ -1,4 +1,5 @@
 ﻿using ForgeModGenerator.Converters;
+using ForgeModGenerator.Persistence;
 using ForgeModGenerator.Services;
 using ForgeModGenerator.Utility;
 using GalaSoft.MvvmLight;
@@ -8,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
@@ -25,7 +27,6 @@ namespace ForgeModGenerator.ViewModels
         {
             SessionContext = sessionContext;
             DialogService = dialogService;
-            FolderFileConverter = new TupleValueConverter<TFolder, TFile>();
             if (IsInDesignMode)
             {
                 return;
@@ -41,15 +42,15 @@ namespace ForgeModGenerator.ViewModels
             FileSynchronizer = new FoldersSynchronizer<TFolder, TFile>(Folders, FoldersRootPath, AllowedFileExtensionsPatterns);
         }
 
+        public IMultiValueConverter FolderFileConverter { get; } = new TupleValueConverter<TFolder, TFile>();
+
         /// <summary> Path to folder root where are all files localized </summary>
         public abstract string FoldersRootPath { get; }
 
-        /// <summary> Path to file that can be deserialized to folders </summary>
-        public virtual string FoldersSerializeFilePath { get; }
+        /// <summary> Path to json file that can be deserialized to folders </summary>
+        public virtual string FoldersJsonFilePath { get; }
 
         public ISessionContextService SessionContext { get; }
-
-        public IMultiValueConverter FolderFileConverter { get; }
 
         public FileEditor<TFolder, TFile> FileEditor { get; protected set; }
 
@@ -74,7 +75,19 @@ namespace ForgeModGenerator.ViewModels
             set => Set(ref selectedFile, value);
         }
 
-        #region Commands
+        private bool isLoading;
+        /// <summary> Determines when folders are loading - used to show loading circle </summary>
+        public bool IsLoading {
+            get => isLoading;
+            set => Set(ref isLoading, value);
+        }
+
+        private bool isFileUpdateAvailable;
+        public bool IsFileUpdateAvailable {
+            get => isFileUpdateAvailable;
+            set => Set(ref isFileUpdateAvailable, value);
+        }
+
         private ICommand onLoadedCommand;
         public ICommand OnLoadedCommand => onLoadedCommand ?? (onLoadedCommand = new RelayCommand(OnLoaded));
 
@@ -92,14 +105,11 @@ namespace ForgeModGenerator.ViewModels
 
         private ICommand addFolderCommand;
         public ICommand AddFolderCommand => addFolderCommand ?? (addFolderCommand = new RelayCommand(ShowFolderDialogAndCopyToRoot));
-        #endregion
 
-        private bool isLoading;
-        /// <summary> Determines when folders are loading - used to show loading circle </summary>
-        public bool IsLoading {
-            get => isLoading;
-            set => Set(ref isLoading, value);
-        }
+        private ICommand resolveJsonFileCommand;
+        public ICommand ResolveJsonFileCommand => resolveJsonFileCommand ?? (resolveJsonFileCommand = new RelayCommand(FileSynchronizer.AddNotReferencedFiles));
+        
+        protected JsonUpdater<TFolder> JsonUpdater { get; set; }
 
         protected FoldersSynchronizer<TFolder, TFile> FileSynchronizer { get; set; }
 
@@ -117,14 +127,14 @@ namespace ForgeModGenerator.ViewModels
 
         protected virtual async void OnLoaded() => await Refresh();
 
-        protected virtual bool CanRefresh() => SessionContext.SelectedMod != null && (Directory.Exists(FoldersRootPath) || File.Exists(FoldersSerializeFilePath));
+        protected virtual bool CanRefresh() => SessionContext.SelectedMod != null && (Directory.Exists(FoldersRootPath) || File.Exists(FoldersJsonFilePath));
         protected virtual async Task<bool> Refresh()
         {
             if (CanRefresh())
             {
                 FileSynchronizer.RootPath = FoldersRootPath;
                 IsLoading = true;
-                Folders = await FileSynchronizer.FindFolders(FoldersRootPath ?? FoldersSerializeFilePath, true);
+                Folders = await FileSynchronizer.FindFolders(FoldersRootPath ?? FoldersJsonFilePath, true);
                 IsLoading = false;
                 return true;
             }
@@ -205,6 +215,36 @@ namespace ForgeModGenerator.ViewModels
                     File.Copy(filePath, newPath);
                 }
             }
+        }
+
+        /// <summary> Deserialized folders from FoldersJsonFilePath and checks if any file doesn't exists, if so, prompt if should fix this </summary>
+        protected async void CheckJsonFileMismatch()
+        {
+            ObservableCollection<TFolder> deserializedFolders = await FileSynchronizer.FindFoldersFromFile(FoldersJsonFilePath, false);
+            bool hasNotExistingFile = deserializedFolders.Any(folder => folder.Files.Any(file => !File.Exists(file.Info.FullName)));
+            if (hasNotExistingFile)
+            {
+                string fileName = Path.GetFileName(FoldersJsonFilePath);
+                string questionMessage = $"{fileName} file has occurencies that doesn't exist in root folder. Do you want to fix it and overwrite {fileName}? ";
+                bool shouldFix = await DialogService.ShowMessage(questionMessage, "Conflict found", "Yes", "No", null);
+                if (shouldFix)
+                {
+                    ForceJsonFileUpdate();
+                }
+            }
+        }
+
+        protected virtual void ForceJsonFileUpdate() => JsonUpdater.ForceJsonUpdate();
+
+        protected void CheckForUpdate() => IsFileUpdateAvailable = !IsJsonUpdated();
+
+        protected virtual bool IsJsonUpdated()
+        {
+            if (SessionContext.SelectedMod != null)
+            {
+                return FileSynchronizer.EnumerateFilteredFiles(FoldersRootPath, SearchOption.AllDirectories).All(filePath => FileSystemInfoReference.IsReferenced(filePath));
+            }
+            return true;
         }
 
         protected virtual async void OnSessionContexPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

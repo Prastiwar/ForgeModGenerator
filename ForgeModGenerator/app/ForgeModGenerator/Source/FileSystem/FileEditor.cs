@@ -58,12 +58,10 @@ namespace ForgeModGenerator
             FileEditForm = fileEditForm;
         }
 
-        public delegate void OnFileEditedEventHandler(object sender, FileEditedEventArgs args);
-
-        private event OnFileEditedEventHandler onFileEdited;
-        public event OnFileEditedEventHandler OnFileEdited {
-            add => onFileEdited += value;
-            remove => onFileEdited -= value;
+        private event EventHandler<FileEditedEventArgs> OnFileEditedHandler;
+        public event EventHandler<FileEditedEventArgs> OnFileEdited {
+            add => OnFileEditedHandler += value;
+            remove => OnFileEditedHandler -= value;
         }
 
         public FrameworkElement FileEditForm { get; set; }
@@ -94,11 +92,11 @@ namespace ForgeModGenerator
                 Log.Error(ex, $"Couldn't open edit form for {param.Item2.Info.Name}", true);
                 return;
             }
-            if (onFileEdited == null)
+            if (OnFileEditedHandler == null)
             {
-                onFileEdited = DefaultOnFileEdited;
+                OnFileEditedHandler = DefaultOnFileEdited;
             }
-            onFileEdited(this, new FileEditedEventArgs(result, param.Item1, (TFile)MemoryCache.Default.Remove(EditFileCacheKey), param.Item2));
+            OnFileEditedHandler(this, new FileEditedEventArgs(result, param.Item1, (TFile)MemoryCache.Default.Remove(EditFileCacheKey), param.Item2));
         }
 
         protected virtual async Task<bool> CanCloseFileEditor(FileEditedEventArgs args)

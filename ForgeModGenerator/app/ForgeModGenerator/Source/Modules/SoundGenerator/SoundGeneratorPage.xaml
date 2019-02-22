@@ -61,8 +61,8 @@
 			</Grid.RowDefinitions>
 			<StackPanel Grid.Row="0"
 						Orientation="Horizontal"
-						Visibility="{Binding ShouldUpdate, Converter={StaticResource BooleanToVisibilityConverter}}">
-				<TextBlock Text="Sounds.json doesn't match found occurencies, do you want to update it?"
+						Visibility="{Binding IsFileUpdateAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
+				<TextBlock Text="Found file that is not referenced by sounds.json, do you want to add it there?"
 						   Padding="7"
 						   Margin="15,0,0,0"
 						   FontSize="11"
@@ -76,7 +76,7 @@
 						Margin="5"
 						Padding="0"
 						VerticalAlignment="Top"
-						Command="{Binding UpdateSoundsJson}" />
+						Command="{Binding ResolveJsonFileCommand}" />
 			</StackPanel>
 			<ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}"
 						 Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"

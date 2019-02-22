@@ -34,10 +34,10 @@ namespace ForgeModGenerator
 
         public Collection<TFolder> Folders { get; set; }
 
-        protected event EventHandler<TFolder> folderInstantiatedHandler;
+        protected event EventHandler<TFolder> FolderInstantiatedHandler;
         public event EventHandler<TFolder> FolderInstantiated {
-            add => folderInstantiatedHandler += value;
-            remove => folderInstantiatedHandler -= value;
+            add => FolderInstantiatedHandler += value;
+            remove => FolderInstantiatedHandler -= value;
         }
 
         private string rootPath;
@@ -126,6 +126,10 @@ namespace ForgeModGenerator
 
         /// <summary> Returns folders by deserializing them from file in given path </summary>
         public async Task<ObservableCollection<TFolder>> FindFoldersFromFile(string path, bool loadOnlyExisting = true) => await Task.Run(() => {
+            if (!File.Exists(path))
+            {
+                return null;
+            }
             string content = File.ReadAllText(path);
             ObservableCollection<TFolder> deserializedFolders = null;
             try
@@ -137,11 +141,11 @@ namespace ForgeModGenerator
                 Log.Error(ex, $"Couldnt load {typeof(ObservableCollection<TFolder>)} from {content}", true);
                 return null;
             }
-            if (folderInstantiatedHandler != null)
+            if (FolderInstantiatedHandler != null)
             {
                 foreach (TFolder folder in deserializedFolders)
                 {
-                    folderInstantiatedHandler.Invoke(this, folder);
+                    FolderInstantiatedHandler.Invoke(this, folder);
                 }
             }
             if (loadOnlyExisting)
@@ -154,6 +158,9 @@ namespace ForgeModGenerator
         /// <summary> Returns file that use extension from AllowedFileExtensions </summary>
         public IEnumerable<string> EnumerateFilteredFiles(string directoryPath, SearchOption searchOption = SearchOption.TopDirectoryOnly)
             => IOHelper.EnumerateFiles(directoryPath, Filters, searchOption);
+
+        public IEnumerable<string> FindNotReferencedFiles(string path, SearchOption searchOption = SearchOption.TopDirectoryOnly)
+            => EnumerateFilteredFiles(path, searchOption).Where(filePath => !FileSystemInfoReference.IsReferenced(filePath));
 
         public ObservableCollection<TFolder> FilterToOnlyNotExistingFiles(IEnumerable<TFolder> foldersToFilter) => FilterFolderFiles(foldersToFilter, file => !File.Exists(file.Info.FullName));
         public ObservableCollection<TFolder> FilterToOnlyExistingFiles(IEnumerable<TFolder> foldersToFilter) => FilterFolderFiles(foldersToFilter, file => File.Exists(file.Info.FullName));
@@ -181,6 +188,21 @@ namespace ForgeModGenerator
             return folders;
         }
 
+        /// <summary> Searches root path for files that are not referenced in Folders collection and adds them </summary>
+        public void AddNotReferencedFiles()
+        {
+            foreach (string filePath in FindNotReferencedFiles(RootPath, SearchOption.AllDirectories))
+            {
+                string dirPath = IOHelper.GetDirectoryPath(filePath);
+                if (!TryGetFolder(dirPath, out TFolder folder))
+                {
+                    folder = ConstructFolderInstance(dirPath, null);
+                    Folders.Add(folder);
+                }
+                folder.Add(filePath);
+            }
+        }
+
         protected ObservableCollection<TFolder> CreateEmptyFoldersRoot(string folderPath) => new ObservableCollection<TFolder>() { ConstructFolderInstance(IOHelper.GetDirectoryPath(folderPath), null) };
 
         /// <summary> Create TFolder instance and subscrive its events </summary>
@@ -202,7 +224,7 @@ namespace ForgeModGenerator
                     }
                 }
             }
-            folderInstantiatedHandler?.Invoke(this, folder);
+            FolderInstantiatedHandler?.Invoke(this, folder);
             return folder;
         }
 

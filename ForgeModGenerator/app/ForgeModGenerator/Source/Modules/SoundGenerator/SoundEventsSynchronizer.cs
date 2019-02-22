@@ -1,6 +1,8 @@
 ﻿using ForgeModGenerator.Converters;
 using ForgeModGenerator.SoundGenerator.Models;
+using ForgeModGenerator.Utility;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -10,7 +12,7 @@ namespace ForgeModGenerator.SoundGenerator
 {
     public class SoundEventsSynchronizer : FoldersSynchronizer<SoundEvent, Sound>
     {
-        public SoundEventsSynchronizer(Collection<SoundEvent> folders, string modname, string modid, string rootPath = null, string filters = null) 
+        public SoundEventsSynchronizer(Collection<SoundEvent> folders, string modname, string modid, string rootPath = null, string filters = null)
             : base(folders, rootPath, filters) => SetModInfo(modname, modid);
 
         protected string Modname { get; set; }
@@ -38,6 +40,13 @@ namespace ForgeModGenerator.SoundGenerator
         {
             SoundCollectionConverter converter = new SoundCollectionConverter(Modname, Modid);
             return JsonConvert.DeserializeObject<ObservableCollection<SoundEvent>>(fileCotent, converter);
+        }
+
+        protected override SoundEvent ConstructFolderInstance(string path, IEnumerable<string> filePaths)
+        {
+            SoundEvent soundEvent = base.ConstructFolderInstance(path, filePaths);
+            soundEvent.EventName = IOHelper.GetUniqueName(soundEvent.EventName, (name) => Folders.All(inFolder => inFolder.EventName != name));
+            return soundEvent;
         }
     }
 }
