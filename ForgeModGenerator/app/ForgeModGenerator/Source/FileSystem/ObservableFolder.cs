@@ -257,7 +257,6 @@ namespace ForgeModGenerator
             return false;
         }
 
-        #region Constructor Checks
         protected void ThrowExceptionIfInvalid(string path)
         {
             if (!IOHelper.IsPathValid(path))
@@ -266,6 +265,5 @@ namespace ForgeModGenerator
                 throw new ArgumentException("Invalid Path", nameof(path));
             }
         }
-        #endregion
     }
 }

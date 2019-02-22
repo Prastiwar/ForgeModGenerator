@@ -160,6 +160,9 @@
     <Compile Include="Source\Converters\InvertBooleanConverter.cs" />
     <Compile Include="Source\Controls\NavButton.cs" />
     <Compile Include="Source\Exceptions\InvalidSynchronizationArgument.cs" />
+    <Compile Include="Source\FileSystem\FoldersSynchronizer.cs" />
+    <Compile Include="Source\Modules\SoundGenerator\SoundEventsSynchronizer.cs" />
+    <Compile Include="Source\Modules\SoundGenerator\SoundFileEditor.cs" />
     <Compile Include="Source\Services\DialogService.cs" />
     <Compile Include="Source\Utility\Extensions\CollectionExtensions.cs" />
     <Compile Include="Source\Utility\Extensions\IOExtensions.cs" />
@@ -246,6 +249,7 @@
     <Compile Include="Source\Modules\BlockGenerator\BlockGeneratorViewModel.cs" />
     <Compile Include="Source\Modules\CommandGenerator\CommandGeneratorViewModel.cs" />
     <Compile Include="Source\Modules\ItemGenerator\ItemGeneratorViewModel.cs" />
+    <Compile Include="Source\FileSystem\FileEditor.cs" />
     <Compile Include="Source\ViewModels\FolderListViewModelBase.cs" />
     <Compile Include="Source\Modules\ModGenerator\ModGeneratorViewModel.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\RecipeGeneratorViewModel.cs" />

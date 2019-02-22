@@ -9,7 +9,6 @@ using ForgeModGenerator.Utility;
 using ForgeModGenerator.ViewModels;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -33,6 +32,12 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             OpenFileDialog.Filter = "Sound file (*.ogg) | *.ogg";
             AllowedFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".ogg" };
             FileEditForm = new SoundEditForm();
+            FileEditor = new SoundFileEditor(dialogService, FileEditForm);
+            FileEditor.OnFileEdited += OnSoundEdited;
+            FileSynchronizer = SessionContext.IsModSelected
+                             ? new SoundEventsSynchronizer(Folders, SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid, FoldersRootPath, AllowedFileExtensionsPatterns)
+                             : new SoundEventsSynchronizer(Folders, "", "", FoldersRootPath, AllowedFileExtensionsPatterns);
+            FileSynchronizer.FolderInstantiated += SubscribeFolderEvents;
         }
 
         public override string FoldersRootPath => SessionContext.SelectedMod != null ? ModPaths.SoundsFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid) : null;
@@ -63,7 +68,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             if (SessionContext.SelectedMod != null)
             {
                 string soundsFolderPath = ModPaths.SoundsFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
-                return EnumerateAllowedFiles(soundsFolderPath, SearchOption.AllDirectories).All(filePath => FileSystemInfoReference.IsReferenced(filePath));
+                return FileSynchronizer.EnumerateFilteredFiles(soundsFolderPath, SearchOption.AllDirectories).All(filePath => FileSystemInfoReference.IsReferenced(filePath));
             }
             return true;
         }
@@ -71,15 +76,15 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
         protected void FindAndAddNewFiles()
         {
             string soundsFolderPath = ModPaths.SoundsFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
-            foreach (string filePath in EnumerateAllowedFiles(soundsFolderPath, SearchOption.AllDirectories).Where(filePath => !FileSystemInfoReference.IsReferenced(filePath)))
+            foreach (string filePath in FileSynchronizer.EnumerateFilteredFiles(soundsFolderPath, SearchOption.AllDirectories).Where(filePath => !FileSystemInfoReference.IsReferenced(filePath)))
             {
                 string dirPath = IOHelper.GetDirectoryPath(filePath);
-                if (!TryGetFolder(dirPath, out SoundEvent folder))
+                if (!FileSynchronizer.TryGetFolder(dirPath, out SoundEvent folder))
                 {
                     folder = new SoundEvent(dirPath) {
                         EventName = IOHelper.GetUniqueName(SoundEvent.FormatDottedSoundNameFromFullPath(filePath), (name) => Folders.All(inFolder => inFolder.EventName != name))
                     };
-                    SubscribeFolderEvents(folder);
+                    SubscribeFolderEvents(this, folder);
                     Folders.Add(folder);
                 }
                 folder.Add(filePath);
@@ -98,10 +103,11 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
         {
             if (CanRefresh())
             {
-                Folders = await FindFolders(FoldersSerializeFilePath, true);
                 Preferences = SessionContext.GetOrCreatePreferences<SoundsGeneratorPreferences>();
+                (FileSynchronizer as SoundEventsSynchronizer).SetModInfo(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
                 jsonUpdater = null; // will lazy load itself when needed
                 soundEventValidator = null; // will lazy load itself when needed
+                Folders = await FileSynchronizer.FindFolders(FoldersSerializeFilePath, true);
                 CheckSerializationFileMismatch(FoldersSerializeFilePath);
                 CheckForUpdate();
                 return true;
@@ -109,37 +115,10 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             return false;
         }
 
-        protected override void OnFileEditorOpening(object sender, FileEditorOpeningDialogEventArgs eventArgs) => (FileEditForm as SoundEditForm).AllSounds = eventArgs.Folder.Files;
-
-        protected override void OnFileEdited(bool result, FileEditedEventArgs args)
-        {
-            if (result)
-            {
-                ForceUpdate();
-            }
-            else
-            {
-                base.OnFileEdited(result, args);
-            }
-            args.ActualFile.IsDirty = false;
-        }
-
-        protected override async Task<ObservableCollection<SoundEvent>> FindFolders(string path, bool createRootIfEmpty = false)
-        {
-            if (!File.Exists(path))
-            {
-                File.AppendAllText(path, "{}");
-                return new ObservableCollection<SoundEvent>();
-            }
-            ObservableCollection<SoundEvent> deserializedFolders = await FindFoldersFromFile(path, false);
-            bool hasNotExistingFile = deserializedFolders.Any(folder => folder.Files.Any(file => !File.Exists(file.Info.FullName)));
-            return hasNotExistingFile ? FilterToOnlyExistingFiles(deserializedFolders) : deserializedFolders;
-        }
-
         /// <summary> Deserialized folders from "filePath" and checks if any file doesn't exists, if so, prompt if should fix this </summary>
         protected async void CheckSerializationFileMismatch(string filePath)
         {
-            ObservableCollection<SoundEvent> deserializedFolders = await FindFoldersFromFile(filePath, false);
+            ObservableCollection<SoundEvent> deserializedFolders = await FileSynchronizer.FindFoldersFromFile(filePath, false);
             bool hasNotExistingFile = deserializedFolders.Any(folder => folder.Files.Any(file => !File.Exists(file.Info.FullName)));
             if (hasNotExistingFile)
             {
@@ -152,29 +131,36 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             }
         }
 
-        protected override ObservableCollection<SoundEvent> DeserializeFolders(string fileCotent)
+        protected void OnSoundEdited(object sender, SoundFileEditor.FileEditedEventArgs args)
         {
-            SoundCollectionConverter converter = new SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
-            return JsonConvert.DeserializeObject<ObservableCollection<SoundEvent>>(fileCotent, converter);
+            if (args.Result)
+            {
+                ForceUpdate();
+            }
+            else
+            {
+                args.ActualFile.CopyValues(args.CachedFile);
+            }
+            args.ActualFile.IsDirty = false;
         }
 
-        protected override void SubscribeFolderEvents(SoundEvent soundEvent)
+        protected void SubscribeFolderEvents(object sender, SoundEvent soundEvent)
         {
-            soundEvent.CollectionChanged += (sender, args) => {
+            soundEvent.CollectionChanged += (s, args) => {
                 ForceUpdate();
                 CheckForUpdate();
             };
-            soundEvent.OnValidate += (sender, propertyName) => {
-                return new SoundEventValidator(Folders).Validate(sender, propertyName).ToString();
+            soundEvent.OnValidate += (s, propertyName) => {
+                return new SoundEventValidator(Folders).Validate(s, propertyName).ToString();
             };
-            soundEvent.PropertyChanged += (sender, args) => {
-                FluentValidation.Results.ValidationResult validateResult = SoundEventValidator.Validate((SoundEvent)sender);
+            soundEvent.PropertyChanged += (s, args) => {
+                FluentValidation.Results.ValidationResult validateResult = SoundEventValidator.Validate((SoundEvent)s);
                 if (validateResult.IsValid)
                 {
                     ForceUpdate();
                 }
             };
-            soundEvent.OnFilePropertyChanged += (sender, e) => {
+            soundEvent.OnFilePropertyChanged += (s, e) => {
                 if (e.PropertyName == nameof(Sound.Name))
                 {
                     ForceUpdate();

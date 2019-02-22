@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 
@@ -16,7 +17,7 @@ namespace ForgeModGenerator
         /// <param name="filters">The types of files to watch separated with "|". For example, "*.txt|*.png" watches for changes to all text or png images.</param>
         public FileSystemWatcherExtended(string path, string filters) : base(path, "*")
         {
-            this.filters = filters.Split('|');
+            Filters = filters;
             strictMatchPatternMethodInfo = typeof(FileSystemWatcher).Assembly.GetTypes().First(x => x.Name == "PatternMatcher").GetMethod("StrictMatchPattern");
             FileSystemWatcher baseInstance = this;
             baseInstance.Changed += NotifyEvent;
@@ -28,14 +29,22 @@ namespace ForgeModGenerator
         /// <summary> Defines if should monitor folders despite of "filters" construction </summary>
         public bool MonitorDirectoryChanges { get; set; }
 
-        /// <summary> Array of common filter used in base class </summary>
-        private readonly string[] filters;
-
-        /// <summary> Cached two elements parameters array for StrictMatchPattern method </summary>
-        private readonly string[] parameters = new string[] { "", "" };
-
-        /// <summary> Method from internal class (System.IO.PatternMatcher.StrictMatchPattern(string expression, string name)) </summary>
-        private readonly MethodInfo strictMatchPatternMethodInfo;
+        private string filters;
+        /// <summary> The types of files to watch separated with "|". For example, "*.txt|*.png" watches for changes to all text or png images </summary>
+        public string Filters {
+            get => filters;
+            set {
+                if (string.IsNullOrEmpty(value))
+                {
+                    value = "*.*";
+                }
+                if (string.Compare(filters, value, StringComparison.OrdinalIgnoreCase) != 0)
+                {
+                    filters = value;
+                    filtersArray = Filters.Split('|');
+                }
+            }
+        }
 
         private FileSystemEventHandler onChangedHandler = null;
         /// <summary> Occurs when a file or directory in the specified Path is changed. </summary>
@@ -64,6 +73,15 @@ namespace ForgeModGenerator
             add => onRenamedHandler += value;
             remove => onRenamedHandler -= value;
         }
+
+        /// <summary> Array of common filter used in base class </summary>
+        private string[] filtersArray;
+
+        /// <summary> Cached two elements parameters array for StrictMatchPattern method </summary>
+        private readonly string[] parameters = new string[] { "", "" };
+
+        /// <summary> Method from internal class (System.IO.PatternMatcher.StrictMatchPattern(string expression, string name)) </summary>
+        private readonly MethodInfo strictMatchPatternMethodInfo;
 
         protected void NotifyEvent(object sender, FileSystemEventArgs e)
         {
@@ -99,7 +117,7 @@ namespace ForgeModGenerator
         protected bool StrictMatchPattern(string[] expressions, string name)
         {
             bool nameMatches = false;
-            foreach (string filter in filters)
+            foreach (string filter in filtersArray)
             {
                 if (StrictMatchPattern(filter, name))
                 {
