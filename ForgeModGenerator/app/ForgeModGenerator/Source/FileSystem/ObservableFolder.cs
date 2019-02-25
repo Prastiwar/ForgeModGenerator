@@ -8,26 +8,44 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Windows.Data;
 
 namespace ForgeModGenerator
 {
-    public delegate void OnFileChangedEventHandler<T>(T file);
-    public delegate void OnFilePropertyChangedEventHandler<T>(T file, PropertyChangedEventArgs e);
+    public enum FileChange { Add, Remove }
+
+    public delegate void OnFileChangedEventHandler<TFile>(object sender, FileChangedEventArgs<TFile> e) where TFile : IFileSystemInfo;
+    public delegate void OnFilePropertyChangedEventHandler<T>(T sender, PropertyChangedEventArgs e);
+
+    public class FileChangedEventArgs<TFile> : EventArgs where TFile : IFileSystemInfo
+    {
+        public FileChangedEventArgs(IEnumerable<TFile> files, FileChange change)
+        {
+            Files = files ?? throw new ArgumentNullException(nameof(files));
+            File = files.FirstOrDefault();
+            Change = change;
+        }
+
+        public TFile File { get; }
+        public IEnumerable<TFile> Files { get; }
+        public FileChange Change { get; }
+    }
 
     public interface IFileFolder : IFileSystemInfo, IDirty, INotifyCollectionChanged, INotifyPropertyChanged
     {
         bool Add(string filePath);
+        void AddRange(IEnumerable<string> filePaths);
         void Clear();
     }
 
     public interface IFileFolder<T> : IFileFolder where T : IFileSystemInfo
     {
-        event OnFileChangedEventHandler<T> OnFileAdded;
-        event OnFileChangedEventHandler<T> OnFileRemoved;
+        event OnFileChangedEventHandler<T> OnFilesChanged;
         event OnFilePropertyChangedEventHandler<T> OnFilePropertyChanged;
 
-        ObservableCollection<T> Files { get; }
+        WpfObservableRangeCollection<T> Files { get; }
 
+        void AddRange(IEnumerable<T> items);
         bool Add(T item);
         bool Remove(T item);
         bool Contains(T item);
@@ -41,7 +59,7 @@ namespace ForgeModGenerator
         public ObservableFolder(string path)
         {
             ThrowExceptionIfInvalid(path);
-            Files = new ObservableCollection<T>();
+            Files = new WpfObservableRangeCollection<T>();
             SetInfo(path);
             IsDirty = false;
         }
@@ -70,15 +88,11 @@ namespace ForgeModGenerator
         public ObservableFolder(string path, string fileSearchPatterns) : this(path, fileSearchPatterns, SearchOption.TopDirectoryOnly) { }
         public ObservableFolder(string path, string fileSearchPatterns, SearchOption searchOption) : this(path)
         {
-            foreach (string filePath in IOHelper.EnumerateFiles(path, fileSearchPatterns, searchOption))
-            {
-                Add(filePath);
-            }
+            AddRange(IOHelper.EnumerateFiles(path, fileSearchPatterns, searchOption));
             IsDirty = false;
         }
 
-        public event OnFileChangedEventHandler<T> OnFileAdded;
-        public event OnFileChangedEventHandler<T> OnFileRemoved;
+        public event OnFileChangedEventHandler<T> OnFilesChanged;
         public event OnFilePropertyChangedEventHandler<T> OnFilePropertyChanged;
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;
@@ -89,8 +103,8 @@ namespace ForgeModGenerator
             private set => DirtSet(ref info, value);
         }
 
-        private ObservableCollection<T> files;
-        public ObservableCollection<T> Files {
+        private WpfObservableRangeCollection<T> files;
+        public WpfObservableRangeCollection<T> Files {
             get => files;
             protected set {
                 if (DirtSet(ref files, value))
@@ -120,41 +134,67 @@ namespace ForgeModGenerator
 
         public bool Contains(T item) => Files.Contains(item);
 
-        public bool Add(T item)
+        protected bool CanAdd(T item) => CanAdd(item.Info.FullName);
+        protected bool CanAdd(string filePath) => !Files.Exists(file => file.Info.FullName == filePath);
+
+        /// <summary> Add file without existing check </summary>
+        protected void AddFile(T item)
         {
-            bool canAdd = !Files.Exists(file => file.Info.FullName == item.Info.FullName);
-            if (canAdd)
+            Files.Add(item);
+            item.PropertyChanged += File_PropertyChanged;
+        }
+
+        /// <summary> Add files without existing check </summary>
+        protected void AddFileRange(IEnumerable<T> items)
+        {
+            foreach (T item in items)
             {
-                Files.Add(item);
                 item.PropertyChanged += File_PropertyChanged;
             }
-            return canAdd;
+            Files.AddRange(items);
+        }
+
+        /// <summary> Add files without existing check </summary>
+        protected void RemoveFileRange(IEnumerable<T> items)
+        {
+            foreach (T item in items)
+            {
+                item.PropertyChanged -= File_PropertyChanged;
+            }
+            Files.RemoveRange(items);
+        }
+
+        public bool Add(T item)
+        {
+            if (CanAdd(item))
+            {
+                AddFile(item);
+                return true;
+            }
+            return false;
         }
 
         public bool Add(string filePath)
         {
-            bool canAdd = !Files.Exists(file => file.Info.FullName == Path.GetFullPath(filePath));
-            if (canAdd)
+            if (CanAdd(filePath))
             {
-                Add(CreateFileFromPath(filePath));
+                AddFile(CreateFileFromPath(filePath));
+                return true;
             }
-            return canAdd;
+            return false;
         }
 
         public void AddRange(IEnumerable<T> items)
         {
-            foreach (T item in items)
-            {
-                Add(item);
-            }
+            IEnumerable<T> itemsToAdd = items.Where(item => CanAdd(item));
+            AddFileRange(itemsToAdd.ToList());
         }
 
         public void AddRange(IEnumerable<string> filePaths)
         {
-            foreach (string filePath in filePaths)
-            {
-                Add(filePath);
-            }
+            IEnumerable<string> filePathsToAdd = filePaths.Where(filePath => CanAdd(filePath));
+            IEnumerable<T> files = filePathsToAdd.Select(filePath => CreateFileFromPath(filePath));
+            AddFileRange(files.ToList());
         }
 
         public bool Remove(T item)
@@ -170,10 +210,12 @@ namespace ForgeModGenerator
 
         public void Clear()
         {
-            for (int i = Files.Count - 1; i >= 0; i--)
+            foreach (T file in Files)
             {
-                Remove(Files[i]);
+                file.PropertyChanged -= File_PropertyChanged;
+                file.Info.Remove();
             }
+            Files.Clear();
         }
 
         /// <summary> Initialize DirectoryInfoReference or rename </summary>
@@ -212,22 +254,19 @@ namespace ForgeModGenerator
         {
             IsDirty = true;
             RaisePropertyChanged(nameof(Count));
+            RaisePropertyChanged(nameof(Files));
             CollectionChanged?.Invoke(sender, e);
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
-                foreach (object item in e.NewItems)
-                {
-                    T file = (T)item;
-                    OnFileAdded?.Invoke(file);
-                }
+                OnFilesChanged?.Invoke(this, new FileChangedEventArgs<T>(e.NewItems.Cast<T>(), FileChange.Add));
             }
             else if (e.Action == NotifyCollectionChangedAction.Remove)
             {
-                foreach (object item in e.OldItems)
-                {
-                    T file = (T)item;
-                    OnFileRemoved?.Invoke(file);
-                }
+                OnFilesChanged?.Invoke(this, new FileChangedEventArgs<T>(e.OldItems.Cast<T>(), FileChange.Remove));
+            }
+            else
+            {
+                System.Windows.MessageBox.Show(e.Action.ToString());
             }
         }
 
@@ -239,7 +278,7 @@ namespace ForgeModGenerator
             {
                 cloneFiles.Add((T)file.DeepClone());
             }
-            ObservableFolder<T> folder = new ObservableFolder<T>() { Files = new ObservableCollection<T>() };
+            ObservableFolder<T> folder = new ObservableFolder<T>() { Files = new WpfObservableRangeCollection<T>() };
             folder.AddRange(cloneFiles);
             folder.SetInfo(Info.FullName);
             folder.IsDirty = false;

@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using SearchOption = System.IO.SearchOption;
 
 namespace ForgeModGenerator.Utility
@@ -147,34 +149,6 @@ namespace ForgeModGenerator.Utility
             }
         }
 
-        public static void DirectoryCopy(string sourceDirPath, string destDirPath, HashSet<string> searchFileExtensions, bool copySubDirs = true)
-        {
-            DirectoryInfo dir = new DirectoryInfo(sourceDirPath);
-            if (!dir.Exists)
-            {
-                throw new DirectoryNotFoundException("Source directory does not exist or could not be found: " + nameof(sourceDirPath));
-            }
-
-            Directory.CreateDirectory(destDirPath);
-            foreach (FileInfo file in dir.EnumerateFiles())
-            {
-                if (searchFileExtensions.Contains(file.Extension))
-                {
-                    string destFilePath = Path.Combine(destDirPath, file.Name);
-                    file.CopyTo(destFilePath, false);
-                }
-            }
-
-            if (copySubDirs)
-            {
-                foreach (DirectoryInfo subDir in dir.EnumerateDirectories())
-                {
-                    string destSubDirPath = Path.Combine(destDirPath, subDir.Name);
-                    DirectoryCopy(subDir.FullName, destSubDirPath, searchFileExtensions, copySubDirs);
-                }
-            }
-        }
-
         public static void MoveDirectoriesAndFiles(string from, string destination)
         {
             foreach (string folder in Directory.EnumerateDirectories(from))
@@ -245,6 +219,73 @@ namespace ForgeModGenerator.Utility
                 i++;
             }
             return uniqueName;
+        }
+
+        /// <summary> fileSearchPatterns accepts multiple patterns splitted by "|" </summary>
+        public static async Task DirectoryCopyAsync(string sourceDirPath, string destDirPath, string fileSearchPatterns, bool copySubDirs = true)
+        {
+            DirectoryInfo dir = new DirectoryInfo(sourceDirPath);
+            if (!dir.Exists)
+            {
+                throw new DirectoryNotFoundException("Source directory does not exist or could not be found: " + nameof(sourceDirPath));
+            }
+
+            Directory.CreateDirectory(destDirPath);
+            foreach (FileInfo file in EnumerateFileInfos(sourceDirPath, fileSearchPatterns))
+            {
+                string destFilePath = Path.Combine(destDirPath, file.Name);
+                using (FileStream SourceStream = file.Open(FileMode.Open))
+                {
+                    using (FileStream DestinationStream = File.Create(destFilePath))
+                    {
+                        await SourceStream.CopyToAsync(DestinationStream);
+                    }
+                }
+            }
+
+            if (copySubDirs)
+            {
+                foreach (DirectoryInfo subDir in dir.EnumerateDirectories())
+                {
+                    string destSubDirPath = Path.Combine(destDirPath, subDir.Name);
+                    await DirectoryCopyAsync(subDir.FullName, destSubDirPath, fileSearchPatterns, copySubDirs);
+                }
+            }
+        }
+
+        public static async Task AppendAllTextAsync(string filePath, string text)
+        {
+            byte[] encodedText = Encoding.Unicode.GetBytes(text);
+            using (FileStream sourceStream = new FileStream(filePath, FileMode.Append, FileAccess.Write, FileShare.None, 4096, true))
+            {
+                await sourceStream.WriteAsync(encodedText, 0, encodedText.Length);
+            }
+        }
+
+        public static async Task WriteAllTextAsync(string filePath, string text)
+        {
+            byte[] encodedText = Encoding.Unicode.GetBytes(text);
+            using (FileStream sourceStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None, 4096, true))
+            {
+                await sourceStream.WriteAsync(encodedText, 0, encodedText.Length);
+            }
+        }
+
+        public static async Task<string> ReadAllTextAsync(string filePath)
+        {
+            using (FileStream sourceStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true))
+            {
+                StringBuilder sb = new StringBuilder();
+
+                byte[] buffer = new byte[0x1000];
+                int numRead;
+                while ((numRead = await sourceStream.ReadAsync(buffer, 0, buffer.Length)) != 0)
+                {
+                    string text = Encoding.Unicode.GetString(buffer, 0, numRead);
+                    sb.Append(text);
+                }
+                return sb.ToString();
+            }
         }
     }
 }

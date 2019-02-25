@@ -1,12 +1,12 @@
-﻿using ForgeModGenerator.Converters;
+﻿using ForgeModGenerator.SoundGenerator.Converters;
 using ForgeModGenerator.Validations;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace ForgeModGenerator.SoundGenerator.Models
 {
@@ -22,7 +22,7 @@ namespace ForgeModGenerator.SoundGenerator.Models
             SoundEvent soundEvent = new SoundEvent();
             if (files != null)
             {
-                soundEvent.Files = new ObservableCollection<Sound>(files);
+                soundEvent.Files = new WpfObservableRangeCollection<Sound>(files);
                 foreach (Sound file in soundEvent.Files)
                 {
                     file.PropertyChanged += soundEvent.File_PropertyChanged;

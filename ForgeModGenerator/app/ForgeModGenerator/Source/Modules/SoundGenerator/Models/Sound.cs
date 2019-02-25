@@ -1,5 +1,5 @@
-﻿using ForgeModGenerator.Converters;
-using ForgeModGenerator.Models;
+﻿using ForgeModGenerator.Models;
+using ForgeModGenerator.SoundGenerator.Converters;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.ComponentModel;

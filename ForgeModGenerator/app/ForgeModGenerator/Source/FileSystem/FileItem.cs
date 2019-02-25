@@ -23,7 +23,7 @@ namespace ForgeModGenerator
             private set => DirtSet(ref info, value);
         }
 
-        public virtual void SetInfo(string path)
+        public void SetInfo(string path)
         {
             if (Info != null)
             {

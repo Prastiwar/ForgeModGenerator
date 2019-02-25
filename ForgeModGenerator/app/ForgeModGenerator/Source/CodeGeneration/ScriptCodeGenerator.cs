@@ -1,5 +1,6 @@
 ﻿using ForgeModGenerator.CodeGeneration.CodeDom;
 using ForgeModGenerator.Models;
+using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.IO;
@@ -19,7 +20,7 @@ namespace ForgeModGenerator.CodeGeneration
         }
     }
 
-    public abstract class ScriptCodeGenerator
+    public abstract class ScriptCodeGenerator : IDisposable
     {
         public ScriptCodeGenerator(Mod mod)
         {
@@ -61,6 +62,8 @@ namespace ForgeModGenerator.CodeGeneration
         }
 
         protected abstract CodeCompileUnit CreateTargetCodeUnit();
+
+        public void Dispose() => ((IDisposable)JavaProvider).Dispose();
 
         #region Code expression and statements shorthands
         protected CodeParameterDeclarationExpression NewParameter(string type, string name) => new CodeParameterDeclarationExpression(type, name);

@@ -8,8 +8,9 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Windows.Data;
 
-namespace ForgeModGenerator.Converters
+namespace ForgeModGenerator.SoundGenerator.Converters
 {
     public class SoundCollectionConverter : JsonConverter
     {
@@ -25,14 +26,17 @@ namespace ForgeModGenerator.Converters
             Modid = modid ?? throw new ArgumentNullException(nameof(modid));
         }
 
-        public override bool CanConvert(Type objectType) => objectType.IsAssignableFrom(typeof(Collection<SoundEvent>)) 
+        public override bool CanConvert(Type objectType) => objectType.IsAssignableFrom(typeof(Collection<SoundEvent>))
+                                                        || objectType.IsAssignableFrom(typeof(IEnumerable<SoundEvent>))
                                                         || objectType.IsAssignableFrom(typeof(ObservableCollection<SoundEvent>))
+                                                        || objectType.IsAssignableFrom(typeof(ObservableFolder<SoundEvent>))
+                                                        || objectType.IsAssignableFrom(typeof(WpfObservableRangeCollection<SoundEvent>))
                                                         || objectType.IsAssignableFrom(typeof(List<SoundEvent>));
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             string soundsPath = ModPaths.SoundsFolder(ModName, Modid);
-            Collection<SoundEvent> folders = new Collection<SoundEvent>();
+            ICollection<SoundEvent> folders = new Collection<SoundEvent>();
             JObject item = JObject.Load(reader);
 
             foreach (KeyValuePair<string, JToken> property in item)
@@ -54,13 +58,17 @@ namespace ForgeModGenerator.Converters
                 soundEvent.IsDirty = false;
                 folders.Add(soundEvent);
             }
-            if (objectType.IsAssignableFrom(typeof(ObservableCollection<SoundEvent>)))
+            if (objectType.IsAssignableFrom(typeof(ObservableFolder<SoundEvent>)))
+            {
+                return new ObservableFolder<SoundEvent>(soundsPath, folders);
+            }
+            else if (objectType.IsAssignableFrom(typeof(ObservableCollection<SoundEvent>)))
             {
                 return new ObservableCollection<SoundEvent>(folders);
             }
-            else if(objectType.IsAssignableFrom(typeof(List<SoundEvent>)))
+            else if (objectType.IsAssignableFrom(typeof(List<SoundEvent>)))
             {
-                return new List<SoundEvent>(folders);
+                return folders.ToList();
             }
             return folders;
         }

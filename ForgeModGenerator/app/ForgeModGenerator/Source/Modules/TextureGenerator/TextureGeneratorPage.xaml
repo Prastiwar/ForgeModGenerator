@@ -57,7 +57,7 @@
 						 Value="0"
 						 IsIndeterminate="True" />
 			<controls:FolderListBox Grid.Row="1"
-									FoldersSource="{Binding Folders}"
+									FoldersSource="{Binding Folders.Files, Mode=OneWay}"
 									SelectedFolder="{Binding SelectedFolder}"
 									AddFolderCommand="{Binding AddFolderCommand}"
 									ShowEmptyMessage="{Binding SessionContext.IsModSelected, Converter={StaticResource InvertBooleanConverter}}"

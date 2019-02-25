@@ -7,7 +7,6 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -54,8 +53,8 @@ namespace ForgeModGenerator.ViewModels
 
         public FileEditor<TFolder, TFile> FileEditor { get; protected set; }
 
-        private ObservableCollection<TFolder> folders;
-        public ObservableCollection<TFolder> Folders {
+        private ObservableFolder<TFolder> folders;
+        public ObservableFolder<TFolder> Folders {
             get => folders;
             set {
                 Set(ref folders, value);
@@ -108,7 +107,7 @@ namespace ForgeModGenerator.ViewModels
 
         private ICommand resolveJsonFileCommand;
         public ICommand ResolveJsonFileCommand => resolveJsonFileCommand ?? (resolveJsonFileCommand = new RelayCommand(FileSynchronizer.AddNotReferencedFiles));
-        
+
         protected JsonUpdater<TFolder> JsonUpdater { get; set; }
 
         protected FoldersSynchronizer<TFolder, TFile> FileSynchronizer { get; set; }
@@ -134,28 +133,28 @@ namespace ForgeModGenerator.ViewModels
             {
                 FileSynchronizer.RootPath = FoldersRootPath;
                 IsLoading = true;
-                Folders = await FileSynchronizer.FindFolders(FoldersRootPath ?? FoldersJsonFilePath, true);
+                Folders = new ObservableFolder<TFolder>(FileSynchronizer.GetFolders(FoldersRootPath ?? FoldersJsonFilePath, true));
                 IsLoading = false;
                 return true;
             }
             return false;
         }
 
-        protected void ShowFolderDialogAndCopyToRoot()
+        protected async void ShowFolderDialogAndCopyToRoot()
         {
             DialogResult dialogResult = OpenFolderDialog.ShowDialog();
             if (dialogResult == DialogResult.OK)
             {
-                CopyFolderToRoot(OpenFolderDialog.SelectedPath);
+                await CopyFolderToRoot(OpenFolderDialog.SelectedPath);
             }
         }
 
         /// <summary> Copies directory to root path, if directory with given name exists, add (n) number to its name </summary>
-        protected void CopyFolderToRoot(string path)
+        protected async Task CopyFolderToRoot(string path)
         {
             path = IOHelper.GetDirectoryPath(path);
             string newFolderPath = IOHelper.GetUniqueName(Path.Combine(FoldersRootPath, new DirectoryInfo(path).Name), (name) => !Directory.Exists(name));
-            IOHelper.DirectoryCopy(path, newFolderPath, AllowedFileExtensionsPatterns);
+            await IOHelper.DirectoryCopyAsync(path, newFolderPath, AllowedFileExtensionsPatterns);
         }
 
         /// <summary> Removes folder and if it's empty, sends it to RecycleBin  </summary>
@@ -180,17 +179,17 @@ namespace ForgeModGenerator.ViewModels
 
         protected virtual void RemoveFileFromFolder(Tuple<TFolder, TFile> param) => param.Item1.Remove(param.Item2);
 
-        protected virtual void ShowFileDialogAndCopyToFolder(TFolder folder)
+        protected virtual async void ShowFileDialogAndCopyToFolder(TFolder folder)
         {
             DialogResult dialogResult = OpenFileDialog.ShowDialog();
             if (dialogResult == DialogResult.OK)
             {
-                CopyFilesToFolderAsync(folder, OpenFileDialog.FileNames);
+                await CopyFilesToFolderAsync(folder, OpenFileDialog.FileNames);
             }
         }
 
         /// <summary> Copies files to folder path, if file with given name exists, prompt for overwriting </summary>
-        protected async void CopyFilesToFolderAsync(TFolder folder, params string[] fileNames)
+        protected async Task CopyFilesToFolderAsync(TFolder folder, params string[] fileNames)
         {
             foreach (string filePath in fileNames)
             {
@@ -220,8 +219,8 @@ namespace ForgeModGenerator.ViewModels
         /// <summary> Deserialized folders from FoldersJsonFilePath and checks if any file doesn't exists, if so, prompt if should fix this </summary>
         protected async void CheckJsonFileMismatch()
         {
-            ObservableCollection<TFolder> deserializedFolders = await FileSynchronizer.FindFoldersFromFile(FoldersJsonFilePath, false);
-            bool hasNotExistingFile = deserializedFolders.Any(folder => folder.Files.Any(file => !File.Exists(file.Info.FullName)));
+            IEnumerable<TFolder> deserializedFolders = FileSynchronizer.FindFoldersFromFile(FoldersJsonFilePath, false);
+            bool hasNotExistingFile = deserializedFolders != null ? deserializedFolders.Any(folder => folder.Files.Any(file => !File.Exists(file.Info.FullName))) : false;
             if (hasNotExistingFile)
             {
                 string fileName = Path.GetFileName(FoldersJsonFilePath);

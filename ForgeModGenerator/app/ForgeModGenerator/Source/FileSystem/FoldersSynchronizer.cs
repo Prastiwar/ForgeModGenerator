@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace ForgeModGenerator
@@ -15,7 +14,7 @@ namespace ForgeModGenerator
         where TFolder : class, IFileFolder<TFile>
         where TFile : class, IFileItem
     {
-        public FoldersSynchronizer(Collection<TFolder> folders, string rootPath = null, string filters = null)
+        public FoldersSynchronizer(ObservableFolder<TFolder> folders, string rootPath = null, string filters = null)
         {
             this.rootPath = rootPath;
             this.filters = filters;
@@ -32,13 +31,7 @@ namespace ForgeModGenerator
             FileWatcher.Renamed += FileWatcher_Renamed;
         }
 
-        public Collection<TFolder> Folders { get; set; }
-
-        protected event EventHandler<TFolder> FolderInstantiatedHandler;
-        public event EventHandler<TFolder> FolderInstantiated {
-            add => FolderInstantiatedHandler += value;
-            remove => FolderInstantiatedHandler -= value;
-        }
+        public ObservableFolder<TFolder> Folders { get; set; }
 
         private string rootPath;
         public string RootPath {
@@ -63,7 +56,7 @@ namespace ForgeModGenerator
         public bool TryGetFolder(string path, out TFolder folder)
         {
             string folderPath = IOHelper.GetDirectoryPath(path);
-            folder = Folders?.Find(x => x.Info.FullName == folderPath);
+            folder = Folders.Files?.Find(x => x.Info.FullName == folderPath);
             return folder != null;
         }
 
@@ -78,33 +71,34 @@ namespace ForgeModGenerator
             return false;
         }
 
-        public virtual async Task<ObservableCollection<TFolder>> FindFolders(string path, bool createRootIfEmpty = false)
+        public virtual IEnumerable<TFolder> GetFolders(string path, bool createRootIfEmpty = false)
         {
             if (!IOHelper.IsPathValid(path))
             {
                 throw new InvalidOperationException($"Path is not valid {path}");
             }
-            ObservableCollection<TFolder> found = null;
+            IEnumerable<TFolder> found = null;
             if (Directory.Exists(path))
             {
-                found = await FindFoldersFromDirectory(path);
+                found = EnumerateFoldersFromDirectory(path);
             }
             else if (File.Exists(path))
             {
-                found = await FindFoldersFromFile(path);
+                found = FindFoldersFromFile(path);
             }
 
-            bool isEmpty = found == null || found.Count <= 0;
+            bool isEmpty = found == null || !found.Any();
             if (isEmpty && createRootIfEmpty)
             {
                 found = CreateEmptyFoldersRoot(IOHelper.GetDirectoryPath(path));
             }
-            return found;
+            return found.ToList();
         }
 
         /// <summary> Creates TFolder with found TFile's for each subdirectory </summary>
-        public async Task<ObservableCollection<TFolder>> FindFoldersFromDirectory(string path) => await Task.Run(() => {
-            ObservableCollection<TFolder> foundFolders = new ObservableCollection<TFolder>();
+        public IEnumerable<TFolder> EnumerateFoldersFromDirectory(string path)
+        {
+            ICollection<TFolder> foundFolders = new Collection<TFolder>();
 
             AddFilesToCollection(path);
             foreach (string directory in IOHelper.EnumerateAllDirectories(path))
@@ -122,53 +116,48 @@ namespace ForgeModGenerator
                 }
             }
             return foundFolders;
-        });
+        }
 
         /// <summary> Returns folders by deserializing them from file in given path </summary>
-        public async Task<ObservableCollection<TFolder>> FindFoldersFromFile(string path, bool loadOnlyExisting = true) => await Task.Run(() => {
+        public ICollection<TFolder> FindFoldersFromFile(string path, bool loadOnlyExisting = true)
+        {
             if (!File.Exists(path))
             {
-                return null;
+                return new Collection<TFolder>();
+                //return Enumerable.Empty<TFolder>();
             }
             string content = File.ReadAllText(path);
-            ObservableCollection<TFolder> deserializedFolders = null;
+            List<TFolder> deserializedFolders = null;
             try
             {
-                deserializedFolders = DeserializeFolders(content);
+                deserializedFolders = new List<TFolder>(DeserializeFolders(content));
             }
             catch (Exception ex)
             {
-                Log.Error(ex, $"Couldnt load {typeof(ObservableCollection<TFolder>)} from {content}", true);
-                return null;
-            }
-            if (FolderInstantiatedHandler != null)
-            {
-                foreach (TFolder folder in deserializedFolders)
-                {
-                    FolderInstantiatedHandler.Invoke(this, folder);
-                }
+                Log.Error(ex, $"Couldnt load {typeof(ICollection<TFolder>)} from {content}", true);
+                return new Collection<TFolder>();
             }
             if (loadOnlyExisting)
             {
-                deserializedFolders = FilterToOnlyExistingFiles(deserializedFolders);
+                deserializedFolders = new List<TFolder>(FilterToOnlyExistingFiles(deserializedFolders));
             }
             return deserializedFolders;
-        });
+        }
 
         /// <summary> Returns file that use extension from AllowedFileExtensions </summary>
         public IEnumerable<string> EnumerateFilteredFiles(string directoryPath, SearchOption searchOption = SearchOption.TopDirectoryOnly)
             => IOHelper.EnumerateFiles(directoryPath, Filters, searchOption);
 
-        public IEnumerable<string> FindNotReferencedFiles(string path, SearchOption searchOption = SearchOption.TopDirectoryOnly)
+        public IEnumerable<string> EnumerateNotReferencedFiles(string path, SearchOption searchOption = SearchOption.TopDirectoryOnly)
             => EnumerateFilteredFiles(path, searchOption).Where(filePath => !FileSystemInfoReference.IsReferenced(filePath));
 
-        public ObservableCollection<TFolder> FilterToOnlyNotExistingFiles(IEnumerable<TFolder> foldersToFilter) => FilterFolderFiles(foldersToFilter, file => !File.Exists(file.Info.FullName));
-        public ObservableCollection<TFolder> FilterToOnlyExistingFiles(IEnumerable<TFolder> foldersToFilter) => FilterFolderFiles(foldersToFilter, file => File.Exists(file.Info.FullName));
+        public ICollection<TFolder> FilterToOnlyNotExistingFiles(IEnumerable<TFolder> foldersToFilter) => FilterFolderFiles(foldersToFilter, file => !File.Exists(file.Info.FullName));
+        public ICollection<TFolder> FilterToOnlyExistingFiles(IEnumerable<TFolder> foldersToFilter) => FilterFolderFiles(foldersToFilter, file => File.Exists(file.Info.FullName));
 
         /// <summary> Returns folders which files matches fileFilter </summary>
-        public ObservableCollection<TFolder> FilterFolderFiles(IEnumerable<TFolder> foldersToFilter, Func<TFile, bool> fileFilter)
+        public ICollection<TFolder> FilterFolderFiles(IEnumerable<TFolder> foldersToFilter, Func<TFile, bool> fileFilter)
         {
-            ObservableCollection<TFolder> folders = new ObservableCollection<TFolder>();
+            ICollection<TFolder> folders = new Collection<TFolder>();
             foreach (TFolder folder in foldersToFilter.Where(dir => Directory.Exists(dir.Info.FullName)))
             {
                 TFolder copyFolder = (TFolder)folder.DeepClone();
@@ -191,7 +180,8 @@ namespace ForgeModGenerator
         /// <summary> Searches root path for files that are not referenced in Folders collection and adds them </summary>
         public void AddNotReferencedFiles()
         {
-            foreach (string filePath in FindNotReferencedFiles(RootPath, SearchOption.AllDirectories))
+            IEnumerable<string> notReferencedFiles = EnumerateNotReferencedFiles(RootPath, SearchOption.AllDirectories);
+            foreach (string filePath in notReferencedFiles)
             {
                 string dirPath = IOHelper.GetDirectoryPath(filePath);
                 if (!TryGetFolder(dirPath, out TFolder folder))
@@ -199,11 +189,13 @@ namespace ForgeModGenerator
                     folder = ConstructFolderInstance(dirPath, null);
                     Folders.Add(folder);
                 }
-                folder.Add(filePath);
+                List<string> notReferencedFilesForFolder = notReferencedFiles.Where(path => IOHelper.GetDirectoryPath(path) == folder.Info.FullName).ToList();
+                folder.AddRange(notReferencedFilesForFolder);
+                notReferencedFiles = notReferencedFiles.Except(notReferencedFilesForFolder);
             }
         }
 
-        protected ObservableCollection<TFolder> CreateEmptyFoldersRoot(string folderPath) => new ObservableCollection<TFolder>() { ConstructFolderInstance(IOHelper.GetDirectoryPath(folderPath), null) };
+        protected ICollection<TFolder> CreateEmptyFoldersRoot(string folderPath) => new Collection<TFolder>() { ConstructFolderInstance(IOHelper.GetDirectoryPath(folderPath), null) };
 
         /// <summary> Create TFolder instance and subscrive its events </summary>
         protected virtual TFolder ConstructFolderInstance(string path, IEnumerable<string> filePaths)
@@ -224,29 +216,25 @@ namespace ForgeModGenerator
                     }
                 }
             }
-            FolderInstantiatedHandler?.Invoke(this, folder);
             return folder;
         }
 
-        /// <summary> Deserializes Json content to ObservableCollection<TFolder> </summary>
-        protected virtual ObservableCollection<TFolder> DeserializeFolders(string fileCotent) => JsonConvert.DeserializeObject<ObservableCollection<TFolder>>(fileCotent);
+        /// <summary> Deserializes Json content to ICollection<TFolder> </summary>
+        protected virtual ICollection<TFolder> DeserializeFolders(string fileCotent) => JsonConvert.DeserializeObject<Collection<TFolder>>(fileCotent);
 
         /// <summary> Called when FileSystemWatcher detects folder creation </summary>
-        protected async void SyncCreateFolder(string path, bool includeSubDirectories = true)
+        protected void SyncCreateFolder(string path, bool includeSubDirectories = true)
         {
             SynchronizationCheck(path);
             if (Folders != null)
             {
-                Folders?.Add(ConstructFolderInstance(path, null));
+                Folders.Add(ConstructFolderInstance(path, null));
                 if (includeSubDirectories)
                 {
-                    ObservableCollection<TFolder> foundFolders = await FindFoldersFromDirectory(path);
-                    if (foundFolders.Count > 0)
+                    IEnumerable<TFolder> foundFolders = EnumerateFoldersFromDirectory(path);
+                    if (foundFolders.Any())
                     {
-                        foreach (TFolder folder in foundFolders)
-                        {
-                            Folders.Add(folder);
-                        }
+                        Folders.AddRange(foundFolders);
                     }
                 }
             }

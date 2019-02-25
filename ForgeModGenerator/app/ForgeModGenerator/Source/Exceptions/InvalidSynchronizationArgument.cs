@@ -3,6 +3,7 @@ using System.Runtime.Serialization;
 
 namespace ForgeModGenerator.Exceptions
 {
+    [Serializable]
     public class InvalidSynchronizationArgument : ArgumentException
     {
         protected static string GetDefaultMessage(string rootSyncronizationPath, string actualPath) => $"You cannot synchronize folder outside root path: {rootSyncronizationPath}. The actual folder path: {actualPath}";

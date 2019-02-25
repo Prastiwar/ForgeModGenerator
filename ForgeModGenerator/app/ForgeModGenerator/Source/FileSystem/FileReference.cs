@@ -2,6 +2,7 @@
 using ForgeModGenerator.Validations;
 using GalaSoft.MvvmLight;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -51,8 +52,6 @@ namespace ForgeModGenerator
             }
             FileSystemInfo = GetOrCreateInfo(path);
         }
-
-        private static Dictionary<string, RefCounter> references = new Dictionary<string, RefCounter>();
 
         private FileSystemInfo fileSystemInfo;
         public FileSystemInfo FileSystemInfo {
@@ -135,7 +134,7 @@ namespace ForgeModGenerator
             RemoveReference(path);
         }
 
-        protected virtual FileSystemInfo GetOrCreateInfo(string filePath)
+        protected FileSystemInfo GetOrCreateInfo(string filePath)
         {
             filePath = filePath.NormalizeFullPath();
             AddReference(filePath);
@@ -171,12 +170,14 @@ namespace ForgeModGenerator
                 references[filePath].ReferenceCount--;
                 if (references[filePath].ReferenceCount <= 0)
                 {
-                    return references.Remove(filePath);
+                    return references.TryRemove(filePath, out RefCounter del);
                 }
                 return true;
             }
             return false;
         }
+
+        private static ConcurrentDictionary<string, RefCounter> references = new ConcurrentDictionary<string, RefCounter>();
 
         public static bool IsReferenced(string filePath) => GetReferenceCount(filePath.NormalizeFullPath()) > 0;
         public static int GetReferenceCount(string filePath) => references.TryGetValue(filePath.NormalizeFullPath(), out RefCounter refCounter) ? refCounter.ReferenceCount : 0;

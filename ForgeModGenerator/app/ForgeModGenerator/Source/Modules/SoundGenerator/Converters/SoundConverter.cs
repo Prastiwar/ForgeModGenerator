@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 
-namespace ForgeModGenerator.Converters
+namespace ForgeModGenerator.SoundGenerator.Converters
 {
     public class SoundConverter : JsonConverter<Sound>
     {

@@ -4,7 +4,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 
-namespace ForgeModGenerator.Converters
+namespace ForgeModGenerator.SoundGenerator.Converters
 {
     public class SoundEventConverter : JsonConverter<SoundEvent>
     {

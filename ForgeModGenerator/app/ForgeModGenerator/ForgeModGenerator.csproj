@@ -152,6 +152,9 @@
     <Compile Include="Source\Common\Log.cs" />
     <Compile Include="Source\Common\Math.cs" />
     <Compile Include="Source\Common\ModPaths.cs" />
+    <Compile Include="Source\Common\ThirdParty\ObservableRangeCollection.cs" />
+    <Compile Include="Source\Common\ThirdParty\ObservableSortableCollection.cs" />
+    <Compile Include="Source\Common\ThirdParty\WpfObservableRangeCollection.cs" />
     <Compile Include="Source\Controls\EditableList.cs" />
     <Compile Include="Source\Controls\ScrollButton.cs" />
     <Compile Include="Source\Converters\BoolValueConverter.cs" />
@@ -202,7 +205,7 @@
     <Compile Include="Source\Modules\ModGenerator\SourceCodeGeneration\ProxyCodeGenerator.cs" />
     <Compile Include="Source\Modules\ModGenerator\SourceCodeGeneration\RegistryHandlerCodeGenerator.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundCodeGenerator.cs" />
-    <Compile Include="Source\Modules\SoundGenerator\Models\SoundJsonUpdater.cs" />
+    <Compile Include="Source\Modules\SoundGenerator\SoundJsonUpdater.cs" />
     <Compile Include="Source\Models\Mod\LaunchSetup.cs" />
     <Compile Include="Source\Modules\SoundGenerator\Models\SoundsGeneratorPreferences.cs" />
     <Compile Include="Source\Modules\SoundGenerator\Models\SoundEvent.cs" />

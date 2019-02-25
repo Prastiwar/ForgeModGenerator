@@ -1,7 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using ForgeModGenerator.Utility;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace ForgeModGenerator.Persistence
 {
@@ -34,17 +36,36 @@ namespace ForgeModGenerator.Persistence
 
         protected string Serialize() => JsonConvert.SerializeObject(Target, Formatting, Settings);
 
+        protected async Task OverwriteJsonAsync(string json) => await IOHelper.WriteAllTextAsync(Path, json);
+
         protected void OverwriteJson(string json) => File.WriteAllText(Path, json);
 
         public virtual bool IsValidToSerialize() => true;
 
-        public virtual void ForceJsonUpdate()
+        public async void ForceJsonUpdateAsync()
         {
             try
             {
                 if (IsValidToSerialize())
                 {
-                    OverwriteJson(Serialize());
+                    string serializedContent = Serialize();
+                    await OverwriteJsonAsync(serializedContent);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, Log.UnexpectedErrorMessage, true);
+            }
+        }
+
+        public void ForceJsonUpdate()
+        {
+            try
+            {
+                if (IsValidToSerialize())
+                {
+                    string serializedContent = Serialize();
+                    OverwriteJson(serializedContent);
                 }
             }
             catch (Exception ex)

@@ -1,4 +1,4 @@
-﻿using ForgeModGenerator.Converters;
+﻿using ForgeModGenerator.SoundGenerator.Converters;
 using ForgeModGenerator.SoundGenerator.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
