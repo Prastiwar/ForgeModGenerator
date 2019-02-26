@@ -38,7 +38,7 @@ namespace ForgeModGenerator.ViewModels
             OpenFolderDialog = new FolderBrowserDialog() { ShowNewFolderButton = true };
             AllowedFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { OpenFileDialog.DefaultExt };
             SessionContext.PropertyChanged += OnSessionContexPropertyChanged;
-            FileSynchronizer = new FoldersSynchronizer<TFolder, TFile>(Folders, FoldersRootPath, AllowedFileExtensionsPatterns);
+            FileSynchronizer = new DefaultFoldersSynchronizer<TFolder, TFile>(Folders, FoldersRootPath, AllowedFileExtensionsPatterns);
         }
 
         public IMultiValueConverter FolderFileConverter { get; } = new TupleValueConverter<TFolder, TFile>();
@@ -106,7 +106,7 @@ namespace ForgeModGenerator.ViewModels
         public ICommand AddFolderCommand => addFolderCommand ?? (addFolderCommand = new RelayCommand(ShowFolderDialogAndCopyToRoot));
 
         private ICommand resolveJsonFileCommand;
-        public ICommand ResolveJsonFileCommand => resolveJsonFileCommand ?? (resolveJsonFileCommand = new RelayCommand(FileSynchronizer.AddNotReferencedFiles));
+        public ICommand ResolveJsonFileCommand => resolveJsonFileCommand ?? (resolveJsonFileCommand = new RelayCommand(ResolveJsonFile));
 
         protected JsonUpdater<TFolder> JsonUpdater { get; set; }
 
@@ -133,7 +133,7 @@ namespace ForgeModGenerator.ViewModels
             {
                 FileSynchronizer.RootPath = FoldersRootPath;
                 IsLoading = true;
-                Folders = new ObservableFolder<TFolder>(FileSynchronizer.GetFolders(FoldersRootPath ?? FoldersJsonFilePath, true));
+                Folders = new ObservableFolder<TFolder>(FileSynchronizer.FindFolders(FoldersRootPath ?? FoldersJsonFilePath, true));
                 IsLoading = false;
                 return true;
             }
@@ -164,12 +164,12 @@ namespace ForgeModGenerator.ViewModels
             {
                 for (int i = folder.Files.Count - 1; i >= 0; i--)
                 {
-                    if (File.Exists(folder.Files[i].Info.FullName))
+                    if (FileSystemInfoReference.GetReferenceCount(folder.Files[i].Info.FullName) <= 1 && File.Exists(folder.Files[i].Info.FullName))
                     {
                         IOHelper.DeleteFileToBin(folder.Files[i].Info.FullName);
                     }
-                    folder.Remove(folder.Files[i]);
                 }
+                folder.Clear();
                 if (Directory.Exists(folder.Info.FullName) && IOHelper.IsEmpty(folder.Info.FullName))
                 {
                     IOHelper.DeleteDirectoryToBin(folder.Info.FullName);
@@ -177,7 +177,16 @@ namespace ForgeModGenerator.ViewModels
             }
         }
 
-        protected virtual void RemoveFileFromFolder(Tuple<TFolder, TFile> param) => param.Item1.Remove(param.Item2);
+        protected virtual void RemoveFileFromFolder(Tuple<TFolder, TFile> param)
+        {
+            if (param.Item1.Remove(param.Item2))
+            {
+                if (!FileSystemInfoReference.IsReferenced(param.Item2.Info.FullName))
+                {
+                    IOHelper.DeleteFileToBin(param.Item2.Info.FullName);
+                }
+            }
+        }
 
         protected virtual async void ShowFileDialogAndCopyToFolder(TFolder folder)
         {
@@ -219,7 +228,7 @@ namespace ForgeModGenerator.ViewModels
         /// <summary> Deserialized folders from FoldersJsonFilePath and checks if any file doesn't exists, if so, prompt if should fix this </summary>
         protected async void CheckJsonFileMismatch()
         {
-            IEnumerable<TFolder> deserializedFolders = FileSynchronizer.FindFoldersFromFile(FoldersJsonFilePath, false);
+            IEnumerable<TFolder> deserializedFolders = FileSynchronizer.GetFoldersFromFile(FoldersJsonFilePath, false);
             bool hasNotExistingFile = deserializedFolders != null ? deserializedFolders.Any(folder => folder.Files.Any(file => !File.Exists(file.Info.FullName))) : false;
             if (hasNotExistingFile)
             {
@@ -231,11 +240,22 @@ namespace ForgeModGenerator.ViewModels
                     ForceJsonFileUpdate();
                 }
             }
+            foreach (TFolder folder in deserializedFolders)
+            {
+                folder.Clear();
+            }
         }
 
-        protected virtual void ForceJsonFileUpdate() => JsonUpdater.ForceJsonUpdate();
+        protected void ResolveJsonFile()
+        {
+            FileSynchronizer.AddNotReferencedFiles();
+            CheckForUpdate();
+            ForceJsonFileUpdate();
+        }
 
         protected void CheckForUpdate() => IsFileUpdateAvailable = !IsJsonUpdated();
+
+        protected virtual void ForceJsonFileUpdate() => JsonUpdater.ForceJsonUpdate();
 
         protected virtual bool IsJsonUpdated()
         {

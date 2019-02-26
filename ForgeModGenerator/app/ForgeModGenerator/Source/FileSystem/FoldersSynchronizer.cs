@@ -6,11 +6,43 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace ForgeModGenerator
 {
-    public class FoldersSynchronizer<TFolder, TFile>
+    public class DefaultFoldersSynchronizer<TFolder, TFile> : FoldersSynchronizer<TFolder, TFile>
+        where TFolder : class, IFileFolder<TFile>
+        where TFile : class, IFileItem
+    {
+        public DefaultFoldersSynchronizer(ObservableFolder<TFolder> folders, string rootPath = null, string filters = null) : base(folders, rootPath, filters) { }
+
+        public override IEnumerable<TFolder> FindFolders(string path, bool createRootIfEmpty = false)
+        {
+            if (!IOHelper.IsPathValid(path))
+            {
+                throw new InvalidOperationException($"Path is not valid {path}");
+            }
+            IEnumerable<TFolder> found = null;
+            if (Directory.Exists(path))
+            {
+                found = EnumerateFoldersFromDirectory(path);
+            }
+            else if (File.Exists(path))
+            {
+                found = GetFoldersFromFile(path);
+            }
+
+            bool isEmpty = found == null || !found.Any();
+            if (isEmpty && createRootIfEmpty)
+            {
+                found = CreateEmptyFoldersRoot(IOHelper.GetDirectoryPath(path));
+            }
+            return found.ToList();
+        }
+    }
+
+    public abstract class FoldersSynchronizer<TFolder, TFile>
         where TFolder : class, IFileFolder<TFile>
         where TFile : class, IFileItem
     {
@@ -53,10 +85,12 @@ namespace ForgeModGenerator
 
         protected FileSystemWatcherExtended FileWatcher { get; set; }
 
+        public abstract IEnumerable<TFolder> FindFolders(string path, bool createRootIfEmpty = false);
+
         public bool TryGetFolder(string path, out TFolder folder)
         {
             string folderPath = IOHelper.GetDirectoryPath(path);
-            folder = Folders.Files?.Find(x => x.Info.FullName == folderPath);
+            folder = Folders?.Files?.Find(x => x.Info.FullName == folderPath);
             return folder != null;
         }
 
@@ -71,62 +105,59 @@ namespace ForgeModGenerator
             return false;
         }
 
-        public virtual IEnumerable<TFolder> GetFolders(string path, bool createRootIfEmpty = false)
-        {
-            if (!IOHelper.IsPathValid(path))
-            {
-                throw new InvalidOperationException($"Path is not valid {path}");
-            }
-            IEnumerable<TFolder> found = null;
-            if (Directory.Exists(path))
-            {
-                found = EnumerateFoldersFromDirectory(path);
-            }
-            else if (File.Exists(path))
-            {
-                found = FindFoldersFromFile(path);
-            }
-
-            bool isEmpty = found == null || !found.Any();
-            if (isEmpty && createRootIfEmpty)
-            {
-                found = CreateEmptyFoldersRoot(IOHelper.GetDirectoryPath(path));
-            }
-            return found.ToList();
-        }
-
         /// <summary> Creates TFolder with found TFile's for each subdirectory </summary>
         public IEnumerable<TFolder> EnumerateFoldersFromDirectory(string path)
         {
-            ICollection<TFolder> foundFolders = new Collection<TFolder>();
-
-            AddFilesToCollection(path);
+            IEnumerable<string> filePaths = EnumerateFilteredFiles(path);
+            if (filePaths.Any())
+            {
+                TFolder folder = ConstructFolderInstance(path, filePaths);
+                yield return folder;
+            }
             foreach (string directory in IOHelper.EnumerateAllDirectories(path))
             {
-                AddFilesToCollection(directory);
-            }
-
-            void AddFilesToCollection(string directoryPath)
-            {
-                IEnumerable<string> filePaths = EnumerateFilteredFiles(directoryPath);
+                filePaths = EnumerateFilteredFiles(directory);
                 if (filePaths.Any())
                 {
-                    TFolder folder = ConstructFolderInstance(directoryPath, filePaths);
-                    foundFolders.Add(folder);
+                    TFolder folder = ConstructFolderInstance(directory, filePaths);
+                    yield return folder;
                 }
             }
-            return foundFolders;
         }
 
         /// <summary> Returns folders by deserializing them from file in given path </summary>
-        public ICollection<TFolder> FindFoldersFromFile(string path, bool loadOnlyExisting = true)
+        public ICollection<TFolder> GetFoldersFromFile(string path, bool loadOnlyExisting = true)
         {
             if (!File.Exists(path))
             {
                 return new Collection<TFolder>();
-                //return Enumerable.Empty<TFolder>();
             }
             string content = File.ReadAllText(path);
+            List<TFolder> deserializedFolders = null;
+            try
+            {
+                deserializedFolders = new List<TFolder>(DeserializeFolders(content));
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, $"Couldnt load {typeof(ICollection<TFolder>)} from {content}", true);
+                return new Collection<TFolder>();
+            }
+            if (loadOnlyExisting)
+            {
+                deserializedFolders = new List<TFolder>(FilterToOnlyExistingFiles(deserializedFolders));
+            }
+            return deserializedFolders;
+        }
+
+        /// <summary> Returns folders by deserializing them from file in given path </summary>
+        public async Task<ICollection<TFolder>> GetFoldersFromFileAsync(string path, bool loadOnlyExisting = true)
+        {
+            if (!File.Exists(path))
+            {
+                return new Collection<TFolder>();
+            }
+            string content = await IOHelper.ReadAllTextAsync(path);
             List<TFolder> deserializedFolders = null;
             try
             {

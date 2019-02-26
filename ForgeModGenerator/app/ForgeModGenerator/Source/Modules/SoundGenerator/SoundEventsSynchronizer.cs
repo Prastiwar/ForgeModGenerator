@@ -23,14 +23,14 @@ namespace ForgeModGenerator.SoundGenerator
             Modid = modid;
         }
 
-        public override IEnumerable<SoundEvent> GetFolders(string path, bool createRootIfEmpty = false)
+        public override IEnumerable<SoundEvent> FindFolders(string path, bool createRootIfEmpty = false)
         {
             if (!File.Exists(path))
             {
                 File.AppendAllText(path, "{}");
                 return Enumerable.Empty<SoundEvent>();
             }
-            IEnumerable<SoundEvent> deserializedFolders = FindFoldersFromFile(path, false);
+            IEnumerable<SoundEvent> deserializedFolders = GetFoldersFromFile(path, false);
             bool hasNotExistingFile = deserializedFolders != null ? deserializedFolders.Any(folder => folder.Files.Any(file => !File.Exists(file.Info.FullName))) : false;
             return hasNotExistingFile ? FilterToOnlyExistingFiles(deserializedFolders) : deserializedFolders;
         }

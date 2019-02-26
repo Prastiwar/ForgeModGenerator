@@ -264,10 +264,12 @@ namespace ForgeModGenerator
             {
                 OnFilesChanged?.Invoke(this, new FileChangedEventArgs<T>(e.OldItems.Cast<T>(), FileChange.Remove));
             }
+#if DEBUG
             else
             {
-                System.Windows.MessageBox.Show(e.Action.ToString());
+                System.Windows.MessageBox.Show(e.Action.ToString()); // TODO: Remove it
             }
+#endif
         }
 
         public virtual object Clone() => MemberwiseClone();

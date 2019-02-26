@@ -7,16 +7,11 @@ using ForgeModGenerator.SoundGenerator.Persistence;
 using ForgeModGenerator.SoundGenerator.Validations;
 using ForgeModGenerator.ViewModels;
 using GalaSoft.MvvmLight.Views;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Data;
 using System.Windows.Forms;
 
 namespace ForgeModGenerator.SoundGenerator.ViewModels
@@ -65,8 +60,11 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
                     Folders.OnFilesChanged -= SubscribeFolderEvents;
                     Folders.Clear();
                 }
-                Folders = new ObservableFolder<SoundEvent>(FoldersRootPath, FileSynchronizer.GetFolders(FoldersJsonFilePath, true));
+                Folders = new ObservableFolder<SoundEvent>(FoldersRootPath, FileSynchronizer.FindFolders(FoldersJsonFilePath, true));
+                SubscribeFolderEvents(Folders, new FileChangedEventArgs<SoundEvent>(Folders.Files, FileChange.Add));
                 Folders.OnFilesChanged += SubscribeFolderEvents;
+                Folders.OnFilesChanged += OnFoldersCollectionChanged;
+                FileSynchronizer.Folders = Folders;
                 JsonUpdater = new SoundJsonUpdater(Folders.Files, FoldersJsonFilePath, Preferences.JsonFormatting, GetActualConverter());
                 CheckJsonFileMismatch();
                 CheckForUpdate();
@@ -118,6 +116,14 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             }
         }
 
+        private void OnFoldersCollectionChanged(object sender, FileChangedEventArgs<SoundEvent> e)
+        {
+            ForceJsonFileUpdate();
+            CheckForUpdate();
+        }
+
+        private string OnSoundEventValidate(SoundEvent sender, string propertyName) => new SoundEventValidator(Folders.Files).Validate(sender, propertyName).ToString();
+
         private void OnSoundPropertyChanged(Sound file, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(Sound.Name))
@@ -134,8 +140,6 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
                 ForceJsonFileUpdate();
             }
         }
-
-        private string OnSoundEventValidate(SoundEvent sender, string propertyName) => new SoundEventValidator(Folders.Files).Validate(sender, propertyName).ToString();
 
         private void SoundEventSoundsChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
