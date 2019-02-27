@@ -24,7 +24,7 @@ namespace ForgeModGenerator.SoundGenerator.Models
         {
             this.modid = modid ?? throw new System.ArgumentNullException(nameof(modid));
 
-            if (File.Exists(filePath))
+            if (Utility.IOHelper.IsPathValid(filePath))
             {
                 Name = FormatSoundNameFromFullPath(modid, filePath);
                 SetInfo(filePath);
@@ -166,7 +166,7 @@ namespace ForgeModGenerator.SoundGenerator.Models
         public static string FormatSoundRelativePath(string fullPath)
         {
             int startIndex = fullPath.IndexOf("sounds") + 7;
-            if (startIndex == -1)
+            if (startIndex == -1 || startIndex >= fullPath.Length)
             {
                 return null;
             }

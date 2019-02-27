@@ -10,14 +10,104 @@ namespace ForgeModGenerator.Tests
     [TestClass]
     public class SoundGeneratorTests
     {
+        private readonly string expectedSoundEventsJson = "{\"sounds\":{\"replace\":false,\"subtitle\":\"\",\"sounds\":[{\"name\":\"testmod:test\",\"volume\":1.0,\"pitch\":1.0,\"weight\":1,\"stream\":false,\"attenuation_distance\":0,\"preload\":false,\"type\":\"file\"},{\"name\":\"testmod:testCopy2\",\"volume\":0.5,\"pitch\":2.0,\"weight\":2,\"stream\":true,\"attenuation_distance\":1,\"preload\":true,\"type\":\"event\"}]},\"entity.vatras\":{\"replace\":true,\"subtitle\":\"Some subtitle2\",\"sounds\":[{\"name\":\"testmod:entity/vatras/greet\",\"volume\":1.0,\"pitch\":1.0,\"weight\":1,\"stream\":true,\"attenuation_distance\":0,\"preload\":true,\"type\":\"event\"}]}}";
+        private readonly SoundEventConverter soundEventConverter = new SoundEventConverter();
+        private readonly SoundConverter soundConverter = new SoundConverter();
+        private readonly SoundCollectionConverter soundEventCollectionConverter = new SoundCollectionConverter("TestMod", "testmod");
+
+        private Sound CreateSoundTest() =>
+            new Sound("testmod", @"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\TestMod\src\main\resources\assets\testmod\sounds\test.ogg") {
+                Volume = 1.0f,
+                Pitch = 1.0f,
+                Weight = 1,
+                Stream = false,
+                AttenuationDistance = 0,
+                Preload = false,
+                Type = Sound.SoundType.file
+            };
+
+        private Sound CreateSoundTestCopy2() =>
+            new Sound("testmod", @"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\TestMod\src\main\resources\assets\testmod\sounds\testCopy2.ogg") {
+                Volume = 0.5f,
+                Pitch = 2.0f,
+                Weight = 2,
+                Stream = true,
+                AttenuationDistance = 1,
+                Preload = true,
+                Type = Sound.SoundType.@event
+            };
+
+        private Sound CreateSoundGreet() =>
+            new Sound("testmod", @"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\TestMod\src\main\resources\assets\testmod\sounds\entity\vatras\greet.ogg") {
+                Volume = 1.0f,
+                Pitch = 1.0f,
+                Weight = 1,
+                Stream = true,
+                AttenuationDistance = 0,
+                Preload = true,
+                Type = Sound.SoundType.@event
+            };
+
+        // ----------------------------------------------------------- Serialization
+
         [TestMethod]
-        public void SoundJsonConvert()
+        public void SoundSerialize()
         {
-            string json = "{\"name\":\"craftpolis:testCopy2\",\"volume\":0.5,\"pitch\":2.0,\"weight\":2,\"stream\":true,\"attenuation_distance\":1,\"preload\":true,\"type\":\"event\"}";
-            SoundConverter converter = new SoundConverter();
-            Sound sound = JsonConvert.DeserializeObject<Sound>(json, converter);
+            string expectedJson = "{\"name\":\"testmod:testCopy2\",\"volume\":0.5,\"pitch\":2.0,\"weight\":2,\"stream\":true,\"attenuation_distance\":1,\"preload\":true,\"type\":\"event\"}";
+            Sound sound = CreateSoundTestCopy2();
+            sound.FormatName();
+            string json = JsonConvert.SerializeObject(sound, soundConverter);
+            Assert.AreEqual(expectedJson, json);
+        }
+
+        [TestMethod]
+        public void SoundEventSerialize()
+        {
+            string expectedJson = "\"sounds\":{\"replace\":false,\"subtitle\":\"Some subtitle\",\"sounds\":[{\"name\":\"testmod:test\",\"volume\":1.0,\"pitch\":1.0,\"weight\":1,\"stream\":false,\"attenuation_distance\":0,\"preload\":false,\"type\":\"file\"},{\"name\":\"testmod:testCopy2\",\"volume\":0.5,\"pitch\":2.0,\"weight\":2,\"stream\":true,\"attenuation_distance\":1,\"preload\":true,\"type\":\"event\"}]}";
+            Collection<Sound> sounds = new Collection<Sound>() {
+                CreateSoundTest(), CreateSoundTestCopy2()
+            };
+            SoundEvent soundEvent = new SoundEvent(@"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\TestMod\src\main\resources\assets\testmod\sounds", sounds) {
+                Subtitle = "Some subtitle",
+                Replace = false
+            };
+            string json = JsonConvert.SerializeObject(soundEvent, soundEventConverter);
+            Assert.AreEqual(expectedJson, json);
+        }
+
+        [TestMethod]
+        public void SoundEventListSerialize()
+        {
+            Collection<Sound> sounds1 = new Collection<Sound>() {
+                CreateSoundTest(), CreateSoundTestCopy2()
+            };
+            Collection<Sound> sounds2 = new Collection<Sound>() {
+                CreateSoundGreet()
+            };
+            List<SoundEvent> soundEvent = new List<SoundEvent>(){
+                new SoundEvent(@"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\TestMod\src\main\resources\assets\testmod\sounds", sounds1) {
+                    Subtitle = "",
+                    Replace = false
+                },
+                new SoundEvent(@"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\TestMod\src\main\resources\assets\testmod\sounds\entity\vatras", sounds2) {
+                    Subtitle = "Some subtitle2",
+                    Replace = true
+                }
+            };
+            string json = JsonConvert.SerializeObject(soundEvent, soundEventCollectionConverter);
+            Assert.AreEqual(expectedSoundEventsJson, json);
+        }
+
+
+        // ----------------------------------------------------------- Deserialization
+
+        [TestMethod]
+        public void SoundDeserialize()
+        {
+            string json = "{\"name\":\"testmod:testCopy2\",\"volume\":0.5,\"pitch\":2.0,\"weight\":2,\"stream\":true,\"attenuation_distance\":1,\"preload\":true,\"type\":\"event\"}";
+            Sound sound = JsonConvert.DeserializeObject<Sound>(json, soundConverter);
             Assert.IsNotNull(sound);
-            Assert.AreEqual("craftpolis:testCopy2", sound.Name);
+            Assert.AreEqual("testmod:testCopy2", sound.Name);
             Assert.AreEqual(0.5, sound.Volume);
             Assert.AreEqual(2.0, sound.Pitch);
             Assert.AreEqual(2, sound.Weight);
@@ -28,11 +118,10 @@ namespace ForgeModGenerator.Tests
         }
 
         [TestMethod]
-        public void SoundEventJsonConvert()
+        public void SoundEventDeserialize()
         {
-            string json = "{\"replace\":false,\"subtitle\":\"Some subtitle\",\"sounds\":[{\"name\":\"craftpolis:test\",\"volume\":1.0,\"pitch\":1.0,\"weight\":1,\"stream\":false,\"attenuation_distance\":0,\"preload\":false,\"type\":\"file\"},{\"name\":\"craftpolis:testCopy2\",\"volume\":0.5,\"pitch\":2.0,\"weight\":2,\"stream\":true,\"attenuation_distance\":1,\"preload\":true,\"type\":\"event\"}]}";
-            SoundEventConverter converter = new SoundEventConverter();
-            SoundEvent soundEvent = JsonConvert.DeserializeObject<SoundEvent>(json, converter);
+            string json = "{\"replace\":false,\"subtitle\":\"Some subtitle\",\"sounds\":[{\"name\":\"testmod:test\",\"volume\":1.0,\"pitch\":1.0,\"weight\":1,\"stream\":false,\"attenuation_distance\":0,\"preload\":false,\"type\":\"file\"},{\"name\":\"testmod:testCopy2\",\"volume\":0.5,\"pitch\":2.0,\"weight\":2,\"stream\":true,\"attenuation_distance\":1,\"preload\":true,\"type\":\"event\"}]}";
+            SoundEvent soundEvent = JsonConvert.DeserializeObject<SoundEvent>(json, soundEventConverter);
             Assert.IsNotNull(soundEvent);
             Assert.AreEqual(false, soundEvent.Replace);
             Assert.AreEqual("Some subtitle", soundEvent.Subtitle);
@@ -40,7 +129,7 @@ namespace ForgeModGenerator.Tests
             Assert.AreEqual(2, soundEvent.Files.Count);
             Assert.IsNotNull(soundEvent.Files[0]);
             Assert.IsNotNull(soundEvent.Files[1]);
-            Assert.AreEqual("craftpolis:test", soundEvent.Files[0].Name);
+            Assert.AreEqual("testmod:test", soundEvent.Files[0].Name);
             Assert.AreEqual(1.0, soundEvent.Files[0].Volume);
             Assert.AreEqual(1.0, soundEvent.Files[0].Pitch);
             Assert.AreEqual(1, soundEvent.Files[0].Weight);
@@ -48,7 +137,7 @@ namespace ForgeModGenerator.Tests
             Assert.AreEqual(0, soundEvent.Files[0].AttenuationDistance);
             Assert.AreEqual(false, soundEvent.Files[0].Preload);
             Assert.AreEqual(Sound.SoundType.file, soundEvent.Files[0].Type);
-            Assert.AreEqual("craftpolis:testCopy2", soundEvent.Files[1].Name);
+            Assert.AreEqual("testmod:testCopy2", soundEvent.Files[1].Name);
             Assert.AreEqual(0.5, soundEvent.Files[1].Volume);
             Assert.AreEqual(2.0, soundEvent.Files[1].Pitch);
             Assert.AreEqual(2, soundEvent.Files[1].Weight);
@@ -59,11 +148,9 @@ namespace ForgeModGenerator.Tests
         }
 
         [TestMethod]
-        public void SoundEventsJsonConvertList()
+        public void SoundEventListDeserialize()
         {
-            string json = "{\"sounds\":{\"replace\":false,\"subtitle\":\"\",\"sounds\":[{\"name\":\"craftpolis:test\",\"volume\":1.0,\"pitch\":1.0,\"weight\":1,\"stream\":false,\"attenuation_distance\":0,\"preload\":false,\"type\":\"file\"},{\"name\":\"craftpolis:testCopy2\",\"volume\":0.5,\"pitch\":2.0,\"weight\":2,\"stream\":true,\"attenuation_distance\":1,\"preload\":true,\"type\":\"file\"}]},\"entity.vatras\":{\"replace\":true,\"subtitle\":\"Some subtitle2\",\"sounds\":[{\"name\":\"craftpolis:entity/vatras/greet\",\"volume\":1.0,\"pitch\":1.0,\"weight\":1,\"stream\":true,\"attenuation_distance\":0,\"preload\":true,\"type\":\"event\"}]}}";
-            SoundCollectionConverter converter = new SoundCollectionConverter("Craftpolis", "craftpolis");
-            List<SoundEvent> soundEvents = JsonConvert.DeserializeObject<List<SoundEvent>>(json, converter);
+            List<SoundEvent> soundEvents = JsonConvert.DeserializeObject<List<SoundEvent>>(expectedSoundEventsJson, soundEventCollectionConverter);
             Assert.IsNotNull(soundEvents);
             Assert.AreEqual(2, soundEvents.Count);
             Assert.AreEqual("sounds", soundEvents[0].EventName);
@@ -80,7 +167,7 @@ namespace ForgeModGenerator.Tests
             Assert.IsNotNull(soundEvents[0].Files[1]);
             Assert.IsNotNull(soundEvents[1].Files[0]);
 
-            Assert.AreEqual("craftpolis:test", soundEvents[0].Files[0].Name);
+            Assert.AreEqual("testmod:test", soundEvents[0].Files[0].Name);
             Assert.AreEqual(1.0, soundEvents[0].Files[0].Volume);
             Assert.AreEqual(1.0, soundEvents[0].Files[0].Pitch);
             Assert.AreEqual(1, soundEvents[0].Files[0].Weight);
@@ -89,7 +176,7 @@ namespace ForgeModGenerator.Tests
             Assert.AreEqual(false, soundEvents[0].Files[0].Preload);
             Assert.AreEqual(Sound.SoundType.file, soundEvents[0].Files[0].Type);
 
-            Assert.AreEqual("craftpolis:testCopy2", soundEvents[0].Files[1].Name);
+            Assert.AreEqual("testmod:testCopy2", soundEvents[0].Files[1].Name);
             Assert.AreEqual(0.5, soundEvents[0].Files[1].Volume);
             Assert.AreEqual(2.0, soundEvents[0].Files[1].Pitch);
             Assert.AreEqual(2, soundEvents[0].Files[1].Weight);
@@ -98,7 +185,7 @@ namespace ForgeModGenerator.Tests
             Assert.AreEqual(true, soundEvents[0].Files[1].Preload);
             Assert.AreEqual(Sound.SoundType.@event, soundEvents[0].Files[1].Type);
 
-            Assert.AreEqual("craftpolis:entity/vatras/greet", soundEvents[1].Files[0].Name);
+            Assert.AreEqual("testmod:entity/vatras/greet", soundEvents[1].Files[0].Name);
             Assert.AreEqual(1.0, soundEvents[1].Files[0].Volume);
             Assert.AreEqual(1.0, soundEvents[1].Files[0].Pitch);
             Assert.AreEqual(1, soundEvents[1].Files[0].Weight);
@@ -109,11 +196,9 @@ namespace ForgeModGenerator.Tests
         }
 
         [TestMethod]
-        public void SoundEventsJsonConvertCollection()
+        public void SoundEventCollectionDeserialize()
         {
-            string json = "{\"sounds\":{\"replace\":false,\"subtitle\":\"\",\"sounds\":[{\"name\":\"craftpolis:test\",\"volume\":1.0,\"pitch\":1.0,\"weight\":1,\"stream\":false,\"attenuation_distance\":0,\"preload\":false,\"type\":\"file\"},{\"name\":\"craftpolis:testCopy2\",\"volume\":0.5,\"pitch\":2.0,\"weight\":2,\"stream\":true,\"attenuation_distance\":1,\"preload\":true,\"type\":\"file\"}]},\"entity.vatras\":{\"replace\":true,\"subtitle\":\"Some subtitle2\",\"sounds\":[{\"name\":\"craftpolis:entity/vatras/greet\",\"volume\":1.0,\"pitch\":1.0,\"weight\":1,\"stream\":true,\"attenuation_distance\":0,\"preload\":true,\"type\":\"event\"}]}}";
-            SoundCollectionConverter converter = new SoundCollectionConverter("Craftpolis", "craftpolis");
-            Collection<SoundEvent> soundEvents = JsonConvert.DeserializeObject<Collection<SoundEvent>>(json, converter);
+            Collection<SoundEvent> soundEvents = JsonConvert.DeserializeObject<Collection<SoundEvent>>(expectedSoundEventsJson, soundEventCollectionConverter);
             Assert.IsNotNull(soundEvents);
             Assert.AreEqual(2, soundEvents.Count);
             Assert.AreEqual("sounds", soundEvents[0].EventName);
@@ -130,7 +215,7 @@ namespace ForgeModGenerator.Tests
             Assert.IsNotNull(soundEvents[0].Files[1]);
             Assert.IsNotNull(soundEvents[1].Files[0]);
 
-            Assert.AreEqual("craftpolis:test", soundEvents[0].Files[0].Name);
+            Assert.AreEqual("testmod:test", soundEvents[0].Files[0].Name);
             Assert.AreEqual(1.0, soundEvents[0].Files[0].Volume);
             Assert.AreEqual(1.0, soundEvents[0].Files[0].Pitch);
             Assert.AreEqual(1, soundEvents[0].Files[0].Weight);
@@ -139,7 +224,7 @@ namespace ForgeModGenerator.Tests
             Assert.AreEqual(false, soundEvents[0].Files[0].Preload);
             Assert.AreEqual(Sound.SoundType.file, soundEvents[0].Files[0].Type);
 
-            Assert.AreEqual("craftpolis:testCopy2", soundEvents[0].Files[1].Name);
+            Assert.AreEqual("testmod:testCopy2", soundEvents[0].Files[1].Name);
             Assert.AreEqual(0.5, soundEvents[0].Files[1].Volume);
             Assert.AreEqual(2.0, soundEvents[0].Files[1].Pitch);
             Assert.AreEqual(2, soundEvents[0].Files[1].Weight);
@@ -148,7 +233,7 @@ namespace ForgeModGenerator.Tests
             Assert.AreEqual(true, soundEvents[0].Files[1].Preload);
             Assert.AreEqual(Sound.SoundType.@event, soundEvents[0].Files[1].Type);
 
-            Assert.AreEqual("craftpolis:entity/vatras/greet", soundEvents[1].Files[0].Name);
+            Assert.AreEqual("testmod:entity/vatras/greet", soundEvents[1].Files[0].Name);
             Assert.AreEqual(1.0, soundEvents[1].Files[0].Volume);
             Assert.AreEqual(1.0, soundEvents[1].Files[0].Pitch);
             Assert.AreEqual(1, soundEvents[1].Files[0].Weight);
@@ -159,11 +244,9 @@ namespace ForgeModGenerator.Tests
         }
 
         [TestMethod]
-        public void SoundEventsJsonConvertObservableCollection()
+        public void SoundEventObservableCollectionDeserialize()
         {
-            string json = "{\"sounds\":{\"replace\":false,\"subtitle\":\"\",\"sounds\":[{\"name\":\"craftpolis:test\",\"volume\":1.0,\"pitch\":1.0,\"weight\":1,\"stream\":false,\"attenuation_distance\":0,\"preload\":false,\"type\":\"file\"},{\"name\":\"craftpolis:testCopy2\",\"volume\":0.5,\"pitch\":2.0,\"weight\":2,\"stream\":true,\"attenuation_distance\":1,\"preload\":true,\"type\":\"file\"}]},\"entity.vatras\":{\"replace\":true,\"subtitle\":\"Some subtitle2\",\"sounds\":[{\"name\":\"craftpolis:entity/vatras/greet\",\"volume\":1.0,\"pitch\":1.0,\"weight\":1,\"stream\":true,\"attenuation_distance\":0,\"preload\":true,\"type\":\"event\"}]}}";
-            SoundCollectionConverter converter = new SoundCollectionConverter("Craftpolis", "craftpolis");
-            ObservableCollection<SoundEvent> soundEvents = JsonConvert.DeserializeObject<ObservableCollection<SoundEvent>>(json, converter);
+            ObservableCollection<SoundEvent> soundEvents = JsonConvert.DeserializeObject<ObservableCollection<SoundEvent>>(expectedSoundEventsJson, soundEventCollectionConverter);
             Assert.IsNotNull(soundEvents);
             Assert.AreEqual(2, soundEvents.Count);
             Assert.AreEqual("sounds", soundEvents[0].EventName);
@@ -180,7 +263,7 @@ namespace ForgeModGenerator.Tests
             Assert.IsNotNull(soundEvents[0].Files[1]);
             Assert.IsNotNull(soundEvents[1].Files[0]);
 
-            Assert.AreEqual("craftpolis:test", soundEvents[0].Files[0].Name);
+            Assert.AreEqual("testmod:test", soundEvents[0].Files[0].Name);
             Assert.AreEqual(1.0, soundEvents[0].Files[0].Volume);
             Assert.AreEqual(1.0, soundEvents[0].Files[0].Pitch);
             Assert.AreEqual(1, soundEvents[0].Files[0].Weight);
@@ -189,7 +272,7 @@ namespace ForgeModGenerator.Tests
             Assert.AreEqual(false, soundEvents[0].Files[0].Preload);
             Assert.AreEqual(Sound.SoundType.file, soundEvents[0].Files[0].Type);
 
-            Assert.AreEqual("craftpolis:testCopy2", soundEvents[0].Files[1].Name);
+            Assert.AreEqual("testmod:testCopy2", soundEvents[0].Files[1].Name);
             Assert.AreEqual(0.5, soundEvents[0].Files[1].Volume);
             Assert.AreEqual(2.0, soundEvents[0].Files[1].Pitch);
             Assert.AreEqual(2, soundEvents[0].Files[1].Weight);
@@ -198,7 +281,7 @@ namespace ForgeModGenerator.Tests
             Assert.AreEqual(true, soundEvents[0].Files[1].Preload);
             Assert.AreEqual(Sound.SoundType.@event, soundEvents[0].Files[1].Type);
 
-            Assert.AreEqual("craftpolis:entity/vatras/greet", soundEvents[1].Files[0].Name);
+            Assert.AreEqual("testmod:entity/vatras/greet", soundEvents[1].Files[0].Name);
             Assert.AreEqual(1.0, soundEvents[1].Files[0].Volume);
             Assert.AreEqual(1.0, soundEvents[1].Files[0].Pitch);
             Assert.AreEqual(1, soundEvents[1].Files[0].Weight);

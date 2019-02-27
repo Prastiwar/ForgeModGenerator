@@ -133,7 +133,7 @@ namespace ForgeModGenerator.ViewModels
             {
                 FileSynchronizer.RootPath = FoldersRootPath;
                 IsLoading = true;
-                Folders = new ObservableFolder<TFolder>(FileSynchronizer.FindFolders(FoldersRootPath ?? FoldersJsonFilePath, true));
+                Folders = new ObservableFolder<TFolder>(FoldersRootPath, await FileSynchronizer.FindFoldersAsync(FoldersRootPath ?? FoldersJsonFilePath, true));
                 IsLoading = false;
                 return true;
             }

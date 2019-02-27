@@ -98,7 +98,11 @@ namespace ForgeModGenerator.CodeGeneration
 
         protected CodeMemberMethod NewMethod(string name, string returnType, MemberAttributes attributes, params Parameter[] parameters)
         {
-            CodeMemberMethod method = NewMethod(name, returnType, attributes);
+            CodeMemberMethod method = new CodeMemberMethod(){
+                Name = name,
+                ReturnType = NewTypeReference(returnType),
+                Attributes = attributes
+            };
             if (parameters != null)
             {
                 foreach (Parameter param in parameters)

@@ -267,7 +267,7 @@ namespace ForgeModGenerator
 #if DEBUG
             else
             {
-                System.Windows.MessageBox.Show(e.Action.ToString()); // TODO: Remove it
+                //System.Windows.MessageBox.Show(e.Action.ToString()); // TODO: Remove it
             }
 #endif
         }

@@ -87,6 +87,8 @@ namespace ForgeModGenerator
 
         public abstract IEnumerable<TFolder> FindFolders(string path, bool createRootIfEmpty = false);
 
+        public Task<IEnumerable<TFolder>> FindFoldersAsync(string path, bool createRootIfEmpty = false) => Task.Run(() => { return FindFolders(path, createRootIfEmpty); });
+
         public bool TryGetFolder(string path, out TFolder folder)
         {
             string folderPath = IOHelper.GetDirectoryPath(path);

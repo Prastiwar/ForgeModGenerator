@@ -142,7 +142,7 @@ namespace ForgeModGenerator.Models
             {
                 string sub = path.Remove(0, length + 1);
                 int index = sub.IndexOf("/");
-                return index >= 1 ? sub.Substring(0, index) : null;
+                return index >= 1 ? sub.Substring(0, index) : sub;
             }
             catch (System.Exception ex)
             {

@@ -60,7 +60,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
                     Folders.OnFilesChanged -= SubscribeFolderEvents;
                     Folders.Clear();
                 }
-                Folders = new ObservableFolder<SoundEvent>(FoldersRootPath, FileSynchronizer.FindFolders(FoldersJsonFilePath, true));
+                Folders = new ObservableFolder<SoundEvent>(FoldersRootPath, await FileSynchronizer.FindFoldersAsync(FoldersJsonFilePath, true));
                 SubscribeFolderEvents(Folders, new FileChangedEventArgs<SoundEvent>(Folders.Files, FileChange.Add));
                 Folders.OnFilesChanged += SubscribeFolderEvents;
                 Folders.OnFilesChanged += OnFoldersCollectionChanged;
