@@ -28,12 +28,33 @@ namespace ForgeModGenerator.Tests
         }
 
         [TestMethod]
+        public void GenerateComment()
+        {
+            CodeMemberMethod method = new CodeMemberMethod() { Name = "someMethod" };
+            CodeCommentStatement comment = new CodeCommentStatement("Does nothing, but something I should write there. \n So I write something like this {@code int} ", true);
+            method.Comments.Add(comment);
+            string code = GenerateMember(TestContext, method);
+            Assert.IsTrue(code.Contains(@"
+    /**
+     * Does nothing, but something I should write there. 
+     * So I write something like this {@code int} 
+     */"), code);
+
+            comment.Comment.DocComment = false;
+            comment.Comment.Text = "Some other comment \n just to be happy";
+            code = GenerateMember(TestContext, method);
+            Assert.IsTrue(code.Contains(@"
+    // Some other comment 
+    // just to be happy"), code);
+        }
+
+        [TestMethod]
         public void GenerateField()
         {
             CodeMemberField field = new CodeMemberField(new CodeTypeReference(typeof(string)), "someField") { Attributes = MemberAttributes.Private };
             string code = GenerateMember(TestContext, field);
             Assert.IsTrue(code.Contains("private String someField;"), code);
-            
+
             field.Name = "someBlock";
             field.Type = new CodeTypeReference("Block");
             field.Attributes = MemberAttributes.Public | MemberAttributes.Static | MemberAttributes.Final;

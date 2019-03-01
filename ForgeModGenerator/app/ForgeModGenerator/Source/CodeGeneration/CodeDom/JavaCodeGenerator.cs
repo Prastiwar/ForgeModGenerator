@@ -463,40 +463,47 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
 
         private void GenerateComment(CodeComment e)
         {
-            //string commentLineStart = e.DocComment ? "///" : "//";
-            //Output.Write(commentLineStart);
-            //Output.Write(" ");
+            string commentLineStart = e.DocComment ? " *" : "//";
+            if (e.DocComment)
+            {
+                output.WriteLine("/**");
+            }
+            output.Write(commentLineStart + " ");
 
-            //string value = e.Text;
-            //for (int i = 0; i < value.Length; i++)
-            //{
-            //    if (value[i] == '\u0000')
-            //    {
-            //        continue;
-            //    }
-            //    Output.Write(value[i]);
+            string value = e.Text;
+            for (int i = 0; i < value.Length; i++)
+            {
+                if (value[i] == '\u0000')
+                {
+                    continue;
+                }
+                output.Write(value[i]);
 
-            //    if (value[i] == '\r')
-            //    {
-            //        if (i < value.Length - 1 && value[i + 1] == '\n')
-            //        { // if next char is '\n', skip it
-            //            Output.Write('\n');
-            //            i++;
-            //        }
-            //        //((IndentedTextWriter)Output).InternalOutputTabs(); // ERROR
-            //        Output.Write(commentLineStart);
-            //    }
-            //    else if (value[i] == '\n')
-            //    {
-            //        //((IndentedTextWriter)Output).InternalOutputTabs(); // ERROR
-            //        Output.Write(commentLineStart);
-            //    }
-            //    else if (value[i] == '\u2028' || value[i] == '\u2029' || value[i] == '\u0085')
-            //    {
-            //        Output.Write(commentLineStart);
-            //    }
-            //}
-            //Output.WriteLine();
+                if (value[i] == '\r')
+                {
+                    if (i < value.Length - 1 && value[i + 1] == '\n')
+                    { // if next char is '\n', skip it
+                        output.Write('\n');
+                        i++;
+                    }
+                    output.CallOutputTabs();
+                    output.Write(commentLineStart);
+                }
+                else if (value[i] == '\n')
+                {
+                    output.CallOutputTabs();
+                    output.Write(commentLineStart);
+                }
+                else if (value[i] == '\u2028' || value[i] == '\u2029' || value[i] == '\u0085')
+                {
+                    output.Write(commentLineStart);
+                }
+            }
+            output.WriteLine();
+            if (e.DocComment)
+            {
+                output.WriteLine(" */");
+            }
         }
 
         private void GenerateEntryPointMethod(CodeEntryPointMethod e, CodeTypeDeclaration c)

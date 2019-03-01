@@ -1,4 +1,5 @@
 ﻿using System.CodeDom;
+using System.CodeDom.Compiler;
 using System.Reflection;
 
 namespace ForgeModGenerator.CodeGeneration.CodeDom
@@ -17,5 +18,8 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
             }
             return isInterface;
         }
+
+        public static void CallOutputTabs(this IndentedTextWriter writer) => 
+            typeof(IndentedTextWriter).GetMethod("InternalOutputTabs", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(writer, null);
     }
 }
