@@ -11,40 +11,46 @@ namespace ForgeModGenerator
         public static readonly ILogger ErrorLogger = LogManager.GetLogger("ErrorLog");
         public static readonly ILogger InfoLogger = LogManager.GetLogger("InfoLog");
 
-        public static void Error(Exception ex, string message = "", bool messageClient = false)
+        private static string FormatMoreInformation(string message, string moreInformation) => $"aa{message}ds \n More information: {moreInformation}";
+
+        public static void Error(Exception ex, string message = "", bool messageClient = false, string moreInformation = null)
         {
             if (messageClient)
             {
                 MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            ErrorLogger.Error(ex, message);
+            string msg = string.IsNullOrEmpty(moreInformation) ? message : FormatMoreInformation(message, moreInformation);
+            ErrorLogger.Error(ex, msg);
         }
 
-        public static void Info(string message, bool messageClient = false)
+        public static void Info(string message, bool messageClient = false, string moreInformation = null)
         {
             if (messageClient)
             {
                 MessageBox.Show(message, "Info", MessageBoxButton.OK, MessageBoxImage.Information);
             }
-            InfoLogger.Info(message);
+            string msg = string.IsNullOrEmpty(moreInformation) ? message : FormatMoreInformation(message, moreInformation);
+            InfoLogger.Info(msg);
         }
 
-        public static void Warning(string message, bool messageClient = false)
+        public static void Warning(string message, bool messageClient = false, string moreInformation = null)
         {
             if (messageClient)
             {
                 MessageBox.Show(message, "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
-            InfoLogger.Warn(message);
+            string msg = string.IsNullOrEmpty(moreInformation) ? message : FormatMoreInformation(message, moreInformation);
+            InfoLogger.Warn(msg);
         }
 
-        public static void Warning(Exception ex, string message = "", bool messageClient = false)
+        public static void Warning(Exception ex, string message = "", bool messageClient = false, string moreInformation = null)
         {
             if (messageClient)
             {
                 MessageBox.Show(message, "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
-            ErrorLogger.Warn(ex, message);
+            string msg = string.IsNullOrEmpty(moreInformation) ? message : FormatMoreInformation(message, moreInformation);
+            ErrorLogger.Warn(ex, msg);
         }
     }
 }

@@ -142,7 +142,7 @@ namespace ForgeModGenerator
             }
             catch (Exception ex)
             {
-                Log.Error(ex, $"Couldnt load {typeof(ICollection<TFolder>)} from {content}", true);
+                Log.Error(ex, $"Couldnt load {path}", true, $"File content: {content}");
                 return new Collection<TFolder>();
             }
             if (loadOnlyExisting)
@@ -167,7 +167,7 @@ namespace ForgeModGenerator
             }
             catch (Exception ex)
             {
-                Log.Error(ex, $"Couldnt load {typeof(ICollection<TFolder>)} from {content}", true);
+                Log.Error(ex, $"Couldnt load {path}", true, $"File content: {content}");
                 return new Collection<TFolder>();
             }
             if (loadOnlyExisting)

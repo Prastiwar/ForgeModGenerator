@@ -180,7 +180,7 @@ namespace ForgeModGenerator.Models
             }
             catch (System.Exception ex)
             {
-                Log.Error(ex, $"Failed to load: {fmgModInfoPath}", true);
+                Log.Error(ex, $"Failed to load: {fmgModInfoPath}");
             }
             return null;
         }

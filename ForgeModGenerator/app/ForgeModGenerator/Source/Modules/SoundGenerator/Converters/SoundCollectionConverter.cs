@@ -26,11 +26,12 @@ namespace ForgeModGenerator.SoundGenerator.Converters
             Modid = modid ?? throw new ArgumentNullException(nameof(modid));
         }
 
-        public override bool CanConvert(Type objectType) => objectType.IsAssignableFrom(typeof(Collection<SoundEvent>))
+        public override bool CanConvert(Type objectType) => objectType.IsAssignableFrom(typeof(ICollection<SoundEvent>))
                                                         || objectType.IsAssignableFrom(typeof(IEnumerable<SoundEvent>))
                                                         || objectType.IsAssignableFrom(typeof(ObservableCollection<SoundEvent>))
                                                         || objectType.IsAssignableFrom(typeof(ObservableFolder<SoundEvent>))
                                                         || objectType.IsAssignableFrom(typeof(WpfObservableRangeCollection<SoundEvent>))
+                                                        || objectType.IsAssignableFrom(typeof(ObservableRangeCollection<SoundEvent>))
                                                         || objectType.IsAssignableFrom(typeof(List<SoundEvent>));
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
@@ -66,6 +67,14 @@ namespace ForgeModGenerator.SoundGenerator.Converters
             {
                 return new ObservableCollection<SoundEvent>(folders);
             }
+            else if (objectType.IsAssignableFrom(typeof(WpfObservableRangeCollection<SoundEvent>)))
+            {
+                return new WpfObservableRangeCollection<SoundEvent>(folders);
+            }
+            else if (objectType.IsAssignableFrom(typeof(ObservableRangeCollection<SoundEvent>)))
+            {
+                return new ObservableRangeCollection<SoundEvent>(folders);
+            }
             else if (objectType.IsAssignableFrom(typeof(List<SoundEvent>)))
             {
                 return folders.ToList();
@@ -82,12 +91,16 @@ namespace ForgeModGenerator.SoundGenerator.Converters
             {
                 throw new ArgumentNullException(nameof(value));
             }
-            IEnumerable<SoundEvent> folders = value as IEnumerable<SoundEvent>;
+            else if (!(value is IEnumerable<SoundEvent>))
+            {
+                throw new ArgumentException("Passed object should derive from IEnumerable");
+            }
+            IEnumerable<SoundEvent> folders = (IEnumerable<SoundEvent>)value;
             int i = 0;
-            foreach (SoundEvent item in folders.Where(folder => folder.Files.Count > 0))
+            foreach (SoundEvent folder in folders.Where(folder => folder.Files.Count > 0))
             {
                 itemBuilder.Clear();
-                string json = JsonConvert.SerializeObject(item, Formatting.Indented);
+                string json = JsonConvert.SerializeObject(folder, Formatting.Indented);
                 itemBuilder.Append(json);
 
                 bool isLastElement = i < folders.Count() - 1;

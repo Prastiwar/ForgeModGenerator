@@ -136,9 +136,16 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Source\CodeGeneration\CodeDom\CodeBreakLabelStatement.cs" />
+    <Compile Include="Source\CodeGeneration\CodeDom\CodeContinueLabelStatement.cs" />
     <Compile Include="Source\CodeGeneration\CodeDom\CodeForeachStatement.cs" />
+    <Compile Include="Source\CodeGeneration\CodeDom\CodeInstanceOfExpression.cs" />
     <Compile Include="Source\CodeGeneration\CodeDom\CodeSuperInvokeExpression.cs" />
+    <Compile Include="Source\CodeGeneration\CodeDom\Indentation.cs" />
     <Compile Include="Source\CodeGeneration\CodeDom\JavaCodeGenerator.cs" />
+    <Compile Include="Source\CodeGeneration\CodeDom\JavaCodeGeneratorOutput.cs" />
+    <Compile Include="Source\CodeGeneration\CodeDom\JavaCodeGeneratorStatements.cs" />
+    <Compile Include="Source\CodeGeneration\CodeDom\JavaCodeGeneratorExpressions.cs" />
     <Compile Include="Source\CodeGeneration\CodeDom\JavaCodeProvider.cs" />
     <Compile Include="Source\CodeGeneration\CodeDom\JavaMemberAttributeConverter.cs" />
     <Compile Include="Source\CodeGeneration\CodeDom\JavaModifierAttributeConverter.cs" />
