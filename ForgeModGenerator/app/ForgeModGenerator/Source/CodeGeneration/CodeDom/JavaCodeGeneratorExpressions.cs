@@ -143,7 +143,7 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
             if (e.CustomAttributes.Count > 0)
             {
                 // Parameter attributes should be in-line for readability
-                GenerateAttributes(e.CustomAttributes, null, true);
+                GenerateAttributes(e.CustomAttributes, true);
             }
             OutputTypeNamePair(e.Type, e.Name);
         }

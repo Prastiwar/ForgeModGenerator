@@ -1,7 +1,9 @@
-﻿using System.CodeDom;
+﻿using System;
+using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Collections;
 using System.Globalization;
+using System.Reflection;
 using System.Text;
 
 namespace ForgeModGenerator.CodeGeneration.CodeDom
@@ -48,50 +50,49 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
         {
             switch (attributes & MemberAttributes.AccessMask)
             {
-                case MemberAttributes.Family:
-                case MemberAttributes.FamilyOrAssembly:
-                    output.Write("protected");
-                    break;
                 case MemberAttributes.Private:
                     output.Write("private ");
                     break;
                 case MemberAttributes.Public:
                     output.Write("public ");
                     break;
+                case MemberAttributes.Family:
+                case MemberAttributes.FamilyOrAssembly:
+                    output.Write("protected");
+                    break;
+                default:
+                    break;
             }
         }
 
         private void OutputMemberScopeModifier(MemberAttributes attributes)
         {
-            switch (attributes & MemberAttributes.ScopeMask)
+            bool canBeAbstract = true;
+            if (attributes.HasFlag(MemberAttributes.Static))
             {
-                case MemberAttributes.Abstract:
-                    output.Write("abstract ");
-                    break;
-                case MemberAttributes.Static:
-                    output.Write("static ");
-                    break;
-                case MemberAttributes.Final:
-                    output.Write("final ");
-                    break;
-                default:
-                    break;
+                output.Write("static ");
+                canBeAbstract = false;
+            }
+            if (attributes.HasFlag(MemberAttributes.Final))
+            {
+                output.Write("final ");
+                canBeAbstract = false;
+            }
+            else if (canBeAbstract && attributes.HasFlag(MemberAttributes.Abstract))
+            {
+                output.Write("abstract ");
             }
         }
 
         private void OutputFieldScopeModifier(MemberAttributes attributes)
         {
-            switch (attributes & MemberAttributes.ScopeMask)
+            if (attributes.HasFlag(MemberAttributes.Static))
             {
-                case MemberAttributes.Const:
-                case MemberAttributes.Final:
-                    output.Write("final ");
-                    break;
-                case MemberAttributes.Static:
-                    output.Write("static ");
-                    break;
-                default:
-                    break;
+                output.Write("static ");
+            }
+            if (attributes.HasFlag(MemberAttributes.Final) || attributes.HasFlag(MemberAttributes.Const))
+            {
+                output.Write("final ");
             }
         }
 
@@ -183,7 +184,7 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
 
                 if (typeParameters[i].CustomAttributes.Count > 0)
                 {
-                    GenerateAttributes(typeParameters[i].CustomAttributes, null, true);
+                    GenerateAttributes(typeParameters[i].CustomAttributes, true);
                     output.Write(' ');
                 }
                 output.Write(typeParameters[i].Name);
@@ -316,7 +317,7 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                     first = false;
                 }
 
-                // it's possible that we call GetTypeArgumentsOutput with an empty typeArguments collection.  This is the case
+                // it's possible that we call GetTypeArgumentsOutput with an empty typeArguments collection. This is the case
                 // for open types, so we want to just output the brackets and commas.
                 if (i < typeArguments.Count)
                 {
@@ -349,6 +350,127 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                 typeRef = typeRef.ArrayElementType;
             }
             return s;
+        }
+
+        private void OutputAttributeArgument(CodeAttributeArgument arg)
+        {
+            if (arg.Name != null && arg.Name.Length > 0)
+            {
+                OutputIdentifier(arg.Name);
+                output.Write("=");
+            }
+            ((ICodeGenerator)this).GenerateCodeFromExpression(arg.Value, output.InnerWriter, options);
+        }
+
+        private void OutputTypeAttributes(CodeTypeDeclaration e)
+        {
+            if ((e.Attributes & MemberAttributes.New) != 0)
+            {
+                output.Write("new ");
+            }
+
+            TypeAttributes attributes = e.TypeAttributes;
+            switch (attributes & TypeAttributes.VisibilityMask)
+            {
+                case TypeAttributes.Public:
+                case TypeAttributes.NestedPublic:
+                    output.Write("public ");
+                    break;
+                case TypeAttributes.NestedPrivate:
+                    output.Write("private ");
+                    break;
+                case TypeAttributes.NestedFamily:
+                    output.Write("protected ");
+                    break;
+            }
+
+            if (e.IsEnum)
+            {
+                output.Write("enum ");
+            }
+            else
+            {
+                switch (attributes & TypeAttributes.ClassSemanticsMask)
+                {
+                    case TypeAttributes.Class:
+                        if ((attributes & TypeAttributes.Abstract) == TypeAttributes.Abstract)
+                        {
+                            output.Write("abstract ");
+                        }
+                        output.Write("class ");
+                        break;
+                    case TypeAttributes.Interface:
+                        output.Write("interface ");
+                        break;
+                }
+            }
+        }
+
+        private void GenerateAttributes(CodeAttributeDeclarationCollection attributes, bool inLine = false)
+        {
+            if (attributes.Count == 0)
+            {
+                return;
+            }
+
+            IEnumerator en = attributes.GetEnumerator();
+            bool paramArray = false;
+
+            while (en.MoveNext())
+            {
+                CodeAttributeDeclaration current = (CodeAttributeDeclaration)en.Current;
+
+                // params (varargs) must be last parameter to actually compile
+                if (current.Name.Equals("system.paramarrayattribute", StringComparison.OrdinalIgnoreCase))
+                {
+                    paramArray = true;
+                    continue;
+                }
+
+                output.Write("@");
+
+                if (current.AttributeType != null)
+                {
+                    output.Write(GetTypeOutput(current.AttributeType));
+                }
+                output.Write("(");
+                bool firstArg = true;
+                foreach (CodeAttributeArgument arg in current.Arguments)
+                {
+                    if (!firstArg)
+                    {
+                        output.Write(", ");
+                    }
+                    else
+                    {
+                        firstArg = false;
+                    }
+                    OutputAttributeArgument(arg);
+                }
+                output.Write(")");
+
+                if (!inLine)
+                {
+                    output.WriteLine();
+                }
+                else
+                {
+                    output.Write(" ");
+                }
+            }
+
+            if (paramArray)
+            {
+                output.Write("params");
+                if (!inLine)
+                {
+                    output.WriteLine();
+                }
+                else
+                {
+                    output.Write(" ");
+                }
+            }
         }
     }
 }

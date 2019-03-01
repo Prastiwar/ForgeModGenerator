@@ -142,6 +142,7 @@
     <Compile Include="Source\CodeGeneration\CodeDom\CodeInstanceOfExpression.cs" />
     <Compile Include="Source\CodeGeneration\CodeDom\CodeSuperInvokeExpression.cs" />
     <Compile Include="Source\CodeGeneration\CodeDom\Indentation.cs" />
+    <Compile Include="Source\CodeGeneration\CodeDom\JavaCodeExtensions.cs" />
     <Compile Include="Source\CodeGeneration\CodeDom\JavaCodeGenerator.cs" />
     <Compile Include="Source\CodeGeneration\CodeDom\JavaCodeGeneratorOutput.cs" />
     <Compile Include="Source\CodeGeneration\CodeDom\JavaCodeGeneratorStatements.cs" />

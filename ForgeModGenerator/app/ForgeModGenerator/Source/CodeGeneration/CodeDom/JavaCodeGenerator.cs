@@ -288,9 +288,10 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
             bool first = true;
             CodeTypeReferenceCollection classes = new CodeTypeReferenceCollection();
             CodeTypeReferenceCollection interfaces = new CodeTypeReferenceCollection();
+
             foreach (CodeTypeReference typeRef in e.BaseTypes)
             {
-                if (typeRef.IsInterface)
+                if (typeRef.IsInterface())
                 {
                     interfaces.Add(typeRef);
                 }
@@ -299,6 +300,7 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                     classes.Add(typeRef);
                 }
             }
+
             foreach (CodeTypeReference typeClass in classes)
             {
                 if (!first)
@@ -312,6 +314,7 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                 }
                 OutputType(typeClass);
             }
+
             first = true;
             foreach (CodeTypeReference typeInterface in interfaces)
             {
@@ -557,7 +560,7 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
             }
             if (e.ReturnTypeCustomAttributes.Count > 0)
             {
-                GenerateAttributes(e.ReturnTypeCustomAttributes, "return: ");
+                GenerateAttributes(e.ReturnTypeCustomAttributes);
             }
 
             if (!IsCurrentInterface)
@@ -647,7 +650,6 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                 {
                     GenerateAttributes(e.CustomAttributes);
                 }
-
                 OutputMemberAccessModifier(e.Attributes);
                 OutputVTableModifier(e.Attributes);
                 OutputFieldScopeModifier(e.Attributes);

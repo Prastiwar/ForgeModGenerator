@@ -57,7 +57,9 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dummies.cs" />
     <Compile Include="Tests\CommandTrackerTests.cs" />
+    <Compile Include="Tests\JavaCodeGeneratorTests.cs" />
     <Compile Include="Tests\PathTests.cs" />
     <Compile Include="Tests\SoundGeneratorTests.cs" />
     <Compile Include="Tests\ModGeneratorTests.cs" />
