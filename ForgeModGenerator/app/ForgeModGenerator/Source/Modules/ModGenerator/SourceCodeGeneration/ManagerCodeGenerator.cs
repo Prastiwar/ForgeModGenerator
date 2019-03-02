@@ -1,4 +1,5 @@
 ﻿using ForgeModGenerator.CodeGeneration;
+using ForgeModGenerator.CodeGeneration.CodeDom;
 using ForgeModGenerator.Models;
 using System.CodeDom;
 using System.IO;
@@ -41,14 +42,14 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             CodeTypeDeclaration managerClass = NewClassWithMembers(null, true);
 
             // TODO: Add annotation @Instance
-            CodeMemberField instanceField = NewField(Modname, "instance", MemberAttributes.Private | MemberAttributes.Static);
+            CodeMemberField instanceField = NewField(Modname, "instance", MemberAttributes.Private | JavaMemberAttributes.StaticOnly);
             managerClass.Members.Add(instanceField);
 
             // TODO: Add annotation @SidedProxy(clientSide = {modname}Hook.CLIENTPROXYCLASS, serverSide = {modname}Hook.SERVERPROXYCLASS)
-            CodeMemberField proxyField = NewField("CommonProxy", "proxy", MemberAttributes.Private | MemberAttributes.Static);
+            CodeMemberField proxyField = NewField("CommonProxy", "proxy", MemberAttributes.Private | JavaMemberAttributes.StaticOnly);
             managerClass.Members.Add(proxyField);
 
-            managerClass.Members.Add(NewField("Logger", "logger", MemberAttributes.Private | MemberAttributes.Static));
+            managerClass.Members.Add(NewField("Logger", "logger", MemberAttributes.Private | JavaMemberAttributes.StaticOnly));
 
             managerClass.Members.Add(CretePreInitMethod());
             managerClass.Members.Add(CreateInitMethod());
@@ -56,7 +57,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             managerClass.Members.Add(CreateEmptyEventHandler("serverStart", "FMLServerStartingEvent"));
 
             // TODO: Add annotation @EventHandler
-            CodeMemberMethod getProxyMethod = NewMethod("getProxy", "ICommonProxy", MemberAttributes.Public | MemberAttributes.Static);
+            CodeMemberMethod getProxyMethod = NewMethod("getProxy", "ICommonProxy", MemberAttributes.Public | JavaMemberAttributes.StaticOnly);
             getProxyMethod.Statements.Add(NewReturnVar("proxy"));
             managerClass.Members.Add(getProxyMethod);
 

@@ -15,7 +15,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
         private CodeMemberMethod GetRegisterMethod(string registerType)
         {
             // TODO: Add annotation @SubscribeEvent
-            CodeMemberMethod method = NewMethod($"on{registerType}Register", typeof(void).FullName, MemberAttributes.Public | MemberAttributes.Static, new Parameter($"RegistryEvent.Register<{registerType}>", "event"));
+            CodeMemberMethod method = NewMethod($"on{registerType}Register", typeof(void).FullName, MemberAttributes.Public | JavaMemberAttributes.StaticOnly, new Parameter($"RegistryEvent.Register<{registerType}>", "event"));
             CodeMethodInvokeExpression getRegistry = NewMethodInvokeVar("event", "getRegistry");
             CodeFieldReferenceExpression list = NewFieldReferenceVar($"{Modname}{registerType}s", $"{registerType.ToUpper()}S");
             CodeMethodInvokeExpression registerParam = new CodeMethodInvokeExpression(list, "toArray", NewArray($"{registerType}", 0));
@@ -40,7 +40,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
                                                                                      GetRegisterMethod("Block"),
                                                                                      GetRegisterMethod("SoundEvent"));
             // TODO: Add annotation @SubscribeEvent
-            CodeMemberMethod modelRegister = NewMethod("onModelRegister", typeof(void).FullName, MemberAttributes.Public | MemberAttributes.Static, new Parameter("ModelRegistryEvent", "event"));
+            CodeMemberMethod modelRegister = NewMethod("onModelRegister", typeof(void).FullName, MemberAttributes.Public | JavaMemberAttributes.StaticOnly, new Parameter("ModelRegistryEvent", "event"));
             modelRegister.Statements.Add(CreateRegisterModelForeach("Item"));
             modelRegister.Statements.Add(CreateRegisterModelForeach("Block"));
             clas.Members.Add(modelRegister);

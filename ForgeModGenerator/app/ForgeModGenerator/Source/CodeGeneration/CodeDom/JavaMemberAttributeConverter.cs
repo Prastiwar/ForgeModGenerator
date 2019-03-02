@@ -4,17 +4,14 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
 {
     public class JavaMemberAttributeConverter : JavaModifierAttributeConverter
     {
-        private static volatile string[] names;
-        private static volatile object[] values;
-        private static volatile JavaMemberAttributeConverter defaultConverter;
-
         private JavaMemberAttributeConverter() { }
 
+        private static volatile JavaMemberAttributeConverter defaultConverter;
         public static JavaMemberAttributeConverter Default => defaultConverter ?? (defaultConverter = new JavaMemberAttributeConverter());
 
         protected override object DefaultValue => MemberAttributes.Private;
 
-        // Attribute names
+        private static volatile string[] names;
         protected override string[] Names {
             get {
                 if (names == null)
@@ -22,8 +19,6 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                     names = new string[] {
                         "Public",
                         "Protected",
-                        "Protected Internal",
-                        "Internal",
                         "Private"
                     };
                 }
@@ -31,7 +26,7 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
             }
         }
 
-        // Attribute values
+        private static volatile object[] values;
         protected override object[] Values {
             get {
                 if (values == null)
@@ -39,8 +34,6 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                     values = new object[] {
                         MemberAttributes.Public,
                         MemberAttributes.Family,
-                        MemberAttributes.FamilyOrAssembly,
-                        MemberAttributes.Assembly,
                         MemberAttributes.Private
                     };
                 }

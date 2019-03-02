@@ -58,7 +58,8 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                     break;
                 case MemberAttributes.Family:
                 case MemberAttributes.FamilyOrAssembly:
-                    output.Write("protected");
+                case MemberAttributes.FamilyAndAssembly:
+                    output.Write("protected ");
                     break;
                 default:
                     break;
@@ -67,18 +68,19 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
 
         private void OutputMemberScopeModifier(MemberAttributes attributes)
         {
+            attributes &= MemberAttributes.ScopeMask;
             bool canBeAbstract = true;
             if (attributes.HasFlag(MemberAttributes.Static))
             {
                 output.Write("static ");
                 canBeAbstract = false;
             }
-            if (attributes.HasFlag(MemberAttributes.Final))
+            if (attributes != MemberAttributes.ScopeMask && attributes.HasFlag(MemberAttributes.Final))
             {
                 output.Write("final ");
                 canBeAbstract = false;
             }
-            else if (canBeAbstract && attributes.HasFlag(MemberAttributes.Abstract))
+            if (canBeAbstract && attributes.HasFlag(MemberAttributes.Abstract))
             {
                 output.Write("abstract ");
             }
@@ -86,11 +88,13 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
 
         private void OutputFieldScopeModifier(MemberAttributes attributes)
         {
+            attributes &= MemberAttributes.ScopeMask;
             if (attributes.HasFlag(MemberAttributes.Static))
             {
                 output.Write("static ");
             }
-            if (attributes.HasFlag(MemberAttributes.Final) || attributes.HasFlag(MemberAttributes.Const))
+            if (attributes != MemberAttributes.ScopeMask 
+                && (attributes.HasFlag(MemberAttributes.Final) || attributes.HasFlag(MemberAttributes.Const)))
             {
                 output.Write("final ");
             }
