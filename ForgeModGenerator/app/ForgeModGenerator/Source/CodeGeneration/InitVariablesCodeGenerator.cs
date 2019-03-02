@@ -26,9 +26,9 @@ namespace ForgeModGenerator.CodeGeneration
 
         protected CodeCompileUnit CreateDefaultTargetCodeUnit(string className, string elementType, string baseFieldTypeCreation)
         {
-            CodeTypeDeclaration clas = NewClassWithMembers(className, true);
+            CodeTypeDeclaration clas = NewClassWithMembers(className);
 
-            CodeMemberField listField = new CodeMemberField($"List<{elementType}>", className.ToUpper()) {
+            CodeMemberField listField = new CodeMemberField($"List<{elementType}>", elementType.ToUpper() + "s") {
                 Attributes = MemberAttributes.Public | MemberAttributes.Static | MemberAttributes.Final,
                 InitExpression = new CodeObjectCreateExpression($"ArrayList<{elementType}>")
             };

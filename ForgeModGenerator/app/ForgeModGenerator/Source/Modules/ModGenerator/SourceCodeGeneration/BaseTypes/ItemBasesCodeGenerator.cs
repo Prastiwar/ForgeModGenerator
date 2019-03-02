@@ -12,17 +12,17 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
     {
         public ItemBasesCodeGenerator(Mod mod) : base(mod)
         {
-            string folder = Path.Combine(ModPaths.GeneratedSourceCodeFolder(Modname, Organization), "item");
+            string sourceFolder = Path.Combine(ModPaths.SourceCodeRootFolder(Modname, Organization));
             ScriptFilePaths = new string[] {
-                Path.Combine(folder, "ItemBase.java"),
-                Path.Combine(folder, "bow", "BowBase.java"),
-                Path.Combine(folder, "food", "FoodBase.java"),
-                Path.Combine(folder, "armor", "ArmorBase.java"),
-                Path.Combine(folder, "tool", "SwordBase.java"),
-                Path.Combine(folder, "tool", "SpadeBase.java"),
-                Path.Combine(folder, "tool", "PickaxeBase.java"),
-                Path.Combine(folder, "tool", "HoeBase.java"),
-                Path.Combine(folder, "tool", "AxeBase.java"),
+                Path.Combine(sourceFolder, SourceCodeLocator.ItemBase.RelativePath),
+                Path.Combine(sourceFolder, SourceCodeLocator.BowBase.RelativePath),
+                Path.Combine(sourceFolder, SourceCodeLocator.FoodBase.RelativePath),
+                Path.Combine(sourceFolder, SourceCodeLocator.ArmorBase.RelativePath),
+                Path.Combine(sourceFolder, SourceCodeLocator.SwordBase.RelativePath),
+                Path.Combine(sourceFolder, SourceCodeLocator.SpadeBase.RelativePath),
+                Path.Combine(sourceFolder, SourceCodeLocator.PickaxeBase.RelativePath),
+                Path.Combine(sourceFolder, SourceCodeLocator.HoeBase.RelativePath),
+                Path.Combine(sourceFolder, SourceCodeLocator.AxeBase.RelativePath),
             };
         }
 
@@ -33,50 +33,65 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             Parameter[] parameters = null;
             CodeCompileUnit unit = null;
             string fileName = Path.GetFileNameWithoutExtension(scriptPath);
-            switch (fileName)
+            if (fileName == SourceCodeLocator.ItemBase.ClassName)
             {
-                case "ItemBase":
-                    return CreateBaseItemUnit(fileName, "Item", false);
-                case "BowBase":
-                    return CreateBaseItemUnit(fileName, "ItemBow", false);
-                case "SwordBase":
-                    return CreateBaseItemUnit(fileName, "ItemSword", true);
-                case "SpadeBase":
-                    return CreateBaseItemUnit(fileName, "ItemSpade", true);
-                case "PickaxeBase":
-                    return CreateBaseItemUnit(fileName, "ItemPickaxe", true);
-                case "HoeBase":
-                    return CreateBaseItemUnit(fileName, "ItemHoe", true);
+                return CreateBaseItemUnit(fileName, "Item", false);
+            }
+            else if (fileName == SourceCodeLocator.BowBase.ClassName)
+            {
+                return CreateBaseItemUnit(fileName, "ItemBow", false);
+            }
+            else if (fileName == SourceCodeLocator.SwordBase.ClassName)
+            {
+                return CreateBaseItemUnit(fileName, "ItemSword", true);
+            }
+            else if (fileName == SourceCodeLocator.SpadeBase.ClassName)
+            {
+                return CreateBaseItemUnit(fileName, "ItemSpade", true);
+            }
+            else if (fileName == SourceCodeLocator.PickaxeBase.ClassName)
+            {
+                return CreateBaseItemUnit(fileName, "ItemPickaxe", true);
+            }
+            else if (fileName == SourceCodeLocator.HoeBase.ClassName)
+            {
+                return CreateBaseItemUnit(fileName, "ItemHoe", true);
+            }
+            else if (fileName == SourceCodeLocator.AxeBase.ClassName)
+            {
+                unit = CreateBaseItemUnit(fileName, "ItemAxe", true);
+                CodeConstructor ctor = (CodeConstructor)unit.Namespaces[0].Types[0].Members[0];
+                CodeSuperConstructorInvokeExpression super = (CodeSuperConstructorInvokeExpression)((CodeExpressionStatement)ctor.Statements[0]).Expression;
+                super.AddParameter(6.0F);
+                super.AddParameter(-3.2F);
+                return unit;
+            }
 
-                case "AxeBase":
-                    unit = CreateBaseItemUnit(fileName, "ItemAxe", true);
-                    CodeConstructor ctor = (CodeConstructor)unit.Namespaces[0].Types[0].Members[0]; 
-                    CodeSuperConstructorInvokeExpression super = (CodeSuperConstructorInvokeExpression)((CodeExpressionStatement)ctor.Statements[0]).Expression;
-                    super.AddParameter(6.0F);
-                    super.AddParameter(-3.2F);
-                    return unit;
-
-                case "FoodBase":
-                    parameters = new Parameter[] {
+            else if (fileName == SourceCodeLocator.FoodBase.ClassName)
+            {
+                parameters = new Parameter[] {
                         new Parameter(typeof(string).FullName, "name"),
                         new Parameter(typeof(int).FullName, "amount"),
                         new Parameter(typeof(float).FullName, "saturation"),
                         new Parameter(typeof(bool).FullName, "isAnimalFood")
                     };
-                    return CreateCustomItemUnit(fileName, "ItemFood", parameters);
-
-                case "ArmorBase":
-                    parameters = new Parameter[] {
+                return CreateCustomItemUnit(fileName, "ItemFood", parameters);
+            }
+            else if (fileName == SourceCodeLocator.ArmorBase.ClassName)
+            {
+                parameters = new Parameter[] {
                         new Parameter(typeof(string).FullName, "name"),
                         new Parameter("ArmorMaterial", "materialIn"),
                         new Parameter(typeof(int).FullName, "renderIndexIn"),
                         new Parameter("EntityEquipmentSlot", "equipmentSlotIn")
                     };
-                    unit = CreateCustomItemUnit(fileName, "ItemArmor", parameters);
-                    unit.Namespaces[0].Imports.Add(new CodeNamespaceImport("net.minecraft.inventory.EntityEquipmentSlot"));
-                    return unit;
-                default:
-                    throw new NotImplementedException($"CodeCompileUnit for {fileName} not found");
+                unit = CreateCustomItemUnit(fileName, "ItemArmor", parameters);
+                unit.Namespaces[0].Imports.Add(new CodeNamespaceImport("net.minecraft.inventory.EntityEquipmentSlot"));
+                return unit;
+            }
+            else
+            {
+                throw new NotImplementedException($"CodeCompileUnit for {fileName} not found");
             }
         }
 
@@ -102,10 +117,10 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
         private CodeCompileUnit CreateCustomItemUnit(string className, string baseType, params Parameter[] ctorParameters)
         {
             CodeTypeDeclaration clas = CreateBaseItemClass(className, baseType, ctorParameters);
-            return NewCodeUnit(clas, $"{GeneratedPackageName}.{Modname}",
-                                     $"{GeneratedPackageName}.gui.{Modname}CreativeTab",
-                                     $"{GeneratedPackageName}.{Modname}Items",
-                                     $"{GeneratedPackageName}.handler.IHasModel",
+            return NewCodeUnit(clas, $"{PackageName}.{SourceCodeLocator.Manager.ImportFullName}",
+                                     $"{PackageName}.{SourceCodeLocator.CreativeTab.ImportFullName}",
+                                     $"{PackageName}.{SourceCodeLocator.Items.ImportFullName}",
+                                     $"{PackageName}.{SourceCodeLocator.ModelInterface.ImportFullName}",
                                      $"net.minecraft.item.{baseType}");
         }
 
@@ -113,7 +128,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
         {
             // TODO: Add annotation @Override
             CodeMemberMethod method = NewMethod("registerModels", typeof(void).FullName, MemberAttributes.Public);
-            CodeMethodInvokeExpression getProxy = NewMethodInvokeVar(Modname, "getProxy");
+            CodeMethodInvokeExpression getProxy = NewMethodInvokeVar(SourceCodeLocator.Manager.ClassName, "getProxy");
             method.Statements.Add(NewMethodInvoke(getProxy, "registerItemRenderer", NewThis(), NewPrimitive(0), NewPrimitive("inventory")));
             return method;
         }
@@ -142,7 +157,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 
         private CodeTypeDeclaration CreateBaseItemClass(string className, string baseClass, CodeConstructor ctor)
         {
-            CodeTypeDeclaration clas = NewClassWithBases(className, false, baseClass, "IHasModel");
+            CodeTypeDeclaration clas = NewClassWithBases(className, baseClass, SourceCodeLocator.ModelInterface.ClassName);
             clas.Members.Add(ctor);
             clas.Members.Add(CreateItemRegisterModelsMethod());
             return clas;
@@ -163,8 +178,8 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             CodeSuperConstructorInvokeExpression super = new CodeSuperConstructorInvokeExpression(ctorArgs);
             CodeMethodInvokeExpression setUnlocalizedName = NewMethodInvoke("setUnlocalizedName", NewVarReference("name"));
             CodeMethodInvokeExpression setRegistryName = NewMethodInvoke("setRegistryName", NewVarReference("name"));
-            CodeMethodInvokeExpression setCreativeTab = NewMethodInvoke("setCreativeTab", NewVarReference(Modname + "CreativeTab.MODCEATIVETAB"));
-            CodeMethodInvokeExpression addToList = NewMethodInvoke(NewFieldReferenceVar(Modname + "Items", "ITEMS"), "add", NewThis());
+            CodeMethodInvokeExpression setCreativeTab = NewMethodInvoke("setCreativeTab", NewFieldReferenceType(SourceCodeLocator.CreativeTab.ClassName, "MODCEATIVETAB"));
+            CodeMethodInvokeExpression addToList = NewMethodInvoke(NewFieldReferenceVar(SourceCodeLocator.Items.ClassName, "ITEMS"), "add", NewThis());
             return new CodeExpression[] { super, setUnlocalizedName, setRegistryName, setCreativeTab, addToList };
         }
     }

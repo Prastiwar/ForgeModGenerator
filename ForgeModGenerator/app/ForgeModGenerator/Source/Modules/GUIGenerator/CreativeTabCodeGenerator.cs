@@ -7,19 +7,20 @@ namespace ForgeModGenerator.GUIGenerator
 {
     public class CreativeTabCodeGenerator : ScriptCodeGenerator
     {
-        public CreativeTabCodeGenerator(Mod mod) : base(mod) => ScriptFilePath = Path.Combine(ModPaths.GeneratedSourceCodeFolder(Modname, Organization), "gui", Modname + "CreativeTab.java");
+        public CreativeTabCodeGenerator(Mod mod) : base(mod) 
+            => ScriptFilePath = Path.Combine(ModPaths.SourceCodeRootFolder(Modname, Organization), SourceCodeLocator.CreativeTab.RelativePath);
 
         protected override string ScriptFilePath { get; }
 
         protected override CodeCompileUnit CreateTargetCodeUnit()
         {
-            CodeTypeDeclaration clas = NewClassWithMembers("CreativeTab", true);
+            CodeTypeDeclaration clas = NewClassWithMembers(SourceCodeLocator.CreativeTab.ClassName);
             clas.Members.Add(GetCreativeTab());
-            CodeNamespace package = NewPackage(clas, $"{GeneratedPackageName}.{Modname}Items",
-                                                            "net.minecraft.creativetab.CreativeTabs",
-                                                            "net.minecraft.item.ItemStack",
-                                                            "net.minecraftforge.fml.relauncher.Side",
-                                                            "net.minecraftforge.fml.relauncher.SideOnly");
+            CodeNamespace package = NewPackage(clas, $"{PackageName}.{SourceCodeLocator.Items.ImportFullName}",
+                                                      "net.minecraft.creativetab.CreativeTabs",
+                                                      "net.minecraft.item.ItemStack",
+                                                      "net.minecraftforge.fml.relauncher.Side",
+                                                      "net.minecraftforge.fml.relauncher.SideOnly");
             return NewCodeUnit(package);
         }
 
@@ -33,7 +34,7 @@ $"new CreativeTabs(\"{Modname}\") {{" + @"
     @SideOnly(Side.CLIENT)
     @Override
     public ItemStack getTabIconItem() {" +
-$"\n    	return new ItemStack({Modname}Items.{Modname}LOGO, 1);" + @"
+$"\n    	return new ItemStack({SourceCodeLocator.Items.ClassName}.MODLOGO, 1);" + @"
     }
 
     @SideOnly(Side.CLIENT)

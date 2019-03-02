@@ -11,7 +11,6 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
     public static class JavaAttributes
     {
         public const MemberAttributes StaticOnly = (MemberAttributes)15;
-        public const MemberAttributes StaticFinal = (MemberAttributes)3; // convenient attribute for MemberAttributes.Static
-        //public const TypeAttributes StaticFinal = TypeAttributes.Abstract | TypeAttributes.Sealed;
+        public const MemberAttributes StaticFinal = (MemberAttributes)3; // convenient attribute for MemberAttributes.Statics
     }
 }

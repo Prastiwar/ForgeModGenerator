@@ -399,7 +399,14 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                     case TypeAttributes.Class:
                         if (attributes.HasFlag(TypeAttributes.Sealed))
                         {
-                            output.Write("final ");
+                            if (attributes.HasFlag(TypeAttributes.Abstract))
+                            {
+                                output.Write("static ");
+                            }
+                            else
+                            {
+                                output.Write("final ");
+                            }
                         }
                         else if (attributes.HasFlag(TypeAttributes.Abstract))
                         {

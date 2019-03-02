@@ -7,16 +7,16 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 {
     public class ModHookCodeGenerator : ScriptCodeGenerator
     {
-        public ModHookCodeGenerator(Mod mod) : base(mod) => ScriptFilePath = Path.Combine(ModPaths.GeneratedSourceCodeFolder(Modname, Organization), Modname + "Hook.java");
+        public ModHookCodeGenerator(Mod mod) : base(mod) => ScriptFilePath = Path.Combine(ModPaths.SourceCodeRootFolder(Modname, Organization), SourceCodeLocator.Hook.RelativePath);
 
         protected override string ScriptFilePath { get; }
 
         protected CodeMemberField CreateHookString(string variableName, string value) => NewFieldGlobal(typeof(string).FullName, variableName.ToUpper(), NewPrimitive(value));
 
-        protected override CodeCompileUnit CreateTargetCodeUnit() => NewCodeUnit(NewClassWithMembers("Hook", true, CreateHookString("MODID", Mod.ModInfo.Modid),
-                                                                                                                   CreateHookString("VERSION", Mod.ModInfo.Version),
-                                                                                                                   CreateHookString("ACCEPTEDVERSIONS", Mod.ModInfo.McVersion),
-                                                                                                                   CreateHookString("CLIENTPROXYCLASS", $"{GeneratedPackageName}.proxy.ClientProxy"),
-                                                                                                                   CreateHookString("SERVERPROXYCLASS", $"{GeneratedPackageName}.proxy.ServerProxy")));
+        protected override CodeCompileUnit CreateTargetCodeUnit() => NewCodeUnit(NewClassWithMembers(SourceCodeLocator.Hook.ClassName, CreateHookString("MODID", Mod.ModInfo.Modid),
+                                                                                                                                       CreateHookString("VERSION", Mod.ModInfo.Version),
+                                                                                                                                       CreateHookString("ACCEPTEDVERSIONS", Mod.ModInfo.McVersion),
+                                                                                                                                       CreateHookString("CLIENTPROXYCLASS", $"{PackageName}.proxy.ClientProxy"),
+                                                                                                                                       CreateHookString("SERVERPROXYCLASS", $"{PackageName}.proxy.ServerProxy")));
     }
 }

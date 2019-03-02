@@ -10,10 +10,10 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
     {
         public BlockBasesCodeGenerator(Mod mod) : base(mod)
         {
-            string folder = Path.Combine(ModPaths.GeneratedSourceCodeFolder(Modname, Organization), "block");
+            string sourceFolder = Path.Combine(ModPaths.SourceCodeRootFolder(Modname, Organization));
             ScriptFilePaths = new string[] {
-                Path.Combine(folder, "BlockBase.java"),
-                Path.Combine(folder, "OreBase.java")
+                Path.Combine(sourceFolder, SourceCodeLocator.BlockBase.RelativePath),
+                Path.Combine(sourceFolder, SourceCodeLocator.OreBase.RelativePath)
             };
         }
 
@@ -22,38 +22,41 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
         protected override CodeCompileUnit CreateTargetCodeUnit(string scriptPath)
         {
             string fileName = Path.GetFileNameWithoutExtension(scriptPath);
-            switch (fileName)
+            if (fileName == SourceCodeLocator.BlockBase.ClassName)
             {
-                case "BlockBase":
-                    return CreateBlockBase();
-                case "OreBase":
-                    return CreateOreBase();
-                default:
-                    throw new NotImplementedException($"CodeCompileUnit for {fileName} not found");
+                return CreateBlockBase();
+            }
+            else if (fileName == SourceCodeLocator.OreBase.ClassName)
+            {
+                return CreateOreBase();
+            }
+            else
+            {
+                throw new NotImplementedException($"CodeCompileUnit for {fileName} not found");
             }
         }
 
         private CodeCompileUnit CreateBlockBase()
         {
-            CodeTypeDeclaration clas = NewClassWithBases("BlockBase", false, "Block", "IHasModel");
+            CodeTypeDeclaration clas = NewClassWithBases(SourceCodeLocator.BlockBase.ClassName, "Block", SourceCodeLocator.ModelInterface.ClassName);
 
-            CodeConstructor ctor = NewConstructor("BlockBase", MemberAttributes.Public, new Parameter(typeof(string).FullName, "name"),
+            CodeConstructor ctor = NewConstructor(SourceCodeLocator.BlockBase.ClassName, MemberAttributes.Public, new Parameter(typeof(string).FullName, "name"),
                                                                                         new Parameter("Material", "material"));
 
             ctor.Statements.Add(NewSuper(NewVarReference("material")));
             ctor.Statements.Add(NewMethodInvokeVar("name", "setUnlocalizedName"));
             ctor.Statements.Add(NewMethodInvokeVar("name", "setRegistryName"));
-            ctor.Statements.Add(NewMethodInvoke("setCreativeTab", NewFieldReferenceType(Modname + "CreativeTab", "MODCEATIVETAB")));
-            ctor.Statements.Add(NewMethodInvoke(NewFieldReferenceType(Modname + "Blocks", "BLOCKS"), "add", NewThis()));
+            ctor.Statements.Add(NewMethodInvoke("setCreativeTab", NewFieldReferenceType(SourceCodeLocator.CreativeTab.ClassName, "MODCEATIVETAB")));
+            ctor.Statements.Add(NewMethodInvoke(NewFieldReferenceType(SourceCodeLocator.Blocks.ClassName, "BLOCKS"), "add", NewThis()));
             CodeMethodInvokeExpression setRegistryName = NewMethodInvoke(NewObject("ItemBlock", NewThis()), "setRegistryName", NewMethodInvoke(NewThis(), "getRegistryName"));
-            ctor.Statements.Add(NewMethodInvoke(NewFieldReferenceType(Modname + "Items", "ITEMS"), "add", setRegistryName));
+            ctor.Statements.Add(NewMethodInvoke(NewFieldReferenceType(SourceCodeLocator.Items.ClassName, "ITEMS"), "add", setRegistryName));
             clas.Members.Add(ctor);
 
             // TODO: Add annotation @Override
             CodeMemberMethod registerModels = NewMethod("registerModels", typeof(void).FullName, MemberAttributes.Public);
-            CodeMethodInvokeExpression registerItemRenderer = NewMethodInvoke(NewMethodInvokeType(Modname, "getProxy"), "registerItemRenderer", NewMethodInvokeType("Item", "getItemFromBlock", NewThis()),
-                                                                                                                                                NewPrimitive(0),
-                                                                                                                                                NewPrimitive("inventory"));
+            CodeMethodInvokeExpression registerItemRenderer = NewMethodInvoke(NewMethodInvokeType(SourceCodeLocator.Manager.ClassName, "getProxy"), "registerItemRenderer", NewMethodInvokeType("Item", "getItemFromBlock", NewThis()),
+                                                                                                                                                                            NewPrimitive(0),
+                                                                                                                                                                            NewPrimitive("inventory"));
             registerModels.Statements.Add(registerItemRenderer);
             clas.Members.Add(registerModels);
 
@@ -70,11 +73,11 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             setBlockHarvestLevel.Statements.Add(NewReturnThis());
             clas.Members.Add(setBlockHarvestLevel);
 
-            return NewCodeUnit(clas, $"{GeneratedPackageName}.{Modname}",
-                                     $"{GeneratedPackageName}.gui.{Modname}CreativeTab",
-                                     $"{GeneratedPackageName}.{Modname}Blocks",
-                                     $"{GeneratedPackageName}.{Modname}Items",
-                                     $"{GeneratedPackageName}.handler.IHasModel",
+            return NewCodeUnit(clas, $"{PackageName}.{SourceCodeLocator.Manager.ImportFullName}",
+                                     $"{PackageName}.{SourceCodeLocator.CreativeTab.ImportFullName}",
+                                     $"{PackageName}.{SourceCodeLocator.Blocks.ImportFullName}",
+                                     $"{PackageName}.{SourceCodeLocator.Items.ImportFullName}",
+                                     $"{PackageName}.{SourceCodeLocator.ModelInterface.ImportFullName}",
                                      "net.minecraft.block.Block",
                                      "net.minecraft.block.SoundType",
                                      "net.minecraft.block.material.Material",
@@ -84,11 +87,11 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 
         private CodeCompileUnit CreateOreBase()
         {
-            CodeTypeDeclaration clas = NewClassWithBases("OreBase", false, "BlockBase");
+            CodeTypeDeclaration clas = NewClassWithBases(SourceCodeLocator.OreBase.ClassName, SourceCodeLocator.BlockBase.ClassName);
             clas.Members.Add(NewField("Item", "dropItem", MemberAttributes.Family));
 
-            CodeConstructor ctor = NewConstructor("OreBase", MemberAttributes.Public, new Parameter(typeof(string).FullName, "name"),
-                                                                                      new Parameter("Material", "material"));
+            CodeConstructor ctor = NewConstructor(SourceCodeLocator.OreBase.ClassName, MemberAttributes.Public, new Parameter(typeof(string).FullName, "name"),
+                                                                                                                new Parameter("Material", "material"));
             ctor.Statements.Add(NewSuper(NewVarReference("name"), NewVarReference("material")));
             clas.Members.Add(ctor);
 

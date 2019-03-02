@@ -7,10 +7,10 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 {
     public class ModelCodeGenerator : ScriptCodeGenerator
     {
-        public ModelCodeGenerator(Mod mod) : base(mod) => ScriptFilePath = Path.Combine(ModPaths.GeneratedSourceCodeFolder(Modname, Organization), "handler", "IHasModel.java");
+        public ModelCodeGenerator(Mod mod) : base(mod) => ScriptFilePath = Path.Combine(ModPaths.SourceCodeRootFolder(Modname, Organization), SourceCodeLocator.ModelInterface.RelativePath);
 
         protected override string ScriptFilePath { get; }
 
-        protected override CodeCompileUnit CreateTargetCodeUnit() => NewCodeUnit(NewInterface("IHasModel", NewMethod("registerModels", typeof(void).FullName, MemberAttributes.Public)));
+        protected override CodeCompileUnit CreateTargetCodeUnit() => NewCodeUnit(NewInterface(SourceCodeLocator.ModelInterface.ClassName, NewMethod("registerModels", typeof(void).FullName, MemberAttributes.Public)));
     }
 }

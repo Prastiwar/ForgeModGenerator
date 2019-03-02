@@ -28,22 +28,20 @@ namespace ForgeModGenerator.CodeGeneration
             Modname = mod.ModInfo.Name;
             ModnameLower = Modname.ToLower();
             Organization = mod.Organization;
-            GeneratedPackageName = $"com.{Organization}.{ModnameLower}.generated";
+            PackageName = $"com.{Organization}.{ModnameLower}";
         }
 
         protected Mod Mod { get; }
         protected string Modname { get; }
         protected string ModnameLower { get; }
         protected string Organization { get; }
-        protected string GeneratedPackageName { get; }
+        protected string PackageName { get; }
         protected JavaCodeProvider JavaProvider { get; } = new JavaCodeProvider();
         protected CodeGeneratorOptions GeneratorOptions { get; } = new CodeGeneratorOptions() { BracingStyle = "Block" };
 
         protected abstract string ScriptFilePath { get; }
 
         public virtual void RegenerateScript() => RegenerateScript(ScriptFilePath, CreateTargetCodeUnit(), GeneratorOptions);
-
-        protected string GetModClassName(string name) => $"{Modname}{name}";
 
         protected void RegenerateScript(string scriptPath, CodeCompileUnit targetCodeUnit, CodeGeneratorOptions options)
         {
@@ -98,7 +96,7 @@ namespace ForgeModGenerator.CodeGeneration
 
         protected CodeMemberMethod NewMethod(string name, string returnType, MemberAttributes attributes, params Parameter[] parameters)
         {
-            CodeMemberMethod method = new CodeMemberMethod(){
+            CodeMemberMethod method = new CodeMemberMethod() {
                 Name = name,
                 ReturnType = NewTypeReference(returnType),
                 Attributes = attributes
@@ -139,9 +137,9 @@ namespace ForgeModGenerator.CodeGeneration
         }
 
         // Gets public class "{Modname}name"
-        protected CodeTypeDeclaration NewClassWithMembers(string name, bool useModname = false, params CodeTypeMember[] members) => NewClassWithMembers(useModname ? GetModClassName(name) : name, TypeAttributes.Public, members);
+        protected CodeTypeDeclaration NewClassWithMembers(string name, params CodeTypeMember[] members) => NewClassWithMembers(name, TypeAttributes.Public, members);
 
-        protected CodeTypeDeclaration NewClassWithBases(string name, bool useModname = false, params string[] bases) => NewClassWithBases(useModname ? GetModClassName(name) : name, TypeAttributes.Public, bases);
+        protected CodeTypeDeclaration NewClassWithBases(string name, params string[] bases) => NewClassWithBases(name, TypeAttributes.Public, bases);
 
         protected CodeTypeDeclaration NewClassWithMembers(string name, TypeAttributes attributes, params CodeTypeMember[] members)
         {
@@ -188,7 +186,7 @@ namespace ForgeModGenerator.CodeGeneration
 
         protected CodeNamespace NewPackage(params string[] imports)
         {
-            CodeNamespace package = new CodeNamespace(GeneratedPackageName);
+            CodeNamespace package = new CodeNamespace(PackageName);
             if (imports != null)
             {
                 foreach (string import in imports)

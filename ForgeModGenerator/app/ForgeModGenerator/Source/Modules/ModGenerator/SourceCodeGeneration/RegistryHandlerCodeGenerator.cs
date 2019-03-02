@@ -8,7 +8,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 {
     public class RegistryHandlerCodeGenerator : ScriptCodeGenerator
     {
-        public RegistryHandlerCodeGenerator(Mod mod) : base(mod) => ScriptFilePath = Path.Combine(ModPaths.GeneratedSourceCodeFolder(Modname, Organization), "handler", "RegistryHandler.java");
+        public RegistryHandlerCodeGenerator(Mod mod) : base(mod) => ScriptFilePath = Path.Combine(ModPaths.SourceCodeRootFolder(Modname, Organization), SourceCodeLocator.RegistryHandler.RelativePath);
 
         protected override string ScriptFilePath { get; }
 
@@ -38,19 +38,19 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
         protected override CodeCompileUnit CreateTargetCodeUnit()
         {
             // TODO: Add annotation @EventBusSubscriber
-            CodeTypeDeclaration clas = NewClassWithMembers("RegistryHandler", false, GetRegisterMethod("Item"),
-                                                                                     GetRegisterMethod("Block"),
-                                                                                     GetRegisterMethod("Sound", "SoundEvent"));
+            CodeTypeDeclaration clas = NewClassWithMembers(SourceCodeLocator.RegistryHandler.ClassName, GetRegisterMethod("Item"),
+                                                                                                        GetRegisterMethod("Block"),
+                                                                                                        GetRegisterMethod("Sound", "SoundEvent"));
             // TODO: Add annotation @SubscribeEvent
             CodeMemberMethod modelRegister = NewMethod("onModelRegister", typeof(void).FullName, MemberAttributes.Public | JavaAttributes.StaticOnly, new Parameter("ModelRegistryEvent", "event"));
             modelRegister.Statements.Add(CreateRegisterModelForeach("Item"));
             modelRegister.Statements.Add(CreateRegisterModelForeach("Block"));
             clas.Members.Add(modelRegister);
 
-            return NewCodeUnit(clas, $"{GeneratedPackageName}.{Modname}Blocks",
-                                     $"{GeneratedPackageName}.{Modname}Items",
-                                     $"{GeneratedPackageName}.{Modname}Sounds",
-                                     $"{GeneratedPackageName}.handler.IHasModel",
+            return NewCodeUnit(clas, $"{PackageName}.{SourceCodeLocator.Blocks.ImportFullName}",
+                                     $"{PackageName}.{SourceCodeLocator.Items.ImportFullName}",
+                                     $"{PackageName}.{SourceCodeLocator.Sounds.ImportFullName}",
+                                     $"{PackageName}.{SourceCodeLocator.ModelInterface.ImportFullName}",
                                      "net.minecraft.block.Block",
                                      "net.minecraft.item.Item",
                                      "net.minecraft.util.SoundEvent",

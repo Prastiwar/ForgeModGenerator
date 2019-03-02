@@ -173,6 +173,7 @@
     <Compile Include="Source\Controls\NavButton.cs" />
     <Compile Include="Source\Exceptions\InvalidSynchronizationArgument.cs" />
     <Compile Include="Source\FileSystem\FoldersSynchronizer.cs" />
+    <Compile Include="Source\CodeGeneration\SourceCodeLocator.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundEventsSynchronizer.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundFileEditor.cs" />
     <Compile Include="Source\Services\DialogService.cs" />

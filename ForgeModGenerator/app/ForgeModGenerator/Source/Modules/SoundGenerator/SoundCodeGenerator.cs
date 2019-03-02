@@ -11,13 +11,13 @@ namespace ForgeModGenerator.SoundGenerator.CodeGeneration
     {
         public SoundCodeGenerator(Mod mod) : this(mod, null) { }
         public SoundCodeGenerator(Mod mod, IEnumerable<SoundEvent> soundEvents) : base(mod, soundEvents)
-            => ScriptFilePath = Path.Combine(ModPaths.GeneratedSourceCodeFolder(Modname, Organization), Modname + "Sounds.java");
+            => ScriptFilePath = Path.Combine(ModPaths.SourceCodeRootFolder(Modname, Organization), SourceCodeLocator.Sounds.RelativePath);
 
         protected override string ScriptFilePath { get; }
 
         protected override string GetElementName(SoundEvent element) => element.EventName;
 
-        protected override CodeCompileUnit CreateTargetCodeUnit() => CreateDefaultTargetCodeUnit("Sounds", "SoundEvent", "SoundEventBase");
+        protected override CodeCompileUnit CreateTargetCodeUnit() => CreateDefaultTargetCodeUnit(SourceCodeLocator.Sounds.ClassName, "SoundEvent", SourceCodeLocator.SoundEventBase.ClassName);
 
         protected override IEnumerable<SoundEvent> GetElementsForMod(Mod mod) => base.GetElementsForMod(mod); // TODO: Get SoundEvents for mod
 

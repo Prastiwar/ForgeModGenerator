@@ -10,11 +10,11 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
     {
         public ProxyCodeGenerator(Mod mod) : base(mod)
         {
-            string proxyFolder = Path.Combine(ModPaths.GeneratedSourceCodeFolder(Modname, Organization), "proxy");
+            string sourcePath = ModPaths.SourceCodeRootFolder(Modname, Organization);
             ScriptFilePaths = new string[] {
-                Path.Combine(proxyFolder, "ICommonProxy.java"),
-                Path.Combine(proxyFolder, "ClientProxy.java"),
-                Path.Combine(proxyFolder, "ServerProxy.java")
+                Path.Combine(sourcePath, SourceCodeLocator.CommonProxyInterface.RelativePath),
+                Path.Combine(sourcePath, SourceCodeLocator.ClientProxy.RelativePath),
+                Path.Combine(sourcePath, SourceCodeLocator.ServerProxy.RelativePath)
             };
         }
 
@@ -23,22 +23,27 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
         protected override CodeCompileUnit CreateTargetCodeUnit(string scriptPath)
         {
             string fileName = Path.GetFileNameWithoutExtension(scriptPath);
-            switch (fileName)
+            if (fileName == SourceCodeLocator.CommonProxyInterface.ClassName)
             {
-                case "ICommonProxy":
-                    return CreateICommonProxyCodeUnit();
-                case "ClientProxy":
-                    return CreateClientProxyCodeUnit();
-                case "ServerProxy":
-                    return CreateServerProxyCodeUnit();
-                default:
-                    throw new NotImplementedException($"CodeCompileUnit for {fileName} not found");
+                return CreateICommonProxyCodeUnit();
+            }
+            else if (fileName == SourceCodeLocator.ClientProxy.ClassName)
+            {
+                return CreateClientProxyCodeUnit();
+            }
+            else if (fileName == SourceCodeLocator.ServerProxy.ClassName)
+            {
+                return CreateServerProxyCodeUnit();
+            }
+            else
+            {
+                throw new NotImplementedException($"CodeCompileUnit for {fileName} not found");
             }
         }
 
         private CodeCompileUnit CreateClientProxyCodeUnit()
         {
-            CodeTypeDeclaration proxyClass = NewClassWithBases("ClientProxy", false, "ICommonProxy");
+            CodeTypeDeclaration proxyClass = NewClassWithBases(SourceCodeLocator.ClientProxy.ClassName, SourceCodeLocator.CommonProxyInterface.ClassName);
             CodeMemberMethod registerItemRendererMethod = CreateRegisterItemRendererMethod();
             registerItemRendererMethod.Attributes |= MemberAttributes.Override;
             CodeObjectCreateExpression modelResourceLocation = NewObject("ModelResourceLocation", NewMethodInvokeVar("item", "getRegistryName", NewVarReference("id")));
@@ -51,14 +56,14 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 
         private CodeCompileUnit CreateServerProxyCodeUnit()
         {
-            CodeTypeDeclaration proxyClass = NewClassWithBases("ServerProxy", false, "ICommonProxy");
+            CodeTypeDeclaration proxyClass = NewClassWithBases(SourceCodeLocator.ServerProxy.ClassName, SourceCodeLocator.CommonProxyInterface.ClassName);
             CodeMemberMethod registerItemRendererMethod = CreateRegisterItemRendererMethod();
             registerItemRendererMethod.Attributes |= MemberAttributes.Override;
             proxyClass.Members.Add(registerItemRendererMethod);
             return NewCodeUnit(proxyClass, "net.minecraft.item.Item");
         }
 
-        private CodeCompileUnit CreateICommonProxyCodeUnit() => NewCodeUnit(NewInterface("ICommonProxy", CreateRegisterItemRendererMethod()), "net.minecraft.item.Item");
+        private CodeCompileUnit CreateICommonProxyCodeUnit() => NewCodeUnit(NewInterface(SourceCodeLocator.CommonProxyInterface.ClassName, CreateRegisterItemRendererMethod()), "net.minecraft.item.Item");
 
         private CodeMemberMethod CreateRegisterItemRendererMethod() => NewMethod("registerItemRenderer", typeof(void).FullName, MemberAttributes.Public, new Parameter("Item", "item"),
                                                                                                                                                          new Parameter(typeof(int).FullName, "meta"),

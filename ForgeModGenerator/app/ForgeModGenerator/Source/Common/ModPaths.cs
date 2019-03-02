@@ -34,6 +34,5 @@ namespace ForgeModGenerator
         public static string JavaSourceFolder(string modname) => Path.Combine(ModRootFolder(modname), "src", "main", "java", "com");
         public static string OrganizationRootFolder(string modname, string organization) => Path.Combine(JavaSourceFolder(modname), organization);
         public static string SourceCodeRootFolder(string modname, string organization) => Path.Combine(JavaSourceFolder(modname), organization, modname.ToLower());
-        public static string GeneratedSourceCodeFolder(string modname, string organization) => Path.Combine(SourceCodeRootFolder(modname, organization), "generated");
     }
 }

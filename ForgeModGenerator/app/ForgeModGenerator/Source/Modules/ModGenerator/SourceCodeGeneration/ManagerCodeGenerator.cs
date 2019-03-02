@@ -8,7 +8,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 {
     public class ManagerCodeGenerator : ScriptCodeGenerator
     {
-        public ManagerCodeGenerator(Mod mod) : base(mod) => ScriptFilePath = Path.Combine(ModPaths.GeneratedSourceCodeFolder(Modname, Organization), Modname + ".java");
+        public ManagerCodeGenerator(Mod mod) : base(mod) => ScriptFilePath = Path.Combine(ModPaths.SourceCodeRootFolder(Modname, Organization), SourceCodeLocator.Manager.RelativePath);
 
         protected override string ScriptFilePath { get; }
 
@@ -26,7 +26,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
         {
             // TODO: Add annotation @EventHandler
             CodeMemberMethod initMethod = NewMethod("init", typeof(void).FullName, MemberAttributes.Public, new Parameter("FMLInitializationEvent", "event"));
-            initMethod.Statements.Add(NewMethodInvokeType(Modname + "Recipes", "init"));
+            initMethod.Statements.Add(NewMethodInvokeType(SourceCodeLocator.Recipes.ClassName, "init"));
             return initMethod;
         }
 
@@ -39,7 +39,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 
         protected override CodeCompileUnit CreateTargetCodeUnit()
         {
-            CodeTypeDeclaration managerClass = NewClassWithMembers(null, true);
+            CodeTypeDeclaration managerClass = NewClassWithMembers(SourceCodeLocator.Manager.ClassName);
 
             // TODO: Add annotation @Instance
             CodeMemberField instanceField = NewField(Modname, "instance", MemberAttributes.Private | JavaAttributes.StaticOnly);
@@ -57,7 +57,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             managerClass.Members.Add(CreateEmptyEventHandler("serverStart", "FMLServerStartingEvent"));
 
             // TODO: Add annotation @EventHandler
-            CodeMemberMethod getProxyMethod = NewMethod("getProxy", "ICommonProxy", MemberAttributes.Public | JavaAttributes.StaticOnly);
+            CodeMemberMethod getProxyMethod = NewMethod("getProxy", SourceCodeLocator.CommonProxyInterface.ClassName, MemberAttributes.Public | JavaAttributes.StaticOnly);
             getProxyMethod.Statements.Add(NewReturnVar("proxy"));
             managerClass.Members.Add(getProxyMethod);
 
@@ -69,8 +69,8 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
                                              "net.minecraftforge.fml.common.event.FMLPostInitializationEvent",
                                              "net.minecraftforge.fml.common.event.FMLPreInitializationEvent",
                                              "net.minecraftforge.fml.common.event.FMLServerStartingEvent",
-                                             $"{GeneratedPackageName}.{Modname}Recipes",
-                                             $"{GeneratedPackageName}.proxy.CommonProxy",
+                                             $"{PackageName}.{SourceCodeLocator.Recipes.ImportFullName}",
+                                             $"{PackageName}.{SourceCodeLocator.CommonProxyInterface.ImportFullName}",
                                              "org.apache.logging.log4j.Logger");
         }
     }
