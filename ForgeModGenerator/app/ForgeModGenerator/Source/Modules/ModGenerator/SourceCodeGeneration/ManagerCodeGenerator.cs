@@ -42,14 +42,14 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             CodeTypeDeclaration managerClass = NewClassWithMembers(null, true);
 
             // TODO: Add annotation @Instance
-            CodeMemberField instanceField = NewField(Modname, "instance", MemberAttributes.Private | JavaMemberAttributes.StaticOnly);
+            CodeMemberField instanceField = NewField(Modname, "instance", MemberAttributes.Private | JavaAttributes.StaticOnly);
             managerClass.Members.Add(instanceField);
 
             // TODO: Add annotation @SidedProxy(clientSide = {modname}Hook.CLIENTPROXYCLASS, serverSide = {modname}Hook.SERVERPROXYCLASS)
-            CodeMemberField proxyField = NewField("CommonProxy", "proxy", MemberAttributes.Private | JavaMemberAttributes.StaticOnly);
+            CodeMemberField proxyField = NewField("CommonProxy", "proxy", MemberAttributes.Private | JavaAttributes.StaticOnly);
             managerClass.Members.Add(proxyField);
 
-            managerClass.Members.Add(NewField("Logger", "logger", MemberAttributes.Private | JavaMemberAttributes.StaticOnly));
+            managerClass.Members.Add(NewField("Logger", "logger", MemberAttributes.Private | JavaAttributes.StaticOnly));
 
             managerClass.Members.Add(CretePreInitMethod());
             managerClass.Members.Add(CreateInitMethod());
@@ -57,7 +57,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             managerClass.Members.Add(CreateEmptyEventHandler("serverStart", "FMLServerStartingEvent"));
 
             // TODO: Add annotation @EventHandler
-            CodeMemberMethod getProxyMethod = NewMethod("getProxy", "ICommonProxy", MemberAttributes.Public | JavaMemberAttributes.StaticOnly);
+            CodeMemberMethod getProxyMethod = NewMethod("getProxy", "ICommonProxy", MemberAttributes.Public | JavaAttributes.StaticOnly);
             getProxyMethod.Statements.Add(NewReturnVar("proxy"));
             managerClass.Members.Add(getProxyMethod);
 

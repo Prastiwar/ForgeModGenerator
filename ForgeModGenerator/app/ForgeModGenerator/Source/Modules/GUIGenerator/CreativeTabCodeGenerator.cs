@@ -29,11 +29,11 @@ namespace ForgeModGenerator.GUIGenerator
                 Attributes = MemberAttributes.Public | MemberAttributes.Static | MemberAttributes.Final,
             };
             field.InitExpression = new CodeSnippetExpression(
-$"public static final CreativeTabs MODCEATIVETAB = new CreativeTabs(\"{Modname}\") {{" + @"
+$"new CreativeTabs(\"{Modname}\") {{" + @"
     @SideOnly(Side.CLIENT)
     @Override
     public ItemStack getTabIconItem() {" +
-$"    	return new ItemStack({Modname}Items.{Modname}LOGO, 1);" + @"
+$"\n    	return new ItemStack({Modname}Items.{Modname}LOGO, 1);" + @"
     }
 
     @SideOnly(Side.CLIENT)

@@ -45,6 +45,9 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                 case CodeSnippetExpression val:
                     GenerateSnippetExpression(val);
                     break;
+                case CodeSuperConstructorInvokeExpression val:
+                    GenerateSuperConstructorInvokeExpression(val);
+                    break;
                 case CodeMethodInvokeExpression val:
                     GenerateMethodInvokeExpression(val);
                     break;
@@ -146,6 +149,13 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                 GenerateAttributes(e.CustomAttributes, true);
             }
             OutputTypeNamePair(e.Type, e.Name);
+        }
+
+        private void GenerateSuperConstructorInvokeExpression(CodeSuperConstructorInvokeExpression e)
+        {
+            output.Write("super(");
+            OutputExpressionList(e.Parameters);
+            output.Write(")");
         }
 
         private void GenerateMethodInvokeExpression(CodeMethodInvokeExpression e)

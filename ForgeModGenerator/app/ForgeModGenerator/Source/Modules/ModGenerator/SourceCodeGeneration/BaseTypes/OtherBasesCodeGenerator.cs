@@ -35,13 +35,13 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
         {
             CodeTypeDeclaration clas = NewClassWithBases("SoundEventBase", false, "SoundEvent");
             CodeConstructor ctor = NewConstructor("SoundEventBase", MemberAttributes.Public, new Parameter(typeof(string).FullName, "name"));
-            ctor.Parameters.Add(NewParameter(typeof(string).FullName, "name"));
             ctor.Statements.Add(new CodeSuperConstructorInvokeExpression(NewObject("ResourceLocation", NewFieldReferenceType(Modname + "Hook", "MODID"), NewVarReference("name"))));
             ctor.Statements.Add(NewMethodInvoke("setRegistryName", NewVarReference("name")));
-            ctor.Statements.Add(NewMethodInvoke("add", NewFieldReferenceType(Modname + "Sounds", "SOUNDS"), NewThis()));
+            ctor.Statements.Add(NewMethodInvoke(NewFieldReferenceType(Modname + "Sounds", "SOUNDS"), "add", NewThis()));
             clas.Members.Add(ctor);
             CodeNamespace package = NewPackage(clas, $"{GeneratedPackageName}.{Modname}Hook",
                                                             $"{GeneratedPackageName}.{Modname}Sounds",
+                                                            $"{GeneratedPackageName}.SoundEventBase",
                                                             "net.minecraft.util.ResourceLocation",
                                                             "net.minecraft.util.SoundEvent");
             return NewCodeUnit(package);

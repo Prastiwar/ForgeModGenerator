@@ -12,13 +12,15 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 
         protected override string ScriptFilePath { get; }
 
-        private CodeMemberMethod GetRegisterMethod(string registerType)
+        private CodeMemberMethod GetRegisterMethod(string initClassName, string customRegisterType = null)
         {
             // TODO: Add annotation @SubscribeEvent
-            CodeMemberMethod method = NewMethod($"on{registerType}Register", typeof(void).FullName, MemberAttributes.Public | JavaMemberAttributes.StaticOnly, new Parameter($"RegistryEvent.Register<{registerType}>", "event"));
+            string registerName = string.IsNullOrEmpty(customRegisterType) ? initClassName : customRegisterType;
+            CodeMemberMethod method = NewMethod($"on{initClassName}Register", typeof(void).FullName, MemberAttributes.Public | JavaAttributes.StaticOnly,
+                                                                                                     new Parameter($"RegistryEvent.Register<{registerName}>", "event"));
             CodeMethodInvokeExpression getRegistry = NewMethodInvokeVar("event", "getRegistry");
-            CodeFieldReferenceExpression list = NewFieldReferenceVar($"{Modname}{registerType}s", $"{registerType.ToUpper()}S");
-            CodeMethodInvokeExpression registerParam = new CodeMethodInvokeExpression(list, "toArray", NewArray($"{registerType}", 0));
+            CodeFieldReferenceExpression list = NewFieldReferenceVar($"{Modname}{initClassName}s", $"{initClassName.ToUpper()}S");
+            CodeMethodInvokeExpression registerParam = new CodeMethodInvokeExpression(list, "toArray", NewArray(registerName, 0));
             CodeMethodInvokeExpression registerAll = new CodeMethodInvokeExpression(getRegistry, "registerAll", registerParam);
             method.Statements.Add(registerAll);
             return method;
@@ -38,9 +40,9 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             // TODO: Add annotation @EventBusSubscriber
             CodeTypeDeclaration clas = NewClassWithMembers("RegistryHandler", false, GetRegisterMethod("Item"),
                                                                                      GetRegisterMethod("Block"),
-                                                                                     GetRegisterMethod("SoundEvent"));
+                                                                                     GetRegisterMethod("Sound", "SoundEvent"));
             // TODO: Add annotation @SubscribeEvent
-            CodeMemberMethod modelRegister = NewMethod("onModelRegister", typeof(void).FullName, MemberAttributes.Public | JavaMemberAttributes.StaticOnly, new Parameter("ModelRegistryEvent", "event"));
+            CodeMemberMethod modelRegister = NewMethod("onModelRegister", typeof(void).FullName, MemberAttributes.Public | JavaAttributes.StaticOnly, new Parameter("ModelRegistryEvent", "event"));
             modelRegister.Statements.Add(CreateRegisterModelForeach("Item"));
             modelRegister.Statements.Add(CreateRegisterModelForeach("Block"));
             clas.Members.Add(modelRegister);

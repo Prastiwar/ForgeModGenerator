@@ -50,7 +50,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 
                 case "AxeBase":
                     unit = CreateBaseItemUnit(fileName, "ItemAxe", true);
-                    CodeConstructor ctor = (CodeConstructor)unit.Namespaces[0].Types[0].Members[0];
+                    CodeConstructor ctor = (CodeConstructor)unit.Namespaces[0].Types[0].Members[0]; 
                     CodeSuperConstructorInvokeExpression super = (CodeSuperConstructorInvokeExpression)((CodeExpressionStatement)ctor.Statements[0]).Expression;
                     super.AddParameter(6.0F);
                     super.AddParameter(-3.2F);
@@ -114,7 +114,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             // TODO: Add annotation @Override
             CodeMemberMethod method = NewMethod("registerModels", typeof(void).FullName, MemberAttributes.Public);
             CodeMethodInvokeExpression getProxy = NewMethodInvokeVar(Modname, "getProxy");
-            method.Statements.Add(NewMethodInvoke(getProxy, "registerItemRenderer", NewVarReference("this"), NewPrimitive(0), NewPrimitive("inventory")));
+            method.Statements.Add(NewMethodInvoke(getProxy, "registerItemRenderer", NewThis(), NewPrimitive(0), NewPrimitive("inventory")));
             return method;
         }
 

@@ -167,7 +167,7 @@ namespace ForgeModGenerator.CodeGeneration
         }
 
         // Gets public interface
-        protected CodeTypeDeclaration NewInterface(string name, params CodeTypeMember[] members) => NewInterface(name, TypeAttributes.Public, members);
+        protected CodeTypeDeclaration NewInterface(string name, params CodeTypeMember[] members) => NewInterface(name, TypeAttributes.Interface | TypeAttributes.Public, members);
 
         protected CodeTypeDeclaration NewInterface(string name, TypeAttributes attributes, params CodeTypeMember[] members)
         {
@@ -199,7 +199,7 @@ namespace ForgeModGenerator.CodeGeneration
             return package;
         }
 
-        protected CodeCompileUnit NewCodeUnit(CodeTypeDeclaration defaultType, params string[] imports) => NewCodeUnit(NewPackage(imports));
+        protected CodeCompileUnit NewCodeUnit(CodeTypeDeclaration defaultType, params string[] imports) => NewCodeUnit(NewPackage(defaultType, imports));
 
         protected CodeCompileUnit NewCodeUnit(CodeNamespace package)
         {

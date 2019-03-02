@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.IO;
+using System.Reflection;
 
 namespace ForgeModGenerator.Tests
 {
@@ -28,6 +29,24 @@ namespace ForgeModGenerator.Tests
         }
 
         [TestMethod]
+        public void GenerateInterface()
+        {
+            CodeCompileUnit unit = new CodeCompileUnit();
+            CodeNamespace package = new CodeNamespace("testPackage");
+            CodeTypeDeclaration typ = new CodeTypeDeclaration("ITestInterface") { IsInterface = true };
+            typ.BaseTypes.Add(new CodeTypeReference("ISomeInterface"));
+            typ.BaseTypes.Add(new CodeTypeReference("ISomeOtherInterface"));
+            package.Types.Add(typ);
+            unit.Namespaces.Add(package);
+            string code = GenerateCode(TestContext, unit);
+            Assert.IsTrue(code.Contains("public interface ITestInterface implements ISomeInterface, ISomeOtherInterface"), code);
+
+            typ.Attributes = MemberAttributes.Assembly;
+            code = GenerateCode(TestContext, unit);
+            Assert.IsTrue(code.Contains("interface ITestInterface implements ISomeInterface, ISomeOtherInterface"), code);
+        }
+
+        [TestMethod]
         public void GenerateClass()
         {
             CodeCompileUnit unit = new CodeCompileUnit();
@@ -39,9 +58,36 @@ namespace ForgeModGenerator.Tests
             package.Types.Add(typ);
             unit.Namespaces.Add(package);
             string code = GenerateCode(TestContext, unit);
-            Assert.IsTrue(code.Contains(""), code);
+            Assert.IsTrue(code.Contains("public class TestClass extends SomeClass implements ISomeInterface, ISomeOtherInterface"), code);
+
+            typ.TypeAttributes = TypeAttributes.NestedAssembly;
+            code = GenerateCode(TestContext, unit);
+            bool statemenet = !code.Contains(" class") && code.Contains("class TestClass extends SomeClass implements ISomeInterface, ISomeOtherInterface");
+            Assert.IsTrue(statemenet, code);
+
+            typ.TypeAttributes = TypeAttributes.NestedAssembly | TypeAttributes.Abstract;
+            code = GenerateCode(TestContext, unit);
+            Assert.IsTrue(code.Contains("abstract class TestClass extends SomeClass implements ISomeInterface, ISomeOtherInterface"), code);
+
+            typ.TypeAttributes = TypeAttributes.NestedFamily;
+            code = GenerateCode(TestContext, unit);
+            Assert.IsTrue(code.Contains("protected class TestClass extends SomeClass implements ISomeInterface, ISomeOtherInterface"), code);
+
+            typ.TypeAttributes = TypeAttributes.Public | TypeAttributes.Abstract;
+            code = GenerateCode(TestContext, unit);
+            Assert.IsTrue(code.Contains("public abstract class TestClass extends SomeClass implements ISomeInterface, ISomeOtherInterface"), code);
+
+            typ.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed | TypeAttributes.Abstract;
+            code = GenerateCode(TestContext, unit);
+            Assert.IsTrue(code.Contains("public final class TestClass extends SomeClass implements ISomeInterface, ISomeOtherInterface"), code);
+
+            typ.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;
+            typ.Attributes = JavaAttributes.StaticFinal;
+            code = GenerateCode(TestContext, unit);
+            Assert.IsTrue(code.Contains("public final class TestClass extends SomeClass implements ISomeInterface, ISomeOtherInterface"), code);
         }
 
+        // IMPORTANT: Results may differ because of line endings
         [TestMethod]
         public void GenerateComment()
         {
@@ -75,12 +121,20 @@ namespace ForgeModGenerator.Tests
             field.Attributes = MemberAttributes.Public | MemberAttributes.Static | MemberAttributes.Final;
             code = GenerateMember(TestContext, field);
             Assert.IsTrue(code.Contains("public static final Block someBlock;"), code);
-            
-            field.Attributes = MemberAttributes.Public | JavaMemberAttributes.StaticOnly;
+
+            field.Attributes = MemberAttributes.Assembly | MemberAttributes.Static | MemberAttributes.Final;
+            code = GenerateMember(TestContext, field);
+            Assert.IsTrue(code.Contains("static final Block someBlock;"), code);
+
+            field.Attributes = MemberAttributes.Public | JavaAttributes.StaticOnly;
             code = GenerateMember(TestContext, field);
             Assert.IsTrue(code.Contains("public static Block someBlock;"), code);
 
-            field.Attributes = MemberAttributes.FamilyAndAssembly | JavaMemberAttributes.StaticOnly;
+            field.Attributes = MemberAttributes.Assembly | JavaAttributes.StaticOnly;
+            code = GenerateMember(TestContext, field);
+            Assert.IsTrue(code.Contains("static Block someBlock;"), code);
+
+            field.Attributes = MemberAttributes.FamilyAndAssembly | JavaAttributes.StaticOnly;
             code = GenerateMember(TestContext, field);
             Assert.IsTrue(code.Contains("protected static Block someBlock;"), code);
 
@@ -101,23 +155,31 @@ namespace ForgeModGenerator.Tests
             Assert.IsTrue(code.Contains("private final void someMethod() {"), code);
 
             method.Name = "someOtherMethod";
-            method.Attributes = MemberAttributes.Public | JavaMemberAttributes.StaticOnly;
+            method.Attributes = MemberAttributes.Public | JavaAttributes.StaticOnly;
             method.ReturnType = new CodeTypeReference(typeof(int));
             code = GenerateMember(TestContext, method);
             Assert.IsTrue(code.Contains("public static int someOtherMethod() {"), code);
 
             method.Name = "someYetOtherMethod";
-            method.Attributes = MemberAttributes.Family | JavaMemberAttributes.StaticFinal;
+            method.Attributes = MemberAttributes.Family | JavaAttributes.StaticFinal;
             code = GenerateMember(TestContext, method);
             Assert.IsTrue(code.Contains("protected static final int someYetOtherMethod() {"), code);
 
-            method.Attributes = MemberAttributes.FamilyAndAssembly | JavaMemberAttributes.StaticFinal;
+            method.Attributes = MemberAttributes.FamilyAndAssembly | JavaAttributes.StaticFinal;
             code = GenerateMember(TestContext, method);
             Assert.IsTrue(code.Contains("protected static final int someYetOtherMethod() {"), code);
 
-            method.Attributes = MemberAttributes.FamilyOrAssembly | JavaMemberAttributes.StaticFinal;
+            method.Attributes = MemberAttributes.FamilyOrAssembly | JavaAttributes.StaticFinal;
             code = GenerateMember(TestContext, method);
             Assert.IsTrue(code.Contains("protected static final int someYetOtherMethod() {"), code);
+
+            method.Attributes = MemberAttributes.Assembly | JavaAttributes.StaticFinal;
+            code = GenerateMember(TestContext, method);
+            Assert.IsTrue(code.Contains("static final int someYetOtherMethod() {"), code);
+
+            method.Attributes = MemberAttributes.Assembly;
+            code = GenerateMember(TestContext, method);
+            Assert.IsTrue(code.Contains("int someYetOtherMethod() {"), code);
 
             method.Attributes = MemberAttributes.Abstract;
             method.ReturnType = new CodeTypeReference(typeof(void));
