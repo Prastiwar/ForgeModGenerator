@@ -11,10 +11,24 @@
 			 d:DesignHeight="500"
 			 d:DesignWidth="800">
 	<Grid>
-		<Expander Header="{Binding ModInfo.Name}"
-				  HorizontalAlignment="Stretch"
+		<Expander HorizontalAlignment="Stretch"
 				  Foreground="Wheat"
 				  Background="#FF424242">
+			<Expander.HeaderTemplate>
+				<DataTemplate>
+					<StackPanel Orientation="Horizontal">
+						<Button Content="{materialDesign:PackIcon Kind=Trash}"
+								Width="20"
+								Height="20"
+								Padding="0"
+								Margin="8,0"
+								Command="{Binding Path=RemoveModCommand, RelativeSource={RelativeSource AncestorType=local:ModForm}}"
+								CommandParameter="{Binding Path=DataContext, RelativeSource={RelativeSource AncestorType=local:ModForm}}" />
+						<TextBlock Margin="12,0"
+								   Text="{Binding DataContext.ModInfo.Name, RelativeSource={RelativeSource AncestorType=local:ModForm}}" />
+					</StackPanel>
+				</DataTemplate>
+			</Expander.HeaderTemplate>
 			<Grid Margin="0,-10,0,0">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="125" />
@@ -75,7 +89,8 @@
 				<StackPanel Grid.Column="1"
 							TextBlock.Foreground="{DynamicResource MaterialDesignBody}"
 							Margin="7">
-					<TextBox x:Name="OrganizationBox">
+					<TextBox x:Name="OrganizationBox"
+							 TextChanged="LowerText">
 						<TextBox.Text>
 							<Binding Path="Organization"
 									 UpdateSourceTrigger="PropertyChanged">
@@ -132,7 +147,8 @@
 													 VerticalAlignment="Center" />
 						</Button>
 					</StackPanel>
-					<TextBox x:Name="NameBox">
+					<TextBox x:Name="NameBox"
+							 TextChanged="TryFillModid">
 						<TextBox.Text>
 							<Binding Path="ModInfo.Name"
 									 UpdateSourceTrigger="PropertyChanged">
@@ -143,7 +159,8 @@
 							</Binding>
 						</TextBox.Text>
 					</TextBox>
-					<TextBox x:Name="ModidBox">
+					<TextBox x:Name="ModidBox"
+							 TextChanged="LowerText">
 						<TextBox.Text>
 							<Binding Path="ModInfo.Modid"
 									 UpdateSourceTrigger="PropertyChanged">

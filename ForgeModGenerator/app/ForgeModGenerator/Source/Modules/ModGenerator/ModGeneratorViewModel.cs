@@ -5,6 +5,7 @@ using ForgeModGenerator.Services;
 using ForgeModGenerator.Utility;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -19,13 +20,11 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
     /// <summary> ModGenerator Business ViewModel </summary>
     public class ModGeneratorViewModel : ViewModelBase
     {
-        public ISessionContextService SessionContext { get; }
-        public IWorkspaceSetupService WorkspaceService { get; }
-
-        public ModGeneratorViewModel(ISessionContextService sessionContext, IWorkspaceSetupService workspaceService)
+        public ModGeneratorViewModel(ISessionContextService sessionContext, IWorkspaceSetupService workspaceService, IDialogService dialogService)
         {
             SessionContext = sessionContext;
             WorkspaceService = workspaceService;
+            DialogService = dialogService;
 
             NewMod = new Mod(new McModInfo() {
                 Name = "NewExampleMod",
@@ -43,6 +42,10 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
         private readonly string[] assetsFolerToGenerate = new string[] {
             "blockstates", "lang", "recipes", "sounds", "models/item", "textures/blocks", "textures/entity", "textures/items", "textures/models/armor"
         };
+
+        public ISessionContextService SessionContext { get; }
+        public IWorkspaceSetupService WorkspaceService { get; }
+        public IDialogService DialogService { get; }
 
         public IEnumerable<ModSide> Sides => Enum.GetValues(typeof(ModSide)).Cast<ModSide>();
 
@@ -64,8 +67,31 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
         private ICommand createModCommand;
         public ICommand CreateModCommand => createModCommand ?? (createModCommand = new RelayCommand(() => GenerateMod(NewMod)));
 
+        private ICommand removeModCommand;
+        public ICommand RemoveModCommand => removeModCommand ?? (removeModCommand = new RelayCommand<Mod>(RemoveMod));
+
         private ICommand saveChangesCommand;
         public ICommand SaveChangesCommand => saveChangesCommand ?? (saveChangesCommand = new RelayCommand<Mod>(SaveModChanges));
+
+        private async void RemoveMod(Mod mod)
+        {
+            bool shouldRemove = await DialogService.ShowMessage("Are you sure you want to delete this mod? Folder will be moved to trash bin", "Confirm deletion", "Yes", "No", null);
+            if (shouldRemove)
+            {
+                if (SessionContext.Mods.Remove(mod))
+                {
+                    try
+                    {
+                        IOHelper.DeleteDirectoryToBin(ModPaths.ModRootFolder(mod.ModInfo.Name));
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "Couldn't remove mod. Make sure folder or its file is not used in any other process", true);
+                        SessionContext.Mods.Add(mod); // remove failed, so rollback
+                    }
+                }
+            }
+        }
 
         private void AddNewForge()
         {

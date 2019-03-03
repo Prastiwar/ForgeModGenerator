@@ -45,6 +45,7 @@
 								<DataTemplate>
 									<mControls:ModForm DataContext="{Binding}"
 													   SaveCommand="{Binding DataContext.SaveChangesCommand, ElementName=ThisWindow}"
+													   RemoveModCommand="{Binding DataContext.RemoveModCommand, ElementName=ThisWindow}"
 													   AddForgeVersionCommand="{Binding DataContext.AddNewForgeVersionCommand, ElementName=ThisWindow}"
 													   Setups="{Binding DataContext.WorkspaceService.Setups, ElementName=ThisWindow}"
 													   ForgeVersions="{Binding DataContext.SessionContext.ForgeVersions, ElementName=ThisWindow}"

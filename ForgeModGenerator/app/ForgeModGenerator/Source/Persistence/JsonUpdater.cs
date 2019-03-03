@@ -54,7 +54,7 @@ namespace ForgeModGenerator.Persistence
             }
             catch (Exception ex)
             {
-                Log.Error(ex, Log.UnexpectedErrorMessage, true);
+                Log.Error(ex, "Couldn't save JSON", true);
             }
         }
 
@@ -70,7 +70,7 @@ namespace ForgeModGenerator.Persistence
             }
             catch (Exception ex)
             {
-                Log.Error(ex, Log.UnexpectedErrorMessage, true);
+                Log.Error(ex, "Couldn't save JSON", true);
             }
         }
 
@@ -88,7 +88,7 @@ namespace ForgeModGenerator.Persistence
             }
             catch (Exception ex)
             {
-                Log.Error(ex, Log.UnexpectedErrorMessage);
+                Log.Error(ex);
                 return false;
             }
         }

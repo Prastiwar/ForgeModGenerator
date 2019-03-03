@@ -207,7 +207,7 @@ namespace ForgeModGenerator.ViewModels
                 {
                     if (filePath != newPath)
                     {
-                        bool overwrite = await DialogService.ShowMessage($"File {newPath} already exists.\nDo you want to overwrite it?", "Existing file conflict", "Yes", "No", null);
+                        bool overwrite = await DialogService.ShowMessage($"File {newPath} already exists.{Environment.NewLine}Do you want to overwrite it?", "Existing file conflict", "Yes", "No", null);
                         if (overwrite)
                         {
                             File.Copy(filePath, newPath, true);

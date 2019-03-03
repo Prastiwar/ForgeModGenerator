@@ -34,7 +34,7 @@ $"new CreativeTabs(\"{Modname}\") {{" + @"
     @SideOnly(Side.CLIENT)
     @Override
     public ItemStack getTabIconItem() {" +
-$"\n    	return new ItemStack({SourceCodeLocator.Items.ClassName}.MODLOGO, 1);" + @"
+$"{System.Environment.NewLine}    	return new ItemStack({SourceCodeLocator.Items.ClassName}.MODLOGO, 1);" + @"
     }
 
     @SideOnly(Side.CLIENT)

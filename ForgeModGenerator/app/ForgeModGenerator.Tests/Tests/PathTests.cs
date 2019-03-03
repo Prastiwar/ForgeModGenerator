@@ -2,6 +2,7 @@
 using ForgeModGenerator.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
+using System.IO;
 
 namespace ForgeModGenerator.Tests
 {
@@ -71,30 +72,35 @@ namespace ForgeModGenerator.Tests
             Assert.IsTrue(IOHelper.IsPathValid(@"\ForgeModGenerator\ForgeModGenerator\mods\TestMod"));
         }
 
-        // IMPORTANT: Make sure you have TestMod in /mods/ folder
         [TestMethod]
         public void GetModidFromPath()
         {
-            string path = @"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\TestMod\src\main\resources";
             string path1 = @"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\TestMod\src\main\resources\assets\testmod";
             string path2 = @"testmod:entity/something/either";
             string path3 = @"testmod:entity.something.either";
-            string path4 = @"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\TestMod";
             string path5 = @"\ForgeModGenerator\ForgeModGenerator\mods\TestMod";
 
-            string resultModid = Models.Mod.GetModidFromPath(path);
             string resultModid1 = Models.Mod.GetModidFromPath(path1);
             string resultModid2 = Models.Mod.GetModidFromPath(path2);
             string resultModid3 = Models.Mod.GetModidFromPath(path3);
-            string resultModid4 = Models.Mod.GetModidFromPath(path4);
             string resultModid5 = Models.Mod.GetModidFromPath(path5);
 
-            Assert.AreEqual("testmod", resultModid);
             Assert.AreEqual("testmod", resultModid1);
             Assert.AreEqual("testmod", resultModid2);
             Assert.AreEqual("testmod", resultModid3);
-            Assert.AreEqual("testmod", resultModid4);
             Assert.AreEqual(null, resultModid5);
+
+            // IMPORTANT: to run this tests, make sure you have TestMod in /mods/ folder
+            if (Directory.Exists(ModPaths.ModRootFolder("TestMod")))
+            {
+                string modPath = @"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\TestMod";
+                string modPathResult = Models.Mod.GetModidFromPath(modPath);
+                Assert.AreEqual("testmod", modPathResult);
+
+                string modPath1 = @"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\TestMod\src\main\resources";
+                string modPath1Result = Models.Mod.GetModidFromPath(modPath1);
+                Assert.AreEqual("testmod", modPath1Result);
+            }
         }
 
         [TestMethod]

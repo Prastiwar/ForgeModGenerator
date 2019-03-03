@@ -85,7 +85,8 @@ namespace ForgeModGenerator.SoundGenerator.Converters
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             builder.Clear();
-            builder.Append("{\n");
+            string newLine = Environment.NewLine;
+            builder.Append("{" + newLine);
 
             if (value == null)
             {
@@ -112,7 +113,7 @@ namespace ForgeModGenerator.SoundGenerator.Converters
                 i++;
             }
 
-            builder.Append("\n}");
+            builder.Append(newLine + "}");
             string serializedJson = builder.ToString();
             writer.WriteRawValue(serializedJson.FormatJson(serializer.Formatting));
         }

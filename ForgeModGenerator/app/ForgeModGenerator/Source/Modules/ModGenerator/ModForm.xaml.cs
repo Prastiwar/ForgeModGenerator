@@ -11,6 +11,13 @@ namespace ForgeModGenerator.ModGenerator.Controls
     {
         public ModForm() => InitializeComponent();
 
+        public static readonly DependencyProperty RemoveModCommandProperty =
+            DependencyProperty.Register("RemoveModCommand", typeof(ICommand), typeof(ModForm), new PropertyMetadata(null));
+        public ICommand RemoveModCommand {
+            get => (ICommand)GetValue(RemoveModCommandProperty);
+            set => SetValue(RemoveModCommandProperty, value);
+        }
+
         public static readonly DependencyProperty SidesProperty =
             DependencyProperty.Register("Sides", typeof(IEnumerable<ModSide>), typeof(ModForm), new PropertyMetadata(null));
         public IEnumerable<ModSide> Sides {
@@ -53,15 +60,14 @@ namespace ForgeModGenerator.ModGenerator.Controls
             set => SetValue(SaveButtonTextProperty, value);
         }
 
-        private void ValidateNameAndTryFillModif(object sender, TextChangedEventArgs e)
+        private void LowerText(object sender, TextChangedEventArgs e) => ((TextBox)sender).Text = ((TextBox)sender).Text.ToLower();
+
+        private void TryFillModid(object sender, TextChangedEventArgs e)
         {
             TextBox text = sender as TextBox;
-            if (ModidBox != null)
+            if (string.IsNullOrWhiteSpace(ModidBox.Text) || string.Compare(ModidBox.Text, text.Text, true) < 0)
             {
-                if (string.IsNullOrWhiteSpace(ModidBox.Text) || string.Compare(ModidBox.Text, text.Text, true) < 0)
-                {
-                    ModidBox.Text = text.Text;
-                }
+                ModidBox.Text = text.Text;
             }
         }
     }

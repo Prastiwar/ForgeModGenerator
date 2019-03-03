@@ -93,20 +93,20 @@ namespace ForgeModGenerator.Tests
         public void GenerateComment()
         {
             CodeMemberMethod method = new CodeMemberMethod() { Name = "someMethod" };
-            CodeCommentStatement comment = new CodeCommentStatement("Does nothing, but something I should write there. \n So I write something like this {@code int} ", true);
+            CodeCommentStatement comment = new CodeCommentStatement("Does nothing, but something I should write there." + Environment.NewLine + " So I write something like this {@code int} ", true);
             method.Comments.Add(comment);
             string code = GenerateMember(TestContext, method);
             Assert.IsTrue(code.Contains(@"
     /**
-     * Does nothing, but something I should write there. 
+     * Does nothing, but something I should write there.
      * So I write something like this {@code int} 
      */"), code);
 
             comment.Comment.DocComment = false;
-            comment.Comment.Text = "Some other comment \n just to be happy";
+            comment.Comment.Text = "Some other comment" + Environment.NewLine + " just to be happy";
             code = GenerateMember(TestContext, method);
             Assert.IsTrue(code.Contains(@"
-    // Some other comment 
+    // Some other comment
     // just to be happy"), code);
         }
 

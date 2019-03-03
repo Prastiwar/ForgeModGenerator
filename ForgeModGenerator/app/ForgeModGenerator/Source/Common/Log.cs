@@ -11,7 +11,7 @@ namespace ForgeModGenerator
         public static readonly ILogger ErrorLogger = LogManager.GetLogger("ErrorLog");
         public static readonly ILogger InfoLogger = LogManager.GetLogger("InfoLog");
 
-        private static string FormatMoreInformation(string message, string moreInformation) => $"aa{message}ds \n More information: {moreInformation}";
+        private static string FormatMoreInformation(string message, string moreInformation) => $"{message}{Environment.NewLine}More information: {moreInformation}";
 
         public static void Error(Exception ex, string message = "", bool messageClient = false, string moreInformation = null)
         {

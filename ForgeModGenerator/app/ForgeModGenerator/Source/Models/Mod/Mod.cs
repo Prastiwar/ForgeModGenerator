@@ -100,7 +100,7 @@ namespace ForgeModGenerator.Models
 
         public static string GetModidFromPath(string path)
         {
-            path = path.Replace("\\", "/");
+            path = path.NormalizePath();
             int index = !path.Contains(":/") ? path.IndexOf(':') : -1;
             if (index >= 1)
             {
@@ -109,12 +109,21 @@ namespace ForgeModGenerator.Models
             string modname = GetModnameFromPath(path);
             if (modname != null)
             {
-                string assetsPath = ModPaths.AssetsFolder(modname).Replace("\\", "/"); // in assets folder there should be always folder with modid
+                string assetsPath = ModPaths.AssetsFolder(modname).NormalizePath(); // in assets folder there should be always folder with modid
+
+                // case if modid is already in path
+                if (assetsPath.Length < path.Length && IOHelper.IsSubPathOf(path, assetsPath))
+                {
+                    string relativePathToAssetsPath = path.Remove(0, assetsPath.Length + 1);
+                    int slashIndex = relativePathToAssetsPath.IndexOf("/", 1);
+                    return slashIndex >= 0 ? relativePathToAssetsPath.Substring(0, slashIndex) : relativePathToAssetsPath;
+                }
+
                 int assetsPathLength = assetsPath.Length;
                 try
                 {
                     string directory = Directory.EnumerateDirectories(assetsPath).First();
-                    string dir = directory.Replace("\\", "/");
+                    string dir = directory.NormalizePath();
                     return dir.Remove(0, assetsPathLength + 1);
                 }
                 catch (System.Exception ex)
