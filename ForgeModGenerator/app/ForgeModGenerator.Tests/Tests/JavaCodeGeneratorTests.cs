@@ -196,7 +196,30 @@ namespace ForgeModGenerator.Tests
         }
 
         [TestMethod]
-        public void GenerateForEach()
+        public void GenerateSimpleForLoop()
+        {
+            CodeSimpleForLoopStatement loop = new CodeSimpleForLoopStatement(
+                new CodeVariableDeclarationStatement(typeof(int), "i"),
+                new CodeFieldReferenceExpression(new CodeVariableReferenceExpression("someArray"), "length")
+            );
+            string code = GenerateStatement(TestContext, loop);
+            Assert.IsTrue(code.Contains("for (int i = 0; i < someArray.length; i++) {"), code);
+
+            loop.LoopBackwards = true;
+            code = GenerateStatement(TestContext, loop);
+            Assert.IsTrue(code.Contains("for (int i = someArray.length - 1; i >= 0; i--) {"), code);
+        }
+
+        [TestMethod]
+        public void GenerateWhileLoop()
+        {
+            CodeWhileLoopStatement loop = new CodeWhileLoopStatement(new CodePrimitiveExpression(true));
+            string code = GenerateStatement(TestContext, loop);
+            Assert.IsTrue(code.Contains("while (true) {"), code);
+        }
+
+        [TestMethod]
+        public void GenerateForEachLoop()
         {
             CodeForeachStatement forEach = new CodeForeachStatement(new CodeVariableDeclarationStatement(typeof(int), "integer"), new CodeTypeReferenceExpression("someList"));
             string code = GenerateStatement(TestContext, forEach);

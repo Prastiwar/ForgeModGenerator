@@ -34,6 +34,12 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                 case CodeIterationStatement val:
                     GenerateIterationStatement(val);
                     break;
+                case CodeWhileLoopStatement val:
+                    GenerateWhileLoopStatement(val);
+                    break;
+                case CodeSimpleForLoopStatement val:
+                    GenerateSimpleForLoopStatement(val);
+                    break;
                 case CodeThrowExceptionStatement val:
                     GenerateThrowExceptionStatement(val);
                     break;
@@ -258,6 +264,57 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
             GenerateExpression(e.TestExpression);
             output.Write("; ");
             GenerateStatement(e.IncrementStatement);
+            output.Write(")");
+            OutputStartingBrace();
+            generatingForLoop = false;
+            Indent++;
+            GenerateStatements(e.Statements);
+            Indent--;
+            output.WriteLine("}");
+        }
+
+        private void GenerateSimpleForLoopStatement(CodeSimpleForLoopStatement e)
+        {
+            generatingForLoop = true;
+            output.Write("for (");
+            OutputTypeNamePair(e.IndexVariable.Type, e.IndexVariable.Name);
+            output.Write(" = ");
+            if (e.LoopBackwards)
+            {
+                GenerateExpression(e.LengthExpression);
+                output.Write(" - 1");
+            }
+            else
+            {
+                output.Write("0");
+            }
+            output.Write("; ");
+            output.Write(e.IndexVariable.Name);
+            if (e.LoopBackwards)
+            {
+                output.Write(" >= 0");
+            }
+            else
+            {
+                output.Write(" < ");
+                GenerateExpression(e.LengthExpression);
+            }
+            output.Write("; ");
+            string incrementOperation = e.LoopBackwards ? "--" : "++";
+            output.Write(e.IndexVariable.Name + incrementOperation + ")");
+            OutputStartingBrace();
+            generatingForLoop = false;
+            Indent++;
+            GenerateStatements(e.Statements);
+            Indent--;
+            output.WriteLine("}");
+        }
+
+        private void GenerateWhileLoopStatement(CodeWhileLoopStatement e)
+        {
+            generatingForLoop = true;
+            output.Write("while (");
+            GenerateExpression(e.ConditionExpression);
             output.Write(")");
             OutputStartingBrace();
             generatingForLoop = false;

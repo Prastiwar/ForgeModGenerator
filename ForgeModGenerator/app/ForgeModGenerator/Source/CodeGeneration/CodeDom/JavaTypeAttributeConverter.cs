@@ -19,7 +19,6 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                 {
                     names = new string[] {
                         "Public",
-                        "Internal"
                     };
                 }
                 return names;
@@ -33,8 +32,7 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                 if (values == null)
                 {
                     values = new object[] {
-                        TypeAttributes.Public,
-                        TypeAttributes.NotPublic
+                        TypeAttributes.Public
                     };
                 }
                 return values;
