@@ -14,39 +14,48 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 
         private CodeMemberMethod CretePreInitMethod()
         {
-            CodeMemberMethod preInitMethod = CreateEmptyEventHandler("preInit", "FMLPreInitializationEvent");
-            preInitMethod.Statements.Add(new CodeAssignStatement(NewVarReference("logger"), NewMethodInvokeType("event", "getModLog")));
+            CodeMemberMethod method = CreateEmptyEventHandler("preInit", "FMLPreInitializationEvent");
+            method.Statements.Add(new CodeAssignStatement(NewVarReference("logger"), NewMethodInvokeType("event", "getModLog")));
             //CodeMethodInvokeExpression registerWorldGenerator =
             //    new CodeMethodInvokeExpression(new CodeTypeReferenceExpression("GameRegistry"), "registerWorldGenerator", new CodeObjectCreateExpression($"{Modname}WorldGen"), new CodePrimitiveExpression(3));
             //preInitMethod.Statements.Add(registerWorldGenerator);
-            return preInitMethod;
+            return method;
         }
 
         private CodeMemberMethod CreateInitMethod()
         {
-            // TODO: Add annotation @EventHandler
-            CodeMemberMethod initMethod = NewMethod("init", typeof(void).FullName, MemberAttributes.Public, new Parameter("FMLInitializationEvent", "event"));
-            initMethod.Statements.Add(NewMethodInvokeType(SourceCodeLocator.Recipes.ClassName, "init"));
-            return initMethod;
+            CodeMemberMethod method = CreateEmptyEventHandler("init", "FMLInitializationEvent");
+            method.Statements.Add(NewMethodInvokeType(SourceCodeLocator.Recipes.ClassName, "init"));
+            return method;
         }
 
         private CodeMemberMethod CreateEmptyEventHandler(string name, string eventType)
         {
-            // TODO: Add annotation @EventHandler
             CodeMemberMethod method = NewMethod(name, typeof(void).FullName, MemberAttributes.Public, new Parameter(eventType, "event"));
+            method.CustomAttributes.Add(NewEventHandlerAnnotation());
             return method;
         }
 
         protected override CodeCompileUnit CreateTargetCodeUnit()
         {
             CodeTypeDeclaration managerClass = NewClassWithMembers(SourceCodeLocator.Manager.ClassName);
+            string hook = SourceCodeLocator.Hook.ClassName;
+            managerClass.CustomAttributes.Add(NewAnnotation("Mod",
+                NewAnnotationArg("modid", NewFieldReferenceType(hook, "MODID")),
+                NewAnnotationArg("name", NewFieldReferenceType(hook, "NAME")),
+                NewAnnotationArg("version", NewFieldReferenceType(hook, "VERSION")),
+                NewAnnotationArg("acceptedMinecraftVersions", NewFieldReferenceType(hook, "ACCEPTEDVERSIONS"))
+            ));
 
-            // TODO: Add annotation @Instance
             CodeMemberField instanceField = NewField(Modname, "instance", MemberAttributes.Private | JavaAttributes.StaticOnly);
+            instanceField.CustomAttributes.Add(NewInstanceAnnotation());
             managerClass.Members.Add(instanceField);
 
-            // TODO: Add annotation @SidedProxy(clientSide = {modname}Hook.CLIENTPROXYCLASS, serverSide = {modname}Hook.SERVERPROXYCLASS)
             CodeMemberField proxyField = NewField("CommonProxy", "proxy", MemberAttributes.Private | JavaAttributes.StaticOnly);
+            proxyField.CustomAttributes.Add(NewAnnotation("SidedProxy",
+                NewAnnotationArg("clientSide", NewFieldReferenceType(hook, "CLIENTPROXYCLASS")),
+                NewAnnotationArg("serverSide", NewFieldReferenceType(hook, "SERVERPROXYCLASS"))
+            ));
             managerClass.Members.Add(proxyField);
 
             managerClass.Members.Add(NewField("Logger", "logger", MemberAttributes.Private | JavaAttributes.StaticOnly));
@@ -56,7 +65,6 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             managerClass.Members.Add(CreateEmptyEventHandler("postInit", "FMLPostInitializationEvent"));
             managerClass.Members.Add(CreateEmptyEventHandler("serverStart", "FMLServerStartingEvent"));
 
-            // TODO: Add annotation @EventHandler
             CodeMemberMethod getProxyMethod = NewMethod("getProxy", SourceCodeLocator.CommonProxyInterface.ClassName, MemberAttributes.Public | JavaAttributes.StaticOnly);
             getProxyMethod.Statements.Add(NewReturnVar("proxy"));
             managerClass.Members.Add(getProxyMethod);

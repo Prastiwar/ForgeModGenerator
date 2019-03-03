@@ -63,7 +63,17 @@ namespace ForgeModGenerator.CodeGeneration
 
         public void Dispose() => ((IDisposable)JavaProvider).Dispose();
 
-        #region Code expression and statements shorthands
+        #region Code expression and statements shorthands     
+        protected CodeAttributeDeclaration NewAnnotation(string name, params CodeAttributeArgument[] arguments) => new CodeAttributeDeclaration(name, arguments);
+        protected CodeAttributeArgument NewAnnotationArg(string valueName, CodeExpression expression) => new CodeAttributeArgument(valueName, expression);
+        protected CodeAttributeDeclaration NewOverrideAnnotation() => new CodeAttributeDeclaration("Override");
+        protected CodeAttributeDeclaration NewSubscribeEventAnnotation() => new CodeAttributeDeclaration("SubscribeEvent");
+        protected CodeAttributeDeclaration NewEventHandlerAnnotation() => new CodeAttributeDeclaration("EventHandler");
+        protected CodeAttributeDeclaration NewEventBusSubscriberAnnotation() => new CodeAttributeDeclaration("EventBusSubscriber");
+        protected CodeAttributeDeclaration NewInstanceAnnotation() => new CodeAttributeDeclaration("Instance");
+        protected CodeAttributeDeclaration NewSideAnnotation(ModSide side) =>
+            new CodeAttributeDeclaration("SideOnly", NewAnnotationArg(null, NewFieldReferenceType("Side", side.HasFlag(ModSide.Client) ? "CLIENT" : "SERVER")));
+
         protected CodeParameterDeclarationExpression NewParameter(string type, string name) => new CodeParameterDeclarationExpression(type, name);
         protected CodeVariableReferenceExpression NewVarReference(string variableName) => new CodeVariableReferenceExpression(variableName);
         protected CodeVariableDeclarationStatement NewVariable(string type, string name, CodeExpression initExpression = null) => new CodeVariableDeclarationStatement(type, name, initExpression);

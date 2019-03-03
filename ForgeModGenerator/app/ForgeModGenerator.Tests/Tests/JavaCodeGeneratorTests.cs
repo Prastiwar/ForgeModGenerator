@@ -1,5 +1,6 @@
 ﻿using ForgeModGenerator.CodeGeneration.CodeDom;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.IO;
@@ -216,6 +217,22 @@ namespace ForgeModGenerator.Tests
             CodeWhileLoopStatement loop = new CodeWhileLoopStatement(new CodePrimitiveExpression(true));
             string code = GenerateStatement(TestContext, loop);
             Assert.IsTrue(code.Contains("while (true) {"), code);
+        }
+
+        [TestMethod]
+        public void GenerateAnnotation()
+        {
+            string newLine = Environment.NewLine;
+            CodeMemberMethod method = new CodeMemberMethod() { Name = "someMethod" };
+            method.CustomAttributes.Add(new CodeAttributeDeclaration("Override",
+                new CodeAttributeArgument("someValue", new CodeFieldReferenceExpression(new CodeTypeReferenceExpression("ConstClass"), "SOMECONST"))
+            ));
+            string code = GenerateMember(TestContext, method);
+            Assert.IsTrue(code.Contains("@Override(someValue=ConstClass.SOMECONST)" + newLine), code);
+
+            method.CustomAttributes.Add(new CodeAttributeDeclaration("Override"));
+            code = GenerateMember(TestContext, method);
+            Assert.IsTrue(code.Contains("@Override" + newLine), code);
         }
 
         [TestMethod]

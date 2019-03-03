@@ -62,11 +62,11 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             ctor.Statements.Add(NewMethodInvoke("setAlwaysEdible"));
             ctor.Statements.Add(new CodeAssignStatement(new CodeFieldReferenceExpression(NewThis(), "effect"), NewVarReference("effect")));
             clas.Members.Add(ctor);
-
-            // TODO: Add annotation @Override
+            
             CodeMemberMethod onFoodEaten = NewMethod("onFoodEaten", typeof(void).FullName, MemberAttributes.Family, new Parameter("ItemStack", "stack"),
                                                                                                                     new Parameter("World", "worldIn"),
                                                                                                                     new Parameter("EntityPlayer", "player"));
+            onFoodEaten.CustomAttributes.Add(NewOverrideAnnotation());
             CodeObjectCreateExpression potionEffect = NewObject("PotionEffect", NewMethodInvokeVar("effect", "getPotion"),
                                                                                 NewMethodInvokeVar("effect", "getDuration"),
                                                                                 NewMethodInvokeVar("effect", "getAmplifier"),
@@ -75,9 +75,9 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             CodeMethodInvokeExpression addPotionEffect = NewMethodInvokeVar("player", "addPotionEffect", potionEffect);
             onFoodEaten.Statements.Add(new CodeConditionStatement(new CodeSnippetExpression("!worldIn.isRemote"), new CodeExpressionStatement(addPotionEffect)));
             clas.Members.Add(onFoodEaten);
-
-            // TODO: Add annotation @SideOnly(Side.CLIENT)
+            
             CodeMemberMethod hasEffect = NewMethod("hasEffect", typeof(bool).FullName, MemberAttributes.Public, new Parameter("ItemStack", "stack"));
+            hasEffect.CustomAttributes.Add(NewSideAnnotation(ModSide.Client));
             hasEffect.Statements.Add(NewReturnPrimitive(true));
             clas.Members.Add(hasEffect);
 

@@ -126,8 +126,8 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 
         private CodeMemberMethod CreateItemRegisterModelsMethod()
         {
-            // TODO: Add annotation @Override
             CodeMemberMethod method = NewMethod("registerModels", typeof(void).FullName, MemberAttributes.Public);
+            method.CustomAttributes.Add(NewOverrideAnnotation());
             CodeMethodInvokeExpression getProxy = NewMethodInvokeVar(SourceCodeLocator.Manager.ClassName, "getProxy");
             method.Statements.Add(NewMethodInvoke(getProxy, "registerItemRenderer", NewThis(), NewPrimitive(0), NewPrimitive("inventory")));
             return method;

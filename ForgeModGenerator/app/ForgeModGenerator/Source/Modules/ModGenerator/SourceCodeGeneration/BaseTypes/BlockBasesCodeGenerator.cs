@@ -51,9 +51,9 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             CodeMethodInvokeExpression setRegistryName = NewMethodInvoke(NewObject("ItemBlock", NewThis()), "setRegistryName", NewMethodInvoke(NewThis(), "getRegistryName"));
             ctor.Statements.Add(NewMethodInvoke(NewFieldReferenceType(SourceCodeLocator.Items.ClassName, SourceCodeLocator.Items.InitFieldName), "add", setRegistryName));
             clas.Members.Add(ctor);
-
-            // TODO: Add annotation @Override
+            
             CodeMemberMethod registerModels = NewMethod("registerModels", typeof(void).FullName, MemberAttributes.Public);
+            registerModels.CustomAttributes.Add(NewOverrideAnnotation());
             CodeMethodInvokeExpression registerItemRenderer = NewMethodInvoke(NewMethodInvokeType(SourceCodeLocator.Manager.ClassName, "getProxy"), "registerItemRenderer", NewMethodInvokeType("Item", "getItemFromBlock", NewThis()),
                                                                                                                                                                             NewPrimitive(0),
                                                                                                                                                                             NewPrimitive("inventory"));
@@ -94,16 +94,16 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
                                                                                                                 new Parameter("Material", "material"));
             ctor.Statements.Add(NewSuper(NewVarReference("name"), NewVarReference("material")));
             clas.Members.Add(ctor);
-
-            // TODO: Add annotation @Override
+            
             CodeMemberMethod getItemDropped = NewMethod("getItemDropped", "Item", MemberAttributes.Public, new Parameter("IBlockState", "state"),
                                                                                                            new Parameter("Random", "rand"),
                                                                                                            new Parameter(typeof(int).FullName, "fortune"));
+            getItemDropped.CustomAttributes.Add(NewOverrideAnnotation());
             getItemDropped.Statements.Add(NewReturnVar("dropItem"));
             clas.Members.Add(getItemDropped);
-
-            // TODO: Add annotation @Override
+            
             CodeMemberMethod quantityDropped = NewMethod("quantityDropped", typeof(int).FullName, MemberAttributes.Public, new Parameter("Random", "rand"));
+            quantityDropped.CustomAttributes.Add(NewOverrideAnnotation());
             quantityDropped.Statements.Add(NewVariable(typeof(int).FullName, "max", NewPrimitive(4)));
             quantityDropped.Statements.Add(NewVariable(typeof(int).FullName, "min", NewPrimitive(1)));
             quantityDropped.Statements.Add(NewReturn(new CodeBinaryOperatorExpression(NewMethodInvokeVar("rand", "nextInt", NewVarReference("max")), CodeBinaryOperatorType.Add, NewVarReference("min"))));

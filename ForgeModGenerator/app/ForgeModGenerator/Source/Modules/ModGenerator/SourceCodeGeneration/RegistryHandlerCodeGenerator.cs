@@ -14,9 +14,9 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 
         private CodeMemberMethod GetRegisterMethod(string className, string fieldName, string registerType)
         {
-            // TODO: Add annotation @SubscribeEvent
             CodeMemberMethod method = NewMethod($"on{registerType}Register", typeof(void).FullName, MemberAttributes.Public | JavaAttributes.StaticOnly,
                                                                                                      new Parameter($"RegistryEvent.Register<{registerType}>", "event"));
+            method.CustomAttributes.Add(NewSubscribeEventAnnotation());
             CodeMethodInvokeExpression getRegistry = NewMethodInvokeVar("event", "getRegistry");
             CodeFieldReferenceExpression list = NewFieldReferenceVar(className, fieldName);
             CodeMethodInvokeExpression registerParam = new CodeMethodInvokeExpression(list, "toArray", NewArray(registerType, 0));
@@ -38,12 +38,12 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 
         protected override CodeCompileUnit CreateTargetCodeUnit()
         {
-            // TODO: Add annotation @EventBusSubscriber
             CodeTypeDeclaration clas = NewClassWithMembers(SourceCodeLocator.RegistryHandler.ClassName, GetRegisterMethod(SourceCodeLocator.Items.ClassName, SourceCodeLocator.Items.InitFieldName, "Item"),
                                                                                GetRegisterMethod(SourceCodeLocator.Blocks.ClassName, SourceCodeLocator.Blocks.InitFieldName, "Block"),
                                                                                GetRegisterMethod(SourceCodeLocator.SoundEvents.ClassName, SourceCodeLocator.SoundEvents.InitFieldName, "SoundEvent"));
-            // TODO: Add annotation @SubscribeEvent
+            clas.CustomAttributes.Add(NewEventBusSubscriberAnnotation());
             CodeMemberMethod modelRegister = NewMethod("onModelRegister", typeof(void).FullName, MemberAttributes.Public | JavaAttributes.StaticOnly, new Parameter("ModelRegistryEvent", "event"));
+            modelRegister.CustomAttributes.Add(NewSubscribeEventAnnotation());
             modelRegister.Statements.Add(CreateRegisterModelForeach(SourceCodeLocator.Items.ClassName, "Item"));
             modelRegister.Statements.Add(CreateRegisterModelForeach(SourceCodeLocator.Blocks.ClassName, "Block"));
             clas.Members.Add(modelRegister);

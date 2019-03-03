@@ -448,21 +448,24 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                 {
                     output.Write(GetTypeOutput(current.AttributeType));
                 }
-                output.Write("(");
-                bool firstArg = true;
-                foreach (CodeAttributeArgument arg in current.Arguments)
+                if (current.Arguments.Count > 0)
                 {
-                    if (!firstArg)
+                    output.Write("(");
+                    bool firstArg = true;
+                    foreach (CodeAttributeArgument arg in current.Arguments)
                     {
-                        output.Write(", ");
+                        if (!firstArg)
+                        {
+                            output.Write(", ");
+                        }
+                        else
+                        {
+                            firstArg = false;
+                        }
+                        OutputAttributeArgument(arg);
                     }
-                    else
-                    {
-                        firstArg = false;
-                    }
-                    OutputAttributeArgument(arg);
+                    output.Write(")");
                 }
-                output.Write(")");
 
                 if (!inLine)
                 {

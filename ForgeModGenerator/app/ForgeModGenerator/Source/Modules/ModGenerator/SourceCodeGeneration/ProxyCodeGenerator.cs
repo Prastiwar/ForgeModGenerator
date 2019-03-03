@@ -63,10 +63,20 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             return NewCodeUnit(proxyClass, "net.minecraft.item.Item");
         }
 
-        private CodeCompileUnit CreateICommonProxyCodeUnit() => NewCodeUnit(NewInterface(SourceCodeLocator.CommonProxyInterface.ClassName, CreateRegisterItemRendererMethod()), "net.minecraft.item.Item");
+        private CodeCompileUnit CreateICommonProxyCodeUnit()
+        {
+            CodeMemberMethod registerItemMethod = CreateRegisterItemRendererMethod();
+            registerItemMethod.CustomAttributes.Clear();
+            return NewCodeUnit(NewInterface(SourceCodeLocator.CommonProxyInterface.ClassName, registerItemMethod), "net.minecraft.item.Item");
+        }
 
-        private CodeMemberMethod CreateRegisterItemRendererMethod() => NewMethod("registerItemRenderer", typeof(void).FullName, MemberAttributes.Public, new Parameter("Item", "item"),
-                                                                                                                                                         new Parameter(typeof(int).FullName, "meta"),
-                                                                                                                                                         new Parameter(typeof(string).FullName, "id"));
+        private CodeMemberMethod CreateRegisterItemRendererMethod()
+        {
+            CodeMemberMethod method = NewMethod("registerItemRenderer", typeof(void).FullName, MemberAttributes.Public, new Parameter("Item", "item"),
+                                                                                                new Parameter(typeof(int).FullName, "meta"),
+                                                                                                new Parameter(typeof(string).FullName, "id"));
+            method.CustomAttributes.Add(NewOverrideAnnotation());
+            return method;
+        }
     }
 }
