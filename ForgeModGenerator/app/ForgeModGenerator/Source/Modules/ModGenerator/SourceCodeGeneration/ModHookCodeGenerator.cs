@@ -16,7 +16,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
         protected override CodeCompileUnit CreateTargetCodeUnit() => NewCodeUnit(NewClassWithMembers(SourceCodeLocator.Hook.ClassName, CreateHookString("MODID", Mod.ModInfo.Modid),
                                                                                                                                        CreateHookString("VERSION", Mod.ModInfo.Version),
                                                                                                                                        CreateHookString("ACCEPTEDVERSIONS", Mod.ModInfo.McVersion),
-                                                                                                                                       CreateHookString("CLIENTPROXYCLASS", $"{PackageName}.proxy.ClientProxy"),
-                                                                                                                                       CreateHookString("SERVERPROXYCLASS", $"{PackageName}.proxy.ServerProxy")));
+                                                                                                                                       CreateHookString("CLIENTPROXYCLASS", $"{PackageName}.{SourceCodeLocator.ClientProxy.ImportFullName}"),
+                                                                                                                                       CreateHookString("SERVERPROXYCLASS", $"{PackageName}.{SourceCodeLocator.ServerProxy.ImportFullName}")));
     }
 }

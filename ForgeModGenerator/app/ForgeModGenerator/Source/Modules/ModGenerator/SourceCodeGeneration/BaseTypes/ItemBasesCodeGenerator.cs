@@ -179,7 +179,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             CodeMethodInvokeExpression setUnlocalizedName = NewMethodInvoke("setUnlocalizedName", NewVarReference("name"));
             CodeMethodInvokeExpression setRegistryName = NewMethodInvoke("setRegistryName", NewVarReference("name"));
             CodeMethodInvokeExpression setCreativeTab = NewMethodInvoke("setCreativeTab", NewFieldReferenceType(SourceCodeLocator.CreativeTab.ClassName, "MODCEATIVETAB"));
-            CodeMethodInvokeExpression addToList = NewMethodInvoke(NewFieldReferenceVar(SourceCodeLocator.Items.ClassName, "ITEMS"), "add", NewThis());
+            CodeMethodInvokeExpression addToList = NewMethodInvoke(NewFieldReferenceVar(SourceCodeLocator.Items.ClassName, SourceCodeLocator.Items.InitFieldName), "add", NewThis());
             return new CodeExpression[] { super, setUnlocalizedName, setRegistryName, setCreativeTab, addToList };
         }
     }

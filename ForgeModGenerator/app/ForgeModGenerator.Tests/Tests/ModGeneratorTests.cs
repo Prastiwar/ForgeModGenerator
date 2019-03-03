@@ -15,7 +15,7 @@ namespace ForgeModGenerator.Tests
             Assert.AreEqual("someFolder.SomeClassName", locator.ImportFullName);
             Assert.AreEqual("someFolder/SomeClassName.java", locator.RelativePath);
 
-            string sourcePath = ModPaths.GeneratedSourceCodeFolder("TestMod", "testorg");
+            string sourcePath = ModPaths.SourceCodeRootFolder("TestMod", "testorg");
             string armorBasePath = Path.Combine(sourcePath, SourceCodeLocator.ArmorBase.RelativePath);
             string armorBaseFileName = Path.GetFileNameWithoutExtension(armorBasePath);
             Assert.AreEqual(armorBaseFileName, SourceCodeLocator.ArmorBase.ClassName);

@@ -47,9 +47,9 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             ctor.Statements.Add(NewMethodInvokeVar("name", "setUnlocalizedName"));
             ctor.Statements.Add(NewMethodInvokeVar("name", "setRegistryName"));
             ctor.Statements.Add(NewMethodInvoke("setCreativeTab", NewFieldReferenceType(SourceCodeLocator.CreativeTab.ClassName, "MODCEATIVETAB")));
-            ctor.Statements.Add(NewMethodInvoke(NewFieldReferenceType(SourceCodeLocator.Blocks.ClassName, "BLOCKS"), "add", NewThis()));
+            ctor.Statements.Add(NewMethodInvoke(NewFieldReferenceType(SourceCodeLocator.Blocks.ClassName, SourceCodeLocator.Blocks.InitFieldName), "add", NewThis()));
             CodeMethodInvokeExpression setRegistryName = NewMethodInvoke(NewObject("ItemBlock", NewThis()), "setRegistryName", NewMethodInvoke(NewThis(), "getRegistryName"));
-            ctor.Statements.Add(NewMethodInvoke(NewFieldReferenceType(SourceCodeLocator.Items.ClassName, "ITEMS"), "add", setRegistryName));
+            ctor.Statements.Add(NewMethodInvoke(NewFieldReferenceType(SourceCodeLocator.Items.ClassName, SourceCodeLocator.Items.InitFieldName), "add", setRegistryName));
             clas.Members.Add(ctor);
 
             // TODO: Add annotation @Override

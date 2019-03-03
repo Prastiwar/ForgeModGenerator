@@ -40,10 +40,10 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             CodeConstructor ctor = NewConstructor(SourceCodeLocator.SoundEventBase.ClassName, MemberAttributes.Public, new Parameter(typeof(string).FullName, "name"));
             ctor.Statements.Add(new CodeSuperConstructorInvokeExpression(NewObject("ResourceLocation", NewFieldReferenceType(SourceCodeLocator.Hook.ClassName, "MODID"), NewVarReference("name"))));
             ctor.Statements.Add(NewMethodInvoke("setRegistryName", NewVarReference("name")));
-            ctor.Statements.Add(NewMethodInvoke(NewFieldReferenceType(SourceCodeLocator.Sounds.ClassName, "SOUNDS"), "add", NewThis()));
+            ctor.Statements.Add(NewMethodInvoke(NewFieldReferenceType(SourceCodeLocator.SoundEvents.ClassName, SourceCodeLocator.SoundEvents.InitFieldName), "add", NewThis()));
             clas.Members.Add(ctor);
             CodeNamespace package = NewPackage(clas, $"{PackageName}.{SourceCodeLocator.Hook.ImportFullName}",
-                                                     $"{PackageName}.{SourceCodeLocator.Sounds.ImportFullName}",
+                                                     $"{PackageName}.{SourceCodeLocator.SoundEvents.ImportFullName}",
                                                      "net.minecraft.util.ResourceLocation",
                                                      "net.minecraft.util.SoundEvent");
             return NewCodeUnit(package);

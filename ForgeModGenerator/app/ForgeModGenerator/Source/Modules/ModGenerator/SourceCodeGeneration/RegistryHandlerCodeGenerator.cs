@@ -12,25 +12,26 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 
         protected override string ScriptFilePath { get; }
 
-        private CodeMemberMethod GetRegisterMethod(string initClassName, string customRegisterType = null)
+        private CodeMemberMethod GetRegisterMethod(string className, string fieldName, string registerType)
         {
             // TODO: Add annotation @SubscribeEvent
-            string registerName = string.IsNullOrEmpty(customRegisterType) ? initClassName : customRegisterType;
-            CodeMemberMethod method = NewMethod($"on{initClassName}Register", typeof(void).FullName, MemberAttributes.Public | JavaAttributes.StaticOnly,
-                                                                                                     new Parameter($"RegistryEvent.Register<{registerName}>", "event"));
+            CodeMemberMethod method = NewMethod($"on{registerType}Register", typeof(void).FullName, MemberAttributes.Public | JavaAttributes.StaticOnly,
+                                                                                                     new Parameter($"RegistryEvent.Register<{registerType}>", "event"));
             CodeMethodInvokeExpression getRegistry = NewMethodInvokeVar("event", "getRegistry");
-            CodeFieldReferenceExpression list = NewFieldReferenceVar($"{Modname}{initClassName}s", $"{initClassName.ToUpper()}S");
-            CodeMethodInvokeExpression registerParam = new CodeMethodInvokeExpression(list, "toArray", NewArray(registerName, 0));
+            CodeFieldReferenceExpression list = NewFieldReferenceVar(className, fieldName);
+            CodeMethodInvokeExpression registerParam = new CodeMethodInvokeExpression(list, "toArray", NewArray(registerType, 0));
             CodeMethodInvokeExpression registerAll = new CodeMethodInvokeExpression(getRegistry, "registerAll", registerParam);
             method.Statements.Add(registerAll);
             return method;
         }
 
-        private CodeForeachStatement CreateRegisterModelForeach(string registerType)
+        private CodeForeachStatement CreateRegisterModelForeach(string className, string registerType)
         {
-            CodeForeachStatement loop = new CodeForeachStatement(NewVariable(registerType, registerType.ToLower()), NewFieldReferenceType($"{Modname}{registerType}s", $"{registerType.ToUpper()}S"));
-            CodeMethodInvokeExpression registerModels = NewMethodInvokeVar($"((IHasModel) {registerType.ToLower()})", "registerModels");
-            CodeConditionStatement ifStatement = new CodeConditionStatement(new CodeSnippetExpression($"{registerType.ToLower()} instanceof IHasModel"), new CodeExpressionStatement(registerModels));
+            CodeForeachStatement loop = new CodeForeachStatement(NewVariable(registerType, registerType.ToLower()), NewFieldReferenceType(className, $"{registerType.ToUpper()}S"));
+            CodeMethodInvokeExpression registerModels = NewMethodInvokeVar($"(({SourceCodeLocator.ModelInterface.ClassName}) {registerType.ToLower()})", "registerModels");
+            CodeConditionStatement ifStatement = new CodeConditionStatement(
+                new CodeSnippetExpression($"{registerType.ToLower()} instanceof {SourceCodeLocator.ModelInterface.ClassName}"), new CodeExpressionStatement(registerModels)
+            );
             loop.Statements.Add(ifStatement);
             return loop;
         }
@@ -38,18 +39,18 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
         protected override CodeCompileUnit CreateTargetCodeUnit()
         {
             // TODO: Add annotation @EventBusSubscriber
-            CodeTypeDeclaration clas = NewClassWithMembers(SourceCodeLocator.RegistryHandler.ClassName, GetRegisterMethod("Item"),
-                                                                                                        GetRegisterMethod("Block"),
-                                                                                                        GetRegisterMethod("Sound", "SoundEvent"));
+            CodeTypeDeclaration clas = NewClassWithMembers(SourceCodeLocator.RegistryHandler.ClassName, GetRegisterMethod(SourceCodeLocator.Items.ClassName, SourceCodeLocator.Items.InitFieldName, "Item"),
+                                                                               GetRegisterMethod(SourceCodeLocator.Blocks.ClassName, SourceCodeLocator.Blocks.InitFieldName, "Block"),
+                                                                               GetRegisterMethod(SourceCodeLocator.SoundEvents.ClassName, SourceCodeLocator.SoundEvents.InitFieldName, "SoundEvent"));
             // TODO: Add annotation @SubscribeEvent
             CodeMemberMethod modelRegister = NewMethod("onModelRegister", typeof(void).FullName, MemberAttributes.Public | JavaAttributes.StaticOnly, new Parameter("ModelRegistryEvent", "event"));
-            modelRegister.Statements.Add(CreateRegisterModelForeach("Item"));
-            modelRegister.Statements.Add(CreateRegisterModelForeach("Block"));
+            modelRegister.Statements.Add(CreateRegisterModelForeach(SourceCodeLocator.Items.ClassName, "Item"));
+            modelRegister.Statements.Add(CreateRegisterModelForeach(SourceCodeLocator.Blocks.ClassName, "Block"));
             clas.Members.Add(modelRegister);
 
             return NewCodeUnit(clas, $"{PackageName}.{SourceCodeLocator.Blocks.ImportFullName}",
                                      $"{PackageName}.{SourceCodeLocator.Items.ImportFullName}",
-                                     $"{PackageName}.{SourceCodeLocator.Sounds.ImportFullName}",
+                                     $"{PackageName}.{SourceCodeLocator.SoundEvents.ImportFullName}",
                                      $"{PackageName}.{SourceCodeLocator.ModelInterface.ImportFullName}",
                                      "net.minecraft.block.Block",
                                      "net.minecraft.item.Item",

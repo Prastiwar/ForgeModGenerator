@@ -46,7 +46,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             CodeTypeDeclaration proxyClass = NewClassWithBases(SourceCodeLocator.ClientProxy.ClassName, SourceCodeLocator.CommonProxyInterface.ClassName);
             CodeMemberMethod registerItemRendererMethod = CreateRegisterItemRendererMethod();
             registerItemRendererMethod.Attributes |= MemberAttributes.Override;
-            CodeObjectCreateExpression modelResourceLocation = NewObject("ModelResourceLocation", NewMethodInvokeVar("item", "getRegistryName", NewVarReference("id")));
+            CodeObjectCreateExpression modelResourceLocation = NewObject("ModelResourceLocation", NewMethodInvokeVar("item", "getRegistryName"), NewVarReference("id"));
             registerItemRendererMethod.Statements.Add(NewMethodInvokeType("ModelLoader", "setCustomModelResourceLocation", NewVarReference("item"), NewVarReference("meta"), modelResourceLocation));
             proxyClass.Members.Add(registerItemRendererMethod);
             return NewCodeUnit(proxyClass, "net.minecraft.client.renderer.block.model.ModelResourceLocation",

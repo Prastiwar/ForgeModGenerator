@@ -24,11 +24,11 @@ namespace ForgeModGenerator.CodeGeneration
             return field;
         }
 
-        protected CodeCompileUnit CreateDefaultTargetCodeUnit(string className, string elementType, string baseFieldTypeCreation)
+        protected CodeCompileUnit CreateDefaultTargetCodeUnit(string className, string elementType)
         {
             CodeTypeDeclaration clas = NewClassWithMembers(className);
 
-            CodeMemberField listField = new CodeMemberField($"List<{elementType}>", elementType.ToUpper() + "s") {
+            CodeMemberField listField = new CodeMemberField($"List<{elementType}>", elementType.ToUpper() + "S") {
                 Attributes = MemberAttributes.Public | MemberAttributes.Static | MemberAttributes.Final,
                 InitExpression = new CodeObjectCreateExpression($"ArrayList<{elementType}>")
             };
@@ -42,7 +42,9 @@ namespace ForgeModGenerator.CodeGeneration
                 }
             }
 
-            CodeNamespace package = NewPackage(clas, "java.util.ArrayList", "java.util.List", $"net.minecraft.util.{baseFieldTypeCreation}");
+            CodeNamespace package = NewPackage(clas, "java.util.ArrayList",
+                                                     "java.util.List",
+                                                     $"net.minecraft.util.{elementType}");
             return NewCodeUnit(package);
         }
     }

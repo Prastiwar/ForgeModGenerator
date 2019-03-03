@@ -79,7 +79,7 @@ namespace ForgeModGenerator.Tests
 
             typ.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed | TypeAttributes.Abstract;
             code = GenerateCode(TestContext, unit);
-            Assert.IsTrue(code.Contains("public final class TestClass extends SomeClass implements ISomeInterface, ISomeOtherInterface"), code);
+            Assert.IsTrue(code.Contains("public static class TestClass extends SomeClass implements ISomeInterface, ISomeOtherInterface"), code);
 
             typ.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;
             typ.Attributes = JavaAttributes.StaticFinal;

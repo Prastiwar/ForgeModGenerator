@@ -1,6 +1,6 @@
 ﻿namespace ForgeModGenerator.CodeGeneration
 {
-    public struct ClassLocator
+    public class ClassLocator
     {
         public ClassLocator(string importFullName)
         {
@@ -25,9 +25,17 @@
         public static string CombineImport(params string[] strings) => string.Join(".", strings);
     }
 
+    public class InitClassLocator : ClassLocator
+    {
+        public InitClassLocator(string importFullName, string initFieldName) : base(importFullName) => InitFieldName = initFieldName;
+
+        /// <summary> Name of field (list) that holds a references to init types </summary>
+        public string InitFieldName { get; }
+    }
+
     public static class SourceCodeFolders
     {
-        public const string Root = "generated";
+        public const string Root = "fmg";
 
         public const string Block = "block";
 
@@ -45,12 +53,12 @@
 
     public static class SourceCodeLocator
     {
-        private const string Prefix = "FMG";
+        internal const string Prefix = "FMG";
 
         public static readonly ClassLocator Manager = ClassLocator.CombineImport(SourceCodeFolders.Root, Prefix + "Manager");
         public static readonly ClassLocator Hook = ClassLocator.CombineImport(SourceCodeFolders.Root, Prefix + "Hook");
 
-        public static readonly ClassLocator Items = ClassLocator.CombineImport(SourceCodeFolders.Root, Prefix + "Items");
+        public static readonly InitClassLocator Items = new InitClassLocator(ClassLocator.CombineImport(SourceCodeFolders.Root, Prefix + "Items"), "ITEMS");
         public static readonly ClassLocator ItemBase = ClassLocator.CombineImport(SourceCodeFolders.Root, SourceCodeFolders.Item, "ItemBase");
         public static readonly ClassLocator BowBase = ClassLocator.CombineImport(SourceCodeFolders.Root, SourceCodeFolders.Item, SourceCodeFolders.Bow, "BowBase");
         public static readonly ClassLocator FoodBase = ClassLocator.CombineImport(SourceCodeFolders.Root, SourceCodeFolders.Item, SourceCodeFolders.Food, "FoodBase");
@@ -62,14 +70,14 @@
         public static readonly ClassLocator HoeBase = ClassLocator.CombineImport(SourceCodeFolders.Root, SourceCodeFolders.Item, SourceCodeFolders.Tool, "HoeBase");
         public static readonly ClassLocator AxeBase = ClassLocator.CombineImport(SourceCodeFolders.Root, SourceCodeFolders.Item, SourceCodeFolders.Tool, "AxeBase");
 
-        public static readonly ClassLocator Blocks = ClassLocator.CombineImport(SourceCodeFolders.Root, Prefix + "Blocks");
+        public static readonly InitClassLocator Blocks = new InitClassLocator(ClassLocator.CombineImport(SourceCodeFolders.Root, Prefix + "Blocks"), "BLOCKS");
         public static readonly ClassLocator BlockBase = ClassLocator.CombineImport(SourceCodeFolders.Root, SourceCodeFolders.Block, "BlockBase");
         public static readonly ClassLocator OreBase = ClassLocator.CombineImport(SourceCodeFolders.Root, SourceCodeFolders.Block, "OreBase");
 
-        public static readonly ClassLocator Sounds = ClassLocator.CombineImport(SourceCodeFolders.Root, Prefix + "Sounds");
+        public static readonly InitClassLocator SoundEvents = new InitClassLocator(ClassLocator.CombineImport(SourceCodeFolders.Root, Prefix + "SoundEvents"), "SOUNDEVENTS");
         public static readonly ClassLocator SoundEventBase = ClassLocator.CombineImport(SourceCodeFolders.Root, SourceCodeFolders.Sound, "SoundEventBase");
 
-        public static readonly ClassLocator Recipes = ClassLocator.CombineImport(SourceCodeFolders.Root, Prefix + "Recipes");
+        public static readonly InitClassLocator Recipes = new InitClassLocator(ClassLocator.CombineImport(SourceCodeFolders.Root, Prefix + "Recipes"), "RECIPES");
 
         public static readonly ClassLocator CreativeTab = ClassLocator.CombineImport(SourceCodeFolders.Root, SourceCodeFolders.Gui, Prefix + "CreativeTab");
 

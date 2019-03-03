@@ -191,12 +191,13 @@ namespace ForgeModGenerator.CodeGeneration
             {
                 foreach (string import in imports)
                 {
-                    package.Imports.Add(new CodeNamespaceImport(import));
+                    package.Imports.Add(NewImport(import));
                 }
             }
             return package;
         }
 
+        protected CodeNamespaceImport NewImport(string import) => new CodeNamespaceImport(import);
         protected CodeCompileUnit NewCodeUnit(CodeTypeDeclaration defaultType, params string[] imports) => NewCodeUnit(NewPackage(defaultType, imports));
 
         protected CodeCompileUnit NewCodeUnit(CodeNamespace package)

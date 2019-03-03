@@ -71,6 +71,7 @@ namespace ForgeModGenerator.Tests
             Assert.IsTrue(IOHelper.IsPathValid(@"\ForgeModGenerator\ForgeModGenerator\mods\TestMod"));
         }
 
+        // IMPORTANT: Make sure you have TestMod in /mods/ folder
         [TestMethod]
         public void GetModidFromPath()
         {
