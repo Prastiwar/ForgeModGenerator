@@ -13,49 +13,67 @@
 	  d:DesignWidth="800"
 	  x:Name="ThisWindow"
 	  vm:ViewModelLocator.GetDataContext="ForgeModGenerator.ModGenerator.ViewModels.ModGeneratorViewModel">
-	<Grid Background="{StaticResource PageBackground}">
-		<ScrollViewer VerticalScrollBarVisibility="Auto">
-			<StackPanel>
-				<materialDesign:Card Background="#FF535353"
-									 Margin="10">
-					<StackPanel>
-						<TextBlock Text="Generate New Mod"
-								   HorizontalAlignment="Center"
-								   VerticalAlignment="Center"
-								   FontSize="20"
-								   Foreground="Wheat" />
-						<mControls:ModForm DataContext="{Binding NewMod}"
-										   Margin="10"
-										   SaveCommand="{Binding DataContext.CreateModCommand, ElementName=ThisWindow}"
-										   SaveButtonText="Generate Mod"
-										   AddForgeVersionCommand="{Binding DataContext.AddNewForgeVersionCommand, ElementName=ThisWindow}"
-										   Setups="{Binding DataContext.WorkspaceService.Setups, ElementName=ThisWindow}"
-										   ForgeVersions="{Binding DataContext.SessionContext.ForgeVersions, ElementName=ThisWindow}"
-										   Sides="{Binding DataContext.Sides, ElementName=ThisWindow}" />
-						<TextBlock Text="Edit Mod"
-								   HorizontalAlignment="Center"
-								   VerticalAlignment="Center"
-								   FontSize="20"
-								   Foreground="Wheat"
-								   Visibility="{Binding Path=SessionContext.Mods.Count, Converter={StaticResource IntToVisibilityConverter}}" />
-						<ListBox ItemsSource="{Binding Path=SessionContext.Mods}"
-								 SelectedItem="{Binding Path=SelectedEditMod}"
-								 HorizontalContentAlignment="Stretch">
-							<ListBox.ItemTemplate>
-								<DataTemplate>
-									<mControls:ModForm DataContext="{Binding}"
-													   SaveCommand="{Binding DataContext.SaveChangesCommand, ElementName=ThisWindow}"
-													   RemoveModCommand="{Binding DataContext.RemoveModCommand, ElementName=ThisWindow}"
-													   AddForgeVersionCommand="{Binding DataContext.AddNewForgeVersionCommand, ElementName=ThisWindow}"
-													   Setups="{Binding DataContext.WorkspaceService.Setups, ElementName=ThisWindow}"
-													   ForgeVersions="{Binding DataContext.SessionContext.ForgeVersions, ElementName=ThisWindow}"
-													   Sides="{Binding DataContext.Sides, ElementName=ThisWindow}" />
-								</DataTemplate>
-							</ListBox.ItemTemplate>
-						</ListBox>
-					</StackPanel>
-				</materialDesign:Card>
-			</StackPanel>
-		</ScrollViewer>
-	</Grid>
+	<materialDesign:DialogHost>
+		<Grid Background="{StaticResource PageBackground}">
+			<ScrollViewer VerticalScrollBarVisibility="Auto">
+				<StackPanel>
+					<materialDesign:Card Background="#FF535353"
+										 Margin="10">
+						<StackPanel>
+							<StackPanel Orientation="Horizontal"
+										Margin="5">
+								<Button Content="{materialDesign:PackIcon Kind=Plus}"
+										Margin="10,1"
+										HorizontalAlignment="Left"
+										VerticalAlignment="Center"
+										FontSize="20"
+										Command="{Binding CreateModCommand}" />
+								<TextBlock Text="Generate New Mod"
+										   Margin="10,1"
+										   HorizontalAlignment="Center"
+										   VerticalAlignment="Center"
+										   FontSize="15"
+										   Foreground="Wheat" />
+							</StackPanel>
+							<TextBlock Text="Edit Mod"
+									   HorizontalAlignment="Center"
+									   VerticalAlignment="Center"
+									   FontSize="20"
+									   Foreground="Wheat"
+									   Visibility="{Binding Path=SessionContext.Mods.Count, Converter={StaticResource IntToVisibilityConverter}}" />
+							<ListBox ItemsSource="{Binding Path=SessionContext.Mods}"
+									 SelectedItem="{Binding Path=SelectedEditMod}"
+									 HorizontalContentAlignment="Stretch">
+								<ListBox.ItemTemplate>
+									<DataTemplate>
+										<materialDesign:Card>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Button Content="{materialDesign:PackIcon Kind=Edit}"
+                                                        Margin="5"
+                                                        Command="{Binding DataContext.EditModCommand, ElementName=ThisWindow}"
+                                                        CommandParameter="{Binding}" />
+                                                <Button Content="{materialDesign:PackIcon Kind=Folder}"
+                                                        Margin="5"
+                                                        Command="{Binding DataContext.ShowModContainerCommand, ElementName=ThisWindow}"
+                                                        CommandParameter="{Binding}" />
+                                                <Button Content="{materialDesign:PackIcon Kind=Trash}"
+														Margin="5"
+														Command="{Binding DataContext.RemoveModCommand, ElementName=ThisWindow}"
+														CommandParameter="{Binding}" />
+												<TextBlock Text="{Binding ModInfo.Name}"
+														   VerticalAlignment="Center"
+														   Margin="5"
+														   FontSize="14"
+														   Foreground="Wheat" />
+											</StackPanel>
+										</materialDesign:Card>
+									</DataTemplate>
+								</ListBox.ItemTemplate>
+							</ListBox>
+						</StackPanel>
+					</materialDesign:Card>
+				</StackPanel>
+			</ScrollViewer>
+		</Grid>
+	</materialDesign:DialogHost>
 </Page>

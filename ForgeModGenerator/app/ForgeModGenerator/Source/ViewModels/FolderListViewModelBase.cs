@@ -51,7 +51,7 @@ namespace ForgeModGenerator.ViewModels
 
         public ISessionContextService SessionContext { get; }
 
-        public FileEditor<TFolder, TFile> FileEditor { get; protected set; }
+        public EditorForm<TFile> FileEditor { get; protected set; }
 
         private ObservableFolder<TFolder> folders;
         public ObservableFolder<TFolder> Folders {
@@ -91,7 +91,7 @@ namespace ForgeModGenerator.ViewModels
         public ICommand OnLoadedCommand => onLoadedCommand ?? (onLoadedCommand = new RelayCommand(OnLoaded));
 
         private ICommand editFileCommand;
-        public ICommand EditFileCommand => editFileCommand ?? (editFileCommand = new RelayCommand<Tuple<TFolder, TFile>>(FileEditor.OpenFileEditor));
+        public ICommand EditFileCommand => editFileCommand ?? (editFileCommand = new RelayCommand<TFile>(FileEditor.OpenItemEditor));
 
         private ICommand addFileCommand;
         public ICommand AddFileCommand => addFileCommand ?? (addFileCommand = new RelayCommand<TFolder>(ShowFileDialogAndCopyToFolder));

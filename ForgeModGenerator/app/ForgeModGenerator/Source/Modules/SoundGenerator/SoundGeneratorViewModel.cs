@@ -28,8 +28,8 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             OpenFileDialog.Filter = "Sound file (*.ogg) | *.ogg";
             AllowedFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".ogg" };
             FileEditForm = new SoundEditForm();
-            FileEditor = new SoundFileEditor(dialogService, FileEditForm);
-            FileEditor.OnFileEdited += OnSoundEdited;
+            FileEditor = new EditorForm<Sound>(dialogService, FileEditForm);
+            FileEditor.ItemEdited += OnSoundEdited;
             FileSynchronizer = SessionContext.IsModSelected
                              ? new SoundEventsSynchronizer(Folders, SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid, FoldersRootPath, AllowedFileExtensionsPatterns)
                              : new SoundEventsSynchronizer(Folders, "", "", FoldersRootPath, AllowedFileExtensionsPatterns);
@@ -78,8 +78,8 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             base.ForceJsonFileUpdate();
             ;// TODO: GetCurrentSoundCodeGenerator().RegenerateScript();
         }
-
-        protected void OnSoundEdited(object sender, SoundFileEditor.FileEditedEventArgs args)
+        
+        protected void OnSoundEdited(object sender, EditorForm<Sound>.ItemEditedEventArgs args)
         {
             if (args.Result)
             {
@@ -87,9 +87,9 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             }
             else
             {
-                args.ActualFile.CopyValues(args.CachedFile);
+                args.ActualItem.CopyValues(args.CachedItem);
             }
-            args.ActualFile.IsDirty = false;
+            args.ActualItem.IsDirty = false;
         }
 
         protected void SubscribeFolderEvents(object sender, FileChangedEventArgs<SoundEvent> e)

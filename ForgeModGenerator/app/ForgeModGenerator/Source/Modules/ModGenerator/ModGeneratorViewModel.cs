@@ -1,5 +1,6 @@
 ﻿using ForgeModGenerator.CodeGeneration;
 using ForgeModGenerator.Models;
+using ForgeModGenerator.ModGenerator.Controls;
 using ForgeModGenerator.ModGenerator.SourceCodeGeneration;
 using ForgeModGenerator.Services;
 using ForgeModGenerator.Utility;
@@ -12,6 +13,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -25,23 +27,22 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
             SessionContext = sessionContext;
             WorkspaceService = workspaceService;
             DialogService = dialogService;
-
-            NewMod = new Mod(new McModInfo() {
-                Name = "NewExampleMod",
-                Modid = "newexamplemod",
-                Credits = "For contributors of ForgeModGenerator",
-                Description = "This is example mod",
-                McVersion = "12.2",
-                Version = "1.0",
-                AuthorList = new ObservableCollection<string>() { "Me" },
-                Dependencies = new ObservableCollection<string>(),
-                Screenshots = new ObservableCollection<string>()
-            }, "newexampleorg", SessionContext.ForgeVersions[0]);
+            ResetNewMod();
+            Form = new ModForm() {
+                AddForgeVersionCommand = AddNewForgeVersionCommand,
+                Setups = WorkspaceService.Setups,
+                ForgeVersions = SessionContext.ForgeVersions,
+                Sides = Sides
+            };
+            EditorForm = new EditorForm<Mod>(DialogService, Form);
         }
 
         private readonly string[] assetsFolerToGenerate = new string[] {
             "blockstates", "lang", "recipes", "sounds", "models/item", "textures/blocks", "textures/entity", "textures/items", "textures/models/armor"
         };
+
+        protected FrameworkElement Form { get; set; }
+        protected EditorForm<Mod> EditorForm { get; set; }
 
         public ISessionContextService SessionContext { get; }
         public IWorkspaceSetupService WorkspaceService { get; }
@@ -65,13 +66,18 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
         public ICommand AddNewForgeVersionCommand => addNewForgeVersionCommand ?? (addNewForgeVersionCommand = new RelayCommand(AddNewForge));
 
         private ICommand createModCommand;
-        public ICommand CreateModCommand => createModCommand ?? (createModCommand = new RelayCommand(() => GenerateMod(NewMod)));
+        public ICommand CreateModCommand => createModCommand ?? (createModCommand = new RelayCommand(() => CreateNewMod(NewMod)));
 
         private ICommand removeModCommand;
         public ICommand RemoveModCommand => removeModCommand ?? (removeModCommand = new RelayCommand<Mod>(RemoveMod));
 
-        private ICommand saveChangesCommand;
-        public ICommand SaveChangesCommand => saveChangesCommand ?? (saveChangesCommand = new RelayCommand<Mod>(SaveModChanges));
+        private ICommand editModCommand;
+        public ICommand EditModCommand => editModCommand ?? (editModCommand = new RelayCommand<Mod>(EditMod));
+
+        private ICommand showModContainerCommand;
+        public ICommand ShowModContainerCommand => showModContainerCommand ?? (showModContainerCommand = new RelayCommand<Mod>(ShowContainer));
+
+        private void ShowContainer(Mod mod) => Process.Start(ModPaths.ModRootFolder(mod.ModInfo.Name));
 
         private async void RemoveMod(Mod mod)
         {
@@ -97,6 +103,48 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
         {
             Process.Start("https://files.minecraftforge.net/"); // to install version
             Process.Start(AppPaths.ForgeVersions); // paste zip there
+        }
+
+        private void ResetNewMod() => NewMod = new Mod(new McModInfo() {
+            Name = "NewExampleMod",
+            Modid = "newexamplemod",
+            Credits = "For contributors of ForgeModGenerator",
+            Description = "This is example mod",
+            McVersion = "12.2",
+            Version = "1.0",
+            AuthorList = new ObservableCollection<string>() { "Me" },
+            Dependencies = new ObservableCollection<string>(),
+            Screenshots = new ObservableCollection<string>()
+        }, "newexampleorg", SessionContext.ForgeVersions[0]);
+
+        private void EditMod(Mod mod)
+        {
+            SelectedEditMod = mod;
+            EditorForm.OpenItemEditor(mod);
+        }
+
+        private void CreateNewMod(Mod mod)
+        {
+            EditorForm<Mod> tempEditor = new EditorForm<Mod>(DialogService, Form);
+            tempEditor.ItemEdited += (sender, e) => {
+                if (e.Result)
+                {
+                    GenerateMod(e.ActualItem);
+                }
+            };
+            tempEditor.OpenItemEditor(mod);
+        }
+
+        private void Editor_OnItemEdited(object sender, EditorForm<Mod>.ItemEditedEventArgs e)
+        {
+            if (e.Result)
+            {
+                SaveModChanges(e.ActualItem);
+            }
+            else
+            {
+                e.ActualItem.CopyValues(e.CachedItem);
+            }
         }
 
         private void GenerateMod(Mod mod)

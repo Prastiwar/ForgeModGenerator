@@ -158,6 +158,7 @@
     <Compile Include="Source\CodeGeneration\MultiScriptsCodeGenerator.cs" />
     <Compile Include="Source\CodeGeneration\ScriptCodeGenerator.cs" />
     <Compile Include="Source\Common\AppPaths.cs" />
+    <Compile Include="Source\Common\EditorForm.cs" />
     <Compile Include="Source\Common\ICopiable.cs" />
     <Compile Include="Source\Common\IDirty.cs" />
     <Compile Include="Source\Common\Log.cs" />
@@ -177,7 +178,6 @@
     <Compile Include="Source\FileSystem\FoldersSynchronizer.cs" />
     <Compile Include="Source\CodeGeneration\SourceCodeLocator.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundEventsSynchronizer.cs" />
-    <Compile Include="Source\Modules\SoundGenerator\SoundFileEditor.cs" />
     <Compile Include="Source\Services\DialogService.cs" />
     <Compile Include="Source\Utility\Extensions\CollectionExtensions.cs" />
     <Compile Include="Source\Utility\Extensions\IOExtensions.cs" />
@@ -264,7 +264,6 @@
     <Compile Include="Source\Modules\BlockGenerator\BlockGeneratorViewModel.cs" />
     <Compile Include="Source\Modules\CommandGenerator\CommandGeneratorViewModel.cs" />
     <Compile Include="Source\Modules\ItemGenerator\ItemGeneratorViewModel.cs" />
-    <Compile Include="Source\FileSystem\FileEditor.cs" />
     <Compile Include="Source\ViewModels\FolderListViewModelBase.cs" />
     <Compile Include="Source\Modules\ModGenerator\ModGeneratorViewModel.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\RecipeGeneratorViewModel.cs" />

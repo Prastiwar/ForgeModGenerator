@@ -3,6 +3,7 @@ using ForgeModGenerator.ModGenerator.Validations;
 using ForgeModGenerator.Utility;
 using GalaSoft.MvvmLight;
 using Newtonsoft.Json;
+using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -18,7 +19,7 @@ namespace ForgeModGenerator.Models
         Server
     }
 
-    public class Mod : ObservableObject
+    public class Mod : ObservableObject, IDirty, ICopiable<Mod>
     {
         private string organization;
         [JsonProperty(Required = Required.Always)]
@@ -193,5 +194,34 @@ namespace ForgeModGenerator.Models
             }
             return null;
         }
+
+        [JsonIgnore]
+        public bool IsDirty { get; set; }
+
+        public bool CopyValues(Mod fromCopy)
+        {
+            Side = fromCopy.Side;
+            ModInfo = fromCopy.ModInfo;
+            Organization = fromCopy.Organization;
+            WorkspaceSetup = fromCopy.WorkspaceSetup;
+            LaunchSetup = fromCopy.LaunchSetup;
+            ForgeVersion = fromCopy.ForgeVersion;
+            return true;
+        }
+
+        public Mod DeepCopy()
+        {
+            Mod clone = new Mod(ModInfo.DeepCopy(), Organization, new ForgeVersion(ForgeVersion.ZipPath))
+                .SetSide(Side)
+                .SetLaunchSetup(new LaunchSetup(LaunchSetup.RunClient, LaunchSetup.RunServer))
+                .SetWorkspaceSetup(WorkspaceSetup);
+            return clone;
+        }
+
+        public Mod ShallowCopy() => (Mod)((ICloneable)this).Clone();
+
+        bool ICopiable.CopyValues(object fromCopy) => fromCopy is Mod copyMod ? CopyValues(copyMod) : false;
+        object ICopiable.DeepClone() => DeepCopy();
+        object ICloneable.Clone() => MemberwiseClone();
     }
 }
