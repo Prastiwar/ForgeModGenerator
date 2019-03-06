@@ -161,6 +161,7 @@
     <Compile Include="Source\Common\EditorForm.cs" />
     <Compile Include="Source\Common\ICopiable.cs" />
     <Compile Include="Source\Common\IDirty.cs" />
+    <Compile Include="Source\Common\IValidable.cs" />
     <Compile Include="Source\Common\Log.cs" />
     <Compile Include="Source\Common\Math.cs" />
     <Compile Include="Source\Common\ModPaths.cs" />
@@ -177,6 +178,7 @@
     <Compile Include="Source\Exceptions\InvalidSynchronizationArgument.cs" />
     <Compile Include="Source\FileSystem\FoldersSynchronizer.cs" />
     <Compile Include="Source\CodeGeneration\SourceCodeLocator.cs" />
+    <Compile Include="Source\Modules\ModGenerator\ModValidator.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundEventsSynchronizer.cs" />
     <Compile Include="Source\Services\DialogService.cs" />
     <Compile Include="Source\Utility\Extensions\CollectionExtensions.cs" />
@@ -207,7 +209,6 @@
     <Compile Include="Source\Converters\PathToModidConverter.cs" />
     <Compile Include="Source\Controls\BindingProxy.cs" />
     <Compile Include="Source\Modules\GUIGenerator\CreativeTabCodeGenerator.cs" />
-    <Compile Include="Source\Modules\ModGenerator\ModRules.cs" />
     <Compile Include="Source\Modules\ModGenerator\SourceCodeGeneration\BaseTypes\OtherBasesCodeGenerator.cs" />
     <Compile Include="Source\Modules\ModGenerator\SourceCodeGeneration\BaseTypes\BlockBasesCodeGenerator.cs" />
     <Compile Include="Source\Modules\ModGenerator\SourceCodeGeneration\BaseTypes\ItemBasesCodeGenerator.cs" />
@@ -264,7 +265,9 @@
     <Compile Include="Source\Modules\BlockGenerator\BlockGeneratorViewModel.cs" />
     <Compile Include="Source\Modules\CommandGenerator\CommandGeneratorViewModel.cs" />
     <Compile Include="Source\Modules\ItemGenerator\ItemGeneratorViewModel.cs" />
-    <Compile Include="Source\ViewModels\FolderListViewModelBase.cs" />
+    <Compile Include="Source\Validations\ValidateHelper.cs" />
+    <Compile Include="Source\ViewModels\FolderCollectionViewModelBase.cs" />
+    <Compile Include="Source\ViewModels\FoldersViewModelBase.cs" />
     <Compile Include="Source\Modules\ModGenerator\ModGeneratorViewModel.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\RecipeGeneratorViewModel.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundGeneratorViewModel.cs" />

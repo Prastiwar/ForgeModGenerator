@@ -46,33 +46,17 @@ namespace ForgeModGenerator
             }
         }
 
-        private FileSystemEventHandler onChangedHandler = null;
         /// <summary> Occurs when a file or directory in the specified Path is changed. </summary>
-        public new event FileSystemEventHandler Changed {
-            add => onChangedHandler += value;
-            remove => onChangedHandler -= value;
-        }
+        public new event FileSystemEventHandler Changed;
 
-        private FileSystemEventHandler onCreatedHandler = null;
         /// <summary> Occurs when a file or directory in the specified Path is created. </summary>
-        public new event FileSystemEventHandler Created {
-            add => onCreatedHandler += value;
-            remove => onCreatedHandler -= value;
-        }
+        public new event FileSystemEventHandler Created;
 
-        private FileSystemEventHandler onDeletedHandler = null;
         /// <summary> Occurs when a file or directory in the specified Path is deleted. </summary>
-        public new event FileSystemEventHandler Deleted {
-            add => onDeletedHandler += value;
-            remove => onDeletedHandler -= value;
-        }
+        public new event FileSystemEventHandler Deleted;
 
-        private RenamedEventHandler onRenamedHandler = null;
         /// <summary> Occurs when a file or directory in the specified Path is renamed. </summary>
-        public new event RenamedEventHandler Renamed {
-            add => onRenamedHandler += value;
-            remove => onRenamedHandler -= value;
-        }
+        public new event RenamedEventHandler Renamed;
 
         /// <summary> Array of common filter used in base class </summary>
         private string[] filtersArray;
@@ -92,7 +76,7 @@ namespace ForgeModGenerator
                 RenamedEventArgs args = (RenamedEventArgs)e;
                 if (monitorDirectory || StrictMatchPattern(filters, args.OldName))
                 {
-                    onRenamedHandler?.Invoke(sender, args);
+                    Renamed?.Invoke(sender, args);
                 }
             }
             else if (monitorDirectory || StrictMatchPattern(filters, e.Name))
@@ -100,13 +84,13 @@ namespace ForgeModGenerator
                 switch (e.ChangeType)
                 {
                     case WatcherChangeTypes.Created:
-                        onCreatedHandler?.Invoke(sender, e);
+                        Created?.Invoke(sender, e);
                         break;
                     case WatcherChangeTypes.Deleted:
-                        onDeletedHandler?.Invoke(sender, e);
+                        Deleted?.Invoke(sender, e);
                         break;
                     case WatcherChangeTypes.Changed:
-                        onChangedHandler?.Invoke(sender, e);
+                        Changed?.Invoke(sender, e);
                         break;
                     default:
                         break;

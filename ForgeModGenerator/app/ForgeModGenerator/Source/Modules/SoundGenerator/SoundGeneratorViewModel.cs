@@ -17,7 +17,7 @@ using System.Windows.Forms;
 namespace ForgeModGenerator.SoundGenerator.ViewModels
 {
     /// <summary> SoundGenerator Business ViewModel </summary>
-    public class SoundGeneratorViewModel : FolderListViewModelBase<SoundEvent, Sound>
+    public class SoundGeneratorViewModel : FoldersViewModelBase<SoundEvent, Sound>
     {
         public SoundGeneratorViewModel(ISessionContextService sessionContext, IDialogService dialogService) : base(sessionContext, dialogService)
         {
@@ -57,13 +57,13 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
                 soundEventValidator = null; // will lazy load itself when needed
                 if (Folders != null)
                 {
-                    Folders.OnFilesChanged -= SubscribeFolderEvents;
+                    Folders.FilesChanged -= SubscribeFolderEvents;
                     Folders.Clear();
                 }
                 Folders = new ObservableFolder<SoundEvent>(FoldersRootPath, await FileSynchronizer.FindFoldersAsync(FoldersJsonFilePath, true));
                 SubscribeFolderEvents(Folders, new FileChangedEventArgs<SoundEvent>(Folders.Files, FileChange.Add));
-                Folders.OnFilesChanged += SubscribeFolderEvents;
-                Folders.OnFilesChanged += OnFoldersCollectionChanged;
+                Folders.FilesChanged += SubscribeFolderEvents;
+                Folders.FilesChanged += OnFoldersCollectionChanged;
                 FileSynchronizer.Folders = Folders;
                 JsonUpdater = new SoundJsonUpdater(Folders.Files, FoldersJsonFilePath, Preferences.JsonFormatting, GetActualConverter());
                 CheckJsonFileMismatch();
@@ -99,9 +99,9 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
                 foreach (SoundEvent soundEvent in e.Files)
                 {
                     soundEvent.CollectionChanged += SoundEventSoundsChanged;
-                    soundEvent.OnValidate += OnSoundEventValidate;
+                    soundEvent.Validate += OnSoundEventValidate;
                     soundEvent.PropertyChanged += OnSoundEventPropertyChanged;
-                    soundEvent.OnFilePropertyChanged += OnSoundPropertyChanged;
+                    soundEvent.FilePropertyChanged += OnSoundPropertyChanged;
                 }
             }
             else if (e.Change == FileChange.Remove)
@@ -109,9 +109,9 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
                 foreach (SoundEvent soundEvent in e.Files)
                 {
                     soundEvent.CollectionChanged -= SoundEventSoundsChanged;
-                    soundEvent.OnValidate -= OnSoundEventValidate;
+                    soundEvent.Validate -= OnSoundEventValidate;
                     soundEvent.PropertyChanged -= OnSoundEventPropertyChanged;
-                    soundEvent.OnFilePropertyChanged -= OnSoundPropertyChanged;
+                    soundEvent.FilePropertyChanged -= OnSoundPropertyChanged;
                 }
             }
         }

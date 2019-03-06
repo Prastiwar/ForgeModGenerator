@@ -1,4 +1,6 @@
-﻿using GalaSoft.MvvmLight.Views;
+﻿using FluentValidation;
+using FluentValidation.Results;
+using GalaSoft.MvvmLight.Views;
 using MaterialDesignThemes.Wpf;
 using System;
 using System.Runtime.Caching;
@@ -43,25 +45,20 @@ namespace ForgeModGenerator
             public TItem Item { get; }
         }
 
-        public EditorForm(IDialogService dialogService, FrameworkElement form)
+        public EditorForm(IDialogService dialogService, FrameworkElement form, AbstractValidator<TItem> validator = null)
         {
             DialogService = dialogService;
             Form = form;
+            Validator = validator;
         }
 
-        private event EventHandler<ItemEditedEventArgs> ItemEditedHandler;
-        public event EventHandler<ItemEditedEventArgs> ItemEdited {
-            add => ItemEditedHandler += value;
-            remove => ItemEditedHandler -= value;
-        }
-
-        private event EventHandler<TItem> OpenFormFailedHandler;
-        public event EventHandler<TItem> OpenFormFailed {
-            add => OpenFormFailedHandler += value;
-            remove => OpenFormFailedHandler -= value;
-        }
+        public event EventHandler<ItemEditorClosingDialogEventArgs> FormClosing;
+        public event EventHandler<ItemEditedEventArgs> ItemEdited;
+        public event EventHandler<TItem> OpenFormFailed;
 
         public FrameworkElement Form { get; set; }
+
+        public AbstractValidator<TItem> Validator { get; set; }
 
         public TItem EditingItem { get; protected set; }
 
@@ -86,7 +83,7 @@ namespace ForgeModGenerator
             }
             catch (Exception)
             {
-                OpenFormFailedHandler?.Invoke(this, item);
+                OnOpenFormFailed(item);
                 return;
             }
             OnItemEdited(new ItemEditedEventArgs(result, (TItem)MemoryCache.Default.Remove(EdiTItemCacheKey), item));
@@ -94,7 +91,19 @@ namespace ForgeModGenerator
 
         protected virtual bool CanCloseItemEditor<TEditedArgs>(TEditedArgs args) where TEditedArgs : ItemEditedEventArgs
         {
-            if (!args.Result)
+            if (args.Result)
+            {
+                if (Validator != null)
+                {
+                    ValidationResult validation = Validator.Validate(args.ActualItem);
+                    if (!validation.IsValid)
+                    {
+                        DialogService.ShowMessage("Form is not valid, fix errors before saving", "Invalid form");
+                        return false;
+                    }
+                }
+            }
+            else
             {
                 if (args.ActualItem.IsDirty)
                 {
@@ -110,6 +119,7 @@ namespace ForgeModGenerator
         {
             bool result = (bool)args.DialogClosingArgs.Parameter;
             bool canClose = CanCloseItemEditor(new ItemEditedEventArgs(result, (TItem)MemoryCache.Default.Get(EdiTItemCacheKey), args.Item));
+            FormClosing?.Invoke(this, args);
             if (!canClose)
             {
                 args.DialogClosingArgs.Cancel();
@@ -126,13 +136,13 @@ namespace ForgeModGenerator
 
         protected virtual void OnItemEdited(ItemEditedEventArgs e)
         {
-            if (ItemEditedHandler == null)
+            if (ItemEdited == null)
             {
-                ItemEditedHandler = DefaultOnItemEdited;
+                ItemEdited = DefaultOnItemEdited;
             }
-            ItemEditedHandler.Invoke(this, e);
+            ItemEdited.Invoke(this, e);
         }
 
-        protected virtual void OnOpenFormFailed(TItem e) => OpenFormFailedHandler?.Invoke(this, e);
+        protected virtual void OnOpenFormFailed(TItem e) => OpenFormFailed?.Invoke(this, e);
     }
 }

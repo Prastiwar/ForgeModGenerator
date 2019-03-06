@@ -4,11 +4,12 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.ComponentModel;
 using System.IO;
+using System.Windows.Controls;
 
 namespace ForgeModGenerator.SoundGenerator.Models
 {
     [JsonConverter(typeof(SoundConverter))]
-    public class Sound : FileItem
+    public class Sound : FileItem, IValidable
     {
         [JsonConverter(typeof(StringEnumConverter))]
         public enum SoundType { file, @event }
@@ -85,6 +86,8 @@ namespace ForgeModGenerator.SoundGenerator.Models
             get => type;
             set => DirtSet(ref type, value);
         }
+
+        public ValidationResult IsValid => ValidationResult.ValidResult;
 
         internal string GetSoundsFolder() => ModPaths.SoundsFolder(Mod.GetModnameFromPath(Info.FullName), modid);
 

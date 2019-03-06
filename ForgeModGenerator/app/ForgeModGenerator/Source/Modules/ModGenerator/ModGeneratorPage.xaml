@@ -35,12 +35,6 @@
 										   FontSize="15"
 										   Foreground="Wheat" />
 							</StackPanel>
-							<TextBlock Text="Edit Mod"
-									   HorizontalAlignment="Center"
-									   VerticalAlignment="Center"
-									   FontSize="20"
-									   Foreground="Wheat"
-									   Visibility="{Binding Path=SessionContext.Mods.Count, Converter={StaticResource IntToVisibilityConverter}}" />
 							<ListBox ItemsSource="{Binding Path=SessionContext.Mods}"
 									 SelectedItem="{Binding Path=SelectedEditMod}"
 									 HorizontalContentAlignment="Stretch">

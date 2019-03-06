@@ -1,6 +1,6 @@
 ﻿using ForgeModGenerator.Converters;
-using ForgeModGenerator.ModGenerator.Validations;
 using ForgeModGenerator.Utility;
+using ForgeModGenerator.Validations;
 using GalaSoft.MvvmLight;
 using Newtonsoft.Json;
 using System;
@@ -19,7 +19,7 @@ namespace ForgeModGenerator.Models
         Server
     }
 
-    public class Mod : ObservableObject, IDirty, ICopiable<Mod>
+    public class Mod : ObservableObject, IDirty, ICopiable<Mod>, IDataErrorInfo, IValidable<Mod>
     {
         private string organization;
         [JsonProperty(Required = Required.Always)]
@@ -99,6 +99,38 @@ namespace ForgeModGenerator.Models
             return this;
         }
 
+        /// <summary> Shorthand for ModInfo.Name (used also for WPF validation) </summary>
+        public string Name { get => ModInfo.Name; set => ModInfo.Name = value; }
+
+        /// <summary> Shorthand for ModInfo.Modid (used also for WPF validation) </summary>
+        public string Modid { get => ModInfo.Modid; set => ModInfo.Modid = value; }
+
+        public ValidationResult IsValid {
+            get {
+                string errorString = OnValidate(nameof(Organization));
+                if (!string.IsNullOrEmpty(errorString))
+                {
+                    return new ValidationResult(false, errorString);
+                }
+                errorString = OnValidate(nameof(Modid));
+                if (!string.IsNullOrEmpty(errorString))
+                {
+                    return new ValidationResult(false, errorString);
+                }
+                errorString = OnValidate(nameof(Name));
+                if (!string.IsNullOrEmpty(errorString))
+                {
+                    return new ValidationResult(false, errorString);
+                }
+                return ValidationResult.ValidResult;
+            }
+        }
+
+        public event ValidationEventHandler<Mod> Validate;
+        string IDataErrorInfo.Error => null;
+        string IDataErrorInfo.this[string propertyName] => OnValidate(propertyName);
+        private string OnValidate(string propertyName) => ValidateHelper.OnValidateError(Validate, this, propertyName);
+
         public static string GetModidFromPath(string path)
         {
             path = path.NormalizePath();
@@ -159,22 +191,6 @@ namespace ForgeModGenerator.Models
                 Log.Error(ex);
                 return null;
             }
-        }
-
-        public ValidationResult IsValid()
-        {
-            ModRules rules = new ModRules();
-            ValidationResult result = rules.ValidateName(ModInfo.Name);
-            if (!result.IsValid)
-            {
-                return result;
-            }
-            result = rules.ValidateModid(ModInfo.Modid);
-            if (!result.IsValid)
-            {
-                return result;
-            }
-            return rules.ValidateOrganization(Organization);
         }
 
         // Writes to FmgModInfo file

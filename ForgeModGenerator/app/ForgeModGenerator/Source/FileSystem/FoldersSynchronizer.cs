@@ -230,7 +230,7 @@ namespace ForgeModGenerator
 
         protected ICollection<TFolder> CreateEmptyFoldersRoot(string folderPath) => new Collection<TFolder>() { ConstructFolderInstance(IOHelper.GetDirectoryPath(folderPath), null) };
 
-        /// <summary> Create TFolder instance and subscrive its events </summary>
+        /// <summary> Create TFolder instance and subscribe its events </summary>
         protected virtual TFolder ConstructFolderInstance(string path, IEnumerable<string> filePaths)
         {
             TFolder folder = null;

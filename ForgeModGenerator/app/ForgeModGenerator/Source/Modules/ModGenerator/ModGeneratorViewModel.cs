@@ -1,7 +1,10 @@
-﻿using ForgeModGenerator.CodeGeneration;
+﻿using FluentValidation;
+using FluentValidation.Results;
+using ForgeModGenerator.CodeGeneration;
 using ForgeModGenerator.Models;
 using ForgeModGenerator.ModGenerator.Controls;
 using ForgeModGenerator.ModGenerator.SourceCodeGeneration;
+using ForgeModGenerator.ModGenerator.Validations;
 using ForgeModGenerator.Services;
 using ForgeModGenerator.Utility;
 using GalaSoft.MvvmLight;
@@ -14,7 +17,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace ForgeModGenerator.ModGenerator.ViewModels
@@ -34,12 +36,14 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
                 ForgeVersions = SessionContext.ForgeVersions,
                 Sides = Sides
             };
-            EditorForm = new EditorForm<Mod>(DialogService, Form);
+            EditorForm = new EditorForm<Mod>(DialogService, Form, modValidator);
         }
 
         private readonly string[] assetsFolerToGenerate = new string[] {
             "blockstates", "lang", "recipes", "sounds", "models/item", "textures/blocks", "textures/entity", "textures/items", "textures/models/armor"
         };
+
+        protected ModValidator modValidator { get; set; } = new ModValidator();
 
         protected FrameworkElement Form { get; set; }
         protected EditorForm<Mod> EditorForm { get; set; }
@@ -78,6 +82,8 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
         public ICommand ShowModContainerCommand => showModContainerCommand ?? (showModContainerCommand = new RelayCommand<Mod>(ShowContainer));
 
         private void ShowContainer(Mod mod) => Process.Start(ModPaths.ModRootFolder(mod.ModInfo.Name));
+
+        private string OnModValidate(Mod sender, string propertyName) => modValidator.Validate(sender, propertyName).ToString();
 
         private async void RemoveMod(Mod mod)
         {
@@ -120,18 +126,21 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
         private void EditMod(Mod mod)
         {
             SelectedEditMod = mod;
+            mod.Validate += OnModValidate;
             EditorForm.OpenItemEditor(mod);
         }
 
         private void CreateNewMod(Mod mod)
         {
-            EditorForm<Mod> tempEditor = new EditorForm<Mod>(DialogService, Form);
+            EditorForm<Mod> tempEditor = new EditorForm<Mod>(DialogService, Form, modValidator);
             tempEditor.ItemEdited += (sender, e) => {
                 if (e.Result)
                 {
                     GenerateMod(e.ActualItem);
                 }
+                mod.Validate -= OnModValidate;
             };
+            mod.Validate += OnModValidate;
             tempEditor.OpenItemEditor(mod);
         }
 
@@ -139,20 +148,24 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
         {
             if (e.Result)
             {
-                SaveModChanges(e.ActualItem);
+                if (e.ActualItem.IsValid.IsValid)
+                {
+                    SaveModChanges(e.ActualItem);
+                }
             }
             else
             {
                 e.ActualItem.CopyValues(e.CachedItem);
             }
+            e.ActualItem.Validate -= OnModValidate;
         }
 
         private void GenerateMod(Mod mod)
         {
-            ValidationResult validation = mod.IsValid();
+            ValidationResult validation = modValidator.Validate(mod);
             if (!validation.IsValid)
             {
-                Log.Warning($"Selected mod is not valid. Reason: {validation.ErrorContent}", true);
+                Log.Warning($"Selected mod is not valid. Reason: {validation}", true);
                 return;
             }
             string newModPath = ModPaths.ModRootFolder(mod.ModInfo.Name);
@@ -196,10 +209,10 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
 
         private void SaveModChanges(Mod mod)
         {
-            ValidationResult validation = mod.IsValid();
+            ValidationResult validation = modValidator.Validate(mod);
             if (!validation.IsValid)
             {
-                Log.Warning($"Selected mod is not valid. Reason: {validation.ErrorContent}", true);
+                Log.Warning($"Selected mod is not valid. Reason: {validation}", true);
                 return;
             }
             Mod oldValues = Mod.Import(ModPaths.ModRootFolder(mod.CachedName));

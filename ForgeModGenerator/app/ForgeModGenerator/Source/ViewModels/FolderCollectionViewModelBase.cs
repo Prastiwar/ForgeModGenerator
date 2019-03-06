@@ -1,28 +1,24 @@
 ﻿using ForgeModGenerator.Converters;
-using ForgeModGenerator.Persistence;
 using ForgeModGenerator.Services;
 using ForgeModGenerator.Utility;
 using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Views;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Data;
 using System.Windows.Forms;
 using System.Windows.Input;
 
 namespace ForgeModGenerator.ViewModels
 {
-    /// <summary> Business ViewModel Base class for making file list </summary>
-    public abstract class FolderListViewModelBase<TFolder, TFile> : ViewModelBase
+    public abstract class FoldersWatcherViewModelBase<TFolder, TFile> : ViewModelBase
         where TFolder : class, IFileFolder<TFile>
         where TFile : class, IFileItem
     {
-        public FolderListViewModelBase(ISessionContextService sessionContext, IDialogService dialogService)
+        public FoldersWatcherViewModelBase(ISessionContextService sessionContext, IDialogService dialogService)
         {
             SessionContext = sessionContext;
             DialogService = dialogService;
@@ -50,8 +46,6 @@ namespace ForgeModGenerator.ViewModels
         public virtual string FoldersJsonFilePath { get; }
 
         public ISessionContextService SessionContext { get; }
-
-        public EditorForm<TFile> FileEditor { get; protected set; }
 
         private ObservableFolder<TFolder> folders;
         public ObservableFolder<TFolder> Folders {
@@ -81,17 +75,8 @@ namespace ForgeModGenerator.ViewModels
             set => Set(ref isLoading, value);
         }
 
-        private bool isFileUpdateAvailable;
-        public bool IsFileUpdateAvailable {
-            get => isFileUpdateAvailable;
-            set => Set(ref isFileUpdateAvailable, value);
-        }
-
         private ICommand onLoadedCommand;
         public ICommand OnLoadedCommand => onLoadedCommand ?? (onLoadedCommand = new RelayCommand(OnLoaded));
-
-        private ICommand editFileCommand;
-        public ICommand EditFileCommand => editFileCommand ?? (editFileCommand = new RelayCommand<TFile>(FileEditor.OpenItemEditor));
 
         private ICommand addFileCommand;
         public ICommand AddFileCommand => addFileCommand ?? (addFileCommand = new RelayCommand<TFolder>(ShowFileDialogAndCopyToFolder));
@@ -105,11 +90,6 @@ namespace ForgeModGenerator.ViewModels
         private ICommand addFolderCommand;
         public ICommand AddFolderCommand => addFolderCommand ?? (addFolderCommand = new RelayCommand(ShowFolderDialogAndCopyToRoot));
 
-        private ICommand resolveJsonFileCommand;
-        public ICommand ResolveJsonFileCommand => resolveJsonFileCommand ?? (resolveJsonFileCommand = new RelayCommand(ResolveJsonFile));
-
-        protected JsonUpdater<TFolder> JsonUpdater { get; set; }
-
         protected FoldersSynchronizer<TFolder, TFile> FileSynchronizer { get; set; }
 
         protected HashSet<string> AllowedFileExtensions { get; set; }
@@ -119,8 +99,6 @@ namespace ForgeModGenerator.ViewModels
         protected OpenFileDialog OpenFileDialog { get; }
 
         protected FolderBrowserDialog OpenFolderDialog { get; }
-
-        protected FrameworkElement FileEditForm { get; set; }
 
         protected IDialogService DialogService { get; }
 
@@ -223,47 +201,6 @@ namespace ForgeModGenerator.ViewModels
                     File.Copy(filePath, newPath);
                 }
             }
-        }
-
-        /// <summary> Deserialized folders from FoldersJsonFilePath and checks if any file doesn't exists, if so, prompt if should fix this </summary>
-        protected async void CheckJsonFileMismatch()
-        {
-            IEnumerable<TFolder> deserializedFolders = FileSynchronizer.GetFoldersFromFile(FoldersJsonFilePath, false);
-            bool hasNotExistingFile = deserializedFolders != null ? deserializedFolders.Any(folder => folder.Files.Any(file => !File.Exists(file.Info.FullName))) : false;
-            if (hasNotExistingFile)
-            {
-                string fileName = Path.GetFileName(FoldersJsonFilePath);
-                string questionMessage = $"{fileName} file has occurencies that doesn't exist in root folder. Do you want to fix it and overwrite {fileName}? ";
-                bool shouldFix = await DialogService.ShowMessage(questionMessage, "Conflict found", "Yes", "No", null);
-                if (shouldFix)
-                {
-                    ForceJsonFileUpdate();
-                }
-            }
-            foreach (TFolder folder in deserializedFolders)
-            {
-                folder.Clear();
-            }
-        }
-
-        protected void ResolveJsonFile()
-        {
-            FileSynchronizer.AddNotReferencedFiles();
-            CheckForUpdate();
-            ForceJsonFileUpdate();
-        }
-
-        protected void CheckForUpdate() => IsFileUpdateAvailable = !IsJsonUpdated();
-
-        protected virtual void ForceJsonFileUpdate() => JsonUpdater.ForceJsonUpdate();
-
-        protected virtual bool IsJsonUpdated()
-        {
-            if (SessionContext.SelectedMod != null)
-            {
-                return FileSynchronizer.EnumerateFilteredFiles(FoldersRootPath, SearchOption.AllDirectories).All(filePath => FileSystemInfoReference.IsReferenced(filePath));
-            }
-            return true;
         }
 
         protected virtual async void OnSessionContexPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

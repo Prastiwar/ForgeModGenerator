@@ -1,7 +1,6 @@
 ﻿using ForgeModGenerator.SoundGenerator.Converters;
 using ForgeModGenerator.Validations;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -11,7 +10,7 @@ using System.Windows.Data;
 namespace ForgeModGenerator.SoundGenerator.Models
 {
     [JsonConverter(typeof(SoundEventConverter))]
-    public class SoundEvent : ObservableFolder<Sound>, IDataErrorInfo
+    public class SoundEvent : ObservableFolder<Sound>, IDataErrorInfo, IValidable
     {
         /// <summary> IMPORTANT: Prefer other ctor, this is used for serialization purposes </summary>
         protected SoundEvent() { }
@@ -98,35 +97,15 @@ namespace ForgeModGenerator.SoundGenerator.Models
 
         public ValidationResult IsValid {
             get {
-                string errorString = Validate(nameof(EventName));
+                string errorString = OnValidate(nameof(EventName));
                 return new ValidationResult(string.IsNullOrEmpty(errorString), errorString);
             }
         }
 
+        public event ValidationEventHandler<SoundEvent> Validate;
         string IDataErrorInfo.Error => null;
-        string IDataErrorInfo.this[string propertyName] => Validate(propertyName);
-
-        private event ValidationEventHandler<SoundEvent> OnValidateHandler;
-        public event ValidationEventHandler<SoundEvent> OnValidate {
-            add => OnValidateHandler += value;
-            remove => OnValidateHandler -= value;
-        }
-
-        private string Validate(string propertyName)
-        {
-            if (OnValidateHandler != null)
-            {
-                foreach (Delegate handler in OnValidateHandler.GetInvocationList())
-                {
-                    string error = ((ValidationEventHandler<SoundEvent>)handler).Invoke(this, propertyName);
-                    if (!string.IsNullOrEmpty(error))
-                    {
-                        return error;
-                    }
-                }
-            }
-            return null;
-        }
+        string IDataErrorInfo.this[string propertyName] => OnValidate(propertyName);
+        private string OnValidate(string propertyName) => ValidateHelper.OnValidateError(Validate, this, propertyName);
 
         // Get formatted sound from full path, "shorten.path.toFile"
         public static string FormatDottedSoundNameFromFullPath(string path)

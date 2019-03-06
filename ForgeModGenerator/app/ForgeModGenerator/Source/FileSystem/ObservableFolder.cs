@@ -40,8 +40,8 @@ namespace ForgeModGenerator
 
     public interface IFileFolder<T> : IFileFolder where T : IFileSystemInfo
     {
-        event OnFileChangedEventHandler<T> OnFilesChanged;
-        event OnFilePropertyChangedEventHandler<T> OnFilePropertyChanged;
+        event OnFileChangedEventHandler<T> FilesChanged;
+        event OnFilePropertyChangedEventHandler<T> FilePropertyChanged;
 
         WpfObservableRangeCollection<T> Files { get; }
 
@@ -92,8 +92,8 @@ namespace ForgeModGenerator
             IsDirty = false;
         }
 
-        public event OnFileChangedEventHandler<T> OnFilesChanged;
-        public event OnFilePropertyChangedEventHandler<T> OnFilePropertyChanged;
+        public event OnFileChangedEventHandler<T> FilesChanged;
+        public event OnFilePropertyChangedEventHandler<T> FilePropertyChanged;
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 
@@ -246,7 +246,7 @@ namespace ForgeModGenerator
             }
         }
 
-        protected virtual void File_PropertyChanged(object sender, PropertyChangedEventArgs e) => OnFilePropertyChanged?.Invoke((T)sender, e);
+        protected virtual void File_PropertyChanged(object sender, PropertyChangedEventArgs e) => FilePropertyChanged?.Invoke((T)sender, e);
 
         protected virtual void Info_PropertyChanged(object sender, PropertyChangedEventArgs e) { }
 
@@ -258,18 +258,12 @@ namespace ForgeModGenerator
             CollectionChanged?.Invoke(sender, e);
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
-                OnFilesChanged?.Invoke(this, new FileChangedEventArgs<T>(e.NewItems.Cast<T>(), FileChange.Add));
+                FilesChanged?.Invoke(this, new FileChangedEventArgs<T>(e.NewItems.Cast<T>(), FileChange.Add));
             }
             else if (e.Action == NotifyCollectionChangedAction.Remove)
             {
-                OnFilesChanged?.Invoke(this, new FileChangedEventArgs<T>(e.OldItems.Cast<T>(), FileChange.Remove));
+                FilesChanged?.Invoke(this, new FileChangedEventArgs<T>(e.OldItems.Cast<T>(), FileChange.Remove));
             }
-#if DEBUG
-            else
-            {
-                //System.Windows.MessageBox.Show(e.Action.ToString()); // TODO: Remove it
-            }
-#endif
         }
 
         public virtual object Clone() => MemberwiseClone();
