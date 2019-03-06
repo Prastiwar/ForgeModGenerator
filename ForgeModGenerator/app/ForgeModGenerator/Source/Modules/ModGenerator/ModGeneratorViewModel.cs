@@ -37,6 +37,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
                 Sides = Sides
             };
             EditorForm = new EditorForm<Mod>(DialogService, Form, modValidator);
+            EditorForm.ItemEdited += Editor_OnItemEdited;
         }
 
         private readonly string[] assetsFolerToGenerate = new string[] {
@@ -221,18 +222,29 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
                 bool organizationChanged = mod.Organization != oldValues.Organization;
                 bool nameChanged = mod.ModInfo.Name != oldValues.ModInfo.Name;
                 bool modidChanged = mod.ModInfo.Modid != oldValues.ModInfo.Modid;
-                if (organizationChanged || nameChanged || modidChanged)
+
+                if (organizationChanged)
                 {
-                    RegenerateSourceCode(mod);
+                    string oldOrganizationPath = ModPaths.OrganizationRootFolder(oldValues.ModInfo.Name, oldValues.Organization);
+                    string newOrganizationPath = ModPaths.OrganizationRootFolder(oldValues.ModInfo.Name, mod.Organization);
+                    Directory.Move(oldOrganizationPath, newOrganizationPath);
                 }
-                else
+                if (modidChanged)
                 {
-                    bool versionChanged = mod.ModInfo.Version != oldValues.ModInfo.Version;
-                    bool mcVersionChanged = mod.ModInfo.McVersion != oldValues.ModInfo.McVersion;
-                    if (versionChanged || mcVersionChanged)
-                    {
-                        new ModHookCodeGenerator(mod).RegenerateScript();
-                    }
+                    string oldAssetPath = ModPaths.AssetsFolder(oldValues.ModInfo.Name, oldValues.ModInfo.Modid);
+                    string newAssetPath = ModPaths.AssetsFolder(oldValues.ModInfo.Name, mod.ModInfo.Modid);
+                    Directory.Move(oldAssetPath, newAssetPath);
+                }
+                if (nameChanged)
+                {
+                    string oldSourceCodePath = ModPaths.SourceCodeRootFolder(oldValues.ModInfo.Name, mod.Organization);
+                    string sourceCodeParentPath = new DirectoryInfo(oldSourceCodePath).Parent.FullName;
+                    string newSourceCodePath = Path.Combine(sourceCodeParentPath, mod.ModInfo.Name.ToLower());
+                    Directory.Move(oldSourceCodePath, newSourceCodePath);
+
+                    string oldNamePath = ModPaths.ModRootFolder(oldValues.ModInfo.Name);
+                    string newNamePath = ModPaths.ModRootFolder(mod.ModInfo.Name);
+                    Directory.Move(oldNamePath, newNamePath);
                 }
 
                 bool forgeVersionChanged = mod.ForgeVersion.Name != oldValues.ForgeVersion.Name;
@@ -247,6 +259,20 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
                     mod.WorkspaceSetup.Setup(mod);
                 }
 
+                if (organizationChanged || nameChanged || modidChanged)
+                {
+                    RegenerateSourceCode(mod);
+                }
+                else
+                {
+                    bool versionChanged = mod.ModInfo.Version != oldValues.ModInfo.Version;
+                    bool mcVersionChanged = mod.ModInfo.McVersion != oldValues.ModInfo.McVersion;
+                    if (versionChanged || mcVersionChanged)
+                    {
+                        new ModHookCodeGenerator(mod).RegenerateScript();
+                    }
+                }
+
                 McModInfo.Export(mod.ModInfo);
                 Mod.Export(mod);
             }
@@ -255,7 +281,6 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
                 Log.Error(ex, Log.UnexpectedErrorMessage, true);
                 return;
             }
-
             Log.Info($"Changes to {mod.ModInfo.Name} saved successfully", true);
         }
 
