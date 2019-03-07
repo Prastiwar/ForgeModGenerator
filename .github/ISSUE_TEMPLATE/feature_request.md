@@ -9,6 +9,6 @@ about: Suggest an idea
 
 ### **Have you considered any alternatives? If so, describe them**
 
-### **Screenshots**
+### **Screenshots (if can be useful)**
 
 ### **Additional context**

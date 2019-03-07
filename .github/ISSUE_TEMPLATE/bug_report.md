@@ -9,11 +9,11 @@ about: Create a report to help us fix a bug
 
 ### **Error information(log)**
 
-### **How to reproduce**
+### **How can we reproduce it**
 
-### **Fix suggestion**
+### **Fix suggestion (if have one)**
 
-### **Screenshots**
+### **Screenshots (if can be useful)**
 
 ### **Additional context**
 
