@@ -30,11 +30,11 @@ namespace ForgeModGenerator.Utility
         {
             if (IOHelper.IsFilePath(fileSystemInfo.FullName))
             {
-                IOHelper.DeleteFileToBin(fileSystemInfo.FullName);
+                IOHelper.DeleteDirectoryRecycle(fileSystemInfo.FullName);
             }
             else if (IOHelper.IsDirectoryPath(fileSystemInfo.FullName))
             {
-                IOHelper.DeleteDirectoryToBin(fileSystemInfo.FullName);
+                IOHelper.DeleteDirectoryRecycle(fileSystemInfo.FullName);
             }
             else
             {

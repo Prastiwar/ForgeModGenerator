@@ -53,7 +53,7 @@ namespace ForgeModGenerator.CodeGeneration
                     JavaProvider.GenerateCodeFromCompileUnit(targetCodeUnit, sourceWriter, options);
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 Log.Error(ex, $"Couldnt generate code for file. Make sure it's not accesed by any process. {scriptPath}", true);
             }

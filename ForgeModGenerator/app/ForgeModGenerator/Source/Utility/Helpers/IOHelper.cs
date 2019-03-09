@@ -121,6 +121,36 @@ namespace ForgeModGenerator.Utility
             }
         }
 
+        public static void MoveDirectory(string from, string destination, UIOption option = UIOption.OnlyErrorDialogs) =>
+            FileSystem.MoveDirectory(from, destination, option, UICancelOption.ThrowException);
+        public static void MoveDirectory(string from, string destination, bool overwrite) => FileSystem.MoveDirectory(from, destination, overwrite);
+
+        public static void CopyDirectory(string from, string destination, UIOption option = UIOption.OnlyErrorDialogs) =>
+            FileSystem.CopyDirectory(from, destination, option, UICancelOption.ThrowException);
+        public static void CopyDirectory(string from, string destination, bool overwrite) => FileSystem.CopyDirectory(from, destination, overwrite);
+
+        public static void DeleteDirectoryPerm(string directoryPath, UIOption option = UIOption.OnlyErrorDialogs) =>
+            FileSystem.DeleteDirectory(directoryPath, option, RecycleOption.DeletePermanently, UICancelOption.ThrowException);
+        public static void DeleteDirectoryRecycle(string directoryPath, UIOption option = UIOption.OnlyErrorDialogs) =>
+            FileSystem.DeleteDirectory(directoryPath, option, RecycleOption.SendToRecycleBin, UICancelOption.ThrowException);
+
+        public static void RenameDirectory(string name, string newName) => FileSystem.RenameDirectory(name, newName);
+
+        public static void MoveFile(string from, string destination, UIOption option = UIOption.OnlyErrorDialogs) =>
+            FileSystem.MoveFile(from, destination, option, UICancelOption.ThrowException);
+        public static void MoveFile(string from, string destination, bool overwrite) => FileSystem.MoveFile(from, destination, overwrite);
+
+        public static void CopyFile(string from, string destination, UIOption option = UIOption.OnlyErrorDialogs) =>
+            FileSystem.CopyFile(from, destination, option, UICancelOption.ThrowException);
+        public static void CopyFile(string from, string destination, bool overwrite) => FileSystem.CopyFile(from, destination, overwrite);
+
+        public static void DeleteFilePerm(string filePath, UIOption option = UIOption.OnlyErrorDialogs) =>
+            FileSystem.DeleteFile(filePath, option, RecycleOption.DeletePermanently, UICancelOption.ThrowException);
+        public static void DeleteFileRecycle(string filePath, UIOption option = UIOption.OnlyErrorDialogs) =>
+            FileSystem.DeleteFile(filePath, option, RecycleOption.SendToRecycleBin, UICancelOption.ThrowException);
+
+        public static void RenameFile(string name, string newName) => FileSystem.RenameFile(name, newName);
+
         public static void DirectoryCopy(string sourceDirPath, string destDirPath, bool copySubDirs = true) => DirectoryCopy(sourceDirPath, destDirPath, "*", copySubDirs);
 
         /// <summary> fileSearchPatterns accepts multiple patterns splitted by "|" </summary>
@@ -153,46 +183,32 @@ namespace ForgeModGenerator.Utility
         {
             foreach (string folder in Directory.EnumerateDirectories(from))
             {
-                Directory.Move(folder, Path.Combine(destination, new DirectoryInfo(folder).Name));
+                MoveDirectory(folder, Path.Combine(destination, new DirectoryInfo(folder).Name));
             }
             foreach (string file in Directory.EnumerateFiles(from))
             {
-                File.Move(file, Path.Combine(destination, new FileInfo(file).Name));
+                MoveFile(file, Path.Combine(destination, new FileInfo(file).Name));
+            }
+        }
+
+        public static void MoveDirectoriesAndFiles(string from, string destination, bool overwrite)
+        {
+            foreach (string folder in Directory.EnumerateDirectories(from))
+            {
+                MoveDirectory(folder, Path.Combine(destination, new DirectoryInfo(folder).Name), overwrite);
+            }
+            foreach (string file in Directory.EnumerateFiles(from))
+            {
+                MoveFile(file, Path.Combine(destination, new FileInfo(file).Name), overwrite);
             }
         }
 
         public static void GenerateFolders(string rootPath, params string[] generatedFolders)
         {
-            Directory.CreateDirectory(rootPath); // create root even if generatedFolders is null
+            Directory.CreateDirectory(rootPath); // create root even if generatedFolders is empty
             foreach (string folder in generatedFolders)
             {
                 Directory.CreateDirectory(Path.Combine(rootPath, folder));
-            }
-        }
-
-        public static void DeleteFileToBin(string filePath) => FileSystem.DeleteFile(filePath, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
-        public static void DeleteDirectoryToBin(string directoryPath) => FileSystem.DeleteDirectory(directoryPath, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
-        public static void DeleteToBin(string path)
-        {
-            if (IsDirectoryPath(path))
-            {
-                DeleteDirectoryToBin(path);
-            }
-            else
-            {
-                DeleteFileToBin(path);
-            }
-        }
-
-        public static void Move(string path, string newPath)
-        {
-            if (IsFilePath(path))
-            {
-                File.Move(path, newPath);
-            }
-            else
-            {
-                Directory.Move(path, newPath);
             }
         }
 
@@ -234,7 +250,7 @@ namespace ForgeModGenerator.Utility
             foreach (FileInfo file in EnumerateFileInfos(sourceDirPath, fileSearchPatterns))
             {
                 string destFilePath = Path.Combine(destDirPath, file.Name);
-                using (FileStream SourceStream = file.Open(FileMode.Open))
+                using (FileStream SourceStream = file.OpenRead())
                 {
                     using (FileStream DestinationStream = File.Create(destFilePath))
                     {

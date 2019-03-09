@@ -3,7 +3,6 @@ using ForgeModGenerator.Validations;
 using GalaSoft.MvvmLight;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Windows.Controls;
@@ -90,7 +89,14 @@ namespace ForgeModGenerator
                     FluentValidation.Results.ValidationResult validationResults = new FullPathValidator().Validate(newPath);
                     if (validationResults.IsValid)
                     {
-                        IOHelper.Move(FullName, newPath);
+                        if (IOHelper.IsFilePath(FullName))
+                        {
+                            IOHelper.MoveFile(FullName, newPath);
+                        }
+                        else
+                        {
+                            IOHelper.MoveDirectory(FullName, newPath);
+                        }
                         SetInfo(newPath);
                         error = null;
                     }

@@ -1,7 +1,6 @@
 ﻿using GalaSoft.MvvmLight.CommandWpf;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
 
 namespace ForgeModGenerator.Controls
@@ -62,13 +61,6 @@ namespace ForgeModGenerator.Controls
         public ICommand RemoveFileCommand {
             get => (ICommand)GetValue(RemoveFileCommandProperty);
             set => SetValue(RemoveFileCommandProperty, value);
-        }
-
-        public static readonly DependencyProperty FolderFileConverterProperty =
-            DependencyProperty.Register("FolderFileConverter", typeof(IMultiValueConverter), typeof(FolderExpanderControl), new PropertyMetadata(null));
-        public IMultiValueConverter FolderFileConverter {
-            get => (IMultiValueConverter)GetValue(FolderFileConverterProperty);
-            set => SetValue(FolderFileConverterProperty, value);
         }
 
         public static readonly DependencyProperty EditFileCommandProperty =

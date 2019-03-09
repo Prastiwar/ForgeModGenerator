@@ -23,7 +23,6 @@
 													  AllFolders="{Binding Path=FoldersSource, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
 													  AddFileCommand="{Binding Path=DataContext.AddFileCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
 													  RemoveFileCommand="{Binding Path=DataContext.RemoveFileCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
-													  FolderFileConverter="{Binding Path=DataContext.FolderFileConverter, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
 													  RemoveFolderCommand="{Binding Path=DataContext.RemoveFolderCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
 													  EditFileCommand="{Binding Path=DataContext.EditFileCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}">
 					<sControls:SoundFolderExpanderControl.FileItemTemplate>

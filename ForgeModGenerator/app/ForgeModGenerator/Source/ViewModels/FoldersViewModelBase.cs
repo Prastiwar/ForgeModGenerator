@@ -56,6 +56,7 @@ namespace ForgeModGenerator.ViewModels
             }
         }
 
+        /// <summary> Adds found files that are not referenced in json file </summary>
         protected void ResolveJsonFile()
         {
             FileSynchronizer.AddNotReferencedFiles();

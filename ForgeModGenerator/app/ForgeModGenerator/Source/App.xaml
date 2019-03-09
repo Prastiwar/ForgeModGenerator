@@ -56,6 +56,9 @@
                     <converters:BindMultiValueConverter x:Key="BindMultiValueConverter" />
                 </ResourceDictionary>
                 <ResourceDictionary>
+                    <converters:GenericTupleConverter x:Key="GenericTupleConverter" />
+                </ResourceDictionary>
+                <ResourceDictionary>
                     <ControlTemplate x:Key="ErrorContentTemplate">
                         <StackPanel>
                             <AdornedElementPlaceholder />
@@ -75,9 +78,7 @@
                         <MenuItem Header="Remove"
                                   Command="{Binding PlacementTarget.Tag.RemoveFileCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}">
                             <MenuItem.CommandParameter>
-                                <MultiBinding Converter="{StaticResource BindMultiValueConverter}">
-                                    <Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}"
-                                             Path="PlacementTarget.Tag.FolderFileConverter" />
+                                <MultiBinding Converter="{StaticResource GenericTupleConverter}">
                                     <Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}"
                                              Path="PlacementTarget.Tag.Folder" />
                                     <Binding Path="." />

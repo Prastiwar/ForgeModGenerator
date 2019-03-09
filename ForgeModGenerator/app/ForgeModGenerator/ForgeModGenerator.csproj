@@ -54,6 +54,9 @@
   <PropertyGroup>
     <ApplicationIcon>fmg_icon_6o5_icon.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Config\app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="CommonServiceLocator, Version=2.0.4.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
       <HintPath>..\packages\CommonServiceLocator.2.0.4\lib\net46\CommonServiceLocator.dll</HintPath>
@@ -191,6 +194,7 @@
     <Compile Include="Source\FileSystem\ObservableFolder.cs" />
     <Compile Include="Source\Utility\Extensions\ValidationExtensions.cs" />
     <Compile Include="Source\Utility\Helpers\IOHelper.cs" />
+    <Compile Include="Source\Utility\Helpers\IOSafe.cs" />
     <Compile Include="Source\Utility\Helpers\ReflectionHelper.cs" />
     <Compile Include="Source\Persistence\JsonUpdater.cs" />
     <Compile Include="Source\Models\ObservableDirtyObject.cs" />
@@ -441,6 +445,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
+    <None Include="Config\app.manifest" />
     <None Include="Config\packages.config" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

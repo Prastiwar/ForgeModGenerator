@@ -95,7 +95,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
                 {
                     try
                     {
-                        IOHelper.DeleteDirectoryToBin(ModPaths.ModRootFolder(mod.ModInfo.Name));
+                        IOHelper.DeleteDirectoryRecycle(ModPaths.ModRootFolder(mod.ModInfo.Name));
                     }
                     catch (Exception ex)
                     {
@@ -204,7 +204,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
             string[] organizationPaths = Directory.GetDirectories(javaSource);
             foreach (string organization in organizationPaths)
             {
-                Directory.Delete(organization, true);
+                IOHelper.DeleteDirectoryPerm(organization);
             }
         }
 
@@ -226,25 +226,44 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
                 if (organizationChanged)
                 {
                     string oldOrganizationPath = ModPaths.OrganizationRootFolder(oldValues.ModInfo.Name, oldValues.Organization);
-                    string newOrganizationPath = ModPaths.OrganizationRootFolder(oldValues.ModInfo.Name, mod.Organization);
-                    Directory.Move(oldOrganizationPath, newOrganizationPath);
+                    //string newOrganizationPath = ModPaths.OrganizationRootFolder(oldValues.ModInfo.Name, mod.Organization);
+                    if (!IOSafe.RenameDirectory(oldOrganizationPath, mod.Organization))
+                    {
+                        DialogService.ShowMessage(IOSafe.GetOperationFailedMessage(oldOrganizationPath), "Rename failed");
+                        mod.Organization = oldValues.Organization;
+                    }
                 }
                 if (modidChanged)
                 {
                     string oldAssetPath = ModPaths.AssetsFolder(oldValues.ModInfo.Name, oldValues.ModInfo.Modid);
-                    string newAssetPath = ModPaths.AssetsFolder(oldValues.ModInfo.Name, mod.ModInfo.Modid);
-                    Directory.Move(oldAssetPath, newAssetPath);
+                    //string newAssetPath = ModPaths.AssetsFolder(oldValues.ModInfo.Name, mod.ModInfo.Modid);
+                    if (!IOSafe.RenameDirectory(oldAssetPath, mod.ModInfo.Modid))
+                    {
+                        DialogService.ShowMessage(IOSafe.GetOperationFailedMessage(oldAssetPath), "Rename failed");
+                        mod.ModInfo.Modid = oldValues.ModInfo.Modid;
+                    }
                 }
                 if (nameChanged)
                 {
+                    bool canChangeName = true;
                     string oldSourceCodePath = ModPaths.SourceCodeRootFolder(oldValues.ModInfo.Name, mod.Organization);
-                    string sourceCodeParentPath = new DirectoryInfo(oldSourceCodePath).Parent.FullName;
-                    string newSourceCodePath = Path.Combine(sourceCodeParentPath, mod.ModInfo.Name.ToLower());
-                    Directory.Move(oldSourceCodePath, newSourceCodePath);
+                    //IOHelper.MoveDirectory(oldSourceCodePath, newSourceCodePath);
+                    if (!IOSafe.RenameDirectory(oldSourceCodePath, mod.ModInfo.Name.ToLower()))
+                    {
+                        DialogService.ShowMessage(IOSafe.GetOperationFailedMessage(oldSourceCodePath), "Rename failed");
+                        mod.Name = oldValues.Name;
+                    }
 
                     string oldNamePath = ModPaths.ModRootFolder(oldValues.ModInfo.Name);
-                    string newNamePath = ModPaths.ModRootFolder(mod.ModInfo.Name);
-                    Directory.Move(oldNamePath, newNamePath);
+                    //string newNamePath = ModPaths.ModRootFolder(mod.ModInfo.Name);
+                    if (canChangeName && !IOSafe.RenameDirectory(oldNamePath, mod.ModInfo.Name))
+                    {
+                        DialogService.ShowMessage(IOSafe.GetOperationFailedMessage(oldNamePath), "Rename failed");
+                        string sourceCodeParentPath = new DirectoryInfo(oldSourceCodePath).Parent.FullName;
+                        string newSourceCodePath = Path.Combine(sourceCodeParentPath, mod.ModInfo.Name.ToLower());
+                        IOHelper.RenameDirectory(newSourceCodePath, oldValues.Name.ToLower());
+                        mod.Name = oldValues.Name;
+                    }
                 }
 
                 bool forgeVersionChanged = mod.ForgeVersion.Name != oldValues.ForgeVersion.Name;
@@ -294,7 +313,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
                 DirectoryInfo info = new DirectoryInfo(directory);
                 if (info.Name != "src")
                 {
-                    IOHelper.DeleteDirectoryToBin(directory);
+                    IOHelper.DeleteDirectoryRecycle(directory);
                 }
             }
 
@@ -304,7 +323,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
                 FileInfo info = new FileInfo(file);
                 if (info.Name != ModPaths.FmgInfoFileName)
                 {
-                    IOHelper.DeleteFileToBin(file);
+                    IOHelper.DeleteFileRecycle(file);
                 }
             }
 
@@ -313,9 +332,9 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
             Directory.CreateDirectory(tempDirPath);
             mod.ForgeVersion.UnZip(tempDirPath);
 
-            Directory.Delete(Path.Combine(tempDirPath, "src"), true);
+            IOHelper.DeleteDirectoryPerm(Path.Combine(tempDirPath, "src"));
             IOHelper.MoveDirectoriesAndFiles(tempDirPath, modRoot);
-            Directory.Delete(tempDirPath);
+            IOHelper.DeleteDirectoryPerm(tempDirPath);
             Log.Info($"Changed forge version for {mod.CachedName} to {mod.ForgeVersion.Name}");
         }
     }

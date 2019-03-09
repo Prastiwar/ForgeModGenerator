@@ -1,5 +1,4 @@
-﻿using ForgeModGenerator.Converters;
-using ForgeModGenerator.Services;
+﻿using ForgeModGenerator.Services;
 using ForgeModGenerator.Utility;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
@@ -8,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using System.Windows.Data;
 using System.Windows.Forms;
 using System.Windows.Input;
 
@@ -33,11 +31,9 @@ namespace ForgeModGenerator.ViewModels
             };
             OpenFolderDialog = new FolderBrowserDialog() { ShowNewFolderButton = true };
             AllowedFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { OpenFileDialog.DefaultExt };
-            SessionContext.PropertyChanged += OnSessionContexPropertyChanged;
             FileSynchronizer = new DefaultFoldersSynchronizer<TFolder, TFile>(Folders, FoldersRootPath, AllowedFileExtensionsPatterns);
+            SessionContext.PropertyChanged += OnSessionContexPropertyChanged;
         }
-
-        public IMultiValueConverter FolderFileConverter { get; } = new TupleValueConverter<TFolder, TFile>();
 
         /// <summary> Path to folder root where are all files localized </summary>
         public abstract string FoldersRootPath { get; }
@@ -135,7 +131,7 @@ namespace ForgeModGenerator.ViewModels
             await IOHelper.DirectoryCopyAsync(path, newFolderPath, AllowedFileExtensionsPatterns);
         }
 
-        /// <summary> Removes folder and if it's empty, sends it to RecycleBin  </summary>
+        /// <summary> Removes folder and if it's empty, sends it to RecycleBin </summary>
         protected void RemoveFolder(TFolder folder)
         {
             if (Folders.Remove(folder))
@@ -144,24 +140,28 @@ namespace ForgeModGenerator.ViewModels
                 {
                     if (FileSystemInfoReference.GetReferenceCount(folder.Files[i].Info.FullName) <= 1 && File.Exists(folder.Files[i].Info.FullName))
                     {
-                        IOHelper.DeleteFileToBin(folder.Files[i].Info.FullName);
+                        IOSafe.DeleteFileRecycle(folder.Files[i].Info.FullName);
                     }
                 }
                 folder.Clear();
                 if (Directory.Exists(folder.Info.FullName) && IOHelper.IsEmpty(folder.Info.FullName))
                 {
-                    IOHelper.DeleteDirectoryToBin(folder.Info.FullName);
+                    IOSafe.DeleteDirectoryRecycle(folder.Info.FullName);
                 }
             }
         }
 
-        protected virtual void RemoveFileFromFolder(Tuple<TFolder, TFile> param)
+        protected virtual async void RemoveFileFromFolder(Tuple<TFolder, TFile> param)
         {
             if (param.Item1.Remove(param.Item2))
             {
                 if (!FileSystemInfoReference.IsReferenced(param.Item2.Info.FullName))
                 {
-                    IOHelper.DeleteFileToBin(param.Item2.Info.FullName);
+                    if (!IOSafe.DeleteFileRecycle(param.Item2.Info.FullName))
+                    {
+                        await DialogService.ShowMessage(IOSafe.GetOperationFailedMessage(param.Item2.Info.FullName), "Deletion failed");
+                        param.Item1.Add(param.Item2);
+                    }
                 }
             }
         }
@@ -188,7 +188,10 @@ namespace ForgeModGenerator.ViewModels
                         bool overwrite = await DialogService.ShowMessage($"File {newPath} already exists.{Environment.NewLine}Do you want to overwrite it?", "Existing file conflict", "Yes", "No", null);
                         if (overwrite)
                         {
-                            File.Copy(filePath, newPath, true);
+                            if (!IOSafe.CopyFile(filePath, newPath, true))
+                            {
+                                await DialogService.ShowMessage(IOSafe.GetOperationFailedMessage(filePath), "Copy failed");
+                            }
                         }
                     }
                     else
@@ -198,7 +201,10 @@ namespace ForgeModGenerator.ViewModels
                 }
                 else
                 {
-                    File.Copy(filePath, newPath);
+                    if (!IOSafe.CopyFile(filePath, newPath))
+                    {
+                        await DialogService.ShowMessage(IOSafe.GetOperationFailedMessage(filePath), "Copy failed");
+                    }
                 }
             }
         }
