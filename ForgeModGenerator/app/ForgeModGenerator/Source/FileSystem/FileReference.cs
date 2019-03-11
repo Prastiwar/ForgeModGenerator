@@ -149,7 +149,7 @@ namespace ForgeModGenerator
 
         protected void AddReference(string filePath)
         {
-            if (filePath == null)
+            if (string.IsNullOrEmpty(filePath))
             {
                 return;
             }
@@ -166,7 +166,7 @@ namespace ForgeModGenerator
 
         protected static bool RemoveReference(string filePath)
         {
-            if (filePath == null)
+            if (string.IsNullOrEmpty(filePath))
             {
                 return false;
             }

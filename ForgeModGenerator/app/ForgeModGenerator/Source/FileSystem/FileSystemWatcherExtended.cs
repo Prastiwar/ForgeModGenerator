@@ -19,18 +19,35 @@ namespace ForgeModGenerator
         {
             Filters = filters;
             strictMatchPatternMethodInfo = typeof(FileSystemWatcher).Assembly.GetTypes().First(x => x.Name == "PatternMatcher").GetMethod("StrictMatchPattern");
-            FileSystemWatcher baseInstance = this;
-            baseInstance.Changed += NotifyEvent;
-            baseInstance.Created += NotifyEvent;
-            baseInstance.Deleted += NotifyEvent;
-            baseInstance.Renamed += NotifyEvent;
+            Changed += NotifyEvent;
+            Created += NotifyEvent;
+            Deleted += NotifyEvent;
+            Renamed += NotifyEvent;
         }
 
-        /// <summary> Defines if should monitor folders despite of "filters" construction </summary>
+        /// <summary> Occurs when a file or directory in the specified Path that matches Filters is changed. </summary>
+        public event FileSystemEventHandler FileChanged;
+
+        /// <summary> Occurs when a file or directory in the specified Path that matches Filters is created. </summary>
+        public event FileSystemEventHandler FileCreated;
+
+        /// <summary> Occurs when a file or directory in the specified Path that matches Filters is deleted. </summary>
+        public event FileSystemEventHandler FileDeleted;
+
+        /// <summary> Occurs when a file or directory in the specified Path that matches Filters is renamed. </summary>
+        public event RenamedEventHandler FileRenamed;
+
+        /// <summary> 
+        /// Defines if should monitor folders despite of "filters" construction
+        /// NOTE: NotifyFilters must have NotifyFilters.DirectoryName flag
+        /// </summary>
         public bool MonitorDirectoryChanges { get; set; }
 
         private string filters;
-        /// <summary> The types of files to watch separated with "|". For example, "*.txt|*.png" watches for changes to all text or png images </summary>
+        /// <summary> 
+        /// The types of files to watch separated with "|". For example, "*.txt|*.png" watches for changes to all text or png images.
+        /// These Filters are applied after base Filter
+        /// </summary>
         public string Filters {
             get => filters;
             set {
@@ -45,18 +62,6 @@ namespace ForgeModGenerator
                 }
             }
         }
-
-        /// <summary> Occurs when a file or directory in the specified Path is changed. </summary>
-        public new event FileSystemEventHandler Changed;
-
-        /// <summary> Occurs when a file or directory in the specified Path is created. </summary>
-        public new event FileSystemEventHandler Created;
-
-        /// <summary> Occurs when a file or directory in the specified Path is deleted. </summary>
-        public new event FileSystemEventHandler Deleted;
-
-        /// <summary> Occurs when a file or directory in the specified Path is renamed. </summary>
-        public new event RenamedEventHandler Renamed;
 
         /// <summary> Array of common filter used in base class </summary>
         private string[] filtersArray;
@@ -74,23 +79,23 @@ namespace ForgeModGenerator
             if (e.ChangeType == WatcherChangeTypes.Renamed)
             {
                 RenamedEventArgs args = (RenamedEventArgs)e;
-                if (monitorDirectory || StrictMatchPattern(filters, args.OldName))
+                if (monitorDirectory || StrictMatchPattern(filtersArray, args.OldName))
                 {
-                    Renamed?.Invoke(sender, args);
+                    FileRenamed?.Invoke(sender, args);
                 }
             }
-            else if (monitorDirectory || StrictMatchPattern(filters, e.Name))
+            else if (monitorDirectory || StrictMatchPattern(filtersArray, e.Name))
             {
                 switch (e.ChangeType)
                 {
                     case WatcherChangeTypes.Created:
-                        Created?.Invoke(sender, e);
+                        FileCreated?.Invoke(sender, e);
                         break;
                     case WatcherChangeTypes.Deleted:
-                        Deleted?.Invoke(sender, e);
+                        FileDeleted?.Invoke(sender, e);
                         break;
                     case WatcherChangeTypes.Changed:
-                        Changed?.Invoke(sender, e);
+                        FileChanged?.Invoke(sender, e);
                         break;
                     default:
                         break;
@@ -101,9 +106,9 @@ namespace ForgeModGenerator
         protected bool StrictMatchPattern(string[] expressions, string name)
         {
             bool nameMatches = false;
-            foreach (string filter in filtersArray)
+            foreach (string expression in expressions)
             {
-                if (StrictMatchPattern(filter, name))
+                if (StrictMatchPattern(expression, name))
                 {
                     nameMatches = true;
                     break;

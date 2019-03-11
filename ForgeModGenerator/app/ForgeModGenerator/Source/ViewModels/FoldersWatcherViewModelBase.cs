@@ -20,10 +20,6 @@ namespace ForgeModGenerator.ViewModels
         {
             SessionContext = sessionContext;
             DialogService = dialogService;
-            if (IsInDesignMode)
-            {
-                return;
-            }
             OpenFileDialog = new OpenFileDialog() {
                 Multiselect = true,
                 CheckFileExists = true,
@@ -31,7 +27,6 @@ namespace ForgeModGenerator.ViewModels
             };
             OpenFolderDialog = new FolderBrowserDialog() { ShowNewFolderButton = true };
             AllowedFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { OpenFileDialog.DefaultExt };
-            FileSynchronizer = new DefaultFoldersSynchronizer<TFolder, TFile>(Folders, FoldersRootPath, AllowedFileExtensionsPatterns);
             SessionContext.PropertyChanged += OnSessionContexPropertyChanged;
         }
 
@@ -48,7 +43,10 @@ namespace ForgeModGenerator.ViewModels
             get => folders;
             set {
                 Set(ref folders, value);
-                FileSynchronizer.Folders = folders;
+                if (folders != null && FileSynchronizer != null)
+                {
+                    FileSynchronizer.Folders = folders;
+                }
             }
         }
 
@@ -108,6 +106,7 @@ namespace ForgeModGenerator.ViewModels
                 FileSynchronizer.RootPath = FoldersRootPath;
                 IsLoading = true;
                 Folders = new ObservableFolder<TFolder>(FoldersRootPath, await FileSynchronizer.FindFoldersAsync(FoldersRootPath ?? FoldersJsonFilePath, true));
+                FileSynchronizer = new DefaultFoldersSynchronizer<TFolder, TFile>(Folders, FoldersRootPath, AllowedFileExtensionsPatterns);
                 IsLoading = false;
                 return true;
             }

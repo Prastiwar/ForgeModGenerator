@@ -201,8 +201,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
         private void RemoveDumpExample(Mod mod)
         {
             string javaSource = ModPaths.JavaSourceFolder(mod.ModInfo.Name);
-            string[] organizationPaths = Directory.GetDirectories(javaSource);
-            foreach (string organization in organizationPaths)
+            foreach (string organization in Directory.EnumerateDirectories(javaSource))
             {
                 IOHelper.DeleteDirectoryPerm(organization);
             }

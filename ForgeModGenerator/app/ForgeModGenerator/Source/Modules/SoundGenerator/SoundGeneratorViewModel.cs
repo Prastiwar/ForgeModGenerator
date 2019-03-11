@@ -21,18 +21,11 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
     {
         public SoundGeneratorViewModel(ISessionContextService sessionContext, IDialogService dialogService) : base(sessionContext, dialogService)
         {
-            if (IsInDesignMode)
-            {
-                return;
-            }
             OpenFileDialog.Filter = "Sound file (*.ogg) | *.ogg";
             AllowedFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".ogg" };
             FileEditForm = new SoundEditForm();
-            FileEditor = new EditorForm<Sound>(dialogService, FileEditForm);
+            FileEditor = new EditorForm<Sound>(DialogService, FileEditForm);
             FileEditor.ItemEdited += OnSoundEdited;
-            FileSynchronizer = SessionContext.IsModSelected
-                             ? new SoundEventsSynchronizer(Folders, SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid, FoldersRootPath, AllowedFileExtensionsPatterns)
-                             : new SoundEventsSynchronizer(Folders, "", "", FoldersRootPath, AllowedFileExtensionsPatterns);
         }
 
         public override string FoldersRootPath => SessionContext.SelectedMod != null ? ModPaths.SoundsFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid) : null;
@@ -53,18 +46,18 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             if (CanRefresh())
             {
                 Preferences = SessionContext.GetOrCreatePreferences<SoundsGeneratorPreferences>();
-                ((SoundEventsSynchronizer)FileSynchronizer).SetModInfo(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
                 soundEventValidator = null; // will lazy load itself when needed
                 if (Folders != null)
                 {
                     Folders.FilesChanged -= SubscribeFolderEvents;
                     Folders.Clear();
                 }
-                Folders = new ObservableFolder<SoundEvent>(FoldersRootPath, await FileSynchronizer.FindFoldersAsync(FoldersJsonFilePath, true));
+                Folders = new ObservableSoundEvents(FoldersRootPath, System.Linq.Enumerable.Empty<SoundEvent>());
+                FileSynchronizer = new SoundEventsSynchronizer(Folders, SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid, FoldersRootPath, AllowedFileExtensionsPatterns);
+                Folders.AddRange(await FileSynchronizer.FindFoldersAsync(FoldersJsonFilePath, true));
                 SubscribeFolderEvents(Folders, new FileChangedEventArgs<SoundEvent>(Folders.Files, FileChange.Add));
                 Folders.FilesChanged += SubscribeFolderEvents;
                 Folders.FilesChanged += OnFoldersCollectionChanged;
-                FileSynchronizer.Folders = Folders;
                 JsonUpdater = new SoundJsonUpdater(Folders.Files, FoldersJsonFilePath, Preferences.JsonFormatting, GetActualConverter());
                 CheckJsonFileMismatch();
                 CheckForUpdate();
@@ -78,7 +71,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             base.ForceJsonFileUpdate();
             ;// TODO: GetCurrentSoundCodeGenerator().RegenerateScript();
         }
-        
+
         protected void OnSoundEdited(object sender, EditorForm<Sound>.ItemEditedEventArgs args)
         {
             if (args.Result)

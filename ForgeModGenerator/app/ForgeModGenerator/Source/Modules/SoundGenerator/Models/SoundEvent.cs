@@ -30,25 +30,17 @@ namespace ForgeModGenerator.SoundGenerator.Models
             return soundEvent;
         }
 
-        public SoundEvent(string path) : base(path) => EventName = Info.Name;
+        public SoundEvent(string path) : base(path) => Init();
 
-        public SoundEvent(IEnumerable<string> filePaths) : base(filePaths)
-        {
-            EventName = FormatDottedSoundNameFromFullPath(Info.FullName);
-            IsDirty = false;
-        }
+        public SoundEvent(IEnumerable<string> filePaths) : base(filePaths) => Init();
+        public SoundEvent(IEnumerable<Sound> files) : base(files) => Init();
 
-        public SoundEvent(IEnumerable<Sound> files) : base(files) { }
+        public SoundEvent(string path, IEnumerable<Sound> files) : base(path, files) => Init();
+        public SoundEvent(string path, IEnumerable<string> filePaths) : base(path, filePaths) => Init();
 
-        public SoundEvent(string path, IEnumerable<Sound> files) : base(path, files)
-        {
-            EventName = FormatDottedSoundNameFromFullPath(Info.FullName);
-            IsDirty = false;
-        }
-
-        public SoundEvent(string path, SearchOption searchOption) : base(path, searchOption) { }
-        public SoundEvent(string path, string fileSearchPattern) : base(path, fileSearchPattern) { }
-        public SoundEvent(string path, string fileSearchPattern, SearchOption searchOption) : base(path, fileSearchPattern, searchOption) { }
+        public SoundEvent(string path, SearchOption searchOption) : base(path, searchOption) => Init();
+        public SoundEvent(string path, string fileSearchPatterns) : base(path, fileSearchPatterns) => Init();
+        public SoundEvent(string path, string fileSearchPatterns, SearchOption searchOption) : base(path, fileSearchPatterns, searchOption) => Init();
 
         private string eventName;
         public string EventName {
@@ -66,6 +58,19 @@ namespace ForgeModGenerator.SoundGenerator.Models
         public string Subtitle {
             get => subtitle;
             set => DirtSet(ref subtitle, value);
+        }
+
+        private void Init()
+        {
+            if (Count == 1)
+            {
+                EventName = FormatDottedSoundNameFromFullPath(Files[0].Info.FullName);
+            }
+            else
+            {
+                EventName = FormatDottedSoundNameFromFullPath(Info.FullName);
+            }
+            IsDirty = false;
         }
 
         public override object DeepClone()

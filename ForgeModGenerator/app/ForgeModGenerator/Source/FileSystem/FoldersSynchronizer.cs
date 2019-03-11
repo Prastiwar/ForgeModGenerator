@@ -58,12 +58,16 @@ namespace ForgeModGenerator
                 EnableRaisingEvents = true,
                 NotifyFilter = NotifyFilters.DirectoryName | NotifyFilters.FileName
             };
-            FileWatcher.Created += FileWatcher_Created;
-            FileWatcher.Deleted += FileWatcher_Deleted;
-            FileWatcher.Renamed += FileWatcher_Renamed;
+            FileWatcher.FileCreated += FileWatcher_Created;
+            FileWatcher.FileDeleted += FileWatcher_Deleted;
+            FileWatcher.FileRenamed += FileWatcher_Renamed;
         }
 
-        public ObservableFolder<TFolder> Folders { get; set; }
+        private ObservableFolder<TFolder> folders;
+        public ObservableFolder<TFolder> Folders {
+            get => folders;
+            set => folders = value ?? throw new ArgumentNullException(nameof(value));
+        }
 
         private string rootPath;
         public string RootPath {
@@ -75,11 +79,12 @@ namespace ForgeModGenerator
         }
 
         private string filters;
+
         public string Filters {
             get => filters;
             set {
                 filters = value;
-                FileWatcher.Filter = RootPath;
+                FileWatcher.Filter = Filters;
             }
         }
 
@@ -92,7 +97,7 @@ namespace ForgeModGenerator
         public bool TryGetFolder(string path, out TFolder folder)
         {
             string folderPath = IOHelper.GetDirectoryPath(path);
-            folder = Folders?.Files?.Find(x => x.Info.FullName == folderPath);
+            folder = Folders.Files.Find(x => x.Info.FullName == folderPath);
             return folder != null;
         }
 
@@ -256,36 +261,35 @@ namespace ForgeModGenerator
         protected virtual ICollection<TFolder> DeserializeFolders(string fileCotent) => JsonConvert.DeserializeObject<Collection<TFolder>>(fileCotent);
 
         /// <summary> Called when FileSystemWatcher detects folder creation </summary>
-        protected void SyncCreateFolder(string path, bool includeSubDirectories = true)
+        protected bool SyncCreateFolder(string path, bool includeSubDirectories = true)
         {
             SynchronizationCheck(path);
-            if (Folders != null)
+            Folders.Add(ConstructFolderInstance(path, null));
+            if (includeSubDirectories)
             {
-                Folders.Add(ConstructFolderInstance(path, null));
-                if (includeSubDirectories)
+                IEnumerable<TFolder> foundFolders = EnumerateFoldersFromDirectory(path);
+                if (foundFolders.Any())
                 {
-                    IEnumerable<TFolder> foundFolders = EnumerateFoldersFromDirectory(path);
-                    if (foundFolders.Any())
-                    {
-                        Folders.AddRange(foundFolders);
-                    }
+                    Folders.AddRange(foundFolders);
                 }
             }
+            return true;
         }
 
-        /// <summary> Called when FileSystemWatcher detects file creation </summary>
-        protected void SyncCreateFile(string path)
+        /// <summary> Called when FileSystemWatcher detects file creation. Finds folder from path and adds path to it </summary>
+        protected bool SyncCreateFile(string path)
         {
             SynchronizationCheck(path);
             string folderPath = IOHelper.GetDirectoryPath(path);
             if (TryGetFolder(folderPath, out TFolder folder))
             {
-                folder.Add(path);
+                return folder.Add(path);
             }
+            return false;
         }
 
-        /// <summary> Called when FileSystemWatcher detects folder deletion </summary>
-        protected void SyncRemoveFolder(string path)
+        /// <summary> Called when FileSystemWatcher detects folder deletion. Finds folder from path, if removes from Folders - clear it </summary>
+        protected bool SyncRemoveFolder(string path)
         {
             SynchronizationCheck(path);
             if (TryGetFolder(path, out TFolder folder))
@@ -293,40 +297,49 @@ namespace ForgeModGenerator
                 if (Folders.Remove(folder))
                 {
                     folder.Clear();
+                    return true;
                 }
             }
+            return false;
         }
 
-        /// <summary> Called when FileSystemWatcher detects file deletion </summary>
-        protected void SyncRemoveFile(string path)
+        /// <summary> Called when FileSystemWatcher detects file deletion. Finds File from path and removes it from folder it belongs to </summary>
+        protected bool SyncRemoveFile(string path)
         {
             SynchronizationCheck(path);
-            if (TryGetFile(path, out TFile file, out TFolder folder))
-            {
-                folder.Remove(file);
-            }
+            return TryGetFile(path, out TFile file, out TFolder folder) ? folder.Remove(file) : false;
         }
 
         /// <summary> Called when FileSystemWatcher detects folder rename </summary>
-        protected void SyncRenameFolder(string oldPath, string newPath)
+        protected bool SyncRenameFolder(string oldPath, string newPath)
         {
             SynchronizationCheck(oldPath);
             string oldFolderPath = IOHelper.GetDirectoryPath(oldPath);
-            string folderPath = IOHelper.GetDirectoryPath(newPath);
+            newPath = IOHelper.GetDirectoryPath(newPath).NormalizeFullPath();
             if (TryGetFolder(oldFolderPath, out TFolder oldFolder))
             {
-                oldFolder.SetInfo(folderPath);
+                if (string.Compare(oldFolder.Info.FileSystemInfo.FullName, newPath) != 0)
+                {
+                    oldFolder.SetInfo(newPath);
+                    return true;
+                }
             }
+            return false;
         }
 
         /// <summary> Called when FileSystemWatcher detects file rename </summary>
-        protected void SyncRenameFile(string oldPath, string newPath)
+        protected bool SyncRenameFile(string oldPath, string newPath)
         {
             SynchronizationCheck(oldPath);
             if (TryGetFile(oldPath, out TFile file, out TFolder folder))
             {
-                file.SetInfo(newPath);
+                if (string.Compare(file.Info.FileSystemInfo.FullName, newPath.NormalizeFullPath()) != 0)
+                {
+                    file.SetInfo(newPath);
+                    return true;
+                }
             }
+            return false;
         }
 
         protected virtual void FileWatcher_Created(object sender, FileSystemEventArgs e)
@@ -365,7 +378,8 @@ namespace ForgeModGenerator
             }
         }
 
-        private void SynchronizationCheck(string actualPath)
+        /// <summary> Throws exception if given path is not sub path of RootPath </summary>
+        protected void SynchronizationCheck(string actualPath)
         {
             if (!IOHelper.IsSubPathOf(actualPath, RootPath))
             {

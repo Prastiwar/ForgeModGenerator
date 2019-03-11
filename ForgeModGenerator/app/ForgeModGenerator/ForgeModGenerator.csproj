@@ -270,7 +270,7 @@
     <Compile Include="Source\Modules\CommandGenerator\CommandGeneratorViewModel.cs" />
     <Compile Include="Source\Modules\ItemGenerator\ItemGeneratorViewModel.cs" />
     <Compile Include="Source\Validations\ValidateHelper.cs" />
-    <Compile Include="Source\ViewModels\FolderCollectionViewModelBase.cs" />
+    <Compile Include="Source\ViewModels\FoldersWatcherViewModelBase.cs" />
     <Compile Include="Source\ViewModels\FoldersViewModelBase.cs" />
     <Compile Include="Source\Modules\ModGenerator\ModGeneratorViewModel.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\RecipeGeneratorViewModel.cs" />

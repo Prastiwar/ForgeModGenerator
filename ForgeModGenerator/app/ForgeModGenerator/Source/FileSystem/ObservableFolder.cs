@@ -134,8 +134,8 @@ namespace ForgeModGenerator
 
         public bool Contains(T item) => Files.Contains(item);
 
-        protected bool CanAdd(T item) => CanAdd(item.Info.FullName);
-        protected bool CanAdd(string filePath) => !Files.Exists(file => file.Info.FullName == filePath);
+        protected virtual bool CanAdd(T item) => CanAdd(item.Info.FullName);
+        protected virtual bool CanAdd(string filePath) => !Files.Exists(file => file.Info.FullName == filePath);
 
         /// <summary> Add file without existing check </summary>
         protected void AddFile(T item)
