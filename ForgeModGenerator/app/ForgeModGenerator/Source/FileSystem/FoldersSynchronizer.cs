@@ -61,6 +61,7 @@ namespace ForgeModGenerator
             FileWatcher.FileCreated += FileWatcher_Created;
             FileWatcher.FileDeleted += FileWatcher_Deleted;
             FileWatcher.FileRenamed += FileWatcher_Renamed;
+            FileWatcher.FileSubPathRenamed += FileWatcher_SubPathRenamed;
         }
 
         private ObservableFolder<TFolder> folders;
@@ -97,17 +98,26 @@ namespace ForgeModGenerator
         public bool TryGetFolder(string path, out TFolder folder)
         {
             string folderPath = IOHelper.GetDirectoryPath(path);
-            folder = Folders.Files.Find(x => x.Info.FullName == folderPath);
+            folder = Folders.Files.Find(x => x.Info.FullName.ComparePath(folderPath));
             return folder != null;
         }
 
+        public bool TryGetFile(string path, out TFile file) => TryGetFile(path, out file, out TFolder folder);
         public bool TryGetFile(string path, out TFile file, out TFolder folder)
         {
-            if (TryGetFolder(path, out folder))
+            foreach (TFolder folderItem in Folders.Files)
             {
-                file = folder.Files.Find(x => x.Info.FullName == path);
-                return file != null;
+                foreach (TFile folderFile in folderItem.Files)
+                {
+                    if (folderFile.Info.FullName.ComparePath(path))
+                    {
+                        file = folderFile;
+                        folder = folderItem;
+                        return true;
+                    }
+                }
             }
+            folder = null;
             file = null;
             return false;
         }
@@ -260,6 +270,26 @@ namespace ForgeModGenerator
         /// <summary> Deserializes Json content to ICollection<TFolder> </summary>
         protected virtual ICollection<TFolder> DeserializeFolders(string fileCotent) => JsonConvert.DeserializeObject<Collection<TFolder>>(fileCotent);
 
+        protected bool RemoveFolder(TFolder folder)
+        {
+            if (Folders.Remove(folder))
+            {
+                folder.Clear();
+                return true;
+            }
+            return false;
+        }
+
+        protected bool Rename(IFileSystemInfo info, string newPath)
+        {
+            if (!info.Info.FullName.ComparePath(newPath))
+            {
+                info.SetInfo(newPath);
+                return true;
+            }
+            return false;
+        }
+
         /// <summary> Called when FileSystemWatcher detects folder creation </summary>
         protected bool SyncCreateFolder(string path, bool includeSubDirectories = true)
         {
@@ -281,26 +311,14 @@ namespace ForgeModGenerator
         {
             SynchronizationCheck(path);
             string folderPath = IOHelper.GetDirectoryPath(path);
-            if (TryGetFolder(folderPath, out TFolder folder))
-            {
-                return folder.Add(path);
-            }
-            return false;
+            return TryGetFolder(folderPath, out TFolder folder) ? folder.Add(path) : false;
         }
 
         /// <summary> Called when FileSystemWatcher detects folder deletion. Finds folder from path, if removes from Folders - clear it </summary>
         protected bool SyncRemoveFolder(string path)
         {
             SynchronizationCheck(path);
-            if (TryGetFolder(path, out TFolder folder))
-            {
-                if (Folders.Remove(folder))
-                {
-                    folder.Clear();
-                    return true;
-                }
-            }
-            return false;
+            return TryGetFolder(path, out TFolder folder) ? RemoveFolder(folder) : false;
         }
 
         /// <summary> Called when FileSystemWatcher detects file deletion. Finds File from path and removes it from folder it belongs to </summary>
@@ -316,30 +334,14 @@ namespace ForgeModGenerator
             SynchronizationCheck(oldPath);
             string oldFolderPath = IOHelper.GetDirectoryPath(oldPath);
             newPath = IOHelper.GetDirectoryPath(newPath).NormalizeFullPath();
-            if (TryGetFolder(oldFolderPath, out TFolder oldFolder))
-            {
-                if (string.Compare(oldFolder.Info.FileSystemInfo.FullName, newPath) != 0)
-                {
-                    oldFolder.SetInfo(newPath);
-                    return true;
-                }
-            }
-            return false;
+            return TryGetFolder(oldFolderPath, out TFolder oldFolder) ? Rename(oldFolder, newPath) : false;
         }
 
         /// <summary> Called when FileSystemWatcher detects file rename </summary>
         protected bool SyncRenameFile(string oldPath, string newPath)
         {
             SynchronizationCheck(oldPath);
-            if (TryGetFile(oldPath, out TFile file, out TFolder folder))
-            {
-                if (string.Compare(file.Info.FileSystemInfo.FullName, newPath.NormalizeFullPath()) != 0)
-                {
-                    file.SetInfo(newPath);
-                    return true;
-                }
-            }
-            return false;
+            return TryGetFile(oldPath, out TFile file) ? Rename(file, newPath.NormalizeFullPath()) : false;
         }
 
         protected virtual void FileWatcher_Created(object sender, FileSystemEventArgs e)
@@ -377,6 +379,8 @@ namespace ForgeModGenerator
                 Application.Current.Dispatcher.Invoke(() => { SyncRenameFile(e.OldFullPath, e.FullPath); });
             }
         }
+
+        protected virtual void FileWatcher_SubPathRenamed(object sender, FileSubPathEventArgs e) => Application.Current.Dispatcher.Invoke(() => { SyncRenameFile(e.OldFullPath, e.FullPath); });
 
         /// <summary> Throws exception if given path is not sub path of RootPath </summary>
         protected void SynchronizationCheck(string actualPath)

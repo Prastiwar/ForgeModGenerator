@@ -103,10 +103,14 @@ namespace ForgeModGenerator.ViewModels
         {
             if (CanRefresh())
             {
-                FileSynchronizer.RootPath = FoldersRootPath;
                 IsLoading = true;
-                Folders = new ObservableFolder<TFolder>(FoldersRootPath, await FileSynchronizer.FindFoldersAsync(FoldersRootPath ?? FoldersJsonFilePath, true));
+                if (Folders != null)
+                {
+                    Folders.Clear();
+                }
+                Folders = new ObservableFolder<TFolder>(FoldersRootPath, System.Linq.Enumerable.Empty<TFolder>());
                 FileSynchronizer = new DefaultFoldersSynchronizer<TFolder, TFile>(Folders, FoldersRootPath, AllowedFileExtensionsPatterns);
+                Folders.AddRange(await FileSynchronizer.FindFoldersAsync(FoldersRootPath ?? FoldersJsonFilePath, true));
                 IsLoading = false;
                 return true;
             }

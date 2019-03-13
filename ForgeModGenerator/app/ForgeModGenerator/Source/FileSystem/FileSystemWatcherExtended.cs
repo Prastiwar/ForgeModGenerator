@@ -5,6 +5,18 @@ using System.Reflection;
 
 namespace ForgeModGenerator
 {
+    public class FileSubPathEventArgs : EventArgs
+    {
+        public FileSubPathEventArgs(string oldFullPath, string newFullPath)
+        {
+            OldFullPath = oldFullPath;
+            FullPath = newFullPath;
+        }
+
+        public string OldFullPath { get; }
+        public string FullPath { get; }
+    }
+
     [System.ComponentModel.DesignerCategory("Code")]
     public class FileSystemWatcherExtended : FileSystemWatcher
     {
@@ -36,6 +48,9 @@ namespace ForgeModGenerator
 
         /// <summary> Occurs when a file or directory in the specified Path that matches Filters is renamed. </summary>
         public event RenamedEventHandler FileRenamed;
+
+        /// <summary> Occurs when a directory with files in it in the specified Path that matches Filters is renamed. </summary>
+        public event EventHandler<FileSubPathEventArgs> FileSubPathRenamed;
 
         /// <summary> 
         /// Defines if should monitor folders despite of "filters" construction
@@ -82,6 +97,10 @@ namespace ForgeModGenerator
                 if (monitorDirectory || StrictMatchPattern(filtersArray, args.OldName))
                 {
                     FileRenamed?.Invoke(sender, args);
+                    if (Directory.Exists(args.FullPath))
+                    {
+                        NotifySubPathChanged(this, args.OldFullPath, args.FullPath);
+                    }
                 }
             }
             else if (monitorDirectory || StrictMatchPattern(filtersArray, e.Name))
@@ -99,6 +118,24 @@ namespace ForgeModGenerator
                         break;
                     default:
                         break;
+                }
+            }
+        }
+
+        protected void NotifySubPathChanged(object sender, string oldPath, string newPath)
+        {
+            if (FileSubPathRenamed != null)
+            {
+                DirectoryInfo dirInfo = new DirectoryInfo(newPath);
+                foreach (FileInfo file in dirInfo.EnumerateFiles())
+                {
+                    string oldFilePath = System.IO.Path.Combine(oldPath, file.Name);
+                    FileSubPathRenamed.Invoke(sender, new FileSubPathEventArgs(oldFilePath, file.FullName));
+                }
+                foreach (DirectoryInfo subDir in dirInfo.EnumerateDirectories())
+                {
+                    string oldSubDirPath = System.IO.Path.Combine(oldPath, subDir.Name);
+                    NotifySubPathChanged(sender, oldSubDirPath, subDir.FullName);
                 }
             }
         }
