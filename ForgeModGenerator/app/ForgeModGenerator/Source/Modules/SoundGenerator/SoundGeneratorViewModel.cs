@@ -53,8 +53,9 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
                     Folders.Clear();
                 }
                 Folders = new ObservableSoundEvents(FoldersRootPath, System.Linq.Enumerable.Empty<SoundEvent>());
-                FileSynchronizer = new SoundEventsSynchronizer(Folders, SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid, FoldersRootPath, AllowedFileExtensionsPatterns);
-                Folders.AddRange(await FileSynchronizer.FindFoldersAsync(FoldersJsonFilePath, true));
+                FolderFactory = new SoundEventsFactory(Folders, SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid, AllowedFileExtensionsPatterns);
+                FileSynchronizer = new SoundEventsSynchronizer(Folders, FolderFactory, FoldersRootPath, AllowedFileExtensionsPatterns);
+                Folders.AddRange(await FileSynchronizer.Factory.FindFoldersAsync(FoldersJsonFilePath, true));
                 SubscribeFolderEvents(Folders, new FileChangedEventArgs<SoundEvent>(Folders.Files, FileChange.Add));
                 Folders.FilesChanged += SubscribeFolderEvents;
                 Folders.FilesChanged += OnFoldersCollectionChanged;

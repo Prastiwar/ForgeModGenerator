@@ -38,7 +38,7 @@ namespace ForgeModGenerator.ViewModels
         /// <summary> Deserialized folders from FoldersJsonFilePath and checks if any file doesn't exists, if so, prompt if should fix this </summary>
         protected async void CheckJsonFileMismatch()
         {
-            IEnumerable<TFolder> deserializedFolders = FileSynchronizer.GetFoldersFromFile(FoldersJsonFilePath, false);
+            IEnumerable<TFolder> deserializedFolders = FolderFactory.FindFoldersFromFile(FoldersJsonFilePath, false);
             bool hasNotExistingFile = deserializedFolders != null ? deserializedFolders.Any(folder => folder.Files.Any(file => !File.Exists(file.Info.FullName))) : false;
             if (hasNotExistingFile)
             {
@@ -72,7 +72,7 @@ namespace ForgeModGenerator.ViewModels
         {
             if (SessionContext.SelectedMod != null)
             {
-                return FileSynchronizer.EnumerateFilteredFiles(FoldersRootPath, SearchOption.AllDirectories).All(filePath => FileSystemInfoReference.IsReferenced(filePath));
+                return FolderFactory.EnumerateFilteredFiles(FoldersRootPath, SearchOption.AllDirectories).All(filePath => FileSystemInfoReference.IsReferenced(filePath));
             }
             return true;
         }

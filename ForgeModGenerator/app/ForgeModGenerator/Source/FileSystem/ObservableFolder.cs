@@ -164,6 +164,15 @@ namespace ForgeModGenerator
             Files.RemoveRange(items);
         }
 
+        /// <summary> Enumerates files that are sub paths of given folder path </summary>
+        public IEnumerable<T> EnumerateSubPathFiles(string path) => Files.Where(file => IOHelper.IsSubPathOf(file.Info.FullName, path));
+
+        public bool TryGetFile(string path, out T file)
+        {
+            file = Files.Find(x => x.Info.FullName.ComparePath(path));
+            return file != null;
+        }
+
         public bool Add(T item)
         {
             if (CanAdd(item))

@@ -45,7 +45,7 @@ namespace ForgeModGenerator.ViewModels
                 Set(ref folders, value);
                 if (folders != null && FileSynchronizer != null)
                 {
-                    FileSynchronizer.Folders = folders;
+                    FileSynchronizer.SyncedFolders = folders;
                 }
             }
         }
@@ -86,6 +86,8 @@ namespace ForgeModGenerator.ViewModels
 
         protected FoldersSynchronizer<TFolder, TFile> FileSynchronizer { get; set; }
 
+        protected FoldersFactory<TFolder, TFile> FolderFactory { get; set; }
+
         protected HashSet<string> AllowedFileExtensions { get; set; }
 
         protected string AllowedFileExtensionsPatterns => "*" + string.Join("|*", AllowedFileExtensions);
@@ -109,8 +111,9 @@ namespace ForgeModGenerator.ViewModels
                     Folders.Clear();
                 }
                 Folders = new ObservableFolder<TFolder>(FoldersRootPath, System.Linq.Enumerable.Empty<TFolder>());
-                FileSynchronizer = new DefaultFoldersSynchronizer<TFolder, TFile>(Folders, FoldersRootPath, AllowedFileExtensionsPatterns);
-                Folders.AddRange(await FileSynchronizer.FindFoldersAsync(FoldersRootPath ?? FoldersJsonFilePath, true));
+                FolderFactory = new DefaultFoldersFactory<TFolder, TFile>(AllowedFileExtensionsPatterns);
+                FileSynchronizer = new FoldersSynchronizer<TFolder, TFile>(Folders, FolderFactory, FoldersRootPath, AllowedFileExtensionsPatterns);
+                Folders.AddRange(await FolderFactory.FindFoldersAsync(FoldersRootPath ?? FoldersJsonFilePath, true));
                 IsLoading = false;
                 return true;
             }
