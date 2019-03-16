@@ -4,10 +4,8 @@
                     xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
                     xmlns:soundControls="clr-namespace:ForgeModGenerator.SoundGenerator.Controls"
                     xmlns:vm="clr-namespace:ForgeModGenerator.ViewModels"
-                    xmlns:rules="clr-namespace:ForgeModGenerator.Validations"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-                    xmlns:misc="clr-namespace:ForgeModGenerator.Utility"
-                    xmlns:soundRules="clr-namespace:ForgeModGenerator.SoundGenerator.Validations">
+                    xmlns:misc="clr-namespace:ForgeModGenerator.Utility">
     <Style TargetType="{x:Type controls:FolderExpanderControl}">
         <Setter Property="Template">
             <Setter.Value>
@@ -22,14 +20,16 @@
                             <Expander.HeaderTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <Button Width="20"
+                                        <Button x:Name="AddFileButton"
+                                                Width="20"
                                                 Height="20"
                                                 Padding="0"
                                                 Command="{Binding Path=AddFileCommand, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
                                                 CommandParameter="{Binding Path=Folder, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}">
                                             <materialDesign:PackIcon Kind="Plus" />
                                         </Button>
-                                        <Button Width="20"
+                                        <Button x:Name="RemoveFolderButton"
+                                                Width="20"
                                                 Height="20"
                                                 Padding="0"
                                                 Margin="8,0"
@@ -37,14 +37,16 @@
                                                 CommandParameter="{Binding Path=Folder, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}">
                                             <materialDesign:PackIcon Kind="Trash" />
                                         </Button>
-                                        <Button Width="20"
+                                        <Button x:Name="ShowContainerButton"
+                                                Width="20"
                                                 Height="20"
                                                 Padding="0"
                                                 Margin="8,0"
                                                 Command="{Binding Path=ShowContainerCommand, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}">
                                             <materialDesign:PackIcon Kind="FolderOpen" />
                                         </Button>
-                                        <TextBlock Margin="12,0">
+                                        <TextBlock x:Name="HeaderTextBlock"
+                                                   Margin="12,0">
                                             <TextBlock.Text>
                                                 <MultiBinding StringFormat="({0}) {1}">
                                                     <Binding Path="Folder.Count"
@@ -56,7 +58,8 @@
                                     </StackPanel>
                                 </DataTemplate>
                             </Expander.HeaderTemplate>
-                            <ListBox ItemsSource="{Binding Path=Folder.Files, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
+                            <ListBox x:Name="FilesListBox"
+                                     ItemsSource="{Binding Path=Folder.Files, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
                                      SelectedItem="{Binding Path=SelectedFile, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
                                      ItemTemplate="{Binding Path=FileItemTemplate, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
                                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -89,14 +92,16 @@
                             <Expander.HeaderTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <Button Width="20"
+                                        <Button x:Name="AddFileButton"
+                                                Width="20"
                                                 Height="20"
                                                 Padding="0"
                                                 Command="{Binding Path=AddFileCommand, RelativeSource={RelativeSource AncestorType=soundControls:SoundFolderExpanderControl}}"
                                                 CommandParameter="{Binding Path=Folder, RelativeSource={RelativeSource AncestorType=soundControls:SoundFolderExpanderControl}}">
                                             <materialDesign:PackIcon Kind="Plus" />
                                         </Button>
-                                        <Button Width="20"
+                                        <Button x:Name="RemoveFolderButton"
+                                                Width="20"
                                                 Height="20"
                                                 Padding="0"
                                                 Margin="8,0"
@@ -113,24 +118,28 @@
                                                        HorizontalAlignment="Center"
                                                        Text="{Binding Path=Folder.Count, StringFormat={}({0}), RelativeSource={RelativeSource AncestorType=soundControls:SoundFolderExpanderControl}}" />
                                         </StackPanel>
-                                        <controls:SubmitTextBox Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                        <controls:SubmitTextBox x:Name="EventNameTextBox"
+                                                                Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                                                                 Margin="5,0,10,0"
                                                                 materialDesign:HintAssist.Hint="Event Name"
                                                                 IsTabStop="True"
                                                                 Text="{Binding DataContext.EventName, RelativeSource={RelativeSource AncestorType=soundControls:SoundFolderExpanderControl}, ValidatesOnDataErrors=True}" />
-                                        <controls:SubmitTextBox Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                        <controls:SubmitTextBox x:Name="SubtitleTextBox"
+                                                                Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                                                                 Margin="10,0,10,0"
                                                                 materialDesign:HintAssist.Hint="Subtitle"
                                                                 HorizontalAlignment="Center"
                                                                 Text="{Binding Path=DataContext.Subtitle, RelativeSource={RelativeSource AncestorType=soundControls:SoundFolderExpanderControl}}" />
-                                        <CheckBox Content="Replace"
+                                        <CheckBox x:Name="ReplaceCheckBox"
+                                                  Content="Replace"
                                                   Margin="10,0,10,0"
                                                   VerticalAlignment="Bottom"
                                                   IsChecked="{Binding Path=DataContext.Replace, RelativeSource={RelativeSource AncestorType=soundControls:SoundFolderExpanderControl}}" />
                                     </StackPanel>
                                 </DataTemplate>
                             </Expander.HeaderTemplate>
-                            <ListBox ItemsSource="{Binding Path=Folder.Files, RelativeSource={RelativeSource AncestorType=soundControls:SoundFolderExpanderControl}}"
+                            <ListBox x:Name="FilesListBox"
+                                     ItemsSource="{Binding Path=Folder.Files, RelativeSource={RelativeSource AncestorType=soundControls:SoundFolderExpanderControl}}"
                                      SelectedItem="{Binding Path=SelectedFile, RelativeSource={RelativeSource AncestorType=soundControls:SoundFolderExpanderControl}}"
                                      ItemTemplate="{Binding Path=FileItemTemplate, RelativeSource={RelativeSource AncestorType=soundControls:SoundFolderExpanderControl}}"
                                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"

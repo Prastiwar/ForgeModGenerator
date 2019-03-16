@@ -65,9 +65,9 @@ namespace ForgeModGenerator.ModGenerator.Controls
         private void TryFillModid(object sender, TextChangedEventArgs e)
         {
             TextBox text = sender as TextBox;
-            if (string.IsNullOrWhiteSpace(ModidBox.Text) || string.Compare(ModidBox.Text, text.Text, true) < 0)
+            if (string.IsNullOrWhiteSpace(ModidTextBox.Text) || string.Compare(ModidTextBox.Text, text.Text, true) < 0)
             {
-                ModidBox.Text = text.Text;
+                ModidTextBox.Text = text.Text;
             }
         }
     }

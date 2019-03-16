@@ -20,63 +20,79 @@
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Column="0"
                     Margin="7">
-            <Label Height="{Binding ActualHeight, ElementName=OrganizationBox, Mode=OneWay}"
+            <Label x:Name="OrganizationLabel"
+                   Height="{Binding ActualHeight, ElementName=OrganizationTextBox, Mode=OneWay}"
                    ToolTip="Name of your organization (or just your name)"
                    Content="Organization:" />
-            <Label Height="{Binding ActualHeight, ElementName=SideBox, Mode=OneWay}"
+            <Label x:Name="SideLabel"
+                   Height="{Binding ActualHeight, ElementName=SideTextBox, Mode=OneWay}"
                    ToolTip="Mod can work on server-only, client-only on on both"
                    Content="Side:" />
-            <Label Height="{Binding ActualHeight, ElementName=WorkspaceBox, Mode=OneWay}"
+            <Label x:Name="WorkspaceLabel"
+                   Height="{Binding ActualHeight, ElementName=WorkspaceTextBox, Mode=OneWay}"
                    ToolTip="Generate workspace settings for manual changes"
                    Content="Workspace Setup:" />
-            <Label Height="{Binding ActualHeight, ElementName=ForgeVersionBox, Mode=OneWay}"
+            <Label x:Name="ForgeLabel"
+                   Height="{Binding ActualHeight, ElementName=ForgeVersionTextBox, Mode=OneWay}"
                    ToolTip="Forge version for your workspace and play mode"
                    Content="Forge Version:" />
-            <Label Height="{Binding ActualHeight, ElementName=NameBox, Mode=OneWay}"
+            <Label x:Name="NameLabel"
+                   Height="{Binding ActualHeight, ElementName=NameTextBox, Mode=OneWay}"
                    ToolTip="The user-friendly name of this mod."
                    Content="Name:" />
-            <Label Height="{Binding ActualHeight, ElementName=ModidBox, Mode=OneWay}"
+            <Label x:Name="ModidLabel"
+                   Height="{Binding ActualHeight, ElementName=ModidTextBox, Mode=OneWay}"
                    ToolTip="Identifier of your mod"
                    Content="modid:" />
-            <Label Height="{Binding ActualHeight, ElementName=DescriptionBox, Mode=OneWay}"
+            <Label x:Name="DescriptionLabel"
+                   Height="{Binding ActualHeight, ElementName=DescriptionTextBox, Mode=OneWay}"
                    ToolTip="Short description of your mod"
                    Content="Description:" />
-            <Label Height="{Binding ActualHeight, ElementName=VersionBox, Mode=OneWay}"
+            <Label x:Name="VersionLabel"
+                   Height="{Binding ActualHeight, ElementName=VersionTextBox, Mode=OneWay}"
                    ToolTip="Mod version"
                    Content="Version:" />
-            <Label Height="{Binding ActualHeight, ElementName=McVersionBox, Mode=OneWay}"
+            <Label x:Name="McVersionLabel"
+                   Height="{Binding ActualHeight, ElementName=McVersionTextBox, Mode=OneWay}"
                    ToolTip="Minecraft version"
                    Content="McVersion:" />
-            <Label Height="{Binding ActualHeight, ElementName=UrlBox, Mode=OneWay}"
+            <Label x:Name="UrlLabel"
+                   Height="{Binding ActualHeight, ElementName=UrlTextBox, Mode=OneWay}"
                    ToolTip="Url to mod's homepage"
                    Content="Url:" />
-            <Label Height="{Binding ActualHeight, ElementName=UpdateUrlBox, Mode=OneWay}"
+            <Label x:Name="UpdateUrlLabel"
+                   Height="{Binding ActualHeight, ElementName=UpdateUrlTextBox, Mode=OneWay}"
                    ToolTip="The URL to a version JSON"
                    Content="UpdateUrl:" />
-            <Label Height="{Binding ActualHeight, ElementName=CreditsBox, Mode=OneWay}"
+            <Label x:Name="CreditsLabel"
+                   Height="{Binding ActualHeight, ElementName=CreditsTextBox, Mode=OneWay}"
                    ToolTip="A string that contains any acknowledgements you want to mention"
                    Content="Credits:" />
-            <Label Height="{Binding ActualHeight, ElementName=LogoFileBox, Mode=OneWay}"
+            <Label x:Name="LogoFileLabel"
+                   Height="{Binding ActualHeight, ElementName=LogoFileTextBox, Mode=OneWay}"
                    ToolTip="Path to logo file"
                    Content="LogoFile:" />
-            <Label Height="{Binding ActualHeight, ElementName=AuthorListBox, Mode=OneWay}"
+            <Label x:Name="AuthorListLabel"
+                   Height="{Binding ActualHeight, ElementName=AuthorListBox, Mode=OneWay}"
                    ToolTip="A list of creators of this mod"
                    Content="AuthorList:" />
-            <Label Height="{Binding ActualHeight, ElementName=DependencyListBox, Mode=OneWay}"
+            <Label x:Name="DependenciesLabel"
+                   Height="{Binding ActualHeight, ElementName=DependencyListBox, Mode=OneWay}"
                    ToolTip="A list of modids that will load before yours"
                    Content="Dependencies:" />
-            <Label Height="{Binding ActualHeight, ElementName=ScreenshotListBox, Mode=OneWay}"
+            <Label x:Name="ScreenshotsLabel"
+                   Height="{Binding ActualHeight, ElementName=ScreenshotListBox, Mode=OneWay}"
                    ToolTip="A list of images to be shown on the info page"
                    Content="Screenshots:" />
         </StackPanel>
         <StackPanel Grid.Column="1"
                     TextBlock.Foreground="{DynamicResource MaterialDesignBody}"
                     Margin="7">
-            <controls:SubmitTextBox x:Name="OrganizationBox"
+            <controls:SubmitTextBox x:Name="OrganizationTextBox"
                                     TextChanged="LowerText"
                                     IsTabStop="True"
                                     Text="{Binding Path=Organization, ValidatesOnDataErrors=True}" />
-            <ComboBox x:Name="SideBox"
+            <ComboBox x:Name="SideTextBox"
                       ItemsSource="{Binding Path=Sides, RelativeSource={RelativeSource AncestorType=local:ModForm}}"
                       SelectedValue="{Binding Path=Side}"
                       Background="#FF404040"
@@ -87,7 +103,7 @@
                       HorizontalAlignment="Left"
                       VerticalAlignment="Center"
                       HorizontalContentAlignment="Center" />
-            <ComboBox x:Name="WorkspaceBox"
+            <ComboBox x:Name="WorkspaceTextBox"
                       ItemsSource="{Binding Path=Setups, RelativeSource={RelativeSource AncestorType=local:ModForm}}"
                       SelectedValue="{Binding Path=WorkspaceSetup}"
                       Background="#FF404040"
@@ -100,7 +116,7 @@
                       VerticalAlignment="Center"
                       HorizontalContentAlignment="Center" />
             <StackPanel Orientation="Horizontal">
-                <ComboBox x:Name="ForgeVersionBox"
+                <ComboBox x:Name="ForgeVersionTextBox"
                           ItemsSource="{Binding Path=ForgeVersions, RelativeSource={RelativeSource AncestorType=local:ModForm}}"
                           SelectedValue="{Binding Path=ForgeVersion}"
                           Background="#FF404040"
@@ -122,35 +138,35 @@
                                              VerticalAlignment="Center" />
                 </Button>
             </StackPanel>
-            <controls:SubmitTextBox x:Name="NameBox"
+            <controls:SubmitTextBox x:Name="NameTextBox"
                                     TextChanged="TryFillModid"
                                     IsTabStop="True"
                                     Text="{Binding Path=Name, ValidatesOnDataErrors=True}" />
-            <controls:SubmitTextBox x:Name="ModidBox"
+            <controls:SubmitTextBox x:Name="ModidTextBox"
                                     TextChanged="LowerText"
                                     IsTabStop="True"
                                     Text="{Binding Path=Modid, ValidatesOnDataErrors=True}" />
-            <TextBox x:Name="DescriptionBox"
+            <TextBox x:Name="DescriptionTextBox"
                      Text="{Binding Path=ModInfo.Description, Mode=TwoWay}"
                      TextWrapping="Wrap"
                      AcceptsReturn="True" />
-            <TextBox x:Name="VersionBox"
+            <TextBox x:Name="VersionTextBox"
                      Text="{Binding Path=ModInfo.Version, Mode=TwoWay}" />
-            <TextBox x:Name="McVersionBox"
+            <TextBox x:Name="McVersionTextBox"
                      Text="{Binding Path=ModInfo.McVersion, Mode=TwoWay}" />
-            <TextBox x:Name="UrlBox"
+            <TextBox x:Name="UrlTextBox"
                      Text="{Binding Path=ModInfo.Url, Mode=TwoWay}"
                      TextWrapping="Wrap"
                      AcceptsReturn="True" />
-            <TextBox x:Name="UpdateUrlBox"
+            <TextBox x:Name="UpdateUrlTextBox"
                      Text="{Binding Path=ModInfo.UpdateUrl, Mode=TwoWay}"
                      TextWrapping="Wrap"
                      AcceptsReturn="True" />
-            <TextBox x:Name="CreditsBox"
+            <TextBox x:Name="CreditsTextBox"
                      Text="{Binding Path=ModInfo.Credits, Mode=TwoWay}"
                      TextWrapping="Wrap"
                      AcceptsReturn="True" />
-            <TextBox x:Name="LogoFileBox"
+            <TextBox x:Name="LogoFileTextBox"
                      Text="{Binding Path=ModInfo.LogoFile, Mode=TwoWay}" />
             <controls:EditableStringList x:Name="AuthorListBox"
                                          ItemsSource="{Binding Path=ModInfo.AuthorList, Mode=TwoWay}" />

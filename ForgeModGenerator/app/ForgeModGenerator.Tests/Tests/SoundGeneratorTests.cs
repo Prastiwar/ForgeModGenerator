@@ -78,6 +78,7 @@ namespace ForgeModGenerator.Tests
         [TestMethod]
         public void SoundEventListSerialize()
         {
+            string expectedSoundEventsJson = "{\"sounds\":{\"replace\":false,\"subtitle\":\"\",\"sounds\":[{\"name\":\"testmod:test\",\"volume\":1.0,\"pitch\":1.0,\"weight\":1,\"stream\":false,\"attenuation_distance\":0,\"preload\":false,\"type\":\"file\"},{\"name\":\"testmod:testCopy2\",\"volume\":0.5,\"pitch\":2.0,\"weight\":2,\"stream\":true,\"attenuation_distance\":1,\"preload\":true,\"type\":\"event\"}]},\"entity.vatras.greet\":{\"replace\":true,\"subtitle\":\"Some subtitle2\",\"sounds\":[{\"name\":\"testmod:entity/vatras/greet\",\"volume\":1.0,\"pitch\":1.0,\"weight\":1,\"stream\":true,\"attenuation_distance\":0,\"preload\":true,\"type\":\"event\"}]}}";
             Collection<Sound> sounds1 = new Collection<Sound>() {
                 CreateSoundTest(), CreateSoundTestCopy2()
             };

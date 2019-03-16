@@ -72,7 +72,8 @@
                     <Border Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
-                        <Button Background="#FF673AB7"
+                        <Button x:Name="NavButton"
+                                Background="#FF673AB7"
                                 BorderBrush="Black"
                                 Padding="0"
                                 Margin="5"
@@ -84,12 +85,14 @@
                                     <ColumnDefinition Width="40" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <materialDesign:PackIcon Kind="{Binding Kind, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:NavButton}}}"
+                                <materialDesign:PackIcon x:Name="NavIcon"
+                                                         Kind="{Binding Kind, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:NavButton}}}"
                                                          Width="25"
                                                          Height="25"
                                                          HorizontalAlignment="Center"
                                                          VerticalAlignment="Center" />
-                                <Label Grid.Column="1"
+                                <Label x:Name="NavLabel"
+                                       Grid.Column="1"
                                        Foreground="White"
                                        Height="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Button}}"
                                        VerticalContentAlignment="Center"
@@ -113,7 +116,8 @@
                                 <ColumnDefinition Width="25" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <Button Grid.Column="0"
+                            <Button x:Name="AddNewButton"
+                                    Grid.Column="0"
                                     Height="20"
                                     Width="25"
                                     Padding="0"
@@ -127,12 +131,14 @@
                                           ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                           ScrollViewer.VerticalScrollBarVisibility="Disabled">
                                 <StackPanel Orientation="Horizontal">
-                                    <ListBox ItemsSource="{Binding Path=ItemsSource, RelativeSource={RelativeSource AncestorType=controls:EditableStringList}, Mode=TwoWay}"
+                                    <ListBox x:Name="StringsListBox"
+                                             ItemsSource="{Binding Path=ItemsSource, RelativeSource={RelativeSource AncestorType=controls:EditableStringList}, Mode=TwoWay}"
                                              FontSize="11"
                                              MinHeight="25">
                                         <ListBox.ItemTemplate>
                                             <DataTemplate>
-                                                <TextBox Text="{Binding Path=.}"
+                                                <TextBox x:Name="StringTextBox"
+                                                         Text="{Binding Path=.}"
                                                          Tag="{Binding Path=., RelativeSource={RelativeSource AncestorType=controls:EditableStringList}}">
                                                     <TextBox.ContextMenu>
                                                         <ContextMenu>

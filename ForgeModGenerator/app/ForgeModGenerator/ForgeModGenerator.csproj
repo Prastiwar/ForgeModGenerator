@@ -173,6 +173,7 @@
     <Compile Include="Source\Common\ThirdParty\WpfObservableRangeCollection.cs" />
     <Compile Include="Source\Controls\EditableList.cs" />
     <Compile Include="Source\Controls\ScrollButton.cs" />
+    <Compile Include="Source\Controls\SnackbarExtended.cs" />
     <Compile Include="Source\Converters\BoolValueConverter.cs" />
     <Compile Include="Source\Converters\InvertIntToVisibilityConverter.cs" />
     <Compile Include="Source\Converters\IntToVisibilityConverter.cs" />

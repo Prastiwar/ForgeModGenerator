@@ -206,6 +206,19 @@ namespace ForgeModGenerator
             AddFileRange(files.ToList());
         }
 
+        public bool RemoveAt(int index)
+        {
+            if (index >= 0 && index < Files.Count)
+            {
+                T file = Files[index];
+                file.PropertyChanged -= File_PropertyChanged;
+                file.Info.Remove();
+                Files.RemoveAt(index);
+                return true;
+            }
+            return false;
+        }
+
         public bool Remove(T item)
         {
             if (Files.Remove(item))

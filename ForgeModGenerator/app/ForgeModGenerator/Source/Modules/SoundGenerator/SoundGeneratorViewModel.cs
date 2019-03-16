@@ -96,6 +96,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
                     soundEvent.Validate += OnSoundEventValidate;
                     soundEvent.PropertyChanged += OnSoundEventPropertyChanged;
                     soundEvent.FilePropertyChanged += OnSoundPropertyChanged;
+                    soundEvent.FilesChanged += OnSoundEventFileChanged;
                 }
             }
             else if (e.Change == FileChange.Remove)
@@ -106,6 +107,18 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
                     soundEvent.Validate -= OnSoundEventValidate;
                     soundEvent.PropertyChanged -= OnSoundEventPropertyChanged;
                     soundEvent.FilePropertyChanged -= OnSoundPropertyChanged;
+                    soundEvent.FilesChanged -= OnSoundEventFileChanged;
+                }
+            }
+        }
+
+        private void OnSoundEventFileChanged(object sender, FileChangedEventArgs<Sound> e)
+        {
+            if (e.Change == FileChange.Remove)
+            {
+                if (((SoundEvent)sender).Count == 0)
+                {
+                    HasEmptyFolders = true;
                 }
             }
         }

@@ -3,9 +3,11 @@ using ForgeModGenerator.Utility;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Views;
+using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;
@@ -28,6 +30,7 @@ namespace ForgeModGenerator.ViewModels
             OpenFolderDialog = new FolderBrowserDialog() { ShowNewFolderButton = true };
             AllowedFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { OpenFileDialog.DefaultExt };
             SessionContext.PropertyChanged += OnSessionContexPropertyChanged;
+            NotificationMessageQueue = new SnackbarMessageQueue(TimeSpan.FromSeconds(0.75));
         }
 
         /// <summary> Path to folder root where are all files localized </summary>
@@ -69,6 +72,18 @@ namespace ForgeModGenerator.ViewModels
             set => Set(ref isLoading, value);
         }
 
+        private bool hasEmptyFolders;
+        public bool HasEmptyFolders {
+            get => hasEmptyFolders;
+            set => Set(ref hasEmptyFolders, value);
+        }
+
+        private SnackbarMessageQueue notificationMessageQueue;
+        public SnackbarMessageQueue NotificationMessageQueue {
+            get => notificationMessageQueue;
+            set => Set(ref notificationMessageQueue, value);
+        }
+
         private ICommand onLoadedCommand;
         public ICommand OnLoadedCommand => onLoadedCommand ?? (onLoadedCommand = new RelayCommand(OnLoaded));
 
@@ -83,6 +98,15 @@ namespace ForgeModGenerator.ViewModels
 
         private ICommand addFolderCommand;
         public ICommand AddFolderCommand => addFolderCommand ?? (addFolderCommand = new RelayCommand(ShowFolderDialogAndCopyToRoot));
+
+        private ICommand removeEmptyFoldersCommand;
+        public ICommand RemoveEmptyFoldersCommand => removeEmptyFoldersCommand ?? (removeEmptyFoldersCommand = new RelayCommand(RemoveEmptyFolders));
+
+        private ICommand hideSnackbarCommand;
+
+        public ICommand HideSnackbarCommand => hideSnackbarCommand ?? (hideSnackbarCommand = new RelayCommand<Snackbar>(HideSnackbar));
+
+        private void HideSnackbar(Snackbar obj) => obj.IsActive = false;
 
         protected FoldersSynchronizer<TFolder, TFile> FileSynchronizer { get; set; }
 
@@ -110,7 +134,7 @@ namespace ForgeModGenerator.ViewModels
                 {
                     Folders.Clear();
                 }
-                Folders = new ObservableFolder<TFolder>(FoldersRootPath, System.Linq.Enumerable.Empty<TFolder>());
+                Folders = new ObservableFolder<TFolder>(FoldersRootPath, Enumerable.Empty<TFolder>());
                 FolderFactory = new DefaultFoldersFactory<TFolder, TFile>(AllowedFileExtensionsPatterns);
                 FileSynchronizer = new FoldersSynchronizer<TFolder, TFile>(Folders, FolderFactory, FoldersRootPath, AllowedFileExtensionsPatterns);
                 Folders.AddRange(await FolderFactory.FindFoldersAsync(FoldersRootPath ?? FoldersJsonFilePath, true));
@@ -157,7 +181,19 @@ namespace ForgeModGenerator.ViewModels
             }
         }
 
-        protected virtual async void RemoveFileFromFolder(Tuple<TFolder, TFile> param)
+        protected void RemoveEmptyFolders()
+        {
+            for (int i = Folders.Files.Count - 1; i >= 0; i--)
+            {
+                if (Folders.Files[i].Files.Count == 0)
+                {
+                    Folders.RemoveAt(i);
+                }
+            }
+            HasEmptyFolders = false;
+        }
+
+        protected virtual void RemoveFileFromFolder(Tuple<TFolder, TFile> param)
         {
             if (param.Item1.Remove(param.Item2))
             {
@@ -165,7 +201,7 @@ namespace ForgeModGenerator.ViewModels
                 {
                     if (!IOSafe.DeleteFileRecycle(param.Item2.Info.FullName))
                     {
-                        await DialogService.ShowMessage(IOSafe.GetOperationFailedMessage(param.Item2.Info.FullName), "Deletion failed");
+                        DialogService.ShowMessage(IOSafe.GetOperationFailedMessage(param.Item2.Info.FullName), "Deletion failed");
                         param.Item1.Add(param.Item2);
                     }
                 }

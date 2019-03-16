@@ -93,6 +93,10 @@ namespace ForgeModGenerator.ViewModels
         public static void SetGetDataContext(DependencyObject obj, string value) => obj.SetValue(GetDataContextProperty, value);
         private static void GetDataContextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
+            if (ViewModelBase.IsInDesignModeStatic)
+            {
+                return;
+            }
             FrameworkElement callOwner = d as FrameworkElement;
             string className = GetGetDataContext(d);
             if (className != null && className != "Default")
@@ -103,9 +107,12 @@ namespace ForgeModGenerator.ViewModels
 
         public ViewModelLocator()
         {
-            ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
-            RegisterServices();
-            RegisterViewModels();
+            if (!ViewModelBase.IsInDesignModeStatic)
+            {
+                ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
+                RegisterServices();
+                RegisterViewModels();
+            }
         }
 
         private void RegisterViewModels()
