@@ -172,6 +172,7 @@
     <Compile Include="Source\Common\ThirdParty\ObservableSortableCollection.cs" />
     <Compile Include="Source\Common\ThirdParty\WpfObservableRangeCollection.cs" />
     <Compile Include="Source\Controls\EditableList.cs" />
+    <Compile Include="Source\Controls\FolderListBox.cs" />
     <Compile Include="Source\Controls\ScrollButton.cs" />
     <Compile Include="Source\Controls\SnackbarExtended.cs" />
     <Compile Include="Source\Converters\BoolValueConverter.cs" />
@@ -185,6 +186,7 @@
     <Compile Include="Source\FileSystem\FoldersSynchronizer.cs" />
     <Compile Include="Source\CodeGeneration\SourceCodeLocator.cs" />
     <Compile Include="Source\Modules\ModGenerator\ModValidator.cs" />
+    <Compile Include="Source\Modules\SoundGenerator\Controls\SoundFolderListBox.cs" />
     <Compile Include="Source\Modules\SoundGenerator\ObservableSoundEvents.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundEventsFactory.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundEventsSynchronizer.cs" />
@@ -235,9 +237,6 @@
     <Compile Include="Source\Services\CommandTracker.cs" />
     <Compile Include="Source\Services\ModBuildService.cs" />
     <Compile Include="Source\Controls\FolderExpanderControl.cs" />
-    <Compile Include="Source\Controls\FolderListBox.xaml.cs">
-      <DependentUpon>FolderListBox.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Source\Modules\ModGenerator\BuildConfiguration\ModBuildForm.xaml.cs">
       <DependentUpon>ModBuildForm.xaml</DependentUpon>
     </Compile>
@@ -324,6 +323,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Themes\FolderListBoxThemes.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Themes\FolderExpanderThemes.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -331,10 +334,6 @@
     <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Source\Controls\FolderListBox.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Source\Modules\ModGenerator\BuildConfiguration\ModBuildForm.xaml">
       <SubType>Designer</SubType>

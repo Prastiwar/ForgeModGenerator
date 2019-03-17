@@ -9,22 +9,20 @@ namespace ForgeModGenerator.ApplicationModule.Views
     /// <summary> NavigationMenu UI View-ViewModel </summary>
     public partial class NavigationMenu : UserControl
     {
-        protected MenuComponent menuComponent;
-        protected double slideSpeed = 0.25;
-        protected Vector offset = new Vector(170, 0);
-
         public NavigationMenu()
         {
             InitializeComponent();
-            menuComponent = new MenuComponent(MenuGrid, new MenuSettings(MenuGrid, 0, 2, offset, slideSpeed));
+            MenuComponent = new MenuComponent(MenuGrid, new MenuSettings(MenuGrid, 0, 2, offset, slideSpeed));
         }
+
+        protected double slideSpeed = 0.25;
+        protected Vector offset = new Vector(170, 0);
+
+        public MenuComponent MenuComponent { get; set; }
 
         private ICommand toggleMenu;
-        public ICommand ToggleMenu { get => toggleMenu ?? (toggleMenu = new RelayCommand(() => { menuComponent.Toggle(); })); }
+        public ICommand ToggleMenu => toggleMenu ?? (toggleMenu = new RelayCommand(() => { MenuComponent.Toggle(); }));
 
-        public void InitializeMenu(Grid menuGrid, int row, int column)
-        {
-            menuComponent = new MenuComponent(menuGrid, new MenuSettings(menuGrid, column, row, offset, slideSpeed));
-        }
+        public void InitializeMenu(Grid menuGrid, int row, int column) => MenuComponent = new MenuComponent(menuGrid, new MenuSettings(menuGrid, column, row, offset, slideSpeed));
     }
 }

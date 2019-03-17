@@ -64,12 +64,13 @@
                          Foreground="White"
                          Value="0"
                          IsIndeterminate="True" />
-            <controls:FolderListBox x:Name="FoldersListBox"
-                                    FoldersSource="{Binding Folders.Files, Mode=OneWay}"
-                                    SelectedFolder="{Binding SelectedFolder}"
-                                    AddFolderCommand="{Binding AddFolderCommand}"
-                                    ShowEmptyMessage="{Binding SessionContext.IsModSelected, Converter={StaticResource InvertBooleanConverter}}"
-                                    FolderTemplate="{StaticResource FolderTemplate}" />
+            <sControls:SoundFolderListBox x:Name="FoldersListBox"
+                                          FoldersSource="{Binding Folders.Files, Mode=OneWay}"
+                                          SelectedFolder="{Binding SelectedFolder}"
+                                          AddFolderCommand="{Binding AddFolderCommand}"
+                                          AddFileAsFolderCommand="{Binding AddFileAsFolderCommand}"
+                                          ShowEmptyMessage="{Binding SessionContext.IsModSelected, Converter={StaticResource InvertBooleanConverter}}"
+                                          FolderTemplate="{StaticResource FolderTemplate}" />
             <StackPanel VerticalAlignment="Bottom">
                 <materialDesign:Snackbar x:Name="JsonFileUpdateSnackbar"
                                          IsActive="{Binding IsFileUpdateAvailable}"

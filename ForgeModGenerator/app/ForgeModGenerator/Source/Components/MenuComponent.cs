@@ -1,23 +1,11 @@
 ﻿using ForgeModGenerator.Animations;
+using GalaSoft.MvvmLight;
 using System.Windows.Controls;
 
 namespace ForgeModGenerator.Components
 {
-    public class MenuComponent
+    public class MenuComponent : ObservableObject
     {
-        public bool IsActive { get; set; }
-
-        protected MenuSettings settings;
-
-        private readonly bool shouldChangeColumn;
-        private readonly bool shouldChangeRow;
-        private readonly GridLengthAnimation columnAnim;
-        private readonly GridLengthAnimation rowAnim;
-        private readonly GridLengthAnimation columnAnimBack;
-        private readonly GridLengthAnimation rowAnimBack;
-
-        private Grid grid;
-
         public MenuComponent(Grid grid, MenuSettings settings)
         {
             this.grid = grid;
@@ -36,6 +24,23 @@ namespace ForgeModGenerator.Components
                 rowAnim = new GridLengthAnimation(settings.InitialPosition.Y, settings.TargetPosition.Y, settings.Duration);
                 rowAnimBack = new GridLengthAnimation(settings.TargetPosition.Y, settings.InitialPosition.Y, settings.Duration);
             }
+        }
+
+        private readonly bool shouldChangeColumn;
+        private readonly bool shouldChangeRow;
+        private readonly GridLengthAnimation columnAnim;
+        private readonly GridLengthAnimation rowAnim;
+        private readonly GridLengthAnimation columnAnimBack;
+        private readonly GridLengthAnimation rowAnimBack;
+
+        private Grid grid;
+
+        protected MenuSettings settings;
+
+        private bool isActive;
+        public bool IsActive {
+            get => isActive;
+            set => Set(ref isActive, value);
         }
 
         public void Toggle()

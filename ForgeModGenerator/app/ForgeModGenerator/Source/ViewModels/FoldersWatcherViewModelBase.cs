@@ -99,6 +99,9 @@ namespace ForgeModGenerator.ViewModels
         private ICommand addFolderCommand;
         public ICommand AddFolderCommand => addFolderCommand ?? (addFolderCommand = new RelayCommand(ShowFolderDialogAndCopyToRoot));
 
+        private ICommand addFileAsFolderCommand;
+        public ICommand AddFileAsFolderCommand => addFileAsFolderCommand ?? (addFileAsFolderCommand = new RelayCommand(ShowFileDialogAndCreateFolder));
+
         private ICommand removeEmptyFoldersCommand;
         public ICommand RemoveEmptyFoldersCommand => removeEmptyFoldersCommand ?? (removeEmptyFoldersCommand = new RelayCommand(RemoveEmptyFolders));
 
@@ -205,6 +208,18 @@ namespace ForgeModGenerator.ViewModels
                         param.Item1.Add(param.Item2);
                     }
                 }
+            }
+        }
+
+        protected async void ShowFileDialogAndCreateFolder()
+        {
+            DialogResult dialogResult = OpenFileDialog.ShowDialog();
+            if (dialogResult == DialogResult.OK)
+            {
+                string newFolderPath = null;
+                string newFolderName = IOHelper.GetUniqueName(Path.GetFileNameWithoutExtension(OpenFileDialog.FileName), name => !Directory.Exists((newFolderPath = Path.Combine(FoldersRootPath, name))));
+                TFolder folder = FolderFactory.ConstructFolderInstance(newFolderPath, null);
+                await CopyFilesToFolderAsync(folder, OpenFileDialog.FileNames);
             }
         }
 

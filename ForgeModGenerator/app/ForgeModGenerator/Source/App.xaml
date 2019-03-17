@@ -14,24 +14,20 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Dark.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.DeepPurple.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.MahApps;component/Themes/MaterialDesignTheme.MahApps.NumericUpDown.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.MahApps;component/Themes/MaterialDesignTheme.MahApps.RangeSlider.xaml" />
-                <ResourceDictionary Source="../Themes/Generic.xaml" />
-                <ResourceDictionary Source="../Themes/FolderExpanderThemes.xaml" />
-                <ResourceDictionary>
-                    <SolidColorBrush x:Key="PageBackground"
-                                     Color="#FF424242" />
-                </ResourceDictionary>
                 <ResourceDictionary>
                     <vm:ViewModelLocator x:Key="Locator"
                                          d:IsDataSource="True" />
                 </ResourceDictionary>
                 <ResourceDictionary>
+                    <SolidColorBrush x:Key="PageBackground"
+                                     Color="#FF424242" />
+                </ResourceDictionary>
+                <ResourceDictionary>
                     <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+                </ResourceDictionary>
+                <ResourceDictionary>
+                    <converters:BoolToVisibilityConverter x:Key="InvertedBoolToVisibility"
+                                                          Invert="True" />
                 </ResourceDictionary>
                 <ResourceDictionary>
                     <converters:BoolToTextWrapConverter x:Key="BoolToTextWrapConverter" />
@@ -57,6 +53,15 @@
                 <ResourceDictionary>
                     <converters:GenericTupleConverter x:Key="GenericTupleConverter" />
                 </ResourceDictionary>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Dark.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.DeepPurple.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.MahApps;component/Themes/MaterialDesignTheme.MahApps.NumericUpDown.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.MahApps;component/Themes/MaterialDesignTheme.MahApps.RangeSlider.xaml" />
+                <ResourceDictionary Source="../Themes/Generic.xaml" />
+                <ResourceDictionary Source="../Themes/FolderExpanderThemes.xaml" />
+                <ResourceDictionary Source="../Themes/FolderListBoxThemes.xaml" />
                 <ResourceDictionary>
                     <ControlTemplate x:Key="ErrorContentTemplate">
                         <StackPanel>

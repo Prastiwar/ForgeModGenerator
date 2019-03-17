@@ -4,9 +4,9 @@ using System.Windows.Input;
 
 namespace ForgeModGenerator.Controls
 {
-    public partial class FolderListBox : UserControl
+    public class FolderListBox : ContentControl
     {
-        public FolderListBox() => InitializeComponent();
+        static FolderListBox() => DefaultStyleKeyProperty.OverrideMetadata(typeof(FolderListBox), new FrameworkPropertyMetadata(typeof(FolderListBox)));
 
         public static readonly DependencyProperty FolderTemplateProperty =
             DependencyProperty.Register("FolderTemplate", typeof(DataTemplate), typeof(FolderListBox), new PropertyMetadata(null));
