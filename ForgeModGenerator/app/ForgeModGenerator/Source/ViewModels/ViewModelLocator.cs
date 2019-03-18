@@ -128,6 +128,7 @@ namespace ForgeModGenerator.ViewModels
             SimpleIoc.Default.Register<IWorkspaceSetupService, WorkspaceSetupService>();
             SimpleIoc.Default.Register<IModBuildService, ModBuildService>();
             SimpleIoc.Default.Register<IDialogService, DialogService>();
+            SimpleIoc.Default.Register<ISnackbarService, SnackbarService>();
 
             if (!SimpleIoc.Default.IsRegistered<INavigationService>())
             {

@@ -191,6 +191,7 @@
     <Compile Include="Source\Modules\SoundGenerator\SoundEventsFactory.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundEventsSynchronizer.cs" />
     <Compile Include="Source\Services\DialogService.cs" />
+    <Compile Include="Source\Services\SnackbarService.cs" />
     <Compile Include="Source\Utility\Extensions\CollectionExtensions.cs" />
     <Compile Include="Source\Utility\Extensions\IOExtensions.cs" />
     <Compile Include="Source\Utility\Extensions\ObservableFolderExtensions.cs" />
@@ -481,6 +482,5 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

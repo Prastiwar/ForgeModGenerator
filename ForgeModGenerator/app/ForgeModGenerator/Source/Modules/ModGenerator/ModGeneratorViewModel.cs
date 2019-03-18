@@ -145,7 +145,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
             tempEditor.OpenItemEditor(mod);
         }
 
-        private void Editor_OnItemEdited(object sender, EditorForm<Mod>.ItemEditedEventArgs e)
+        private void Editor_OnItemEdited(object sender, ItemEditedEventArgs<Mod> e)
         {
             if (e.Result)
             {

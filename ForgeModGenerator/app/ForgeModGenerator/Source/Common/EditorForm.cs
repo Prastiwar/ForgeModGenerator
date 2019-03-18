@@ -8,43 +8,88 @@ using System.Windows;
 
 namespace ForgeModGenerator
 {
-    public class EditorForm<TItem> where TItem : ICopiable, IDirty
+    public interface IEditorForm<TItem> where TItem : ICopiable, IDirty
     {
-        public class ItemEditedEventArgs : EventArgs
+        event EventHandler<ItemEditorClosingDialogEventArgs<TItem>> FormClosing;
+        event EventHandler<ItemEditedEventArgs<TItem>> ItemEdited;
+        event EventHandler<TItem> OpenFormFailed;
+
+        TItem EditingItem { get; }
+
+        void OpenItemEditor(TItem item);
+    }
+
+    public class ItemEditedEventArgs<TItem> : EventArgs
+    {
+        public ItemEditedEventArgs(bool result, TItem cachedItem, TItem actualItem)
         {
-            public ItemEditedEventArgs(bool result, TItem cachedItem, TItem actualItem)
+            Result = result;
+            CachedItem = cachedItem;
+            ActualItem = actualItem;
+        }
+        public bool Result { get; }
+        public TItem CachedItem { get; }
+        public TItem ActualItem { get; }
+    }
+
+    public class ItemEditorClosingDialogEventArgs<TItem> : EventArgs
+    {
+        public ItemEditorClosingDialogEventArgs(DialogClosingEventArgs dialogClosingArgs, TItem item)
+        {
+            Item = item;
+            DialogClosingArgs = dialogClosingArgs;
+        }
+        public DialogClosingEventArgs DialogClosingArgs { get; }
+        public TItem Item { get; }
+    }
+
+    public class ItemEditorOpeningDialogEventArgs<TItem> : EventArgs
+    {
+        public ItemEditorOpeningDialogEventArgs(DialogOpenedEventArgs dialogOpenedEventArgs, TItem item)
+        {
+            Item = item;
+            DialogOpenedArgs = dialogOpenedEventArgs;
+        }
+        public DialogOpenedEventArgs DialogOpenedArgs { get; }
+        public TItem Item { get; }
+    }
+
+    public abstract class EditorFormBase<TItem> : IEditorForm<TItem> where TItem : ICopiable, IDirty
+    {
+        public event EventHandler<ItemEditorClosingDialogEventArgs<TItem>> FormClosing;
+        public event EventHandler<ItemEditedEventArgs<TItem>> ItemEdited;
+        public event EventHandler<TItem> OpenFormFailed;
+
+        public TItem EditingItem { get; protected set; }
+
+        protected string EdiTItemCacheKey { get; } = Guid.NewGuid().ToString();
+
+        public abstract void OpenItemEditor(TItem item);
+
+        protected virtual void OnItemEdited(ItemEditedEventArgs<TItem> e)
+        {
+            if (ItemEdited == null)
             {
-                Result = result;
-                CachedItem = cachedItem;
-                ActualItem = actualItem;
+                ItemEdited = DefaultOnItemEdited;
             }
-            public bool Result { get; }
-            public TItem CachedItem { get; }
-            public TItem ActualItem { get; }
+            ItemEdited.Invoke(this, e);
         }
 
-        public class ItemEditorClosingDialogEventArgs : EventArgs
-        {
-            public ItemEditorClosingDialogEventArgs(DialogClosingEventArgs dialogClosingArgs, TItem item)
-            {
-                Item = item;
-                DialogClosingArgs = dialogClosingArgs;
-            }
-            public DialogClosingEventArgs DialogClosingArgs { get; }
-            public TItem Item { get; }
-        }
+        protected virtual void OnOpenFormFailed(TItem e) => OpenFormFailed?.Invoke(this, e);
 
-        public class ItemEditorOpeningDialogEventArgs : EventArgs
-        {
-            public ItemEditorOpeningDialogEventArgs(DialogOpenedEventArgs dialogOpenedEventArgs, TItem item)
-            {
-                Item = item;
-                DialogOpenedArgs = dialogOpenedEventArgs;
-            }
-            public DialogOpenedEventArgs DialogOpenedArgs { get; }
-            public TItem Item { get; }
-        }
+        protected virtual void OnFormClosing(ItemEditorClosingDialogEventArgs<TItem>  args) => FormClosing?.Invoke(this, args);
 
+        protected void DefaultOnItemEdited(object sender, ItemEditedEventArgs<TItem> args)
+        {
+            if (!args.Result)
+            {
+                args.ActualItem.CopyValues(args.CachedItem);
+            }
+        }
+    }
+
+    public class EditorForm<TItem> : EditorFormBase<TItem> where TItem : ICopiable, IDirty
+    {
         public EditorForm(IDialogService dialogService, FrameworkElement form, AbstractValidator<TItem> validator = null)
         {
             DialogService = dialogService;
@@ -52,21 +97,13 @@ namespace ForgeModGenerator
             Validator = validator;
         }
 
-        public event EventHandler<ItemEditorClosingDialogEventArgs> FormClosing;
-        public event EventHandler<ItemEditedEventArgs> ItemEdited;
-        public event EventHandler<TItem> OpenFormFailed;
-
         public FrameworkElement Form { get; set; }
 
         public AbstractValidator<TItem> Validator { get; set; }
 
-        public TItem EditingItem { get; protected set; }
-
         protected IDialogService DialogService { get; set; }
 
-        protected string EdiTItemCacheKey { get; } = Guid.NewGuid().ToString();
-
-        public virtual async void OpenItemEditor(TItem item)
+        public override async void OpenItemEditor(TItem item)
         {
             EditingItem = item;
             if (Form == null)
@@ -78,18 +115,18 @@ namespace ForgeModGenerator
             try
             {
                 result = (bool)await DialogHost.Show(Form,
-                    (sender, args) => { OnItemEditorOpening(sender, new ItemEditorOpeningDialogEventArgs(args, item)); },
-                    (sender, args) => { OnItemEditorClosing(sender, new ItemEditorClosingDialogEventArgs(args, item)); });
+                    (sender, args) => { OnItemEditorOpening(sender, new ItemEditorOpeningDialogEventArgs<TItem>(args, item)); },
+                    (sender, args) => { OnItemEditorClosing(sender, new ItemEditorClosingDialogEventArgs<TItem>(args, item)); });
             }
             catch (Exception)
             {
                 OnOpenFormFailed(item);
                 return;
             }
-            OnItemEdited(new ItemEditedEventArgs(result, (TItem)MemoryCache.Default.Remove(EdiTItemCacheKey), item));
+            OnItemEdited(new ItemEditedEventArgs<TItem>(result, (TItem)MemoryCache.Default.Remove(EdiTItemCacheKey), item));
         }
 
-        protected virtual bool CanCloseItemEditor<TEditedArgs>(TEditedArgs args) where TEditedArgs : ItemEditedEventArgs
+        protected virtual bool CanCloseItemEditor<TEditedArgs>(TEditedArgs args) where TEditedArgs : ItemEditedEventArgs<TItem>
         {
             if (args.Result)
             {
@@ -113,36 +150,17 @@ namespace ForgeModGenerator
             return true;
         }
 
-        protected virtual void OnItemEditorOpening(object sender, ItemEditorOpeningDialogEventArgs args) => Form.DataContext = EditingItem;
+        protected virtual void OnItemEditorOpening(object sender, ItemEditorOpeningDialogEventArgs<TItem> args) => Form.DataContext = EditingItem;
 
-        protected virtual void OnItemEditorClosing(object sender, ItemEditorClosingDialogEventArgs args)
+        protected virtual void OnItemEditorClosing(object sender, ItemEditorClosingDialogEventArgs<TItem> args)
         {
             bool result = (bool)args.DialogClosingArgs.Parameter;
-            bool canClose = CanCloseItemEditor(new ItemEditedEventArgs(result, (TItem)MemoryCache.Default.Get(EdiTItemCacheKey), args.Item));
-            FormClosing?.Invoke(this, args);
+            bool canClose = CanCloseItemEditor(new ItemEditedEventArgs<TItem>(result, (TItem)MemoryCache.Default.Get(EdiTItemCacheKey), args.Item));
+            OnFormClosing(args);
             if (!canClose)
             {
                 args.DialogClosingArgs.Cancel();
             }
         }
-
-        protected void DefaultOnItemEdited(object sender, ItemEditedEventArgs args)
-        {
-            if (!args.Result)
-            {
-                args.ActualItem.CopyValues(args.CachedItem);
-            }
-        }
-
-        protected virtual void OnItemEdited(ItemEditedEventArgs e)
-        {
-            if (ItemEdited == null)
-            {
-                ItemEdited = DefaultOnItemEdited;
-            }
-            ItemEdited.Invoke(this, e);
-        }
-
-        protected virtual void OnOpenFormFailed(TItem e) => OpenFormFailed?.Invoke(this, e);
     }
 }

@@ -10,7 +10,8 @@ namespace ForgeModGenerator.TextureGenerator.ViewModels
     /// <summary> TextureGenerator Business ViewModel </summary>
     public class TextureGeneratorViewModel : FoldersWatcherViewModelBase<ObservableFolder<FileItem>, FileItem>
     {
-        public TextureGeneratorViewModel(ISessionContextService sessionContext, IDialogService dialogService) : base(sessionContext, dialogService)
+        public TextureGeneratorViewModel(ISessionContextService sessionContext, IDialogService dialogService, ISnackbarService snackbarService) :
+            base(sessionContext, dialogService, snackbarService)
         {
             OpenFileDialog.Filter = "Image (*.png) | *.png";
             AllowedFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".png" };

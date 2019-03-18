@@ -15,7 +15,9 @@ namespace ForgeModGenerator.ViewModels
         where TFolder : class, IFileFolder<TFile>
         where TFile : class, IFileItem, IValidable
     {
-        public FoldersViewModelBase(ISessionContextService sessionContext, IDialogService dialogService) : base(sessionContext, dialogService) { }
+        public FoldersViewModelBase(ISessionContextService sessionContext, IDialogService dialogService, ISnackbarService snackbarService) :
+            base(sessionContext, dialogService, snackbarService)
+        { }
 
         public EditorForm<TFile> FileEditor { get; protected set; }
 
@@ -32,8 +34,6 @@ namespace ForgeModGenerator.ViewModels
         public ICommand ResolveJsonFileCommand => resolveJsonFileCommand ?? (resolveJsonFileCommand = new RelayCommand(ResolveJsonFile));
 
         protected JsonUpdater<TFolder> JsonUpdater { get; set; }
-
-        protected FrameworkElement FileEditForm { get; set; }
 
         /// <summary> Deserialized folders from FoldersJsonFilePath and checks if any file doesn't exists, if so, prompt if should fix this </summary>
         protected async void CheckJsonFileMismatch()
@@ -52,7 +52,7 @@ namespace ForgeModGenerator.ViewModels
             }
             foreach (TFolder folder in deserializedFolders)
             {
-                folder.Clear();
+                folder.Clear(); // dereference file paths
             }
         }
 

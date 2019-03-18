@@ -19,12 +19,12 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
     /// <summary> SoundGenerator Business ViewModel </summary>
     public class SoundGeneratorViewModel : FoldersViewModelBase<SoundEvent, Sound>
     {
-        public SoundGeneratorViewModel(ISessionContextService sessionContext, IDialogService dialogService) : base(sessionContext, dialogService)
+        public SoundGeneratorViewModel(ISessionContextService sessionContext, IDialogService dialogService, ISnackbarService snackbarService) :
+            base(sessionContext, dialogService, snackbarService)
         {
             OpenFileDialog.Filter = "Sound file (*.ogg) | *.ogg";
             AllowedFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".ogg" };
-            FileEditForm = new SoundEditForm();
-            FileEditor = new EditorForm<Sound>(DialogService, FileEditForm);
+            FileEditor = new EditorForm<Sound>(DialogService, new SoundEditForm());
             FileEditor.ItemEdited += OnSoundEdited;
         }
 
@@ -73,7 +73,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             ;// TODO: GetCurrentSoundCodeGenerator().RegenerateScript();
         }
 
-        protected void OnSoundEdited(object sender, EditorForm<Sound>.ItemEditedEventArgs args)
+        protected void OnSoundEdited(object sender, ItemEditedEventArgs<Sound> args)
         {
             if (args.Result)
             {

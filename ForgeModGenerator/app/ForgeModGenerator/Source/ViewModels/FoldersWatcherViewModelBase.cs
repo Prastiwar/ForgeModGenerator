@@ -3,7 +3,6 @@ using ForgeModGenerator.Utility;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Views;
-using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -18,7 +17,7 @@ namespace ForgeModGenerator.ViewModels
         where TFolder : class, IFileFolder<TFile>
         where TFile : class, IFileItem
     {
-        public FoldersWatcherViewModelBase(ISessionContextService sessionContext, IDialogService dialogService)
+        public FoldersWatcherViewModelBase(ISessionContextService sessionContext, IDialogService dialogService, ISnackbarService snackbarService)
         {
             SessionContext = sessionContext;
             DialogService = dialogService;
@@ -30,7 +29,7 @@ namespace ForgeModGenerator.ViewModels
             OpenFolderDialog = new FolderBrowserDialog() { ShowNewFolderButton = true };
             AllowedFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { OpenFileDialog.DefaultExt };
             SessionContext.PropertyChanged += OnSessionContexPropertyChanged;
-            NotificationMessageQueue = new SnackbarMessageQueue(TimeSpan.FromSeconds(0.75));
+            SnackbarService = snackbarService;
         }
 
         /// <summary> Path to folder root where are all files localized </summary>
@@ -78,12 +77,6 @@ namespace ForgeModGenerator.ViewModels
             set => Set(ref hasEmptyFolders, value);
         }
 
-        private SnackbarMessageQueue notificationMessageQueue;
-        public SnackbarMessageQueue NotificationMessageQueue {
-            get => notificationMessageQueue;
-            set => Set(ref notificationMessageQueue, value);
-        }
-
         private ICommand onLoadedCommand;
         public ICommand OnLoadedCommand => onLoadedCommand ?? (onLoadedCommand = new RelayCommand(OnLoaded));
 
@@ -105,12 +98,6 @@ namespace ForgeModGenerator.ViewModels
         private ICommand removeEmptyFoldersCommand;
         public ICommand RemoveEmptyFoldersCommand => removeEmptyFoldersCommand ?? (removeEmptyFoldersCommand = new RelayCommand(RemoveEmptyFolders));
 
-        private ICommand hideSnackbarCommand;
-
-        public ICommand HideSnackbarCommand => hideSnackbarCommand ?? (hideSnackbarCommand = new RelayCommand<Snackbar>(HideSnackbar));
-
-        private void HideSnackbar(Snackbar obj) => obj.IsActive = false;
-
         protected FoldersSynchronizer<TFolder, TFile> FileSynchronizer { get; set; }
 
         protected FoldersFactory<TFolder, TFile> FolderFactory { get; set; }
@@ -122,6 +109,8 @@ namespace ForgeModGenerator.ViewModels
         protected OpenFileDialog OpenFileDialog { get; }
 
         protected FolderBrowserDialog OpenFolderDialog { get; }
+
+        protected ISnackbarService SnackbarService { get; }
 
         protected IDialogService DialogService { get; }
 
