@@ -36,7 +36,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
                 ForgeVersions = SessionContext.ForgeVersions,
                 Sides = Sides
             };
-            EditorForm = new EditorForm<Mod>(DialogService, Form, modValidator);
+            EditorForm = new EditorForm<Mod>(Cache.Default, DialogService, Form, modValidator);
             EditorForm.ItemEdited += Editor_OnItemEdited;
         }
 
@@ -133,7 +133,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
 
         private void CreateNewMod(Mod mod)
         {
-            EditorForm<Mod> tempEditor = new EditorForm<Mod>(DialogService, Form, modValidator);
+            EditorForm<Mod> tempEditor = new EditorForm<Mod>(Cache.Default, DialogService, Form, modValidator);
             tempEditor.ItemEdited += (sender, e) => {
                 if (e.Result)
                 {

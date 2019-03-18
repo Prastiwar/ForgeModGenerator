@@ -24,7 +24,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
         {
             OpenFileDialog.Filter = "Sound file (*.ogg) | *.ogg";
             AllowedFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".ogg" };
-            FileEditor = new EditorForm<Sound>(DialogService, new SoundEditForm());
+            FileEditor = new EditorForm<Sound>(Cache.Default, DialogService, new SoundEditForm());
             FileEditor.ItemEdited += OnSoundEdited;
         }
 

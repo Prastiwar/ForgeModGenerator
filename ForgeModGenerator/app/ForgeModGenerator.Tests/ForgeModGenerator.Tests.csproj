@@ -72,9 +72,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ForgeModGenerator\ForgeModGenerator.csproj">
+    <ProjectReference Include="..\ForgeModGenerator.Core\ForgeModGenerator.Core.csproj">
+      <Project>{0e6fce50-bbb3-4e73-a821-28def11b1b48}</Project>
+      <Name>ForgeModGenerator.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ForgeModGenerator.Wpf\ForgeModGenerator.Wpf.csproj">
       <Project>{6bd77961-44de-4365-b1a2-8b281464648d}</Project>
-      <Name>ForgeModGenerator</Name>
+      <Name>ForgeModGenerator.Wpf</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
