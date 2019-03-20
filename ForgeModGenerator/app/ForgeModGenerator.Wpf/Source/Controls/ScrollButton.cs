@@ -1,4 +1,4 @@
-﻿using GalaSoft.MvvmLight.CommandWpf;
+﻿using Prism.Commands;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -24,7 +24,7 @@ namespace ForgeModGenerator.Controls
             timer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(45) };
             if (ScrollCommand == null)
             {
-                ScrollCommand = new RelayCommand(() => {
+                ScrollCommand = new DelegateCommand(() => {
                     timer.Tick += Scroll;
                     timer.Start();
                 });

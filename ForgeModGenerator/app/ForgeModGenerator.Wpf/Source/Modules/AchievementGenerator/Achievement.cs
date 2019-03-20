@@ -1,26 +1,26 @@
-﻿using GalaSoft.MvvmLight;
+﻿using Prism.Mvvm;
 using System.Drawing;
 
 namespace ForgeModGenerator.AchievementGenerator.Models
 {
-    public class Achievement : ObservableObject
+    public class Achievement : BindableBase
     {
         private string name;
         public string Name {
             get => name;
-            set => Set(ref name, value);
+            set => SetProperty(ref name, value);
         }
 
         private string description;
         public string Description {
             get => description;
-            set => Set(ref description, value);
+            set => SetProperty(ref description, value);
         }
 
         private Image icon;
         public Image Icon {
             get => icon;
-            set => Set(ref icon, value);
+            set => SetProperty(ref icon, value);
         }
     }
 }

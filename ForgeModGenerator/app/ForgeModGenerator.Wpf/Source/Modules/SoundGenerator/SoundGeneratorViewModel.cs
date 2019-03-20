@@ -6,7 +6,6 @@ using ForgeModGenerator.SoundGenerator.Models;
 using ForgeModGenerator.SoundGenerator.Persistence;
 using ForgeModGenerator.SoundGenerator.Validations;
 using ForgeModGenerator.ViewModels;
-using GalaSoft.MvvmLight.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -93,7 +92,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
                 foreach (SoundEvent soundEvent in e.Files)
                 {
                     soundEvent.CollectionChanged += SoundEventSoundsChanged;
-                    soundEvent.Validate += OnSoundEventValidate;
+                    soundEvent.ValidateProperty += OnSoundEventValidate;
                     soundEvent.PropertyChanged += OnSoundEventPropertyChanged;
                     soundEvent.FilePropertyChanged += OnSoundPropertyChanged;
                     soundEvent.FilesChanged += OnSoundEventFileChanged;
@@ -104,7 +103,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
                 foreach (SoundEvent soundEvent in e.Files)
                 {
                     soundEvent.CollectionChanged -= SoundEventSoundsChanged;
-                    soundEvent.Validate -= OnSoundEventValidate;
+                    soundEvent.ValidateProperty -= OnSoundEventValidate;
                     soundEvent.PropertyChanged -= OnSoundEventPropertyChanged;
                     soundEvent.FilePropertyChanged -= OnSoundPropertyChanged;
                     soundEvent.FilesChanged -= OnSoundEventFileChanged;

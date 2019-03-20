@@ -1,11 +1,10 @@
 ﻿using ForgeModGenerator.Persistence;
 using ForgeModGenerator.Services;
-using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Views;
+using ForgeModGenerator.Validation;
+using Prism.Commands;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Windows;
 using System.Windows.Input;
 
 namespace ForgeModGenerator.ViewModels
@@ -24,14 +23,14 @@ namespace ForgeModGenerator.ViewModels
         private bool isFileUpdateAvailable;
         public bool IsFileUpdateAvailable {
             get => isFileUpdateAvailable;
-            set => Set(ref isFileUpdateAvailable, value);
+            set => SetProperty(ref isFileUpdateAvailable, value);
         }
 
         private ICommand editFileCommand;
-        public ICommand EditFileCommand => editFileCommand ?? (editFileCommand = new RelayCommand<TFile>(FileEditor.OpenItemEditor));
+        public ICommand EditFileCommand => editFileCommand ?? (editFileCommand = new DelegateCommand<TFile>(FileEditor.OpenItemEditor));
 
         private ICommand resolveJsonFileCommand;
-        public ICommand ResolveJsonFileCommand => resolveJsonFileCommand ?? (resolveJsonFileCommand = new RelayCommand(ResolveJsonFile));
+        public ICommand ResolveJsonFileCommand => resolveJsonFileCommand ?? (resolveJsonFileCommand = new DelegateCommand(ResolveJsonFile));
 
         protected JsonUpdater<TFolder> JsonUpdater { get; set; }
 

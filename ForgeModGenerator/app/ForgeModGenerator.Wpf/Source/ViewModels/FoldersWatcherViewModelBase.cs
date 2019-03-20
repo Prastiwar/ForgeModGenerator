@@ -1,8 +1,7 @@
 ﻿using ForgeModGenerator.Services;
 using ForgeModGenerator.Utility;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.CommandWpf;
-using GalaSoft.MvvmLight.Views;
+using Prism.Commands;
+using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,7 +12,7 @@ using System.Windows.Input;
 
 namespace ForgeModGenerator.ViewModels
 {
-    public abstract class FoldersWatcherViewModelBase<TFolder, TFile> : ViewModelBase
+    public abstract class FoldersWatcherViewModelBase<TFolder, TFile> : BindableBase
         where TFolder : class, IFileFolder<TFile>
         where TFile : class, IFileItem
     {
@@ -44,7 +43,7 @@ namespace ForgeModGenerator.ViewModels
         public ObservableFolder<TFolder> Folders {
             get => folders;
             set {
-                Set(ref folders, value);
+                SetProperty(ref folders, value);
                 if (folders != null && FileSynchronizer != null)
                 {
                     FileSynchronizer.SyncedFolders = folders;
@@ -55,48 +54,48 @@ namespace ForgeModGenerator.ViewModels
         private TFolder selectedFolder;
         public TFolder SelectedFolder {
             get => selectedFolder;
-            set => Set(ref selectedFolder, value);
+            set => SetProperty(ref selectedFolder, value);
         }
 
         private TFile selectedFile;
         public TFile SelectedFile {
             get => selectedFile;
-            set => Set(ref selectedFile, value);
+            set => SetProperty(ref selectedFile, value);
         }
 
         private bool isLoading;
         /// <summary> Determines when folders are loading - used to show loading circle </summary>
         public bool IsLoading {
             get => isLoading;
-            set => Set(ref isLoading, value);
+            set => SetProperty(ref isLoading, value);
         }
 
         private bool hasEmptyFolders;
         public bool HasEmptyFolders {
             get => hasEmptyFolders;
-            set => Set(ref hasEmptyFolders, value);
+            set => SetProperty(ref hasEmptyFolders, value);
         }
 
         private ICommand onLoadedCommand;
-        public ICommand OnLoadedCommand => onLoadedCommand ?? (onLoadedCommand = new RelayCommand(OnLoaded));
+        public ICommand OnLoadedCommand => onLoadedCommand ?? (onLoadedCommand = new DelegateCommand(OnLoaded));
 
         private ICommand addFileCommand;
-        public ICommand AddFileCommand => addFileCommand ?? (addFileCommand = new RelayCommand<TFolder>(ShowFileDialogAndCopyToFolder));
+        public ICommand AddFileCommand => addFileCommand ?? (addFileCommand = new DelegateCommand<TFolder>(ShowFileDialogAndCopyToFolder));
 
         private ICommand removeFileCommand;
-        public ICommand RemoveFileCommand => removeFileCommand ?? (removeFileCommand = new RelayCommand<Tuple<TFolder, TFile>>(RemoveFileFromFolder));
+        public ICommand RemoveFileCommand => removeFileCommand ?? (removeFileCommand = new DelegateCommand<Tuple<TFolder, TFile>>(RemoveFileFromFolder));
 
         private ICommand removeFolderCommand;
-        public ICommand RemoveFolderCommand => removeFolderCommand ?? (removeFolderCommand = new RelayCommand<TFolder>(RemoveFolder));
+        public ICommand RemoveFolderCommand => removeFolderCommand ?? (removeFolderCommand = new DelegateCommand<TFolder>(RemoveFolder));
 
         private ICommand addFolderCommand;
-        public ICommand AddFolderCommand => addFolderCommand ?? (addFolderCommand = new RelayCommand(ShowFolderDialogAndCopyToRoot));
+        public ICommand AddFolderCommand => addFolderCommand ?? (addFolderCommand = new DelegateCommand(ShowFolderDialogAndCopyToRoot));
 
         private ICommand addFileAsFolderCommand;
-        public ICommand AddFileAsFolderCommand => addFileAsFolderCommand ?? (addFileAsFolderCommand = new RelayCommand(ShowFileDialogAndCreateFolder));
+        public ICommand AddFileAsFolderCommand => addFileAsFolderCommand ?? (addFileAsFolderCommand = new DelegateCommand(ShowFileDialogAndCreateFolder));
 
         private ICommand removeEmptyFoldersCommand;
-        public ICommand RemoveEmptyFoldersCommand => removeEmptyFoldersCommand ?? (removeEmptyFoldersCommand = new RelayCommand(RemoveEmptyFolders));
+        public ICommand RemoveEmptyFoldersCommand => removeEmptyFoldersCommand ?? (removeEmptyFoldersCommand = new DelegateCommand(RemoveEmptyFolders));
 
         protected FoldersSynchronizer<TFolder, TFile> FileSynchronizer { get; set; }
 

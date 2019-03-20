@@ -8,10 +8,11 @@
              xmlns:local="clr-namespace:ForgeModGenerator.ApplicationModule.Views"
              xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
              xmlns:vm="clr-namespace:ForgeModGenerator.ViewModels"
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d"
              d:DesignHeight="450"
-             d:DesignWidth="250"
-             vm:ViewModelLocator.GetDataContext="ForgeModGenerator.ApplicationModule.ViewModels.NavigationMenuViewModel">
+             d:DesignWidth="250">
     <Grid x:Name="MenuGrid"
           Background="#2c2c2c">
         <Grid.RowDefinitions>

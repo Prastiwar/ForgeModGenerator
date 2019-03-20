@@ -1,4 +1,4 @@
-﻿using GalaSoft.MvvmLight.CommandWpf;
+﻿using Prism.Commands;
 using System;
 using System.Threading.Tasks;
 using System.Windows;
@@ -22,7 +22,7 @@ namespace ForgeModGenerator.ApplicationModule.Controls
 
             if (CloseCommand == null)
             {
-                CloseCommand = new RelayCommand(Quit);
+                CloseCommand = new DelegateCommand(Quit);
             }
         }
 
@@ -104,14 +104,14 @@ namespace ForgeModGenerator.ApplicationModule.Controls
         }
 
         public static readonly DependencyProperty MinimizeCommandProperty =
-            DependencyProperty.Register("MinimizeCommand", typeof(ICommand), typeof(AppMenu), new PropertyMetadata(new RelayCommand(Minimize)));
+            DependencyProperty.Register("MinimizeCommand", typeof(ICommand), typeof(AppMenu), new PropertyMetadata(new DelegateCommand(Minimize)));
         public ICommand MinimizeCommand {
             get => (ICommand)GetValue(MinimizeCommandProperty);
             set => SetValue(MinimizeCommandProperty, value);
         }
 
         public static readonly DependencyProperty RestoreCommandProperty =
-            DependencyProperty.Register("RestoreCommand", typeof(ICommand), typeof(AppMenu), new PropertyMetadata(new RelayCommand(Restore)));
+            DependencyProperty.Register("RestoreCommand", typeof(ICommand), typeof(AppMenu), new PropertyMetadata(new DelegateCommand(Restore)));
         public ICommand RestoreCommand {
             get => (ICommand)GetValue(RestoreCommandProperty);
             set => SetValue(RestoreCommandProperty, value);

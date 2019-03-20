@@ -1,5 +1,5 @@
 ﻿using ForgeModGenerator.Components;
-using GalaSoft.MvvmLight.Command;
+using Prism.Commands;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -21,7 +21,7 @@ namespace ForgeModGenerator.ApplicationModule.Views
         public MenuComponent MenuComponent { get; set; }
 
         private ICommand toggleMenu;
-        public ICommand ToggleMenu => toggleMenu ?? (toggleMenu = new RelayCommand(() => { MenuComponent.Toggle(); }));
+        public ICommand ToggleMenu => toggleMenu ?? (toggleMenu = new DelegateCommand(() => { MenuComponent.Toggle(); }));
 
         public void InitializeMenu(Grid menuGrid, int row, int column) => MenuComponent = new MenuComponent(menuGrid, new MenuSettings(menuGrid, column, row, offset, slideSpeed));
     }

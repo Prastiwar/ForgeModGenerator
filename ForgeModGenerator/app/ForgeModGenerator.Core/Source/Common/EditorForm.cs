@@ -3,7 +3,7 @@ using System;
 
 namespace ForgeModGenerator
 {
-    public abstract class EditorFormBase<TItem> : IEditorForm<TItem> where TItem : ICopiable, IDirty
+    public abstract class EditorFormBase<TItem> : IEditorForm<TItem> where TItem : ICopiable
     {
         public EditorFormBase(IMemoryCache cache)
         {

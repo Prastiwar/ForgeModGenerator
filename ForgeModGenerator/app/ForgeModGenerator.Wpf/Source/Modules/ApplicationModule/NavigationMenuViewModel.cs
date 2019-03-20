@@ -1,49 +1,45 @@
-﻿using ForgeModGenerator.ViewModels;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.CommandWpf;
-using GalaSoft.MvvmLight.Views;
+﻿using Prism.Commands;
+using Prism.Mvvm;
+using Prism.Regions;
 using System.Windows.Input;
 
 namespace ForgeModGenerator.ApplicationModule.ViewModels
 {
     /// <summary> NavigationMenu Business ViewModel </summary>
-    public class NavigationMenuViewModel : ViewModelBase
+    public class NavigationMenuViewModel : BindableBase
     {
-        private readonly INavigationService navigationService;
+        private readonly IRegionManager regionManager;
 
-        public NavigationMenuViewModel(INavigationService navigationService)
-        {
-            this.navigationService = navigationService;
-        }
+        public NavigationMenuViewModel(IRegionManager regionManager) => this.regionManager = regionManager;
 
         private ICommand openDashboard;
-        public ICommand OpenDashboard { get => openDashboard ?? (openDashboard = new RelayCommand(() => { navigationService.NavigateTo(ViewModelLocator.Pages.Dashboard); })); }
+        public ICommand OpenDashboard => openDashboard ?? (openDashboard = new DelegateCommand(() => { regionManager.RequestNavigate(Pages.RegionName, Pages.Dashboard); }));
 
         private ICommand openModGenerator;
-        public ICommand OpenModGenerator { get => openModGenerator ?? (openModGenerator = new RelayCommand(() => { navigationService.NavigateTo(ViewModelLocator.Pages.ModGenerator); })); }
+        public ICommand OpenModGenerator => openModGenerator ?? (openModGenerator = new DelegateCommand(() => { regionManager.RequestNavigate(Pages.RegionName, Pages.ModGenerator); }));
 
         private ICommand openBuildConfiguration;
-        public ICommand OpenBuildConfiguration { get => openBuildConfiguration ?? (openBuildConfiguration = new RelayCommand(() => { navigationService.NavigateTo(ViewModelLocator.Pages.BuildConfiguration); })); }
+        public ICommand OpenBuildConfiguration => openBuildConfiguration ?? (openBuildConfiguration = new DelegateCommand(() => { regionManager.RequestNavigate(Pages.RegionName, Pages.BuildConfiguration); }));
 
         private ICommand openTextureGenerator;
-        public ICommand OpenTextureGenerator { get => openTextureGenerator ?? (openTextureGenerator = new RelayCommand(() => { navigationService.NavigateTo(ViewModelLocator.Pages.TextureGenerator); })); }
+        public ICommand OpenTextureGenerator => openTextureGenerator ?? (openTextureGenerator = new DelegateCommand(() => { regionManager.RequestNavigate(Pages.RegionName, Pages.TextureGenerator); }));
 
         private ICommand openBlockGenerator;
-        public ICommand OpenBlockGenerator { get => openBlockGenerator ?? (openBlockGenerator = new RelayCommand(() => { navigationService.NavigateTo(ViewModelLocator.Pages.BlockGenerator); })); }
+        public ICommand OpenBlockGenerator => openBlockGenerator ?? (openBlockGenerator = new DelegateCommand(() => { regionManager.RequestNavigate(Pages.RegionName, Pages.BlockGenerator); }));
 
         private ICommand openItemGenerator;
-        public ICommand OpenItemGenerator { get => openItemGenerator ?? (openItemGenerator = new RelayCommand(() => { navigationService.NavigateTo(ViewModelLocator.Pages.ItemGenerator); })); }
+        public ICommand OpenItemGenerator => openItemGenerator ?? (openItemGenerator = new DelegateCommand(() => { regionManager.RequestNavigate(Pages.RegionName, Pages.ItemGenerator); }));
 
         private ICommand openSoundGenerator;
-        public ICommand OpenSoundGenerator { get => openSoundGenerator ?? (openSoundGenerator = new RelayCommand(() => { navigationService.NavigateTo(ViewModelLocator.Pages.SoundGenerator); })); }
+        public ICommand OpenSoundGenerator => openSoundGenerator ?? (openSoundGenerator = new DelegateCommand(() => { regionManager.RequestNavigate(Pages.RegionName, Pages.SoundGenerator); }));
 
         private ICommand openCommandGenerator;
-        public ICommand OpenCommandGenerator { get => openCommandGenerator ?? (openCommandGenerator = new RelayCommand(() => { navigationService.NavigateTo(ViewModelLocator.Pages.CommandGenerator); })); }
+        public ICommand OpenCommandGenerator => openCommandGenerator ?? (openCommandGenerator = new DelegateCommand(() => { regionManager.RequestNavigate(Pages.RegionName, Pages.CommandGenerator); }));
 
         private ICommand openAchievementGenerator;
-        public ICommand OpenAchievementGenerator { get => openAchievementGenerator ?? (openAchievementGenerator = new RelayCommand(() => { navigationService.NavigateTo(ViewModelLocator.Pages.AchievementGenerator); })); }
+        public ICommand OpenAchievementGenerator => openAchievementGenerator ?? (openAchievementGenerator = new DelegateCommand(() => { regionManager.RequestNavigate(Pages.RegionName, Pages.AchievementGenerator); }));
 
         private ICommand openRecipeGenerator;
-        public ICommand OpenRecipeGenerator { get => openRecipeGenerator ?? (openRecipeGenerator = new RelayCommand(() => { navigationService.NavigateTo(ViewModelLocator.Pages.RecipeGenerator); })); }
+        public ICommand OpenRecipeGenerator => openRecipeGenerator ?? (openRecipeGenerator = new DelegateCommand(() => { regionManager.RequestNavigate(Pages.RegionName, Pages.RecipeGenerator); }));
     }
 }

@@ -1,9 +1,9 @@
-﻿using GalaSoft.MvvmLight;
+﻿using Prism.Mvvm;
 
 namespace ForgeModGenerator.RecipeGenerator.ViewModels
 {
     /// <summary> RecipeGenerator Business ViewModel </summary>
-    public class RecipeGeneratorViewModel : ViewModelBase
+    public class RecipeGeneratorViewModel : BindableBase
     {
     }
 }

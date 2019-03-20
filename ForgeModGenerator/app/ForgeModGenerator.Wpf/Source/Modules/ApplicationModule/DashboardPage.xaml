@@ -5,9 +5,12 @@
 	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	  xmlns:local="clr-namespace:ForgeModGenerator.ApplicationModule.Views"
 	  xmlns:vm="clr-namespace:ForgeModGenerator.ViewModels"
-	  mc:Ignorable="d"
+      xmlns:prism="http://prismlibrary.com/"
+      prism:ViewModelLocator.AutoWireViewModel="True"
+      mc:Ignorable="d"
 	  d:DesignHeight="450"
-	  d:DesignWidth="800"
-	  vm:ViewModelLocator.GetDataContext="ForgeModGenerator.ApplicationModule.ViewModels.DashboardViewModel">
-	<Grid Background="{StaticResource PageBackground}"></Grid>
+	  d:DesignWidth="800">
+	<Grid Background="{StaticResource PageBackground}">
+        
+    </Grid>
 </Page>

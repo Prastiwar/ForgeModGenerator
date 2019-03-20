@@ -1,4 +1,4 @@
-﻿using GalaSoft.MvvmLight.CommandWpf;
+﻿using Prism.Commands;
 using System;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -20,11 +20,11 @@ namespace ForgeModGenerator.Controls
         {
             if (AddCommand == null)
             {
-                AddCommand = new RelayCommand<ObservableCollection<T>>(DefaultAdd);
+                AddCommand = new DelegateCommand<ObservableCollection<T>>(DefaultAdd);
             }
             if (RemoveCommand == null)
             {
-                RemoveCommand = new RelayCommand<Tuple<ObservableCollection<T>, T>>(DefaultRemove);
+                RemoveCommand = new DelegateCommand<Tuple<ObservableCollection<T>, T>>(DefaultRemove);
             }
         }
 
@@ -36,7 +36,7 @@ namespace ForgeModGenerator.Controls
             if (e.NewValue == null)
             {
                 EditableList<T> list = (EditableList<T>)d;
-                list.AddCommand = new RelayCommand<ObservableCollection<T>>(list.DefaultAdd);
+                list.AddCommand = new DelegateCommand<ObservableCollection<T>>(list.DefaultAdd);
             }
         }
 
@@ -53,7 +53,7 @@ namespace ForgeModGenerator.Controls
             if (e.NewValue == null)
             {
                 EditableList<T> list = (EditableList<T>)d;
-                list.RemoveCommand = new RelayCommand<Tuple<ObservableCollection<T>, T>>(list.DefaultRemove);
+                list.RemoveCommand = new DelegateCommand<Tuple<ObservableCollection<T>, T>>(list.DefaultRemove);
             }
         }
         public ICommand RemoveCommand {

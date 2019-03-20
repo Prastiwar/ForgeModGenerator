@@ -1,4 +1,4 @@
-﻿using GalaSoft.MvvmLight.CommandWpf;
+﻿using Prism.Commands;
 using System;
 using System.Collections.Generic;
 using System.Windows.Input;
@@ -11,15 +11,15 @@ namespace ForgeModGenerator.Services
         {
             Tracker = tracker;
 
-            ExecuteCommand = new RelayCommand<T>((arg) => {
+            ExecuteCommand = new DelegateCommand<T>((arg) => {
                 LastUsedArguments = new Tuple<T, U>(arg, execute.Invoke(arg));
                 Tracker.Add(this);
-            }, true);
+            });
 
-            UndoCommand = new RelayCommand<Tuple<T, U>>((arg) => {
+            UndoCommand = new DelegateCommand<Tuple<T, U>>((arg) => {
                 LastUsedArguments = undoExecute.Invoke(arg);
                 Tracker.Add(this);
-            }, true);
+            });
         }
     }
 
@@ -27,17 +27,17 @@ namespace ForgeModGenerator.Services
     {
         public TrackedCommand(ICommandTracker tracker, Action<T> execute, Action<T> undoExecute) : base(tracker)
         {
-            ExecuteCommand = new RelayCommand<T>((arg) => {
+            ExecuteCommand = new DelegateCommand<T>((arg) => {
                 LastUsedArguments = arg;
                 execute.Invoke(arg);
                 Tracker.Add(this);
-            }, true);
+            });
 
-            UndoCommand = new RelayCommand<T>((arg) => {
+            UndoCommand = new DelegateCommand<T>((arg) => {
                 LastUsedArguments = arg;
                 undoExecute.Invoke(arg);
                 Tracker.Add(this);
-            }, true);
+            });
         }
     }
 
@@ -69,12 +69,12 @@ namespace ForgeModGenerator.Services
                 throw new ArgumentNullException(nameof(undoExecute));
             }
 
-            ExecuteCommand = new RelayCommand(() => {
+            ExecuteCommand = new DelegateCommand(() => {
                 execute.Invoke();
                 Tracker.Add(this);
             });
 
-            UndoCommand = new RelayCommand(() => {
+            UndoCommand = new DelegateCommand(() => {
                 undoExecute.Invoke();
                 Tracker.Add(this);
             });

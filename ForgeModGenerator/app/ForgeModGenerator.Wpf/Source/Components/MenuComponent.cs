@@ -1,10 +1,10 @@
 ﻿using ForgeModGenerator.Animations;
-using GalaSoft.MvvmLight;
+using Prism.Mvvm;
 using System.Windows.Controls;
 
 namespace ForgeModGenerator.Components
 {
-    public class MenuComponent : ObservableObject
+    public class MenuComponent : BindableBase
     {
         public MenuComponent(Grid grid, MenuSettings settings)
         {
@@ -40,7 +40,7 @@ namespace ForgeModGenerator.Components
         private bool isActive;
         public bool IsActive {
             get => isActive;
-            set => Set(ref isActive, value);
+            set => SetProperty(ref isActive, value);
         }
 
         public void Toggle()

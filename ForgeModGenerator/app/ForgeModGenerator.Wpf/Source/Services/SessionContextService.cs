@@ -1,6 +1,5 @@
 ﻿using ForgeModGenerator.Models;
 using ForgeModGenerator.Persistence;
-using GalaSoft.MvvmLight;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -36,10 +35,6 @@ namespace ForgeModGenerator.Services
     {
         public SessionContextService()
         {
-            if (ViewModelBase.IsInDesignModeStatic)
-            {
-                return;
-            }
             Log.Info("Session loading..");
             StartPage = new Uri("../ApplicationModule/DashboardPage.xaml", UriKind.Relative);
             Refresh();
@@ -79,26 +74,26 @@ namespace ForgeModGenerator.Services
         private bool askBeforeClose;
         public bool AskBeforeClose {
             get => askBeforeClose;
-            set => Set(ref askBeforeClose, value);
+            set => SetProperty(ref askBeforeClose, value);
         }
 
         private ObservableCollection<Mod> mods;
         public ObservableCollection<Mod> Mods {
             get => mods;
-            set => Set(ref mods, value);
+            set => SetProperty(ref mods, value);
         }
 
         private ObservableCollection<Mod> selectedMods;
         public ObservableCollection<Mod> SelectedMods {
             get => selectedMods;
-            set => Set(ref selectedMods, value);
+            set => SetProperty(ref selectedMods, value);
         }
 
         private Mod selectedMod;
         public Mod SelectedMod {
             get => selectedMod;
             set {
-                Set(ref selectedMod, value);
+                SetProperty(ref selectedMod, value);
                 OnPropertyChanged(nameof(IsModSelected));
             }
         }
@@ -106,7 +101,7 @@ namespace ForgeModGenerator.Services
         private ObservableCollection<ForgeVersion> forgeVersions;
         public ObservableCollection<ForgeVersion> ForgeVersions {
             get => forgeVersions;
-            set => Set(ref forgeVersions, value);
+            set => SetProperty(ref forgeVersions, value);
         }
 
         public T GetPreferences<T>() where T : PreferenceData
@@ -188,7 +183,7 @@ namespace ForgeModGenerator.Services
 
         protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-        protected bool Set<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool SetProperty<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
         {
             if ((field != null && field.Equals(newValue))
                 || (field == null && newValue == null))

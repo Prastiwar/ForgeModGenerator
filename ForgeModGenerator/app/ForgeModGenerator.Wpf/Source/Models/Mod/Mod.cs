@@ -1,13 +1,12 @@
 ﻿using ForgeModGenerator.Converters;
 using ForgeModGenerator.Utility;
-using ForgeModGenerator.Validations;
-using GalaSoft.MvvmLight;
+using ForgeModGenerator.Validation;
 using Newtonsoft.Json;
+using Prism.Mvvm;
 using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Windows.Controls;
 
 namespace ForgeModGenerator.Models
 {
@@ -19,46 +18,46 @@ namespace ForgeModGenerator.Models
         Server
     }
 
-    public class Mod : ObservableObject, IDirty, ICopiable<Mod>, IDataErrorInfo, IValidable<Mod>
+    public class Mod : BindableBase, IDirty, ICopiable<Mod>, IDataErrorInfo, IValidable<Mod>
     {
         private string organization;
         [JsonProperty(Required = Required.Always)]
         public string Organization {
             get => organization;
-            set => Set(ref organization, value);
+            set => SetProperty(ref organization, value);
         }
 
         private ModSide side;
         public ModSide Side {
             get => side;
-            set => Set(ref side, value);
+            set => SetProperty(ref side, value);
         }
 
         private WorkspaceSetup workspaceSetup;
         public WorkspaceSetup WorkspaceSetup {
             get => workspaceSetup;
-            set => Set(ref workspaceSetup, value);
+            set => SetProperty(ref workspaceSetup, value);
         }
 
         private McModInfo modInfo;
         [JsonProperty(Required = Required.Always)]
         public McModInfo ModInfo {
             get => modInfo;
-            set => Set(ref modInfo, value);
+            set => SetProperty(ref modInfo, value);
         }
 
         private ForgeVersion forgeVersion;
         [JsonProperty(Required = Required.Always)]
         public ForgeVersion ForgeVersion {
             get => forgeVersion;
-            set => Set(ref forgeVersion, value);
+            set => SetProperty(ref forgeVersion, value);
         }
 
         private LaunchSetup launchSetup;
         [JsonProperty(Required = Required.Always)]
         public LaunchSetup LaunchSetup {
             get => launchSetup;
-            set => Set(ref launchSetup, value);
+            set => SetProperty(ref launchSetup, value);
         }
 
         [JsonProperty(Required = Required.Always)]
@@ -105,31 +104,30 @@ namespace ForgeModGenerator.Models
         /// <summary> Shorthand for ModInfo.Modid (used also for WPF validation) </summary>
         public string Modid { get => ModInfo.Modid; set => ModInfo.Modid = value; }
 
-        public ValidationResult IsValid {
-            get {
-                string errorString = OnValidate(nameof(Organization));
-                if (!string.IsNullOrEmpty(errorString))
-                {
-                    return new ValidationResult(false, errorString);
-                }
-                errorString = OnValidate(nameof(Modid));
-                if (!string.IsNullOrEmpty(errorString))
-                {
-                    return new ValidationResult(false, errorString);
-                }
-                errorString = OnValidate(nameof(Name));
-                if (!string.IsNullOrEmpty(errorString))
-                {
-                    return new ValidationResult(false, errorString);
-                }
-                return ValidationResult.ValidResult;
+        public ValidateResult Validate()
+        {
+            string errorString = OnValidate(nameof(Organization));
+            if (!string.IsNullOrEmpty(errorString))
+            {
+                return new ValidateResult(false, errorString);
             }
+            errorString = OnValidate(nameof(Modid));
+            if (!string.IsNullOrEmpty(errorString))
+            {
+                return new ValidateResult(false, errorString);
+            }
+            errorString = OnValidate(nameof(Name));
+            if (!string.IsNullOrEmpty(errorString))
+            {
+                return new ValidateResult(false, errorString);
+            }
+            return ValidateResult.Valid;
         }
 
-        public event ValidationEventHandler<Mod> Validate;
+        public event PropertyValidationEventHandler<Mod> ValidateProperty;
         string IDataErrorInfo.Error => null;
         string IDataErrorInfo.this[string propertyName] => OnValidate(propertyName);
-        private string OnValidate(string propertyName) => ValidateHelper.OnValidateError(Validate, this, propertyName);
+        private string OnValidate(string propertyName) => ValidateHelper.OnValidateError(ValidateProperty, this, propertyName);
 
         public static string GetModidFromPath(string path)
         {

@@ -9,39 +9,6 @@ namespace ForgeModGenerator.Utility
         private const char LF = '\n';
         private const char NULLCHAR = (char)0;
 
-        public static bool TryDeleteToBin(this FileSystemInfo fileSystemInfo)
-        {
-            if (IOHelper.PathExists(fileSystemInfo.FullName))
-            {
-                try
-                {
-                    DeleteToBin(fileSystemInfo);
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
-                return true;
-            }
-            return false;
-        }
-
-        public static void DeleteToBin(this FileSystemInfo fileSystemInfo)
-        {
-            if (IOHelper.IsFilePath(fileSystemInfo.FullName))
-            {
-                IOHelper.DeleteDirectoryRecycle(fileSystemInfo.FullName);
-            }
-            else if (IOHelper.IsDirectoryPath(fileSystemInfo.FullName))
-            {
-                IOHelper.DeleteDirectoryRecycle(fileSystemInfo.FullName);
-            }
-            else
-            {
-                throw new NotSupportedException(nameof(fileSystemInfo) + " is not valid path");
-            }
-        }
-
         public static string NormalizePath(this string path, bool forwardSlash = true) => forwardSlash ? path.Replace("\\", "/") : path.Replace("/", "\\");
 
         public static string NormalizeFullPath(this string path, bool forwardSlash = true) => forwardSlash ? Path.GetFullPath(path).Replace("\\", "/") : Path.GetFullPath(path).Replace("/", "\\");

@@ -1,25 +1,25 @@
-﻿using GalaSoft.MvvmLight;
+﻿using Prism.Mvvm;
 
 namespace ForgeModGenerator.CommandGenerator.Models
 {
-    public class Command : ObservableObject
+    public class Command : BindableBase
     {
         private string name;
         public string Name {
             get => name;
-            set => Set(ref name, value);
+            set => SetProperty(ref name, value);
         }
 
         private string usage;
         public string Usage {
             get => usage;
-            set => Set(ref usage, value);
+            set => SetProperty(ref usage, value);
         }
 
         private string permission;
         public string Permission {
             get => permission;
-            set => Set(ref permission, value);
+            set => SetProperty(ref permission, value);
         }
     }
 }

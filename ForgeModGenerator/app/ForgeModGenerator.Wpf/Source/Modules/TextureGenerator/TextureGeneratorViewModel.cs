@@ -1,6 +1,5 @@
 ﻿using ForgeModGenerator.Services;
 using ForgeModGenerator.ViewModels;
-using GalaSoft.MvvmLight.Views;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;

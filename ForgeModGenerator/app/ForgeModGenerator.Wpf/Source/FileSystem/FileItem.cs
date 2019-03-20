@@ -20,7 +20,7 @@ namespace ForgeModGenerator
         private FileSystemInfoReference info;
         public FileSystemInfoReference Info {
             get => info;
-            private set => DirtSet(ref info, value);
+            private set => DirtSetProperty(ref info, value);
         }
 
         public void SetInfo(string path)

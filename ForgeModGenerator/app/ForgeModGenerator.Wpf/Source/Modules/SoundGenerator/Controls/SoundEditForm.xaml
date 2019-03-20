@@ -9,7 +9,6 @@
              xmlns:mahapp="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:misc="clr-namespace:ForgeModGenerator.Utility"
              xmlns:local="clr-namespace:ForgeModGenerator.SoundGenerator.Controls"
-             xmlns:rules="clr-namespace:ForgeModGenerator.SoundGenerator.Validations"
              mc:Ignorable="d"
              d:DesignHeight="450"
              d:DesignWidth="800">

@@ -10,7 +10,7 @@ namespace ForgeModGenerator.SoundGenerator.Persistence
         private Formatting jsonFormatting;
         public Formatting JsonFormatting {
             get => jsonFormatting;
-            set => DirtSet(ref jsonFormatting, value);
+            set => DirtSetProperty(ref jsonFormatting, value);
         }
     }
 }

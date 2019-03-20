@@ -1,4 +1,4 @@
-﻿using GalaSoft.MvvmLight;
+﻿using Prism.Mvvm;
 using System.Drawing;
 
 namespace ForgeModGenerator.ItemGenerator.Models
@@ -18,30 +18,30 @@ namespace ForgeModGenerator.ItemGenerator.Models
         public float Damage;
     }
 
-    public class Item : ObservableObject
+    public class Item : BindableBase
     {
         private string name;
         public string Name {
             get => name;
-            set => Set(ref name, value);
+            set => SetProperty(ref name, value);
         }
 
         private ItemType type;
         public ItemType Type {
             get => type;
-            set => Set(ref type, value);
+            set => SetProperty(ref type, value);
         }
 
         private Image texture;
         public Image Texture {
             get => texture;
-            set => Set(ref texture, value);
+            set => SetProperty(ref texture, value);
         }
 
         private ItemAttributes attributes;
         public ItemAttributes Attributes {
             get => attributes;
-            set => Set(ref attributes, value);
+            set => SetProperty(ref attributes, value);
         }
     }
 }

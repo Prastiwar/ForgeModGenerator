@@ -1,4 +1,4 @@
-﻿using GalaSoft.MvvmLight;
+﻿using Prism.Mvvm;
 using System.Drawing;
 
 namespace ForgeModGenerator.BlockGenerator.Models
@@ -16,30 +16,30 @@ namespace ForgeModGenerator.BlockGenerator.Models
         public int LightLevel; // 0-15
     }
 
-    public class Block : ObservableObject
+    public class Block : BindableBase
     {
         private string name;
         public string Name {
             get => name;
-            set => Set(ref name, value);
+            set => SetProperty(ref name, value);
         }
 
         private BlockType type;
         public BlockType Type {
             get => type;
-            set => Set(ref type, value);
+            set => SetProperty(ref type, value);
         }
 
         private Image texture;
         public Image Texture {
             get => texture;
-            set => Set(ref texture, value);
+            set => SetProperty(ref texture, value);
         }
 
         private BlockAttributes attributes;
         public BlockAttributes Attributes {
             get => attributes;
-            set => Set(ref attributes, value);
+            set => SetProperty(ref attributes, value);
         }
     }
 }

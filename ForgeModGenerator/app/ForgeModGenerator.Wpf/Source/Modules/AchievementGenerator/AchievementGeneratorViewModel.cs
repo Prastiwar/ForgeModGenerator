@@ -1,9 +1,9 @@
-﻿using GalaSoft.MvvmLight;
+﻿using Prism.Mvvm;
 
 namespace ForgeModGenerator.AchievementGenerator.ViewModels
 {
     /// <summary> AchievementGenerator Business ViewModel </summary>
-    public class AchievementGeneratorViewModel : ViewModelBase
+    public class AchievementGeneratorViewModel : BindableBase
     {
     }
 }

@@ -1,87 +1,87 @@
-﻿using ForgeModGenerator.Utility;
-using GalaSoft.MvvmLight.Views;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Windows.Controls;
+﻿//using ForgeModGenerator.Utility;
 
-namespace ForgeModGenerator.Services
-{
-    public class NavigationService : INavigationService
-    {
-        private readonly Dictionary<string, Type> _pagesByKey = new Dictionary<string, Type>();
+//using System;
+//using System.Collections.Generic;
+//using System.Linq;
+//using System.Reflection;
+//using System.Windows.Controls;
 
-        private Frame _frame;
-        public Frame NavFrame {
-            get {
-                if (_frame == null)
-                {
-                    _frame = WPFHelper.GetDescendantFromName(System.Windows.Application.Current.MainWindow, "PageFrame") as Frame;
-                }
-                return _frame;
-            }
-            set => _frame = value;
-        }
+//namespace ForgeModGenerator.Services
+//{
+//    public class NavigationService : IRegionManager
+//    {
+//        private readonly Dictionary<string, Type> _pagesByKey = new Dictionary<string, Type>();
 
-        public string CurrentPageKey { get; protected set; }
+//        private Frame _frame;
+//        public Frame NavFrame {
+//            get {
+//                if (_frame == null)
+//                {
+//                    _frame = WPFHelper.GetDescendantFromName(System.Windows.Application.Current.MainWindow, "PageFrame") as Frame;
+//                }
+//                return _frame;
+//            }
+//            set => _frame = value;
+//        }
 
-        public NavigationService(Frame frame = null) => NavFrame = frame;
+//        public string CurrentPageKey { get; protected set; }
 
-        public void GoBack() => NavFrame.GoBack();
+//        public NavigationService(Frame frame = null) => NavFrame = frame;
 
-        public bool CanGoBack() => NavFrame.CanGoBack;
+//        public void GoBack() => NavFrame.GoBack();
 
-        public void NavigateTo(string pageKey) => NavigateTo(pageKey, null);
+//        public bool CanGoBack() => NavFrame.CanGoBack;
 
-        public void NavigateTo(string pageKey, object parameter) => NavigateTo(pageKey, parameter);
+//        public void NavigateTo(string pageKey) => NavigateTo(pageKey, null);
 
-        private void NavigateTo(string pageKey, params object[] parameters)
-        {
-            lock (_pagesByKey)
-            {
-                if (!_pagesByKey.ContainsKey(pageKey))
-                {
-                    throw new ArgumentException($"No such page: {pageKey}. Did you forget to call NavigationService.Configure?", nameof(pageKey));
-                }
-                Type type = _pagesByKey[pageKey];
-                ConstructorInfo constructor;
-                constructor = GetConstructor(type, parameters);
-                if (constructor == null)
-                {
-                    throw new InvalidOperationException($"No suitable constructor found for page {pageKey}");
-                }
-                Page page = constructor.Invoke(parameters) as Page;
-                NavFrame.Navigate(page);
-            }
-        }
+//        public void NavigateTo(string pageKey, object parameter) => NavigateTo(pageKey, parameter);
 
-        private ConstructorInfo GetConstructor(Type type, object[] parameters)
-        {
-            int parameterCount = parameters != null ? parameters.Length : 0;
-            ConstructorInfo constructor;
-            if (parameterCount > 0)
-            {
-                constructor = type.GetTypeInfo().DeclaredConstructors.SingleOrDefault(c => {
-                    ParameterInfo[] p = c.GetParameters();
-                    return p.Count() == parameterCount && p[parameterCount - 1].ParameterType == parameters[parameterCount - 1].GetType();
-                });
-            }
-            else
-            {
-                constructor = type.GetTypeInfo()
-                                .DeclaredConstructors
-                                .FirstOrDefault(c => !c.GetParameters().Any());
-            }
-            return constructor;
-        }
+//        private void NavigateTo(string pageKey, params object[] parameters)
+//        {
+//            lock (_pagesByKey)
+//            {
+//                if (!_pagesByKey.ContainsKey(pageKey))
+//                {
+//                    throw new ArgumentException($"No such page: {pageKey}. Did you forget to call NavigationService.Configure?", nameof(pageKey));
+//                }
+//                Type type = _pagesByKey[pageKey];
+//                ConstructorInfo constructor;
+//                constructor = GetConstructor(type, parameters);
+//                if (constructor == null)
+//                {
+//                    throw new InvalidOperationException($"No suitable constructor found for page {pageKey}");
+//                }
+//                Page page = constructor.Invoke(parameters) as Page;
+//                NavFrame.Navigate(page);
+//            }
+//        }
 
-        public void Configure(string pageKey, Type pageType)
-        {
-            lock (_pagesByKey)
-            {
-                _pagesByKey[pageKey] = pageType;
-            }
-        }
-    }
-}
+//        private ConstructorInfo GetConstructor(Type type, object[] parameters)
+//        {
+//            int parameterCount = parameters != null ? parameters.Length : 0;
+//            ConstructorInfo constructor;
+//            if (parameterCount > 0)
+//            {
+//                constructor = type.GetTypeInfo().DeclaredConstructors.SingleOrDefault(c => {
+//                    ParameterInfo[] p = c.GetParameters();
+//                    return p.Count() == parameterCount && p[parameterCount - 1].ParameterType == parameters[parameterCount - 1].GetType();
+//                });
+//            }
+//            else
+//            {
+//                constructor = type.GetTypeInfo()
+//                                .DeclaredConstructors
+//                                .FirstOrDefault(c => !c.GetParameters().Any());
+//            }
+//            return constructor;
+//        }
+
+//        public void Configure(string pageKey, Type pageType)
+//        {
+//            lock (_pagesByKey)
+//            {
+//                _pagesByKey[pageKey] = pageType;
+//            }
+//        }
+//    }
+//}

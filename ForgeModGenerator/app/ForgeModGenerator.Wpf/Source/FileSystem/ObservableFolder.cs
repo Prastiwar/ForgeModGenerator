@@ -100,14 +100,14 @@ namespace ForgeModGenerator
         private FileSystemInfoReference info;
         public FileSystemInfoReference Info {
             get => info;
-            private set => DirtSet(ref info, value);
+            private set => DirtSetProperty(ref info, value);
         }
 
         private WpfObservableRangeCollection<T> files;
         public WpfObservableRangeCollection<T> Files {
             get => files;
             protected set {
-                if (DirtSet(ref files, value))
+                if (DirtSetProperty(ref files, value))
                 {
                     if (Files != null)
                     {

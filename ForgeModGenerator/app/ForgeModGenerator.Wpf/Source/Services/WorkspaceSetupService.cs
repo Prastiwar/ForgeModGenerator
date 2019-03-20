@@ -22,11 +22,11 @@ namespace ForgeModGenerator.Services
         private ObservableCollection<WorkspaceSetup> setups;
         public ObservableCollection<WorkspaceSetup> Setups {
             get => setups;
-            protected set => Set(ref setups, value);
+            protected set => SetProperty(ref setups, value);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        protected bool Set<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool SetProperty<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
         {
             if ((field != null && field.Equals(newValue))
                 || (field == null && newValue == null))

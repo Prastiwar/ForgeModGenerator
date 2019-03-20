@@ -1,10 +1,10 @@
 ﻿using ForgeModGenerator.Models;
 using ForgeModGenerator.SoundGenerator.Converters;
+using ForgeModGenerator.Validation;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.ComponentModel;
 using System.IO;
-using System.Windows.Controls;
 
 namespace ForgeModGenerator.SoundGenerator.Models
 {
@@ -38,56 +38,55 @@ namespace ForgeModGenerator.SoundGenerator.Models
         }
 
         private string modid;
-
         private string name;
         public string Name {
             get => name;
-            private set => DirtSet(ref name, value);
+            private set => DirtSetProperty(ref name, value);
         }
 
         private float volume = 1.0f;
         public float Volume {
             get => volume;
-            set => DirtSet(ref volume, Math.Clamp(value));
+            set => DirtSetProperty(ref volume, Math.Clamp(value));
         }
 
         private float pitch = 1.0f;
         public float Pitch {
             get => pitch;
-            set => DirtSet(ref pitch, value);
+            set => DirtSetProperty(ref pitch, value);
         }
 
         private int weight = 1;
         public int Weight {
             get => weight;
-            set => DirtSet(ref weight, value);
+            set => DirtSetProperty(ref weight, value);
         }
 
         private bool stream = false;
         public bool Stream {
             get => stream;
-            set => DirtSet(ref stream, value);
+            set => DirtSetProperty(ref stream, value);
         }
 
         private int attenuationDistance;
         public int AttenuationDistance {
             get => attenuationDistance;
-            set => DirtSet(ref attenuationDistance, value);
+            set => DirtSetProperty(ref attenuationDistance, value);
         }
 
         private bool preload = false;
         public bool Preload {
             get => preload;
-            set => DirtSet(ref preload, value);
+            set => DirtSetProperty(ref preload, value);
         }
 
         private SoundType type = SoundType.file;
         public SoundType Type {
             get => type;
-            set => DirtSet(ref type, value);
+            set => DirtSetProperty(ref type, value);
         }
 
-        public ValidationResult IsValid => ValidationResult.ValidResult;
+        public ValidateResult Validate() => ValidateResult.Valid;
 
         internal string GetSoundsFolder() => ModPaths.SoundsFolder(Mod.GetModnameFromPath(Info.FullName), modid);
 

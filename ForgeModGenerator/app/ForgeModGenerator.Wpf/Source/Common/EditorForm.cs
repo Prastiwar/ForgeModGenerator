@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
-using GalaSoft.MvvmLight.Views;
+using ForgeModGenerator.Services;
 using MaterialDesignThemes.Wpf;
 using Microsoft.Extensions.Caching.Memory;
 using System;

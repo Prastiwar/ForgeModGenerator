@@ -1,5 +1,6 @@
 ﻿using ForgeModGenerator.Persistence;
 using ForgeModGenerator.SoundGenerator.Models;
+using ForgeModGenerator.Validation;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 
@@ -17,10 +18,10 @@ namespace ForgeModGenerator.SoundGenerator.Persistence
         {
             foreach (SoundEvent soundEvent in Target)
             {
-                System.Windows.Controls.ValidationResult result = soundEvent.IsValid;
+                ValidateResult result = soundEvent.Validate();
                 if (!result.IsValid)
                 {
-                    Log.Warning($"Cannot serialize json. {soundEvent.EventName} is not valid. Reason: {result.ErrorContent}", true);
+                    Log.Warning($"Cannot serialize json. {soundEvent.EventName} is not valid. Reason: {result.Error}", true);
                     return false;
                 }
             }

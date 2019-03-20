@@ -1,5 +1,4 @@
-﻿using GalaSoft.MvvmLight.Views;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -49,12 +48,6 @@ namespace ForgeModGenerator.Services
             bool boolResult = result == MessageBoxResult.OK || result == MessageBoxResult.Yes;
             afterHideCallback?.Invoke(boolResult);
             return Task.FromResult(boolResult);
-        }
-
-        public Task ShowMessageBox(string message, string title)
-        {
-            MessageBox.Show(message, title);
-            return Task.Delay(0);
         }
     }
 }

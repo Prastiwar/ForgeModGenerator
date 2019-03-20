@@ -1,9 +1,9 @@
-﻿using GalaSoft.MvvmLight;
+﻿using Prism.Mvvm;
 
 namespace ForgeModGenerator.ItemGenerator.ViewModels
 {
     /// <summary> ItemGenerator Business ViewModel </summary>
-    public class ItemGeneratorViewModel : ViewModelBase
+    public class ItemGeneratorViewModel : BindableBase
     {
     }
 }

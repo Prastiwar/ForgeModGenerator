@@ -1,8 +1,8 @@
-﻿using GalaSoft.MvvmLight;
+﻿using Prism.Mvvm;
 
 namespace ForgeModGenerator.Models
 {
-    public class LaunchSetup : ObservableObject
+    public class LaunchSetup : BindableBase
     {
         public LaunchSetup(bool runClient = true, bool runServer = false)
         {
@@ -13,13 +13,13 @@ namespace ForgeModGenerator.Models
         private bool runClient;
         public bool RunClient {
             get => runClient;
-            set => Set(ref runClient, value);
+            set => SetProperty(ref runClient, value);
         }
 
         private bool runServer;
         public bool RunServer {
             get => runServer;
-            set => Set(ref runServer, value);
+            set => SetProperty(ref runServer, value);
         }
     }
 }

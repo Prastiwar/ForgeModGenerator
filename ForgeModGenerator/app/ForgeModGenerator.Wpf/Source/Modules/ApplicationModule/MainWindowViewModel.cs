@@ -1,40 +1,40 @@
 using ForgeModGenerator.Models;
 using ForgeModGenerator.Services;
 using ForgeModGenerator.ViewModels;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Views;
+using Prism.Commands;
+using Prism.Mvvm;
+using Prism.Regions;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
 namespace ForgeModGenerator.ApplicationModule.ViewModels
 {
     /// <summary> MainWindow Business ViewModel </summary>
-    public class MainWindowViewModel : ViewModelBase
+    public class MainWindowViewModel : BindableBase
     {
-        private readonly INavigationService navigationService;
+        private readonly IRegionManager regionManager;
         private readonly IModBuildService modBuilder;
 
         public ISessionContextService SessionContext { get; }
 
-        public MainWindowViewModel(INavigationService navigationService, ISessionContextService sessionContext, IModBuildService modBuilder)
+        public MainWindowViewModel(IRegionManager regionManager, ISessionContextService sessionContext, IModBuildService modBuilder)
         {
-            this.navigationService = navigationService;
+            this.regionManager = regionManager;
             this.modBuilder = modBuilder;
             SessionContext = sessionContext;
         }
 
         private ICommand openSettingsCommand;
-        public ICommand OpenSettingsCommand => openSettingsCommand ?? (openSettingsCommand = new RelayCommand(() => { navigationService.NavigateTo(ViewModelLocator.Pages.Settings); }));
+        public ICommand OpenSettingsCommand => openSettingsCommand ?? (openSettingsCommand = new DelegateCommand(() => { regionManager.RequestNavigate("Page", Pages.Settings); }));
 
         private ICommand refreshCommand;
-        public ICommand RefreshCommand => refreshCommand ?? (refreshCommand = new RelayCommand(ForceRefresh));
+        public ICommand RefreshCommand => refreshCommand ?? (refreshCommand = new DelegateCommand(ForceRefresh));
 
         private ICommand runModCommand;
-        public ICommand RunModCommand => runModCommand ?? (runModCommand = new RelayCommand<Mod>(RunSelectedMod));
+        public ICommand RunModCommand => runModCommand ?? (runModCommand = new DelegateCommand<Mod>(RunSelectedMod));
 
         private ICommand runModsCommand;
-        public ICommand RunModsCommand => runModsCommand ?? (runModsCommand = new RelayCommand<ObservableCollection<Mod>>(RunSelectedMods));
+        public ICommand RunModsCommand => runModsCommand ?? (runModsCommand = new DelegateCommand<ObservableCollection<Mod>>(RunSelectedMods));
 
         private void RunSelectedMods(ObservableCollection<Mod> mods)
         {

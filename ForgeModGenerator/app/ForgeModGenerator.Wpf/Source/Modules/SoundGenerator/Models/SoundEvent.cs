@@ -1,10 +1,10 @@
 ﻿using ForgeModGenerator.SoundGenerator.Converters;
+using ForgeModGenerator.Validation;
 using ForgeModGenerator.Validations;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Windows.Controls;
 using System.Windows.Data;
 
 namespace ForgeModGenerator.SoundGenerator.Models
@@ -45,19 +45,19 @@ namespace ForgeModGenerator.SoundGenerator.Models
         private string eventName;
         public string EventName {
             get => eventName;
-            set => DirtSet(ref eventName, value);
+            set => DirtSetProperty(ref eventName, value);
         }
 
         private bool replace = false;
         public bool Replace {
             get => replace;
-            set => DirtSet(ref replace, value);
+            set => DirtSetProperty(ref replace, value);
         }
 
         private string subtitle;
         public string Subtitle {
             get => subtitle;
-            set => DirtSet(ref subtitle, value);
+            set => DirtSetProperty(ref subtitle, value);
         }
 
         private void Init()
@@ -100,17 +100,17 @@ namespace ForgeModGenerator.SoundGenerator.Models
             return false;
         }
 
-        public ValidationResult IsValid {
-            get {
-                string errorString = OnValidate(nameof(EventName));
-                return new ValidationResult(string.IsNullOrEmpty(errorString), errorString);
-            }
+        public event PropertyValidationEventHandler<SoundEvent> ValidateProperty;
+        string IDataErrorInfo.Error => null;
+
+        public ValidateResult Validate()
+        {
+            string errorString = OnValidate(nameof(EventName));
+            return new ValidateResult(string.IsNullOrEmpty(errorString), errorString);
         }
 
-        public event ValidationEventHandler<SoundEvent> Validate;
-        string IDataErrorInfo.Error => null;
         string IDataErrorInfo.this[string propertyName] => OnValidate(propertyName);
-        private string OnValidate(string propertyName) => ValidateHelper.OnValidateError(Validate, this, propertyName);
+        private string OnValidate(string propertyName) => ValidateHelper.OnValidateError(ValidateProperty, this, propertyName);
 
         // Get formatted sound from full path, "shorten.path.toFile"
         public static string FormatDottedSoundNameFromFullPath(string path)

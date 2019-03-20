@@ -1,4 +1,4 @@
-﻿using GalaSoft.MvvmLight.CommandWpf;
+﻿using Prism.Commands;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -13,11 +13,11 @@ namespace ForgeModGenerator.Controls
         {
             if (FileClickCommand == null)
             {
-                FileClickCommand = new RelayCommand<IFileItem>(OpenFile);
+                FileClickCommand = new DelegateCommand<IFileItem>(OpenFile);
             }
             if (ShowContainerCommand == null)
             {
-                ShowContainerCommand = new RelayCommand(ShowContainer);
+                ShowContainerCommand = new DelegateCommand(ShowContainer);
             }
         }
 

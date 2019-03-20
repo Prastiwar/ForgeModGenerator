@@ -1,6 +1,6 @@
 ﻿using ForgeModGenerator.Utility;
 using ForgeModGenerator.Validations;
-using GalaSoft.MvvmLight;
+using Prism.Mvvm;
 using System;
 using System.Collections.Concurrent;
 using System.ComponentModel;
@@ -10,7 +10,7 @@ using System.Windows.Controls;
 namespace ForgeModGenerator
 {
     // Base class that manages file references in application and synchronizes it with explorer
-    public abstract class FileSystemInfoReference : ObservableObject, IDataErrorInfo
+    public abstract class FileSystemInfoReference : BindableBase, IDataErrorInfo
     {
         public ValidationResult IsValid => new ValidationResult(((IDataErrorInfo)this)[nameof(ChangeName)] != null, "Path is not valid");
 
@@ -56,7 +56,7 @@ namespace ForgeModGenerator
         public FileSystemInfo FileSystemInfo {
             get => fileSystemInfo;
             protected set {
-                if (Set(ref fileSystemInfo, value))
+                if (SetProperty(ref fileSystemInfo, value))
                 {
                     changeName = FileSystemInfo is DirectoryInfo ? Name : Path.GetFileNameWithoutExtension(Name);
                     RaisePropertyChanged(nameof(Name));
@@ -70,7 +70,7 @@ namespace ForgeModGenerator
         public string ChangeName {
             get => changeName;
             set {
-                if (!Set(ref changeName, value))
+                if (!SetProperty(ref changeName, value))
                 {
                     return;
                 }
@@ -91,11 +91,11 @@ namespace ForgeModGenerator
                     {
                         if (IOHelper.IsFilePath(FullName))
                         {
-                            IOHelper.MoveFile(FullName, newPath);
+                            IOHelperWin.MoveFile(FullName, newPath);
                         }
                         else
                         {
-                            IOHelper.MoveDirectory(FullName, newPath);
+                            IOHelperWin.MoveDirectory(FullName, newPath);
                         }
                         SetInfo(newPath);
                         error = null;

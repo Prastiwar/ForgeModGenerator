@@ -28,7 +28,7 @@ namespace ForgeModGenerator.Utility
         {
             try
             {
-                IOHelper.MoveDirectory(from, destination, option);
+                IOHelperWin.MoveDirectory(from, destination, option);
             }
             catch (Exception)
             {
@@ -40,7 +40,7 @@ namespace ForgeModGenerator.Utility
         {
             try
             {
-                IOHelper.MoveDirectory(from, destination, overwrite);
+                IOHelperWin.MoveDirectory(from, destination, overwrite);
             }
             catch (Exception)
             {
@@ -53,7 +53,7 @@ namespace ForgeModGenerator.Utility
         {
             try
             {
-                IOHelper.CopyDirectory(from, destination, option);
+                IOHelperWin.CopyDirectory(from, destination, option);
             }
             catch (Exception)
             {
@@ -65,7 +65,7 @@ namespace ForgeModGenerator.Utility
         {
             try
             {
-                IOHelper.CopyDirectory(from, destination, overwrite);
+                IOHelperWin.CopyDirectory(from, destination, overwrite);
             }
             catch (Exception)
             {
@@ -78,7 +78,7 @@ namespace ForgeModGenerator.Utility
         {
             try
             {
-                IOHelper.DeleteDirectoryPerm(directoryPath, option);
+                IOHelperWin.DeleteDirectoryPerm(directoryPath, option);
             }
             catch (Exception)
             {
@@ -90,7 +90,7 @@ namespace ForgeModGenerator.Utility
         {
             try
             {
-                IOHelper.DeleteDirectoryRecycle(directoryPath, option);
+                IOHelperWin.DeleteDirectoryRecycle(directoryPath, option);
             }
             catch (Exception)
             {
@@ -103,7 +103,7 @@ namespace ForgeModGenerator.Utility
         {
             try
             {
-                IOHelper.RenameDirectory(name, newName);
+                IOHelperWin.RenameDirectory(name, newName);
             }
             catch (Exception)
             {
@@ -116,7 +116,7 @@ namespace ForgeModGenerator.Utility
         {
             try
             {
-                IOHelper.MoveFile(from, destination, option);
+                IOHelperWin.MoveFile(from, destination, option);
             }
             catch (Exception)
             {
@@ -128,7 +128,7 @@ namespace ForgeModGenerator.Utility
         {
             try
             {
-                IOHelper.MoveFile(from, destination, overwrite);
+                IOHelperWin.MoveFile(from, destination, overwrite);
             }
             catch (Exception)
             {
@@ -141,7 +141,7 @@ namespace ForgeModGenerator.Utility
         {
             try
             {
-                IOHelper.CopyFile(from, destination, option);
+                IOHelperWin.CopyFile(from, destination, option);
             }
             catch (Exception)
             {
@@ -153,7 +153,7 @@ namespace ForgeModGenerator.Utility
         {
             try
             {
-                IOHelper.CopyFile(from, destination, overwrite);
+                IOHelperWin.CopyFile(from, destination, overwrite);
             }
             catch (Exception)
             {
@@ -166,7 +166,7 @@ namespace ForgeModGenerator.Utility
         {
             try
             {
-                IOHelper.DeleteFilePerm(filePath, option);
+                IOHelperWin.DeleteFilePerm(filePath, option);
             }
             catch (Exception)
             {
@@ -178,7 +178,7 @@ namespace ForgeModGenerator.Utility
         {
             try
             {
-                IOHelper.DeleteFileRecycle(filePath, option);
+                IOHelperWin.DeleteFileRecycle(filePath, option);
             }
             catch (Exception)
             {
@@ -191,7 +191,7 @@ namespace ForgeModGenerator.Utility
         {
             try
             {
-                IOHelper.RenameFile(name, newName);
+                IOHelperWin.RenameFile(name, newName);
             }
             catch (Exception)
             {

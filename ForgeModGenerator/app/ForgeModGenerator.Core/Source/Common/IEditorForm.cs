@@ -2,7 +2,7 @@
 
 namespace ForgeModGenerator
 {
-    public interface IEditorForm<TItem> where TItem : ICopiable, IDirty
+    public interface IEditorForm<TItem>
     {
         event EventHandler<ItemEditorClosingDialogEventArgs<TItem>> FormClosing;
         event EventHandler<ItemEditedEventArgs<TItem>> ItemEdited;

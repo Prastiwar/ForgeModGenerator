@@ -1,17 +1,17 @@
-﻿using GalaSoft.MvvmLight;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using Prism.Mvvm;
 using System.Runtime.CompilerServices;
 
 namespace ForgeModGenerator.Models
 {
-    public class ObservableDirtyObject : ObservableObject, IDirty
+    public class ObservableDirtyObject : BindableBase, IDirty
     {
         [JsonIgnore]
         public bool IsDirty { get; set; }
 
-        protected bool DirtSet<T>(ref T variable, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool DirtSetProperty<T>(ref T variable, T newValue, [CallerMemberName] string propertyName = null)
         {
-            bool set = Set(ref variable, newValue, propertyName);
+            bool set = SetProperty(ref variable, newValue, propertyName);
             if (set)
             {
                 IsDirty = true;
