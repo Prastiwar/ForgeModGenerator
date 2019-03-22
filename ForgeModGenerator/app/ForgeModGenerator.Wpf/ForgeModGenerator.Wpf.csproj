@@ -195,6 +195,10 @@
     <Compile Include="Source\Common\Cache.cs" />
     <Compile Include="Source\Common\EditorForm.cs" />
     <Compile Include="Source\Common\Log.cs" />
+    <Compile Include="Source\Converters\Json\ForgeVersionJsonConverter.cs" />
+    <Compile Include="Source\Converters\Json\McModInfoJsonConverter.cs" />
+    <Compile Include="Source\Converters\Json\ModJsonConverter.cs" />
+    <Compile Include="Source\Utility\Helpers\ModHelper.cs" />
     <Compile Include="Source\Common\ThirdParty\WpfObservableRangeCollection.cs" />
     <Compile Include="Source\Controls\EditableList.cs" />
     <Compile Include="Source\Controls\FolderListBox.cs" />
@@ -205,7 +209,6 @@
     <Compile Include="Source\Converters\IntToVisibilityConverter.cs" />
     <Compile Include="Source\Converters\InvertBooleanConverter.cs" />
     <Compile Include="Source\Controls\NavButton.cs" />
-    <Compile Include="Source\FileSystem\InvalidSynchronizationArgument.cs" />
     <Compile Include="Source\FileSystem\DefaultFoldersFactory.cs" />
     <Compile Include="Source\FileSystem\FoldersFactory.cs" />
     <Compile Include="Source\FileSystem\FoldersSynchronizer.cs" />
@@ -215,17 +218,14 @@
     <Compile Include="Source\Modules\SoundGenerator\SoundEventsFactory.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundEventsSynchronizer.cs" />
     <Compile Include="Source\Services\DialogService.cs" />
-    <Compile Include="Source\Services\IDialogService.cs" />
     <Compile Include="Source\Services\SnackbarService.cs" />
     <Compile Include="Source\Utility\Extensions\ObservableFolderExtensions.cs" />
     <Compile Include="Source\FileSystem\FileItem.cs" />
     <Compile Include="Source\FileSystem\FileReference.cs" />
-    <Compile Include="Source\FileSystem\FileSystemWatcherExtended.cs" />
     <Compile Include="Source\FileSystem\ObservableFolder.cs" />
     <Compile Include="Source\Utility\Extensions\ValidationExtensions.cs" />
     <Compile Include="Source\Utility\Helpers\IOHelper.cs" />
     <Compile Include="Source\Persistence\JsonUpdater.cs" />
-    <Compile Include="Source\Models\ObservableDirtyObject.cs" />
     <Compile Include="Source\Persistence\PreferenceData.cs" />
     <Compile Include="Source\Modules\ApplicationModule\BugReporter.xaml.cs">
       <DependentUpon>BugReporter.xaml</DependentUpon>
@@ -251,7 +251,6 @@
     <Compile Include="Source\Modules\ModGenerator\SourceCodeGeneration\RegistryHandlerCodeGenerator.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundCodeGenerator.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundJsonUpdater.cs" />
-    <Compile Include="Source\Models\Mod\LaunchSetup.cs" />
     <Compile Include="Source\Modules\SoundGenerator\Models\SoundsGeneratorPreferences.cs" />
     <Compile Include="Source\Modules\SoundGenerator\Models\SoundEvent.cs" />
     <Compile Include="Source\Services\CommandTracker.cs" />
@@ -263,10 +262,7 @@
     <Compile Include="Source\Modules\ModGenerator\ModForm.xaml.cs">
       <DependentUpon>ModForm.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Source\Converters\EnumToCollectionConverter.cs" />
     <Compile Include="Source\Converters\PathToNameConverter.cs" />
-    <Compile Include="Source\Models\Mod\ForgeVersion.cs" />
-    <Compile Include="Source\Models\Mod\McModInfo.cs" />
     <Compile Include="Source\Utility\Extensions\JsonExtensions.cs" />
     <Compile Include="Source\Utility\Helpers\IOSafe.cs" />
     <Compile Include="Source\Utility\Helpers\WPFHelper.cs" />
@@ -274,13 +270,9 @@
     <Compile Include="Source\Modules\BlockGenerator\Block.cs" />
     <Compile Include="Source\Modules\CommandGenerator\Command.cs" />
     <Compile Include="Source\Modules\ItemGenerator\Item.cs" />
-    <Compile Include="Source\Models\Mod\Mod.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\Recipe.cs" />
     <Compile Include="Source\Modules\SoundGenerator\Models\Sound.cs" />
-    <Compile Include="Source\Models\Mod\WorkspaceSetup.cs" />
-    <Compile Include="Source\Services\NavigationService.cs" />
     <Compile Include="Source\Services\SessionContextService.cs" />
-    <Compile Include="Source\Services\WorkspaceSetupService.cs" />
     <Compile Include="Source\Modules\SoundGenerator\Controls\SoundEditForm.xaml.cs">
       <DependentUpon>SoundEditForm.xaml</DependentUpon>
     </Compile>
@@ -308,7 +300,6 @@
       <DependentUpon>TextureGeneratorPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Modules\TextureGenerator\TextureGeneratorViewModel.cs" />
-    <Compile Include="Source\ViewModels\PagesLocator.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\RecipeGeneratorPage.xaml.cs">
       <DependentUpon>RecipeGeneratorPage.xaml</DependentUpon>
     </Compile>

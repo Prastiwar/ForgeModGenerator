@@ -1,5 +1,8 @@
 ﻿using ForgeModGenerator.CodeGeneration;
+using ForgeModGenerator.Converters;
+using ForgeModGenerator.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 using System.IO;
 
 namespace ForgeModGenerator.Tests
@@ -19,6 +22,15 @@ namespace ForgeModGenerator.Tests
             string armorBasePath = Path.Combine(sourcePath, SourceCodeLocator.ArmorBase.RelativePath);
             string armorBaseFileName = Path.GetFileNameWithoutExtension(armorBasePath);
             Assert.AreEqual(armorBaseFileName, SourceCodeLocator.ArmorBase.ClassName);
+        }
+
+        [TestMethod]
+        public void ExportMcModInfo()
+        {
+            McModInfo modInfo = new McModInfo();
+            string serializedModInfo = JsonConvert.SerializeObject(modInfo, Formatting.Indented, new McModInfoJsonConverter());
+            serializedModInfo = "[\n" + serializedModInfo + "\n]";
+            Assert.AreEqual("", serializedModInfo);
         }
     }
 }

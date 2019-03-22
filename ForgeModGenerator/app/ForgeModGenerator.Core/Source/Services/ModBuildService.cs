@@ -28,17 +28,9 @@ namespace ForgeModGenerator.Services
         }
 
         // Ignore LanuchSetup and run client for this mod
-        public void RunClient(Mod mod)
-        {
-            Log.Info($"Running client for {mod.ModInfo.Name}...");
-            throw new System.NotImplementedException();
-        }
+        public void RunClient(Mod mod) => throw new System.NotImplementedException();
 
         // Ignore LanuchSetup and run server for this mod
-        public void RunServer(Mod mod)
-        {
-            Log.Info($"Running server for {mod.ModInfo.Name}...");
-            throw new System.NotImplementedException();
-        }
+        public void RunServer(Mod mod) => throw new System.NotImplementedException();
     }
 }

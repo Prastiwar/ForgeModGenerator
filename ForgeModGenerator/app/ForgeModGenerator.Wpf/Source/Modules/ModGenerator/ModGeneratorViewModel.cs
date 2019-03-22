@@ -182,8 +182,8 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
             RegenerateSourceCode(mod);
 
             mod.WorkspaceSetup.Setup(mod);
-            Mod.Export(mod);
-            McModInfo.Export(mod.ModInfo);
+            ModHelper.ExportMod(mod);
+            ModHelper.ExportMcInfo(mod.ModInfo);
 
             SessionContext.Mods.Add(mod);
             Log.Info($"{mod.ModInfo.Name} was created successfully", true);
@@ -191,7 +191,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
 
         private void RegenerateSourceCode(Mod mod)
         {
-            foreach (ScriptCodeGenerator generator in ReflectionHelper.GetSubclasses<ScriptCodeGenerator>(mod))
+            foreach (ScriptCodeGenerator generator in ReflectionHelper.EnumerateSubclasses<ScriptCodeGenerator>(mod))
             {
                 generator.RegenerateScript();
             }
@@ -214,7 +214,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
                 Log.Warning($"Selected mod is not valid. Reason: {validation}", true);
                 return;
             }
-            Mod oldValues = Mod.Import(ModPaths.ModRootFolder(mod.CachedName));
+            Mod oldValues = ModHelper.ImportMod(ModPaths.ModRootFolder(mod.CachedName));
             try
             {
                 bool organizationChanged = mod.Organization != oldValues.Organization;
@@ -290,8 +290,8 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
                     }
                 }
 
-                McModInfo.Export(mod.ModInfo);
-                Mod.Export(mod);
+                ModHelper.ExportMcInfo(mod.ModInfo);
+                ModHelper.ExportMod(mod);
             }
             catch (Exception ex)
             {

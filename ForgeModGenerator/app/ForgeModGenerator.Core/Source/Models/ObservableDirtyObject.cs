@@ -1,12 +1,10 @@
-﻿using Newtonsoft.Json;
-using Prism.Mvvm;
+﻿using Prism.Mvvm;
 using System.Runtime.CompilerServices;
 
 namespace ForgeModGenerator.Models
 {
     public class ObservableDirtyObject : BindableBase, IDirty
     {
-        [JsonIgnore]
         public bool IsDirty { get; set; }
 
         protected bool DirtSetProperty<T>(ref T variable, T newValue, [CallerMemberName] string propertyName = null)

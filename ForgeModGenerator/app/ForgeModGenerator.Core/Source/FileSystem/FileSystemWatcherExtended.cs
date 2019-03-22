@@ -17,7 +17,6 @@ namespace ForgeModGenerator
         public string FullPath { get; }
     }
 
-    [System.ComponentModel.DesignerCategory("Code")]
     public class FileSystemWatcherExtended : FileSystemWatcher
     {
         public FileSystemWatcherExtended() : this(string.Empty) { }

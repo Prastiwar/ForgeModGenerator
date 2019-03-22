@@ -1,4 +1,3 @@
-using Prism.Mvvm;
 using System;
 
 // Holds information about page key and page type(class)
@@ -14,15 +13,15 @@ public class PageInfo
     }
 }
 
-// Automatically registered page
-public class PageInfo<T> : PageInfo where T : BindableBase
+// Holds information about page key, page type(class) and it's viewmodel
+public class PageInfo<T> : PageInfo
 {
     public Type ViewModelType;
     public PageInfo(string key, Type pageType) : base(key, pageType) => ViewModelType = typeof(T);
 }
 
 // Holds info about every page in application
-public struct Pages
+public static class Pages
 {
     public const string RegionName = "PageRegion";
 

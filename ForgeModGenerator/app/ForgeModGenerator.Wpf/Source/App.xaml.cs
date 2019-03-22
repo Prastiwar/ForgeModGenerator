@@ -19,7 +19,6 @@ using ForgeModGenerator.SoundGenerator.Views;
 using ForgeModGenerator.TextureGenerator.ViewModels;
 using ForgeModGenerator.TextureGenerator.Views;
 using Prism.Ioc;
-using Prism.Regions;
 using Prism.Unity;
 using System.Windows;
 
@@ -52,7 +51,7 @@ namespace ForgeModGenerator
             containerRegistry.Register<IModBuildService, ModBuildService>();
             containerRegistry.Register<IDialogService, DialogService>();
             containerRegistry.Register<ISnackbarService, SnackbarService>();
-            
+
             containerRegistry.RegisterForNavigation<DashboardPage, DashboardViewModel>(Pages.Dashboard);
             containerRegistry.RegisterForNavigation<BuildConfigurationPage, BuildConfigurationViewModel>(Pages.BuildConfiguration);
             containerRegistry.RegisterForNavigation<ModGeneratorPage, ModGeneratorViewModel>(Pages.ModGenerator);

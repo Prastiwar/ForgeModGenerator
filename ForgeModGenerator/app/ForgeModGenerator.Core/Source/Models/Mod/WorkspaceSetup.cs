@@ -1,48 +1,36 @@
-﻿//using Newtonsoft.Json;
-//using System;
+﻿using System;
 
-//namespace ForgeModGenerator.Models
-//{
-//    public abstract class WorkspaceSetup
-//    {
-//        public static WorkspaceSetup NONE = new EmptyWorkspace();
+namespace ForgeModGenerator.Models
+{
+    public abstract class WorkspaceSetup
+    {
+        public static WorkspaceSetup NONE = new EmptyWorkspace();
 
-//        [JsonProperty(Required = Required.Always)]
-//        public string Name { get; protected set; }
+        public string Name => GetType().Name.Replace("Workspace", "");
 
-//        public WorkspaceSetup(string name) => Name = name;
+        public abstract void Setup(Mod mod);
 
-//        public abstract void Setup(Mod mod);
+        public override bool Equals(object obj) => obj is WorkspaceSetup objSetup && objSetup.Name == Name;
+        public override int GetHashCode() => base.GetHashCode();
+    }
 
-//        public override bool Equals(object obj) => obj is WorkspaceSetup objSetup && objSetup.Name == Name;
-//        public override int GetHashCode() => base.GetHashCode();
-//    }
+    public class EmptyWorkspace : WorkspaceSetup
+    {
+        public override void Setup(Mod mod) { }
+    }
 
-//    public class EmptyWorkspace : WorkspaceSetup
-//    {
-//        public EmptyWorkspace() : base("None") { }
+    public class EclipseWorkspace : WorkspaceSetup
+    {
+        public override void Setup(Mod mod) => throw new NotImplementedException();
+    }
 
-//        public override void Setup(Mod mod) { }
-//    }
+    public class IntelliJIDEAWorkspace : WorkspaceSetup
+    {
+        public override void Setup(Mod mod) => throw new NotImplementedException();
+    }
 
-//    public class EclipseWorkspace : WorkspaceSetup
-//    {
-//        public EclipseWorkspace() : base("Eclipse") { }
-
-//        public override void Setup(Mod mod) => throw new NotImplementedException();
-//    }
-
-//    public class IntelliJIDEAWorkspace : WorkspaceSetup
-//    {
-//        public IntelliJIDEAWorkspace() : base("IntelliJIDEA") { }
-
-//        public override void Setup(Mod mod) => throw new NotImplementedException();
-//    }
-
-//    public class VSCodeWorkspace : WorkspaceSetup
-//    {
-//        public VSCodeWorkspace() : base("VSCode") { }
-
-//        public override void Setup(Mod mod) => throw new NotImplementedException();
-//    }
-//}
+    public class VSCodeWorkspace : WorkspaceSetup
+    {
+        public override void Setup(Mod mod) => throw new NotImplementedException();
+    }
+}

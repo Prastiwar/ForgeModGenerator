@@ -1,6 +1,5 @@
 using ForgeModGenerator.Models;
 using ForgeModGenerator.Services;
-using ForgeModGenerator.ViewModels;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Regions;

@@ -132,7 +132,7 @@ namespace ForgeModGenerator.Services
             List<Mod> found = new List<Mod>(paths.Length);
             foreach (string path in paths)
             {
-                Mod imported = Mod.Import(path);
+                Mod imported = ModHelper.ImportMod(path);
                 if (imported != null)
                 {
                     found.Add(imported);
