@@ -29,7 +29,7 @@ namespace ForgeModGenerator.SoundGenerator.Converters
         public override bool CanConvert(Type objectType) => objectType.IsAssignableFrom(typeof(ICollection<SoundEvent>))
                                                         || objectType.IsAssignableFrom(typeof(IEnumerable<SoundEvent>))
                                                         || objectType.IsAssignableFrom(typeof(ObservableCollection<SoundEvent>))
-                                                        || objectType.IsAssignableFrom(typeof(ObservableFolder<SoundEvent>))
+                                                        || objectType.IsAssignableFrom(typeof(WpfObservableFolder<SoundEvent>))
                                                         || objectType.IsAssignableFrom(typeof(WpfObservableRangeCollection<SoundEvent>))
                                                         || objectType.IsAssignableFrom(typeof(ObservableRangeCollection<SoundEvent>))
                                                         || objectType.IsAssignableFrom(typeof(List<SoundEvent>));
@@ -59,9 +59,9 @@ namespace ForgeModGenerator.SoundGenerator.Converters
                 soundEvent.IsDirty = false;
                 folders.Add(soundEvent);
             }
-            if (objectType.IsAssignableFrom(typeof(ObservableFolder<SoundEvent>)))
+            if (objectType.IsAssignableFrom(typeof(WpfObservableFolder<SoundEvent>)))
             {
-                return new ObservableFolder<SoundEvent>(soundsPath, folders);
+                return new WpfObservableFolder<SoundEvent>(soundsPath, folders);
             }
             else if (objectType.IsAssignableFrom(typeof(ObservableCollection<SoundEvent>)))
             {

@@ -39,8 +39,8 @@ namespace ForgeModGenerator.ViewModels
 
         public ISessionContextService SessionContext { get; }
 
-        private ObservableFolder<TFolder> folders;
-        public ObservableFolder<TFolder> Folders {
+        private WpfObservableFolder<TFolder> folders;
+        public WpfObservableFolder<TFolder> Folders {
             get => folders;
             set {
                 SetProperty(ref folders, value);
@@ -125,9 +125,9 @@ namespace ForgeModGenerator.ViewModels
                 {
                     Folders.Clear();
                 }
-                Folders = new ObservableFolder<TFolder>(FoldersRootPath, Enumerable.Empty<TFolder>());
+                Folders = new WpfObservableFolder<TFolder>(FoldersRootPath, Enumerable.Empty<TFolder>());
                 FolderFactory = new DefaultFoldersFactory<TFolder, TFile>(AllowedFileExtensionsPatterns);
-                FileSynchronizer = new FoldersSynchronizer<TFolder, TFile>(Folders, FolderFactory, FoldersRootPath, AllowedFileExtensionsPatterns);
+                FileSynchronizer = new FoldersSynchronizer<TFolder, TFile>(SyncInvokeObject.Default, Folders, FolderFactory, FoldersRootPath, AllowedFileExtensionsPatterns);
                 Folders.AddRange(await FolderFactory.FindFoldersAsync(FoldersRootPath ?? FoldersJsonFilePath, true));
                 IsLoading = false;
                 return true;
@@ -161,13 +161,13 @@ namespace ForgeModGenerator.ViewModels
                 {
                     if (FileSystemInfoReference.GetReferenceCount(folder.Files[i].Info.FullName) <= 1 && File.Exists(folder.Files[i].Info.FullName))
                     {
-                        IOSafe.DeleteFileRecycle(folder.Files[i].Info.FullName);
+                        IOSafeWin.DeleteFileRecycle(folder.Files[i].Info.FullName);
                     }
                 }
                 folder.Clear();
                 if (Directory.Exists(folder.Info.FullName) && IOHelper.IsEmpty(folder.Info.FullName))
                 {
-                    IOSafe.DeleteDirectoryRecycle(folder.Info.FullName);
+                    IOSafeWin.DeleteDirectoryRecycle(folder.Info.FullName);
                 }
             }
         }
@@ -190,9 +190,9 @@ namespace ForgeModGenerator.ViewModels
             {
                 if (!FileSystemInfoReference.IsReferenced(param.Item2.Info.FullName))
                 {
-                    if (!IOSafe.DeleteFileRecycle(param.Item2.Info.FullName))
+                    if (!IOSafeWin.DeleteFileRecycle(param.Item2.Info.FullName))
                     {
-                        DialogService.ShowMessage(IOSafe.GetOperationFailedMessage(param.Item2.Info.FullName), "Deletion failed");
+                        DialogService.ShowMessage(IOSafeWin.GetOperationFailedMessage(param.Item2.Info.FullName), "Deletion failed");
                         param.Item1.Add(param.Item2);
                     }
                 }
@@ -233,9 +233,9 @@ namespace ForgeModGenerator.ViewModels
                         bool overwrite = await DialogService.ShowMessage($"File {newPath} already exists.{Environment.NewLine}Do you want to overwrite it?", "Existing file conflict", "Yes", "No", null);
                         if (overwrite)
                         {
-                            if (!IOSafe.CopyFile(filePath, newPath, true))
+                            if (!IOSafeWin.CopyFile(filePath, newPath, true))
                             {
-                                await DialogService.ShowMessage(IOSafe.GetOperationFailedMessage(filePath), "Copy failed");
+                                await DialogService.ShowMessage(IOSafeWin.GetOperationFailedMessage(filePath), "Copy failed");
                             }
                         }
                     }
@@ -246,9 +246,9 @@ namespace ForgeModGenerator.ViewModels
                 }
                 else
                 {
-                    if (!IOSafe.CopyFile(filePath, newPath))
+                    if (!IOSafeWin.CopyFile(filePath, newPath))
                     {
-                        await DialogService.ShowMessage(IOSafe.GetOperationFailedMessage(filePath), "Copy failed");
+                        await DialogService.ShowMessage(IOSafeWin.GetOperationFailedMessage(filePath), "Copy failed");
                     }
                 }
             }

@@ -140,9 +140,6 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Transactions" />
-    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
-    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Prism.Wpf.7.1.0.431\lib\net45\System.Windows.Interactivity.dll</HintPath>
@@ -195,6 +192,7 @@
     <Compile Include="Source\Common\Cache.cs" />
     <Compile Include="Source\Common\EditorForm.cs" />
     <Compile Include="Source\Common\Log.cs" />
+    <Compile Include="Source\Common\SyncInvokeObject.cs" />
     <Compile Include="Source\Converters\Json\ForgeVersionJsonConverter.cs" />
     <Compile Include="Source\Converters\Json\McModInfoJsonConverter.cs" />
     <Compile Include="Source\Converters\Json\ModJsonConverter.cs" />
@@ -210,8 +208,6 @@
     <Compile Include="Source\Converters\InvertBooleanConverter.cs" />
     <Compile Include="Source\Controls\NavButton.cs" />
     <Compile Include="Source\FileSystem\DefaultFoldersFactory.cs" />
-    <Compile Include="Source\FileSystem\FoldersFactory.cs" />
-    <Compile Include="Source\FileSystem\FoldersSynchronizer.cs" />
     <Compile Include="Source\Modules\ModGenerator\ModValidator.cs" />
     <Compile Include="Source\Modules\SoundGenerator\Controls\SoundFolderListBox.cs" />
     <Compile Include="Source\Modules\SoundGenerator\ObservableSoundEvents.cs" />
@@ -219,12 +215,9 @@
     <Compile Include="Source\Modules\SoundGenerator\SoundEventsSynchronizer.cs" />
     <Compile Include="Source\Services\DialogService.cs" />
     <Compile Include="Source\Services\SnackbarService.cs" />
-    <Compile Include="Source\Utility\Extensions\ObservableFolderExtensions.cs" />
-    <Compile Include="Source\FileSystem\FileItem.cs" />
-    <Compile Include="Source\FileSystem\FileReference.cs" />
     <Compile Include="Source\FileSystem\ObservableFolder.cs" />
     <Compile Include="Source\Utility\Extensions\ValidationExtensions.cs" />
-    <Compile Include="Source\Utility\Helpers\IOHelper.cs" />
+    <Compile Include="Source\Utility\Helpers\IOHelperWin.cs" />
     <Compile Include="Source\Persistence\JsonUpdater.cs" />
     <Compile Include="Source\Persistence\PreferenceData.cs" />
     <Compile Include="Source\Modules\ApplicationModule\BugReporter.xaml.cs">
@@ -254,7 +247,6 @@
     <Compile Include="Source\Modules\SoundGenerator\Models\SoundsGeneratorPreferences.cs" />
     <Compile Include="Source\Modules\SoundGenerator\Models\SoundEvent.cs" />
     <Compile Include="Source\Services\CommandTracker.cs" />
-    <Compile Include="Source\Services\ModBuildService.cs" />
     <Compile Include="Source\Controls\FolderExpanderControl.cs" />
     <Compile Include="Source\Modules\ModGenerator\BuildConfiguration\ModBuildForm.xaml.cs">
       <DependentUpon>ModBuildForm.xaml</DependentUpon>
@@ -264,7 +256,7 @@
     </Compile>
     <Compile Include="Source\Converters\PathToNameConverter.cs" />
     <Compile Include="Source\Utility\Extensions\JsonExtensions.cs" />
-    <Compile Include="Source\Utility\Helpers\IOSafe.cs" />
+    <Compile Include="Source\Utility\Helpers\IOSafeWin.cs" />
     <Compile Include="Source\Utility\Helpers\WPFHelper.cs" />
     <Compile Include="Source\Modules\AchievementGenerator\Achievement.cs" />
     <Compile Include="Source\Modules\BlockGenerator\Block.cs" />

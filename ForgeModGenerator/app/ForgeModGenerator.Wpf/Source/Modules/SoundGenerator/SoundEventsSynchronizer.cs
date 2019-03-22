@@ -1,5 +1,6 @@
 ﻿using ForgeModGenerator.SoundGenerator.Models;
 using ForgeModGenerator.Utility;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 
@@ -7,8 +8,8 @@ namespace ForgeModGenerator.SoundGenerator
 {
     public class SoundEventsSynchronizer : FoldersSynchronizer<SoundEvent, Sound>
     {
-        public SoundEventsSynchronizer(ObservableFolder<SoundEvent> foldersToSync, FoldersFactory<SoundEvent, Sound> factory, string rootPath = null, string filters = null)
-            : base(foldersToSync, factory, rootPath, filters) { }
+        public SoundEventsSynchronizer(ISynchronizeInvoke synchronizeObject,WpfObservableFolder<SoundEvent> foldersToSync, FoldersFactory<SoundEvent, Sound> factory, string rootPath = null, string filters = null)
+            : base(synchronizeObject, foldersToSync, factory, rootPath, filters) { }
 
         /// <inheritdoc/>
         public override void AddNotReferencedFiles()

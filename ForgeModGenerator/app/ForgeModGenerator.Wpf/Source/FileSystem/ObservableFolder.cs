@@ -12,51 +12,12 @@ using System.Windows.Data;
 
 namespace ForgeModGenerator
 {
-    public enum FileChange { Add, Remove }
-
-    public delegate void OnFileChangedEventHandler<TFile>(object sender, FileChangedEventArgs<TFile> e) where TFile : IFileSystemInfo;
-    public delegate void OnFilePropertyChangedEventHandler<T>(T sender, PropertyChangedEventArgs e);
-
-    public class FileChangedEventArgs<TFile> : EventArgs where TFile : IFileSystemInfo
-    {
-        public FileChangedEventArgs(IEnumerable<TFile> files, FileChange change)
-        {
-            Files = files ?? throw new ArgumentNullException(nameof(files));
-            File = files.FirstOrDefault();
-            Change = change;
-        }
-
-        public TFile File { get; }
-        public IEnumerable<TFile> Files { get; }
-        public FileChange Change { get; }
-    }
-
-    public interface IFileFolder : IFileSystemInfo, IDirty, INotifyCollectionChanged, INotifyPropertyChanged
-    {
-        bool Add(string filePath);
-        void AddRange(IEnumerable<string> filePaths);
-        void Clear();
-    }
-
-    public interface IFileFolder<T> : IFileFolder where T : IFileSystemInfo
-    {
-        event OnFileChangedEventHandler<T> FilesChanged;
-        event OnFilePropertyChangedEventHandler<T> FilePropertyChanged;
-
-        WpfObservableRangeCollection<T> Files { get; }
-
-        void AddRange(IEnumerable<T> items);
-        bool Add(T item);
-        bool Remove(T item);
-        bool Contains(T item);
-    }
-
-    public class ObservableFolder<T> : ObservableDirtyObject, IFileFolder<T>
+    public class WpfObservableFolder<T> : ObservableDirtyObject, IFileFolder<T>
         where T : IFileSystemInfo
     {
-        protected ObservableFolder() { }
+        protected WpfObservableFolder() { }
 
-        public ObservableFolder(string path)
+        public WpfObservableFolder(string path)
         {
             ThrowExceptionIfInvalid(path);
             Files = new WpfObservableRangeCollection<T>();
@@ -64,8 +25,8 @@ namespace ForgeModGenerator
             IsDirty = false;
         }
 
-        public ObservableFolder(IEnumerable<string> filePaths) : this(filePaths?.First(), filePaths) { }
-        public ObservableFolder(string path, IEnumerable<string> filePaths) : this(path)
+        public WpfObservableFolder(IEnumerable<string> filePaths) : this(filePaths?.First(), filePaths) { }
+        public WpfObservableFolder(string path, IEnumerable<string> filePaths) : this(path)
         {
             if (filePaths != null)
             {
@@ -74,8 +35,8 @@ namespace ForgeModGenerator
             IsDirty = false;
         }
 
-        public ObservableFolder(IEnumerable<T> files) : this(files?.FirstOrDefault()?.Info.FullName, files) { }
-        public ObservableFolder(string path, IEnumerable<T> files) : this(path)
+        public WpfObservableFolder(IEnumerable<T> files) : this(files?.FirstOrDefault()?.Info.FullName, files) { }
+        public WpfObservableFolder(string path, IEnumerable<T> files) : this(path)
         {
             if (files != null)
             {
@@ -84,9 +45,9 @@ namespace ForgeModGenerator
             IsDirty = false;
         }
 
-        public ObservableFolder(string path, SearchOption searchOption) : this(path, "*", searchOption) { }
-        public ObservableFolder(string path, string fileSearchPatterns) : this(path, fileSearchPatterns, SearchOption.TopDirectoryOnly) { }
-        public ObservableFolder(string path, string fileSearchPatterns, SearchOption searchOption) : this(path)
+        public WpfObservableFolder(string path, SearchOption searchOption) : this(path, "*", searchOption) { }
+        public WpfObservableFolder(string path, string fileSearchPatterns) : this(path, fileSearchPatterns, SearchOption.TopDirectoryOnly) { }
+        public WpfObservableFolder(string path, string fileSearchPatterns, SearchOption searchOption) : this(path)
         {
             AddRange(IOHelper.EnumerateFiles(path, fileSearchPatterns, searchOption));
             IsDirty = false;
@@ -102,11 +63,15 @@ namespace ForgeModGenerator
             get => info;
             private set => DirtSetProperty(ref info, value);
         }
-
-        private WpfObservableRangeCollection<T> files;
-        public WpfObservableRangeCollection<T> Files {
+        
+        private ObservableRangeCollection<T> files;
+        public ObservableRangeCollection<T> Files {
             get => files;
             protected set {
+                if (value != null && !(value is WpfObservableRangeCollection<T>))
+                {
+                    value = new WpfObservableRangeCollection<T>(value);
+                }
                 if (DirtSetProperty(ref files, value))
                 {
                     if (Files != null)
@@ -296,7 +261,7 @@ namespace ForgeModGenerator
             {
                 cloneFiles.Add((T)file.DeepClone());
             }
-            ObservableFolder<T> folder = new ObservableFolder<T>() { Files = new WpfObservableRangeCollection<T>() };
+            WpfObservableFolder<T> folder = new WpfObservableFolder<T>() { Files = new WpfObservableRangeCollection<T>() };
             folder.AddRange(cloneFiles);
             folder.SetInfo(Info.FullName);
             folder.IsDirty = false;
@@ -305,7 +270,7 @@ namespace ForgeModGenerator
 
         public virtual bool CopyValues(object fromCopy)
         {
-            if (fromCopy is ObservableFolder<T> item)
+            if (fromCopy is WpfObservableFolder<T> item)
             {
                 Files = item.Files;
                 SetInfo(item.Info.FullName);
@@ -318,7 +283,7 @@ namespace ForgeModGenerator
         {
             if (!IOHelper.IsPathValid(path))
             {
-                Log.Error(null, $"Called ObservableFolder constructor with invalid path parameter, {nameof(path)}");
+                Log.Error(null, $"Called WpfObservableFolder constructor with invalid path parameter, {nameof(path)}");
                 throw new ArgumentException("Invalid Path", nameof(path));
             }
         }

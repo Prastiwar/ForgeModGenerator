@@ -1,5 +1,4 @@
 ﻿using ForgeModGenerator.Utility;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -56,7 +55,7 @@ namespace ForgeModGenerator
             }
             catch (Exception ex)
             {
-                Log.Error(ex, $"Couldnt load {path}", true, $"File content: {content}");
+                //Log.Error(ex, $"Couldnt load {path}", true, $"File content: {content}");
                 return new Collection<TFolder>();
             }
             if (loadOnlyExisting)
@@ -81,7 +80,7 @@ namespace ForgeModGenerator
             }
             catch (Exception ex)
             {
-                Log.Error(ex, $"Couldnt load {path}", true, $"File content: {content}");
+                //Log.Error(ex, $"Couldnt load {path}", true, $"File content: {content}");
                 return new Collection<TFolder>();
             }
             if (loadOnlyExisting)
@@ -147,7 +146,7 @@ namespace ForgeModGenerator
         }
 
         /// <summary> Deserializes Json content to ICollection<TFolder> </summary>
-        protected virtual ICollection<TFolder> DeserializeFolders(string fileCotent) => JsonConvert.DeserializeObject<Collection<TFolder>>(fileCotent);
+        protected abstract ICollection<TFolder> DeserializeFolders(string fileCotent);
 
         protected ICollection<TFolder> CreateEmptyFoldersRoot(string folderPath) => new Collection<TFolder>() { ConstructFolderInstance(IOHelper.GetDirectoryPath(folderPath), null) };
     }

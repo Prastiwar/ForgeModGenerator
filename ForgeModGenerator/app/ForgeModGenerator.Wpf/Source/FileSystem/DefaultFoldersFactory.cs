@@ -1,6 +1,8 @@
 ﻿using ForgeModGenerator.Utility;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 
@@ -35,5 +37,7 @@ namespace ForgeModGenerator
             }
             return found.ToList();
         }
+
+        protected override ICollection<TFolder> DeserializeFolders(string fileCotent) => JsonConvert.DeserializeObject<Collection<TFolder>>(fileCotent);
     }
 }

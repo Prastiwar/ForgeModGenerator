@@ -7,7 +7,7 @@ using System.Windows.Forms;
 namespace ForgeModGenerator.TextureGenerator.ViewModels
 {
     /// <summary> TextureGenerator Business ViewModel </summary>
-    public class TextureGeneratorViewModel : FoldersWatcherViewModelBase<ObservableFolder<FileItem>, FileItem>
+    public class TextureGeneratorViewModel : FoldersWatcherViewModelBase<WpfObservableFolder<FileItem>, FileItem>
     {
         public TextureGeneratorViewModel(ISessionContextService sessionContext, IDialogService dialogService, ISnackbarService snackbarService) :
             base(sessionContext, dialogService, snackbarService)

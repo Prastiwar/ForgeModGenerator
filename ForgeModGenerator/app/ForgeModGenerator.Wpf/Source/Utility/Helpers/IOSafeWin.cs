@@ -4,7 +4,7 @@ using System.IO;
 
 namespace ForgeModGenerator.Utility
 {
-    public static class IOSafe
+    public static class IOSafeWin
     {
         public const string UnauthorizedAccessMessage = "You do not have privilaged to perform this action.";
 

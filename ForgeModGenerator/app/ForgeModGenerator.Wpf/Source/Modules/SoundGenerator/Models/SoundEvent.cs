@@ -10,7 +10,7 @@ using System.Windows.Data;
 namespace ForgeModGenerator.SoundGenerator.Models
 {
     [JsonConverter(typeof(SoundEventConverter))]
-    public class SoundEvent : ObservableFolder<Sound>, IDataErrorInfo, IValidable
+    public class SoundEvent : WpfObservableFolder<Sound>, IDataErrorInfo, IValidable
     {
         /// <summary> IMPORTANT: Prefer other ctor, this is used for serialization purposes </summary>
         protected SoundEvent() { }
@@ -75,7 +75,7 @@ namespace ForgeModGenerator.SoundGenerator.Models
 
         public override object DeepClone()
         {
-            ObservableFolder<Sound> baseClone = (ObservableFolder<Sound>)base.DeepClone();
+            WpfObservableFolder<Sound> baseClone = (WpfObservableFolder<Sound>)base.DeepClone();
             SoundEvent clone = new SoundEvent() {
                 Replace = Replace,
                 Subtitle = Subtitle,

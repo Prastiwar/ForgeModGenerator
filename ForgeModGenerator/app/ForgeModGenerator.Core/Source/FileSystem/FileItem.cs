@@ -3,12 +3,6 @@ using System.ComponentModel;
 
 namespace ForgeModGenerator
 {
-    public interface IFileSystemInfo : INotifyPropertyChanged, ICopiable, IDirty
-    {
-        FileSystemInfoReference Info { get; }
-        void SetInfo(string path);
-    }
-
     public interface IFileItem : IFileSystemInfo { }
 
     public class FileItem : ObservableDirtyObject, IFileItem

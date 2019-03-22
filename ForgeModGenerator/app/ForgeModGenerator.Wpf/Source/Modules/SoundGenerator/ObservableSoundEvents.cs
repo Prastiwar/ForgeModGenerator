@@ -5,7 +5,7 @@ using System.IO;
 
 namespace ForgeModGenerator.SoundGenerator
 {
-    public class ObservableSoundEvents : ObservableFolder<SoundEvent>
+    public class ObservableSoundEvents : WpfObservableFolder<SoundEvent>
     {
         public ObservableSoundEvents(string path) : base(path) { }
         public ObservableSoundEvents(IEnumerable<string> filePaths) : base(filePaths) { }

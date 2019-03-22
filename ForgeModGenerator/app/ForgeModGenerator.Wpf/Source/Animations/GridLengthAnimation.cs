@@ -6,6 +6,14 @@ namespace ForgeModGenerator.Animations
 {
     public class GridLengthAnimation : AnimationTimeline
     {
+        public GridLengthAnimation() { }
+        public GridLengthAnimation(GridLength from, GridLength to, Duration duration)
+        {
+            From = from;
+            To = to;
+            Duration = duration;
+        }
+
         public override Type TargetPropertyType => typeof(GridLength);
 
         protected override Freezable CreateInstanceCore() => new GridLengthAnimation();
@@ -20,14 +28,6 @@ namespace ForgeModGenerator.Animations
         public GridLength To {
             get => (GridLength)GetValue(ToProperty);
             set => SetValue(ToProperty, value);
-        }
-
-        public GridLengthAnimation() { }
-        public GridLengthAnimation(GridLength from, GridLength to, Duration duration)
-        {
-            From = from;
-            To = to;
-            Duration = duration;
         }
 
         public override object GetCurrentValue(object defaultOriginValue, object defaultDestinationValue, AnimationClock animationClock)

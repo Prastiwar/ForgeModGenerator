@@ -11,13 +11,13 @@ namespace ForgeModGenerator.SoundGenerator
 {
     public class SoundEventsFactory : FoldersFactory<SoundEvent, Sound>
     {
-        public SoundEventsFactory(ObservableFolder<SoundEvent> soundEvents, string modname, string modid, string filters) : base(filters)
+        public SoundEventsFactory(WpfObservableFolder<SoundEvent> soundEvents, string modname, string modid, string filters) : base(filters)
         {
             SetModInfo(modname, modid);
             SoundEvents = soundEvents;
         }
 
-        protected ObservableFolder<SoundEvent> SoundEvents { get; }
+        protected WpfObservableFolder<SoundEvent> SoundEvents { get; }
         protected string Modname { get; set; }
         protected string Modid { get; set; }
 

@@ -1,18 +1,17 @@
 ﻿using ForgeModGenerator.Utility;
-using ForgeModGenerator.Validations;
+using ForgeModGenerator.Validation;
 using Prism.Mvvm;
 using System;
 using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.IO;
-using System.Windows.Controls;
 
 namespace ForgeModGenerator
 {
     // Base class that manages file references in application and synchronizes it with explorer
     public abstract class FileSystemInfoReference : BindableBase, IDataErrorInfo
     {
-        public ValidationResult IsValid => new ValidationResult(((IDataErrorInfo)this)[nameof(ChangeName)] != null, "Path is not valid");
+        public ValidateResult IsValid => new ValidateResult(((IDataErrorInfo)this)[nameof(ChangeName)] != null, "Path is not valid");
 
         private string error;
         string IDataErrorInfo.Error => error;
@@ -86,24 +85,25 @@ namespace ForgeModGenerator
                 }
                 if (FullName != newPath)
                 {
-                    FluentValidation.Results.ValidationResult validationResults = new FullPathValidator().Validate(newPath);
-                    if (validationResults.IsValid)
-                    {
-                        if (IOHelper.IsFilePath(FullName))
-                        {
-                            IOHelperWin.MoveFile(FullName, newPath);
-                        }
-                        else
-                        {
-                            IOHelperWin.MoveDirectory(FullName, newPath);
-                        }
-                        SetInfo(newPath);
-                        error = null;
-                    }
-                    else
-                    {
-                        error = validationResults.ToString();
-                    }
+                    throw new NotImplementedException();
+                    //FluentValidation.Results.ValidationResult validationResults = new FullPathValidator().Validate(newPath);
+                    //if (validationResults.IsValid)
+                    //{
+                    //    if (IOHelper.IsFilePath(FullName))
+                    //    {
+                    //        IOHelperWin.MoveFile(FullName, newPath);
+                    //    }
+                    //    else
+                    //    {
+                    //        IOHelperWin.MoveDirectory(FullName, newPath);
+                    //    }
+                    //    SetInfo(newPath);
+                    //    error = null;
+                    //}
+                    //else
+                    //{
+                    //    error = validationResults.ToString();
+                    //}
                 }
                 else
                 {

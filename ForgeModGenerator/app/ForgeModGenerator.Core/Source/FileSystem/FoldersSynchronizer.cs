@@ -2,9 +2,9 @@
 using ForgeModGenerator.Utility;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Windows;
 
 namespace ForgeModGenerator
 {
@@ -12,7 +12,7 @@ namespace ForgeModGenerator
         where TFolder : class, IFileFolder<TFile>
         where TFile : class, IFileItem
     {
-        public FoldersSynchronizer(ObservableFolder<TFolder> foldersToSync, FoldersFactory<TFolder, TFile> factory, string rootPath = null, string filters = null)
+        public FoldersSynchronizer(ISynchronizeInvoke synchronizingObject, IFileFolder<TFolder> foldersToSync, FoldersFactory<TFolder, TFile> factory, string rootPath = null, string filters = null)
         {
             this.rootPath = rootPath;
             this.filters = filters;
@@ -23,6 +23,7 @@ namespace ForgeModGenerator
                 IncludeSubdirectories = true,
                 MonitorDirectoryChanges = true,
                 EnableRaisingEvents = true,
+                SynchronizingObject = synchronizingObject,
                 NotifyFilter = NotifyFilters.DirectoryName | NotifyFilters.FileName
             };
             FileWatcher.FileCreated += FileWatcher_Created;
@@ -37,8 +38,8 @@ namespace ForgeModGenerator
             set => factory = value ?? throw new ArgumentNullException(nameof(value));
         }
 
-        private ObservableFolder<TFolder> syncedFolders;
-        public ObservableFolder<TFolder> SyncedFolders {
+        private IFileFolder<TFolder> syncedFolders;
+        public IFileFolder<TFolder> SyncedFolders {
             get => syncedFolders;
             set => syncedFolders = value ?? throw new ArgumentNullException(nameof(value));
         }
@@ -159,11 +160,11 @@ namespace ForgeModGenerator
         {
             if (IOHelper.IsDirectoryPath(e.FullPath))
             {
-                Application.Current.Dispatcher.Invoke(() => { SyncCreateFolder(e.FullPath, true); });
+                SyncCreateFolder(e.FullPath, true);
             }
             else // is file
             {
-                Application.Current.Dispatcher.Invoke(() => { SyncCreateFile(e.FullPath); });
+                SyncCreateFile(e.FullPath);
             }
         }
 
@@ -171,11 +172,11 @@ namespace ForgeModGenerator
         {
             if (IOHelper.IsDirectoryPath(e.FullPath))
             {
-                Application.Current.Dispatcher.Invoke(() => { SyncRemoveFolder(e.FullPath); });
+                SyncRemoveFolder(e.FullPath);
             }
             else // is file
             {
-                Application.Current.Dispatcher.Invoke(() => { SyncRemoveFile(e.FullPath); });
+                SyncRemoveFile(e.FullPath);
             }
         }
 
@@ -183,15 +184,15 @@ namespace ForgeModGenerator
         {
             if (IOHelper.IsDirectoryPath(e.FullPath))
             {
-                Application.Current.Dispatcher.Invoke(() => { SyncRenameFolder(e.OldFullPath, e.FullPath); });
+                SyncRenameFolder(e.OldFullPath, e.FullPath);
             }
             else // is file
             {
-                Application.Current.Dispatcher.Invoke(() => { SyncRenameFile(e.OldFullPath, e.FullPath); });
+                SyncRenameFile(e.OldFullPath, e.FullPath);
             }
         }
 
-        protected void FileWatcher_SubPathRenamed(object sender, FileSubPathEventArgs e) => Application.Current.Dispatcher.Invoke(() => { SyncRenameFile(e.OldFullPath, e.FullPath); });
+        protected void FileWatcher_SubPathRenamed(object sender, FileSubPathEventArgs e) => SyncRenameFile(e.OldFullPath, e.FullPath);
 
         /// <summary> Throws exception if given path is not sub path of RootPath </summary>
         protected void SynchronizationCheck(string actualPath)
