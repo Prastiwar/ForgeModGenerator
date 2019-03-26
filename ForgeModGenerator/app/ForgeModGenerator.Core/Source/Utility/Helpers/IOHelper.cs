@@ -9,9 +9,108 @@ namespace ForgeModGenerator.Utility
 {
     public static class IOHelper
     {
+        /// <summary> Returns DirectoryInfo or FileInfo as FileSystemInfo when paths exists </summary>
+        public static FileSystemInfo GetFileSystemInfo(string path)
+        {
+            FileInfo fileInfo = new FileInfo(path);
+            if (fileInfo.Exists)
+            {
+                return fileInfo;
+            }
+            DirectoryInfo dirInfo = new DirectoryInfo(path);
+            if (dirInfo.Exists)
+            {
+                return dirInfo;
+            }
+            return null;
+        }
+
+        /// <summary> Rename file name </summary>
+        /// <param name="oldFullPath"> Full path of file to be renamed </param>
+        /// <param name="newName"> New file name </param>
+        /// <param name="changeExtension"> Defines if <paramref name="newName"/> should change file extension </param>
+        /// <exception cref="IOException"> Thrown when one of parameters are null </exception>
+        /// <exception cref="ArgumentNullException"> Thrown when file with <paramref name="newName"/> already exists </exception>
+        public static void RenameFile(string oldFullPath, string newName, bool changeExtension = false)
+        {
+            if (string.IsNullOrEmpty(oldFullPath))
+            {
+                throw new ArgumentNullException(nameof(oldFullPath));
+            }
+            if (string.IsNullOrEmpty(newName))
+            {
+                throw new ArgumentNullException(nameof(newName));
+            }
+            FileInfo info = new FileInfo(oldFullPath);
+            string oldExactNAme = info.Directory.EnumerateFiles(info.Name).First().Name;
+            if (!string.Equals(oldExactNAme, newName, StringComparison.CurrentCulture))
+            {
+                string folder = Path.GetDirectoryName(oldFullPath);
+                string newPath = !changeExtension ? Path.Combine(folder, newName + info.Extension) : Path.Combine(folder, newName);
+                bool changeCase = string.Equals(oldExactNAme, newName, StringComparison.CurrentCultureIgnoreCase);
+
+                if (File.Exists(newPath) && !changeCase)
+                {
+                    throw new IOException($"File already exists: {newPath}");
+                }
+                File.Move(oldFullPath, newPath);
+            }
+        }
+
+        /// <summary> Rename directory name </summary>
+        /// <param name="oldFullPath"> Full path of directory to be renamed </param>
+        /// <param name="newName"> New directory name </param>
+        /// <exception cref="IOException"> Thrown when one of parameters are null </exception>
+        /// <exception cref="ArgumentNullException"> Thrown when directory with <paramref name="newName"/> already exists </exception>
+        public static void RenameDirectory(string oldFullPath, string newName)
+        {
+            if (string.IsNullOrEmpty(oldFullPath))
+            {
+                throw new ArgumentNullException(nameof(oldFullPath));
+            }
+            if (string.IsNullOrEmpty(newName))
+            {
+                throw new ArgumentNullException(nameof(newName));
+            }
+            DirectoryInfo info = new DirectoryInfo(oldFullPath);
+            string oldExactName = info.Parent.EnumerateDirectories(info.Name).First().Name;
+            if (!string.Equals(oldExactName, newName, StringComparison.CurrentCulture))
+            {
+                string folder = Path.GetDirectoryName(oldFullPath);
+                string newPath = Path.Combine(folder, newName);
+                bool changeCase = string.Equals(oldExactName, newName, StringComparison.CurrentCultureIgnoreCase);
+
+                if (Directory.Exists(newPath) && !changeCase)
+                {
+                    throw new IOException($"Directory already exists: {newPath}");
+                }
+                else if (changeCase)
+                {
+                    // Move fails when changing case, so need to perform two moves
+                    string tempPath = Path.Combine(folder, Guid.NewGuid().ToString());
+                    Directory.Move(oldFullPath, tempPath);
+                    Directory.Move(tempPath, newPath);
+                }
+                else
+                {
+                    Directory.Move(oldFullPath, newPath);
+                }
+            }
+        }
+
+        /// <summary> Recursively copy directory </summary>
+        /// <param name="sourceDirPath"> Full path of directory to be copied </param>
+        /// <param name="destDirPath"> Full path of location where directory should be pasted </param>
+        /// <param name="copySubDirs"> Should copy every sub directory? </param>
+        /// <exception cref="DirectoryNotFoundException"> Thrown when <paramref name="sourceDirPath"/> doesn't exists </exception>
         public static void DirectoryCopy(string sourceDirPath, string destDirPath, bool copySubDirs = true) => DirectoryCopy(sourceDirPath, destDirPath, "*", copySubDirs);
 
-        /// <summary> fileSearchPatterns accepts multiple patterns splitted by "|" </summary>
+        /// <summary> Recursively copy directory </summary>
+        /// <param name="sourceDirPath"> Full path of directory to be copied </param>
+        /// <param name="destDirPath"> Full path of location where directory should be pasted </param>
+        /// <param name="fileSearchPatterns"> String accepts multiple patterns splitted by "|" </param>
+        /// <param name="copySubDirs"> Should copy every sub directory? </param>
+        /// <exception cref="DirectoryNotFoundException"> Thrown when <paramref name="sourceDirPath"/> doesn't exists </exception>
         public static void DirectoryCopy(string sourceDirPath, string destDirPath, string fileSearchPatterns, bool copySubDirs = true)
         {
             DirectoryInfo dir = new DirectoryInfo(sourceDirPath);
@@ -90,13 +189,13 @@ namespace ForgeModGenerator.Utility
             }
         }
 
-        public static bool HasAnyFile(string path) => Directory.EnumerateFiles(path).Any();
+        public static bool HasAnyFile(string directoryPath) => Directory.EnumerateFiles(directoryPath).Any();
 
-        public static bool HasSubDirectories(string path) => Directory.EnumerateDirectories(path).Any();
+        public static bool HasSubDirectories(string directoryPath) => Directory.EnumerateDirectories(directoryPath).Any();
 
-        public static bool IsEmpty(string path) => !Directory.EnumerateFileSystemEntries(path).Any();
+        public static bool IsEmpty(string directoryPath) => !Directory.EnumerateFileSystemEntries(directoryPath).Any();
 
-        /// <summary> if path is file, return it's directory, else return path </summary>
+        /// <summary> if path is file, returns its directory, else returns path </summary>
         public static string GetDirectoryPath(string path) => IsFilePath(path) ? new FileInfo(path).Directory.FullName : path;
 
         public static bool PathExists(string path) => File.Exists(path) || Directory.Exists(path);
@@ -147,12 +246,20 @@ namespace ForgeModGenerator.Utility
             }
         }
 
-        public static void GenerateFolders(string rootPath, params string[] generatedFolders)
+        /// <summary>
+        /// Create all directories inside <paramref name="rootPath"/>
+        /// </summary>
+        /// <param name="rootPath"> Full path where folders should be created. It will be created if doesn't exist </param>
+        /// <param name="folderNames"> Directory names to create </param>
+        public static void GenerateFolders(string rootPath, params string[] folderNames)
         {
             Directory.CreateDirectory(rootPath); // create root even if generatedFolders is empty
-            foreach (string folder in generatedFolders)
+            if (folderNames != null)
             {
-                Directory.CreateDirectory(Path.Combine(rootPath, folder));
+                foreach (string folder in folderNames)
+                {
+                    Directory.CreateDirectory(Path.Combine(rootPath, folder));
+                }
             }
         }
 
@@ -168,7 +275,9 @@ namespace ForgeModGenerator.Utility
             return normalizedPath.StartsWith(normalizedBaseDirPath, StringComparison.OrdinalIgnoreCase);
         }
 
-        /// <summary> Increments Name(i) till isUnique is true </summary>
+        /// <summary> Increments <paramref name="name"/> as format Name(i) till <paramref name="isUnique"/> is true </summary>
+        /// <param name="name"> name that should be unique </param>
+        /// <param name="isUnique"> Func to define if name is unique </param>
         public static string GetUniqueName(string name, Func<string, bool> isUnique)
         {
             string uniqueName = name;
@@ -181,7 +290,12 @@ namespace ForgeModGenerator.Utility
             return uniqueName;
         }
 
-        /// <summary> fileSearchPatterns accepts multiple patterns splitted by "|" </summary>
+        /// <summary> Recursively copy directory </summary>
+        /// <param name="sourceDirPath"> Full path of directory to be copied </param>
+        /// <param name="destDirPath"> Full path of location where directory should be pasted </param>
+        /// <param name="fileSearchPatterns"> String accepts multiple patterns splitted by "|" </param>
+        /// <param name="copySubDirs"> Should copy every sub directory? </param>
+        /// <exception cref="DirectoryNotFoundException"> Thrown when <paramref name="sourceDirPath"/> doesn't exists </exception>
         public static async Task DirectoryCopyAsync(string sourceDirPath, string destDirPath, string fileSearchPatterns, bool copySubDirs = true)
         {
             DirectoryInfo dir = new DirectoryInfo(sourceDirPath);

@@ -9,7 +9,7 @@ using System.IO;
 namespace ForgeModGenerator.SoundGenerator.Models
 {
     [JsonConverter(typeof(SoundConverter))]
-    public class Sound : FileItem, IValidable
+    public class Sound : FileObject, IValidable
     {
         [JsonConverter(typeof(StringEnumConverter))]
         public enum SoundType { file, @event }
@@ -96,8 +96,12 @@ namespace ForgeModGenerator.SoundGenerator.Models
         {
             if (e.PropertyName == nameof(FileSystemInfoReference.FullName))
             {
-                FormatName();
-                IsDirty = false;
+                FileSystemInfoReference infoRef = (FileSystemInfoReference)sender;
+                if (infoRef.Info != null)
+                {
+                    FormatName();
+                    IsDirty = false;
+                }
             }
         }
 

@@ -13,7 +13,7 @@ namespace ForgeModGenerator.Controls
         {
             if (FileClickCommand == null)
             {
-                FileClickCommand = new DelegateCommand<IFileItem>(OpenFile);
+                FileClickCommand = new DelegateCommand<IFileObject>(OpenFile);
             }
             if (ShowContainerCommand == null)
             {
@@ -29,9 +29,9 @@ namespace ForgeModGenerator.Controls
         }
 
         public static readonly DependencyProperty FolderProperty =
-                DependencyProperty.Register("Folder", typeof(IFileFolder), typeof(FolderExpanderControl), new PropertyMetadata(null));
-        public IFileFolder Folder {
-            get => (IFileFolder)GetValue(FolderProperty);
+                DependencyProperty.Register("Folder", typeof(IFolderObject), typeof(FolderExpanderControl), new PropertyMetadata(null));
+        public IFolderObject Folder {
+            get => (IFolderObject)GetValue(FolderProperty);
             set => SetValue(FolderProperty, value);
         }
 
@@ -91,7 +91,7 @@ namespace ForgeModGenerator.Controls
             set => SetValue(RemoveFolderCommandProperty, value);
         }
 
-        protected void OpenFile(IFileItem fileItem) => System.Diagnostics.Process.Start(fileItem.Info.FullName);
+        protected void OpenFile(IFileObject fileItem) => System.Diagnostics.Process.Start(fileItem.Info.FullName);
 
         protected void ShowContainer()
         {

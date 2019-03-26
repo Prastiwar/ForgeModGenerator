@@ -10,7 +10,7 @@ using System.Text;
 
 namespace ForgeModGenerator.CodeGeneration.CodeDom
 {
-    public partial class JavaCodeGenerator : ICodeGenerator
+    public partial class JavaCodeGenerator : ICodeGenerator, IDisposable
     {
         public JavaCodeGenerator() { }
         public JavaCodeGenerator(IDictionary<string, string> providerOptions) => provOptions = providerOptions;
@@ -1003,5 +1003,7 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                 this.options = null;
             }
         }
+
+        public void Dispose() => ((IDisposable)output).Dispose();
     }
 }

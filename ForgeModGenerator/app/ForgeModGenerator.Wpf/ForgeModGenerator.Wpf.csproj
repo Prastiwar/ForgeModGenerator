@@ -191,11 +191,15 @@
     <Compile Include="Source\CodeGeneration\ScriptCodeGenerator.cs" />
     <Compile Include="Source\Common\Cache.cs" />
     <Compile Include="Source\Common\EditorForm.cs" />
+    <Compile Include="Source\Common\FileNameChanger.cs" />
     <Compile Include="Source\Common\Log.cs" />
     <Compile Include="Source\Common\SyncInvokeObject.cs" />
+    <Compile Include="Source\Controls\PathNameSubmitTextBox.cs" />
     <Compile Include="Source\Converters\Json\ForgeVersionJsonConverter.cs" />
     <Compile Include="Source\Converters\Json\McModInfoJsonConverter.cs" />
     <Compile Include="Source\Converters\Json\ModJsonConverter.cs" />
+    <Compile Include="Source\Converters\MethodToCommandConverter.cs" />
+    <Compile Include="Source\Utility\Extensions\BindingExtensions.cs" />
     <Compile Include="Source\Utility\Helpers\ModHelper.cs" />
     <Compile Include="Source\Common\ThirdParty\WpfObservableRangeCollection.cs" />
     <Compile Include="Source\Controls\EditableList.cs" />

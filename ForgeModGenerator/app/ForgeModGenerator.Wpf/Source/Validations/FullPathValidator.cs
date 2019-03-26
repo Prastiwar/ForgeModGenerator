@@ -1,6 +1,8 @@
 ﻿using FluentValidation;
 using ForgeModGenerator.Utility;
+using System.Globalization;
 using System.IO;
+using System.Windows.Controls;
 
 namespace ForgeModGenerator.Validations
 {
@@ -28,5 +30,15 @@ namespace ForgeModGenerator.Validations
         private bool NotExist(string fullPath) => !IOHelper.PathExists(fullPath);
 
         private bool HasSlash(string pathName) => pathName.NormalizePath().Contains("/");
+    }
+
+    public class FullPathValidatorRule : ValidationRule
+    {
+        public override ValidationResult Validate(object value, CultureInfo cultureInfo)
+        {
+            FullPathValidator validator = new FullPathValidator();
+            FluentValidation.Results.ValidationResult results = validator.Validate(value.ToString());
+            return new ValidationResult(results.IsValid, results.Errors.Count > 0 ? results.Errors[0] : null);
+        }
     }
 }

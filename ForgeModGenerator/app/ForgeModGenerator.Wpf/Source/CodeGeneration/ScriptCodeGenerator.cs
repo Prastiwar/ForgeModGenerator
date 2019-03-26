@@ -61,7 +61,7 @@ namespace ForgeModGenerator.CodeGeneration
 
         protected abstract CodeCompileUnit CreateTargetCodeUnit();
 
-        public void Dispose() => ((IDisposable)JavaProvider).Dispose();
+        public void Dispose() => JavaProvider.Dispose();
 
         #region Code expression and statements shorthands     
         protected CodeAttributeDeclaration NewAnnotation(string name, params CodeAttributeArgument[] arguments) => new CodeAttributeDeclaration(name, arguments);

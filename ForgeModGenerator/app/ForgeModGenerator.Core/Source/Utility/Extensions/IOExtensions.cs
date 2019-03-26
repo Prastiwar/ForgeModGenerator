@@ -12,8 +12,16 @@ namespace ForgeModGenerator.Utility
         public static string NormalizePath(this string path, bool forwardSlash = true) => forwardSlash ? path.Replace("\\", "/") : path.Replace("/", "\\");
 
         public static string NormalizeFullPath(this string path, bool forwardSlash = true) => forwardSlash ? Path.GetFullPath(path).Replace("\\", "/") : Path.GetFullPath(path).Replace("/", "\\");
-
-        public static bool ComparePath(this string path, string otherPath) => string.Compare(path.NormalizeFullPath(), otherPath.NormalizeFullPath(), StringComparison.OrdinalIgnoreCase) == 0;
+        
+        /// <summary> Compares two paths and returns true if they're equal. Always returns false if one of path is not valid path </summary>
+        public static bool ComparePath(this string path, string otherPath)
+        {
+            if (!IOHelper.IsPathValid(path) || !IOHelper.IsPathValid(otherPath))
+            {
+                return false;
+            }
+            return string.Compare(path.NormalizeFullPath(), otherPath.NormalizeFullPath(), StringComparison.OrdinalIgnoreCase) == 0;
+        }
 
         public static long GetLineCount(this Stream stream)
         {

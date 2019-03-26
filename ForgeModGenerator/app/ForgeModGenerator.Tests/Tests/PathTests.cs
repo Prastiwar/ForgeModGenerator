@@ -18,6 +18,17 @@ namespace ForgeModGenerator.Tests
         }
 
         [TestMethod]
+        public void PathExists()
+        {
+            FileInfo info = new FileInfo(Path.GetTempFileName());
+            string path = info.FullName;
+            string path1 = info.Directory.FullName;
+
+            Assert.IsTrue(IOHelper.PathExists(path));
+            Assert.IsTrue(IOHelper.PathExists(path1));
+        }
+
+        [TestMethod]
         public void Subpaths()
         {
             Assert.IsTrue(IOHelper.IsSubPathOf(@"c:\foo", @"c:"));

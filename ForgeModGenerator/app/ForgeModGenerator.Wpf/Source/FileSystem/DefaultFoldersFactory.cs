@@ -9,8 +9,8 @@ using System.Linq;
 namespace ForgeModGenerator
 {
     public class DefaultFoldersFactory<TFolder, TFile> : FoldersFactory<TFolder, TFile>
-        where TFolder : class, IFileFolder<TFile>
-        where TFile : class, IFileItem
+        where TFolder : class, IFolderObject<TFile>
+        where TFile : class, IFileObject
     {
         public DefaultFoldersFactory(string filters) : base(filters) { }
 

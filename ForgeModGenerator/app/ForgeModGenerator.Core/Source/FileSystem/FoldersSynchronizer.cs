@@ -9,10 +9,10 @@ using System.Linq;
 namespace ForgeModGenerator
 {
     public class FoldersSynchronizer<TFolder, TFile>
-        where TFolder : class, IFileFolder<TFile>
-        where TFile : class, IFileItem
+        where TFolder : class, IFolderObject<TFile>
+        where TFile : class, IFileObject
     {
-        public FoldersSynchronizer(ISynchronizeInvoke synchronizingObject, IFileFolder<TFolder> foldersToSync, FoldersFactory<TFolder, TFile> factory, string rootPath = null, string filters = null)
+        public FoldersSynchronizer(ISynchronizeInvoke synchronizingObject, IFolderObject<TFolder> foldersToSync, FoldersFactory<TFolder, TFile> factory, string rootPath = null, string filters = null)
         {
             this.rootPath = rootPath;
             this.filters = filters;
@@ -38,8 +38,8 @@ namespace ForgeModGenerator
             set => factory = value ?? throw new ArgumentNullException(nameof(value));
         }
 
-        private IFileFolder<TFolder> syncedFolders;
-        public IFileFolder<TFolder> SyncedFolders {
+        private IFolderObject<TFolder> syncedFolders;
+        public IFolderObject<TFolder> SyncedFolders {
             get => syncedFolders;
             set => syncedFolders = value ?? throw new ArgumentNullException(nameof(value));
         }
@@ -82,7 +82,7 @@ namespace ForgeModGenerator
             }
         }
 
-        protected bool RenameInfo(IFileSystemInfo info, string newPath)
+        protected bool RenameInfo(IFileSystemObject info, string newPath)
         {
             if (!info.Info.FullName.ComparePath(newPath))
             {

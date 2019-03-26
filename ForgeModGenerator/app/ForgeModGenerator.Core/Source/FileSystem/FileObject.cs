@@ -1,15 +1,16 @@
 ﻿using ForgeModGenerator.Models;
+using ForgeModGenerator.Utility;
 using System.ComponentModel;
 
 namespace ForgeModGenerator
 {
-    public interface IFileItem : IFileSystemInfo { }
+    public interface IFileObject : IFileSystemObject { }
 
-    public class FileItem : ObservableDirtyObject, IFileItem
+    public class FileObject : ObservableDirtyObject, IFileObject
     {
-        protected FileItem() { }
+        protected FileObject() { }
 
-        public FileItem(string filePath) => SetInfo(filePath);
+        public FileObject(string filePath) => SetInfo(filePath);
 
         private FileSystemInfoReference info;
         public FileSystemInfoReference Info {
@@ -25,19 +26,25 @@ namespace ForgeModGenerator
             }
             else
             {
-                Info = new FileInfoReference(path);
+                Info = new FileSystemInfoReference(path);
                 Info.PropertyChanged += Info_PropertyChanged;
             }
+        }
+
+        public void Rename(string newName)
+        {
+            IOHelper.RenameFile(Info.FullName, newName);
+            //Info.SetInfo(newinfo);
         }
 
         protected virtual void Info_PropertyChanged(object sender, PropertyChangedEventArgs e) { }
 
         public virtual object Clone() => MemberwiseClone();
-        public virtual object DeepClone() => new FileItem(Info.FullName);
+        public virtual object DeepClone() => new FileObject(Info.FullName);
 
         public virtual bool CopyValues(object fromCopy)
         {
-            if (fromCopy is IFileItem fileItem)
+            if (fromCopy is IFileObject fileItem)
             {
                 SetInfo(fileItem.Info.FullName);
                 return true;

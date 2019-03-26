@@ -3,12 +3,13 @@
                     xmlns:local="clr-namespace:ForgeModGenerator"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-                    xmlns:misc="clr-namespace:ForgeModGenerator.Utility"
                     xmlns:converters="clr-namespace:ForgeModGenerator.Converters"
                     xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
-                    xmlns:rules="clr-namespace:ForgeModGenerator.Validations">
+                    xmlns:validations="clr-namespace:ForgeModGenerator.Validations">
     <Style TargetType="{x:Type controls:SubmitTextBox}"
            BasedOn="{StaticResource {x:Type TextBox}}" />
+    <Style TargetType="{x:Type controls:PathNameSubmitTextBox}"
+           BasedOn="{StaticResource {x:Type controls:SubmitTextBox}}" />
     <Style x:Key="FileRenameStyle"
            TargetType="{x:Type controls:SubmitTextBox}"
            BasedOn="{StaticResource {x:Type TextBox}}">
@@ -18,8 +19,26 @@
                     <Border Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
-                        <controls:SubmitTextBox IsTabStop="True"
-                                                Text="{Binding Info.ChangeName, ValidatesOnDataErrors=True}">
+                        <controls:PathNameSubmitTextBox IsTabStop="True"
+                                                        Text="{Binding Info.Name, Mode=OneWay}"
+                                                        TextSubmitedCommand="{Binding ., Converter={StaticResource MethodToCommandConverter}, ConverterParameter=Rename}">
+                            <!--Text="{Binding Info.Name, Mode=OneWay, ValidatesOnDataErrors=True}"-->
+                            <controls:PathNameSubmitTextBox.FullPath>
+                                <Binding Path="Info.FullName"
+                                         Mode="OneWay">
+                                    <Binding.ValidationRules>
+                                        <validations:FullPathValidatorRule />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </controls:PathNameSubmitTextBox.FullPath>
+                            <!--<controls:PathNameSubmitTextBox.Text>
+                                <Binding Path="Info.Name"
+                                         Mode="OneWay">
+                                    <Binding.ValidationRules>
+                                        <validations:FullPathValidatorRule />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </controls:PathNameSubmitTextBox.Text>-->
                             <Validation.ErrorTemplate>
                                 <ControlTemplate>
                                     <StackPanel>
@@ -35,7 +54,7 @@
                                     </StackPanel>
                                 </ControlTemplate>
                             </Validation.ErrorTemplate>
-                        </controls:SubmitTextBox>
+                        </controls:PathNameSubmitTextBox>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>

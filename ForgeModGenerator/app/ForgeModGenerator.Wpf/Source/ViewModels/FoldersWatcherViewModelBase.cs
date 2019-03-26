@@ -13,8 +13,8 @@ using System.Windows.Input;
 namespace ForgeModGenerator.ViewModels
 {
     public abstract class FoldersWatcherViewModelBase<TFolder, TFile> : BindableBase
-        where TFolder : class, IFileFolder<TFile>
-        where TFile : class, IFileItem
+        where TFolder : class, IFolderObject<TFile>
+        where TFile : class, IFileObject
     {
         public FoldersWatcherViewModelBase(ISessionContextService sessionContext, IDialogService dialogService, ISnackbarService snackbarService)
         {

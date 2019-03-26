@@ -61,7 +61,7 @@ namespace ForgeModGenerator.Tests
         [TestMethod]
         public void ImportMod()
         {
-            string json = "json";
+            string json = "{}";
             JsonSerializerSettings settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All };
             settings.Converters.Add(new ModJsonConverter());
             settings.Converters.Add(new McModInfoJsonConverter());

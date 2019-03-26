@@ -9,10 +9,10 @@ namespace ForgeModGenerator
 {
     public enum FileChange { Add, Remove }
 
-    public delegate void OnFileChangedEventHandler<TFile>(object sender, FileChangedEventArgs<TFile> e) where TFile : IFileSystemInfo;
+    public delegate void OnFileChangedEventHandler<TFile>(object sender, FileChangedEventArgs<TFile> e) where TFile : IFileSystemObject;
     public delegate void OnFilePropertyChangedEventHandler<T>(T sender, PropertyChangedEventArgs e);
 
-    public class FileChangedEventArgs<TFile> : EventArgs where TFile : IFileSystemInfo
+    public class FileChangedEventArgs<TFile> : EventArgs where TFile : IFileSystemObject
     {
         public FileChangedEventArgs(IEnumerable<TFile> files, FileChange change)
         {
@@ -26,14 +26,14 @@ namespace ForgeModGenerator
         public FileChange Change { get; }
     }
 
-    public interface IFileFolder : IFileSystemInfo, IDirty, INotifyCollectionChanged, INotifyPropertyChanged
+    public interface IFolderObject : IFileSystemObject, IDirty, INotifyCollectionChanged, INotifyPropertyChanged
     {
         bool Add(string filePath);
         void AddRange(IEnumerable<string> filePaths);
         void Clear();
     }
 
-    public interface IFileFolder<T> : IFileFolder where T : IFileSystemInfo
+    public interface IFolderObject<T> : IFolderObject where T : IFileSystemObject
     {
         event OnFileChangedEventHandler<T> FilesChanged;
         event OnFilePropertyChangedEventHandler<T> FilePropertyChanged;

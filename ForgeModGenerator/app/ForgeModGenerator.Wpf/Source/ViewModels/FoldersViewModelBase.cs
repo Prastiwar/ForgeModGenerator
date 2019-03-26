@@ -11,8 +11,8 @@ namespace ForgeModGenerator.ViewModels
 {
     /// <summary> Business ViewModel Base class for making file list </summary>
     public abstract class FoldersViewModelBase<TFolder, TFile> : FoldersWatcherViewModelBase<TFolder, TFile>
-        where TFolder : class, IFileFolder<TFile>
-        where TFile : class, IFileItem, IValidable
+        where TFolder : class, IFolderObject<TFile>
+        where TFile : class, IFileObject, IValidable
     {
         public FoldersViewModelBase(ISessionContextService sessionContext, IDialogService dialogService, ISnackbarService snackbarService) :
             base(sessionContext, dialogService, snackbarService)

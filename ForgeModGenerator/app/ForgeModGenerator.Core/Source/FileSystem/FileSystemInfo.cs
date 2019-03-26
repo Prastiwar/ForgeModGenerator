@@ -2,9 +2,11 @@
 
 namespace ForgeModGenerator
 {
-    public interface IFileSystemInfo : INotifyPropertyChanged, ICopiable, IDirty
+    public interface IFileSystemObject : INotifyPropertyChanged, ICopiable, IDirty
     {
         FileSystemInfoReference Info { get; }
+
         void SetInfo(string path);
+        void Rename(string newName);
     }
 }

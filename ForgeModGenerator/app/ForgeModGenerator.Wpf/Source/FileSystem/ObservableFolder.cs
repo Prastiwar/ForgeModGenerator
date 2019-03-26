@@ -12,8 +12,8 @@ using System.Windows.Data;
 
 namespace ForgeModGenerator
 {
-    public class WpfObservableFolder<T> : ObservableDirtyObject, IFileFolder<T>
-        where T : IFileSystemInfo
+    public class WpfObservableFolder<T> : ObservableDirtyObject, IFolderObject<T>
+        where T : IFileSystemObject
     {
         protected WpfObservableFolder() { }
 
@@ -93,9 +93,6 @@ namespace ForgeModGenerator
 
         [JsonIgnore]
         public int Count => Files != null ? Files.Count : 0;
-
-        [JsonIgnore]
-        protected DirectoryInfo DirInfo => (DirectoryInfo)Info.FileSystemInfo;
 
         public bool Contains(T item) => Files.Contains(item);
 
@@ -177,7 +174,7 @@ namespace ForgeModGenerator
             {
                 T file = Files[index];
                 file.PropertyChanged -= File_PropertyChanged;
-                file.Info.Remove();
+                file.Info.Dispose();
                 Files.RemoveAt(index);
                 return true;
             }
@@ -189,7 +186,7 @@ namespace ForgeModGenerator
             if (Files.Remove(item))
             {
                 item.PropertyChanged -= File_PropertyChanged;
-                item.Info.Remove();
+                item.Info.Dispose();
                 return true;
             }
             return false;
@@ -200,10 +197,12 @@ namespace ForgeModGenerator
             foreach (T file in Files)
             {
                 file.PropertyChanged -= File_PropertyChanged;
-                file.Info.Remove();
+                file.Info.Dispose();
             }
             Files.Clear();
         }
+
+        public void Rename(string newName) => IOHelper.RenameDirectory(Info.FullName, newName);
 
         /// <summary> Initialize DirectoryInfoReference or rename </summary>
         public void SetInfo(string path)
@@ -215,7 +214,7 @@ namespace ForgeModGenerator
             }
             else
             {
-                Info = new DirectoryInfoReference(path);
+                Info = new FileSystemInfoReference(path);
                 Info.PropertyChanged += Info_PropertyChanged;
             }
         }
