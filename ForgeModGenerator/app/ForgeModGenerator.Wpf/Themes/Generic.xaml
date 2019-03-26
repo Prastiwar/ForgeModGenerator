@@ -22,7 +22,6 @@
                         <controls:PathNameSubmitTextBox IsTabStop="True"
                                                         Text="{Binding Info.Name, Mode=OneWay}"
                                                         TextSubmitedCommand="{Binding ., Converter={StaticResource MethodToCommandConverter}, ConverterParameter=Rename}">
-                            <!--Text="{Binding Info.Name, Mode=OneWay, ValidatesOnDataErrors=True}"-->
                             <controls:PathNameSubmitTextBox.FullPath>
                                 <Binding Path="Info.FullName"
                                          Mode="OneWay">
@@ -31,14 +30,6 @@
                                     </Binding.ValidationRules>
                                 </Binding>
                             </controls:PathNameSubmitTextBox.FullPath>
-                            <!--<controls:PathNameSubmitTextBox.Text>
-                                <Binding Path="Info.Name"
-                                         Mode="OneWay">
-                                    <Binding.ValidationRules>
-                                        <validations:FullPathValidatorRule />
-                                    </Binding.ValidationRules>
-                                </Binding>
-                            </controls:PathNameSubmitTextBox.Text>-->
                             <Validation.ErrorTemplate>
                                 <ControlTemplate>
                                     <StackPanel>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 
 namespace ForgeModGenerator.Utility
 {
@@ -12,7 +13,7 @@ namespace ForgeModGenerator.Utility
         public static string NormalizePath(this string path, bool forwardSlash = true) => forwardSlash ? path.Replace("\\", "/") : path.Replace("/", "\\");
 
         public static string NormalizeFullPath(this string path, bool forwardSlash = true) => forwardSlash ? Path.GetFullPath(path).Replace("\\", "/") : Path.GetFullPath(path).Replace("/", "\\");
-        
+
         /// <summary> Compares two paths and returns true if they're equal. Always returns false if one of path is not valid path </summary>
         public static bool ComparePath(this string path, string otherPath)
         {
@@ -21,6 +22,103 @@ namespace ForgeModGenerator.Utility
                 return false;
             }
             return string.Compare(path.NormalizeFullPath(), otherPath.NormalizeFullPath(), StringComparison.OrdinalIgnoreCase) == 0;
+        }
+
+        /// <summary> Returns string without `/` or `\` separator on the end </summary>
+        public static string TrimLastSeparator(this string directoryPath)
+        {
+            char lastChar = directoryPath[directoryPath.Length - 1];
+            if (lastChar == '/' || lastChar == '\\')
+            {
+                return directoryPath.Substring(0, directoryPath.Length - 1);
+            }
+            return directoryPath;
+        }
+
+        /// <summary> Rename file or directory name </summary>
+        /// <param name="newName"> New file or directory name </param>
+        /// <param name="changeExtension"> Defines if <paramref name="newName"/> should change file extension for file </param>
+        /// <exception cref="IOException"> Thrown when one of parameters are null </exception>
+        /// <exception cref="ArgumentNullException"> Thrown when file with <paramref name="newName"/> already exists </exception>
+        public static void Rename(this FileSystemInfo fileSystemInfo, string newName, bool changeExtension = false)
+        {
+            if (fileSystemInfo is FileInfo fileInfo)
+            {
+                Rename(fileInfo, newName, changeExtension);
+            }
+            else if (fileSystemInfo is DirectoryInfo dirInfo)
+            {
+                Rename(dirInfo, newName);
+            }
+        }
+
+        /// <summary> Rename directory name </summary>
+        /// <param name="newName"> New directory name </param>
+        /// <exception cref="IOException"> Thrown when one of parameters are null </exception>
+        /// <exception cref="ArgumentNullException"> Thrown when directory with <paramref name="newName"/> already exists </exception>
+        public static void Rename(this DirectoryInfo dirInfo, string newName)
+        {
+            if (!dirInfo.Exists)
+            {
+                throw new DirectoryNotFoundException(dirInfo.FullName);
+            }
+            if (string.IsNullOrEmpty(newName))
+            {
+                throw new ArgumentNullException(nameof(newName));
+            }
+            string oldExactName = dirInfo.Parent.EnumerateDirectories(dirInfo.Name).First().Name;
+            if (!string.Equals(oldExactName, newName, StringComparison.CurrentCulture))
+            {
+                string folder = Path.GetDirectoryName(dirInfo.FullName.TrimLastSeparator());
+                string newPath = Path.Combine(folder, newName);
+                bool changeCase = string.Equals(oldExactName, newName, StringComparison.CurrentCultureIgnoreCase);
+
+                if (Directory.Exists(newPath) && !changeCase)
+                {
+                    throw new IOException($"Directory already exists: {newPath}");
+                }
+                else if (changeCase)
+                {
+                    // Move fails when changing case, so need to perform two moves
+                    string tempPath = Path.Combine(folder, Guid.NewGuid().ToString());
+                    dirInfo.MoveTo(tempPath);
+                    dirInfo.MoveTo(newPath);
+                }
+                else
+                {
+                    dirInfo.MoveTo(newPath);
+                }
+            }
+        }
+
+        /// <summary> Rename file name </summary>
+        /// <param name="newName"> New file name </param>
+        /// <param name="changeExtension"> Defines if <paramref name="newName"/> should change file extension </param>
+        /// <exception cref="IOException"> Thrown when one of parameters are null </exception>
+        /// <exception cref="ArgumentNullException"> Thrown when file with <paramref name="newName"/> already exists </exception>
+        public static void Rename(this FileInfo fileInfo, string newName, bool changeExtension = false)
+        {
+            if (!fileInfo.Exists)
+            {
+                throw new FileNotFoundException(fileInfo.FullName);
+            }
+            if (string.IsNullOrEmpty(newName))
+            {
+                throw new ArgumentNullException(nameof(newName));
+            }
+            string oldExactNAme = fileInfo.Directory.EnumerateFiles(fileInfo.Name).First().Name;
+            if (!string.Equals(oldExactNAme, newName, StringComparison.CurrentCulture))
+            {
+                string folder = Path.GetDirectoryName(fileInfo.FullName);
+                string newPath = !changeExtension ? Path.Combine(folder, newName + fileInfo.Extension) : Path.Combine(folder, newName);
+                bool changeCase = string.Equals(oldExactNAme, newName, StringComparison.CurrentCultureIgnoreCase);
+
+                if (File.Exists(newPath) && !changeCase)
+                {
+                    throw new IOException($"File already exists: {newPath}");
+                }
+                fileInfo.MoveTo(newPath);
+            }
         }
 
         public static long GetLineCount(this Stream stream)

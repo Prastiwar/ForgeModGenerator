@@ -29,6 +29,19 @@ namespace ForgeModGenerator.Tests
         }
 
         [TestMethod]
+        public void PathCompare()
+        {
+            Assert.IsTrue(@"C:\foo".ComparePath(@"C:\foo"));
+            Assert.IsTrue(@"C:\foo".ComparePath(@"C:\Foo"));
+            Assert.IsTrue(@"C:\foo\smth.txt".ComparePath(@"C:\foo\smth.txt"));
+            Assert.IsTrue(@"C:\foo\smth.txt".ComparePath("C:/foo/smth.txt"));
+            Assert.IsTrue("C:/foo/smth.txt".ComparePath("C:/foo/smth.txt"));
+            Assert.IsTrue(@"C:\foo/smth.txt".ComparePath("C:/foo/smth.txt"));
+
+            Assert.IsFalse(@"C:\foo\smth.txt".ComparePath(@"C:\foo\smth"));
+        }
+
+        [TestMethod]
         public void Subpaths()
         {
             Assert.IsTrue(IOHelper.IsSubPathOf(@"c:\foo", @"c:"));

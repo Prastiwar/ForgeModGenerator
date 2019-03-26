@@ -63,7 +63,7 @@ namespace ForgeModGenerator
             get => info;
             private set => DirtSetProperty(ref info, value);
         }
-        
+
         private ObservableRangeCollection<T> files;
         public ObservableRangeCollection<T> Files {
             get => files;
@@ -202,7 +202,7 @@ namespace ForgeModGenerator
             Files.Clear();
         }
 
-        public void Rename(string newName) => IOHelper.RenameDirectory(Info.FullName, newName);
+        public void Rename(string newName) => Info.Info.Rename(newName);
 
         /// <summary> Initialize DirectoryInfoReference or rename </summary>
         public void SetInfo(string path)

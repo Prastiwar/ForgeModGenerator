@@ -25,78 +25,34 @@ namespace ForgeModGenerator.Utility
             return null;
         }
 
+        public static string GetRenamedFileFullName(string oldFullPath, string newName, bool changeExtension = false)
+        {
+            FileInfo info = new FileInfo(oldFullPath);
+            string folder = Path.GetDirectoryName(oldFullPath);
+            return !changeExtension ? Path.Combine(folder, newName + info.Extension) : Path.Combine(folder, newName);
+        }
+
+        public static string GetRenamedDirectoryFullName(string oldFullPath, string newName)
+        {
+            DirectoryInfo info = new DirectoryInfo(oldFullPath);
+            string folder = Path.GetDirectoryName(oldFullPath);
+            return Path.Combine(folder, newName);
+        }
+
         /// <summary> Rename file name </summary>
         /// <param name="oldFullPath"> Full path of file to be renamed </param>
         /// <param name="newName"> New file name </param>
         /// <param name="changeExtension"> Defines if <paramref name="newName"/> should change file extension </param>
         /// <exception cref="IOException"> Thrown when one of parameters are null </exception>
         /// <exception cref="ArgumentNullException"> Thrown when file with <paramref name="newName"/> already exists </exception>
-        public static void RenameFile(string oldFullPath, string newName, bool changeExtension = false)
-        {
-            if (string.IsNullOrEmpty(oldFullPath))
-            {
-                throw new ArgumentNullException(nameof(oldFullPath));
-            }
-            if (string.IsNullOrEmpty(newName))
-            {
-                throw new ArgumentNullException(nameof(newName));
-            }
-            FileInfo info = new FileInfo(oldFullPath);
-            string oldExactNAme = info.Directory.EnumerateFiles(info.Name).First().Name;
-            if (!string.Equals(oldExactNAme, newName, StringComparison.CurrentCulture))
-            {
-                string folder = Path.GetDirectoryName(oldFullPath);
-                string newPath = !changeExtension ? Path.Combine(folder, newName + info.Extension) : Path.Combine(folder, newName);
-                bool changeCase = string.Equals(oldExactNAme, newName, StringComparison.CurrentCultureIgnoreCase);
-
-                if (File.Exists(newPath) && !changeCase)
-                {
-                    throw new IOException($"File already exists: {newPath}");
-                }
-                File.Move(oldFullPath, newPath);
-            }
-        }
+        public static void RenameFile(string oldFullPath, string newName, bool changeExtension = false) => new FileInfo(oldFullPath).Rename(newName, changeExtension);
 
         /// <summary> Rename directory name </summary>
         /// <param name="oldFullPath"> Full path of directory to be renamed </param>
         /// <param name="newName"> New directory name </param>
         /// <exception cref="IOException"> Thrown when one of parameters are null </exception>
         /// <exception cref="ArgumentNullException"> Thrown when directory with <paramref name="newName"/> already exists </exception>
-        public static void RenameDirectory(string oldFullPath, string newName)
-        {
-            if (string.IsNullOrEmpty(oldFullPath))
-            {
-                throw new ArgumentNullException(nameof(oldFullPath));
-            }
-            if (string.IsNullOrEmpty(newName))
-            {
-                throw new ArgumentNullException(nameof(newName));
-            }
-            DirectoryInfo info = new DirectoryInfo(oldFullPath);
-            string oldExactName = info.Parent.EnumerateDirectories(info.Name).First().Name;
-            if (!string.Equals(oldExactName, newName, StringComparison.CurrentCulture))
-            {
-                string folder = Path.GetDirectoryName(oldFullPath);
-                string newPath = Path.Combine(folder, newName);
-                bool changeCase = string.Equals(oldExactName, newName, StringComparison.CurrentCultureIgnoreCase);
-
-                if (Directory.Exists(newPath) && !changeCase)
-                {
-                    throw new IOException($"Directory already exists: {newPath}");
-                }
-                else if (changeCase)
-                {
-                    // Move fails when changing case, so need to perform two moves
-                    string tempPath = Path.Combine(folder, Guid.NewGuid().ToString());
-                    Directory.Move(oldFullPath, tempPath);
-                    Directory.Move(tempPath, newPath);
-                }
-                else
-                {
-                    Directory.Move(oldFullPath, newPath);
-                }
-            }
-        }
+        public static void RenameDirectory(string oldFullPath, string newName) => new DirectoryInfo(oldFullPath).Rename(newName);
 
         /// <summary> Recursively copy directory </summary>
         /// <param name="sourceDirPath"> Full path of directory to be copied </param>

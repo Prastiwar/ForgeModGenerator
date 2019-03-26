@@ -31,11 +31,7 @@ namespace ForgeModGenerator
             }
         }
 
-        public void Rename(string newName)
-        {
-            IOHelper.RenameFile(Info.FullName, newName);
-            //Info.SetInfo(newinfo);
-        }
+        public void Rename(string newName) => Info.Info.Rename(newName);
 
         protected virtual void Info_PropertyChanged(object sender, PropertyChangedEventArgs e) { }
 
