@@ -62,6 +62,7 @@
   <ItemGroup>
     <Compile Include="Dummies.cs" />
     <Compile Include="Tests\CommandTrackerTests.cs" />
+    <Compile Include="IntegratedUnitTests.cs" />
     <Compile Include="Tests\JavaCodeGeneratorTests.cs" />
     <Compile Include="Tests\PathTests.cs" />
     <Compile Include="Tests\SoundGeneratorTests.cs" />

@@ -4,7 +4,12 @@ using System.IO;
 namespace ForgeModGenerator.Tests
 {
     public interface IDummyInterface { }
+
     public interface DummyInterface { }
+
+    public class DummyClass { public void Void() { } }
+
+    public struct DummyStruct { }
 
     public static class OutputHelper
     {

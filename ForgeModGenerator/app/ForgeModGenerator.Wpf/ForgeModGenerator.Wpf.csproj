@@ -193,6 +193,7 @@
     <Compile Include="Source\Common\EditorForm.cs" />
     <Compile Include="Source\Common\FileNameChanger.cs" />
     <Compile Include="Source\Common\Log.cs" />
+    <Compile Include="Source\Controls\Proxy\SelectorDecorator.cs" />
     <Compile Include="Source\Common\SyncInvokeObject.cs" />
     <Compile Include="Source\Controls\PathNameSubmitTextBox.cs" />
     <Compile Include="Source\Converters\Json\ForgeVersionJsonConverter.cs" />
@@ -236,7 +237,7 @@
     <Compile Include="Source\Converters\MultiValues\GenericMultiValueConverter.cs" />
     <Compile Include="Source\Converters\MultiValues\TupleValueConverter.cs" />
     <Compile Include="Source\Converters\PathToModidConverter.cs" />
-    <Compile Include="Source\Controls\BindingProxy.cs" />
+    <Compile Include="Source\Controls\Proxy\BindingProxy.cs" />
     <Compile Include="Source\Modules\GUIGenerator\CreativeTabCodeGenerator.cs" />
     <Compile Include="Source\Modules\ModGenerator\SourceCodeGeneration\BaseTypes\OtherBasesCodeGenerator.cs" />
     <Compile Include="Source\Modules\ModGenerator\SourceCodeGeneration\BaseTypes\BlockBasesCodeGenerator.cs" />

@@ -56,8 +56,8 @@
                     Margin="1"
                     Orientation="Horizontal">
             <ComboBox x:Name="ModsComboBox"
-                      ItemsSource="{Binding Path=SessionContext.Mods}"
                       SelectedItem="{Binding Path=SessionContext.SelectedMod}"
+                      controls:SelectorDecorator.ItemsSource="{Binding Path=SessionContext.Mods}"
                       Background="#FF404040"
                       Foreground="#FFE8E8E8"
                       BorderBrush="Wheat"

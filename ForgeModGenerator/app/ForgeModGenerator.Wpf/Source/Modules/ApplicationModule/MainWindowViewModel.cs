@@ -45,12 +45,6 @@ namespace ForgeModGenerator.ApplicationModule.ViewModels
 
         private void RunSelectedMod(Mod mod) => modBuilder.Run(mod);
 
-        private void ForceRefresh()
-        {
-            Mod mod = SessionContext.SelectedMod;
-            SessionContext.SelectedMod = null;
-            SessionContext.SelectedMod = mod;
-            SessionContext.Refresh();
-        }
+        private void ForceRefresh() => SessionContext.Refresh();
     }
 }

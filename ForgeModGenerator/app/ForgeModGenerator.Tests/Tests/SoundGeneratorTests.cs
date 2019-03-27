@@ -8,7 +8,7 @@ using System.Collections.ObjectModel;
 namespace ForgeModGenerator.Tests
 {
     [TestClass]
-    public class SoundGeneratorTests
+    public class SoundGeneratorTests : IntegratedUnitTests
     {
         private readonly string expectedSoundEventsJson = "{\"sounds\":{\"replace\":false,\"subtitle\":\"\",\"sounds\":[{\"name\":\"testmod:test\",\"volume\":1.0,\"pitch\":1.0,\"weight\":1,\"stream\":false,\"attenuation_distance\":0,\"preload\":false,\"type\":\"file\"},{\"name\":\"testmod:testCopy2\",\"volume\":0.5,\"pitch\":2.0,\"weight\":2,\"stream\":true,\"attenuation_distance\":1,\"preload\":true,\"type\":\"event\"}]},\"entity.vatras\":{\"replace\":true,\"subtitle\":\"Some subtitle2\",\"sounds\":[{\"name\":\"testmod:entity/vatras/greet\",\"volume\":1.0,\"pitch\":1.0,\"weight\":1,\"stream\":true,\"attenuation_distance\":0,\"preload\":true,\"type\":\"event\"}]}}";
         private readonly SoundEventConverter soundEventConverter = new SoundEventConverter();
