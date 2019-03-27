@@ -97,7 +97,7 @@ namespace ForgeModGenerator.SoundGenerator.Models
             if (e.PropertyName == nameof(FileSystemInfoReference.FullName))
             {
                 FileSystemInfoReference infoRef = (FileSystemInfoReference)sender;
-                if (infoRef.Info != null)
+                if (infoRef.IsValidReference)
                 {
                     FormatName();
                     IsDirty = false;
@@ -109,8 +109,12 @@ namespace ForgeModGenerator.SoundGenerator.Models
         {
             if (e.PropertyName == nameof(Info))
             {
-                FormatName();
-                IsDirty = false;
+                Sound sound = (Sound)sender;
+                if (sound.Info.IsValidReference)
+                {
+                    FormatName();
+                    IsDirty = false;
+                }
             }
         }
 

@@ -55,6 +55,7 @@ namespace ForgeModGenerator
         public string FullName => Info?.FullName;
         public string Extension => Info?.Extension;
         public int ReferenceCount => GetReferenceCount(FullName);
+        public bool IsValidReference => Info != null;
 
         private bool isDisposed = false;
 

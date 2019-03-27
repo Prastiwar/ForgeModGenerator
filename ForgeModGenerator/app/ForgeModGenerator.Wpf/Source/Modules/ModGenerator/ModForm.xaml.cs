@@ -68,6 +68,7 @@ namespace ForgeModGenerator.ModGenerator.Controls
             if (string.IsNullOrWhiteSpace(ModidTextBox.Text) || string.Compare(ModidTextBox.Text, text.Text, true) < 0)
             {
                 ModidTextBox.Text = text.Text;
+                ModidTextBox.SubmitText(ModidTextBox, text.Text);
             }
         }
     }

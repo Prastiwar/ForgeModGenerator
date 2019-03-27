@@ -10,6 +10,10 @@ namespace ForgeModGenerator.Converters
         public override ForgeVersion ReadJson(JsonReader reader, Type objectType, ForgeVersion existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
             JObject item = JObject.Load(reader);
+            if (!item.HasValues)
+            {
+                return null;
+            }
             string zipPath = item.GetValue(nameof(ForgeVersion.ZipPath), StringComparison.OrdinalIgnoreCase).ToObject<string>();
             string name = null;
             if (item.TryGetValue(nameof(ForgeVersion.Name), out JToken nameValue))

@@ -31,9 +31,12 @@ namespace ForgeModGenerator.Services
         IEnumerable<Formatting> FormattingTypes { get; }
     }
 
-    public class SessionContextService : ISessionContextService
+    public sealed class SessionContextService : ISessionContextService
     {
-        public SessionContextService()
+        public static SessionContextService Instance { get; }
+        static SessionContextService() => Instance = new SessionContextService();
+
+        private SessionContextService()
         {
             Log.Info("Session loading..");
             StartPage = new Uri("../ApplicationModule/DashboardPage.xaml", UriKind.Relative);
@@ -67,7 +70,7 @@ namespace ForgeModGenerator.Services
 
         public bool IsModSelected => SelectedMod != null;
 
-        protected Dictionary<Type, PreferenceData> Preferences { get; set; }
+        private Dictionary<Type, PreferenceData> Preferences { get; set; }
 
         public IEnumerable<Formatting> FormattingTypes => Enum.GetValues(typeof(Formatting)).Cast<Formatting>();
 
@@ -126,7 +129,7 @@ namespace ForgeModGenerator.Services
             return preferences;
         }
 
-        protected ObservableCollection<Mod> FindMods()
+        private ObservableCollection<Mod> FindMods()
         {
             string[] paths = Directory.GetDirectories(AppPaths.Mods);
             List<Mod> found = new List<Mod>(paths.Length);
@@ -142,7 +145,7 @@ namespace ForgeModGenerator.Services
             return new ObservableCollection<Mod>(found);
         }
 
-        protected ObservableCollection<ForgeVersion> FindForgeVersions()
+        private ObservableCollection<ForgeVersion> FindForgeVersions()
         {
             string[] paths = Directory.GetFiles(AppPaths.ForgeVersions);
             List<ForgeVersion> found = new List<ForgeVersion>(paths.Length);
@@ -181,9 +184,9 @@ namespace ForgeModGenerator.Services
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-        protected bool SetProperty<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        private bool SetProperty<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
         {
             if ((field != null && field.Equals(newValue))
                 || (field == null && newValue == null))

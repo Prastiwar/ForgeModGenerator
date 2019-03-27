@@ -10,6 +10,10 @@ namespace ForgeModGenerator.Converters
         public override Mod ReadJson(JsonReader reader, Type objectType, Mod existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
             JObject item = JObject.Load(reader);
+            if (!item.HasValues)
+            {
+                return null;
+            }
             string organization = item.GetValue(nameof(Mod.Organization), StringComparison.OrdinalIgnoreCase).ToObject<string>();
             McModInfo modInfo = item.GetValue(nameof(Mod.ModInfo), StringComparison.OrdinalIgnoreCase).ToObject<McModInfo>(serializer);            
             ForgeVersion forgeVersion = item.GetValue(nameof(Mod.ForgeVersion), StringComparison.OrdinalIgnoreCase).ToObject<ForgeVersion>(serializer);

@@ -25,7 +25,7 @@ namespace ForgeModGenerator.Controls
             }
         }
 
-        protected void SubmitText(SubmitTextBox sender, string text)
+        public void SubmitText(SubmitTextBox sender, string text)
         {
             BindingExpression textBinding = sender.GetBindingExpression(TextProperty);
             if (textBinding != null)

@@ -1,5 +1,4 @@
-﻿using CommonServiceLocator;
-using ForgeModGenerator.AchievementGenerator.ViewModels;
+﻿using ForgeModGenerator.AchievementGenerator.ViewModels;
 using ForgeModGenerator.AchievementGenerator.Views;
 using ForgeModGenerator.ApplicationModule.ViewModels;
 using ForgeModGenerator.ApplicationModule.Views;
@@ -33,24 +32,22 @@ namespace ForgeModGenerator
 #endif
         }
 
-        public static bool IsDataDirty {
-            get => ServiceLocator.Current.GetInstance<ISessionContextService>().AskBeforeClose;
-            set => ServiceLocator.Current.GetInstance<ISessionContextService>().AskBeforeClose = value;
-        }
-
         protected override Window CreateShell() => (Window)Container.Resolve(typeof(MainWindow));
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
             base.RegisterRequiredTypes(containerRegistry);
 
-            containerRegistry.Register<NavigationMenuViewModel>();
-            containerRegistry.Register<MainWindowViewModel>();
-            containerRegistry.Register<ISessionContextService, SessionContextService>();
-            containerRegistry.Register<IWorkspaceSetupService, WorkspaceSetupService>();
-            containerRegistry.Register<IModBuildService, ModBuildService>();
+            containerRegistry.RegisterInstance<ISessionContextService>(SessionContextService.Instance);
+
             containerRegistry.Register<IDialogService, DialogService>();
             containerRegistry.Register<ISnackbarService, SnackbarService>();
+
+            containerRegistry.Register<IWorkspaceSetupService, WorkspaceSetupService>();
+            containerRegistry.Register<IModBuildService, ModBuildService>();
+
+            containerRegistry.Register<NavigationMenuViewModel>();
+            containerRegistry.Register<MainWindowViewModel>();
 
             containerRegistry.RegisterForNavigation<DashboardPage, DashboardViewModel>(Pages.Dashboard);
             containerRegistry.RegisterForNavigation<BuildConfigurationPage, BuildConfigurationViewModel>(Pages.BuildConfiguration);
