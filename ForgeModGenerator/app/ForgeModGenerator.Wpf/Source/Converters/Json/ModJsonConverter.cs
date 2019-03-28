@@ -41,7 +41,7 @@ namespace ForgeModGenerator.Converters
         public override void WriteJson(JsonWriter writer, Mod value, JsonSerializer serializer)
         {
             JObject jo = new JObject {
-                { nameof(Mod.Organization), value.Name },
+                { nameof(Mod.Organization), value.Organization },
                 { nameof(Mod.ModInfo), JToken.FromObject(value.ModInfo, serializer) },
                 { nameof(Mod.ForgeVersion), JToken.FromObject(value.ForgeVersion, serializer) },
                 { nameof(Mod.LaunchSetup), JToken.FromObject(value.LaunchSetup, serializer) },

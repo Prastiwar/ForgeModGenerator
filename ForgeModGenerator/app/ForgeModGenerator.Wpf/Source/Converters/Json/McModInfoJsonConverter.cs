@@ -7,8 +7,21 @@ namespace ForgeModGenerator.Converters
 {
     public class McModInfoJsonConverter : JsonConverter<McModInfo>
     {
-        public override McModInfo ReadJson(JsonReader reader, Type objectType, McModInfo existingValue, bool hasExistingValue, JsonSerializer serializer) =>
-            JObject.Load(reader).ToObject<McModInfo>();
+        public override McModInfo ReadJson(JsonReader reader, Type objectType, McModInfo existingValue, bool hasExistingValue, JsonSerializer serializer)
+        {
+            JToken token = JToken.Load(reader);
+            if (!token.HasValues)
+            {
+                return null;
+            }
+            string json = token.ToString();
+            if (json.StartsWith("["))
+            {
+                json = json.Remove(0, 2).Remove(json.Length - 4, 2); // remove [\n and \n]
+            }
+            JObject item = JObject.Parse(json);
+            return item.ToObject<McModInfo>();
+        }
 
         public override void WriteJson(JsonWriter writer, McModInfo value, JsonSerializer serializer)
         {
@@ -22,11 +35,13 @@ namespace ForgeModGenerator.Converters
                 { "updateUrl", value.UpdateUrl ?? "" },
                 { nameof(McModInfo.Credits).ToLower(), value.Credits ?? "" },
                 { "logoFile", value.LogoFile  ?? "" },
-                { "authorList", value.AuthorList != null ? JToken.FromObject(value.AuthorList, serializer) : "" },
-                { nameof(McModInfo.Screenshots).ToLower(), value.Screenshots != null ? JToken.FromObject(value.Screenshots) : "" },
-                { nameof(McModInfo.Dependencies).ToLower(), value.Dependencies != null ? JToken.FromObject(value.Dependencies) : "" }
+                { "authorList", value.AuthorList != null ? JToken.FromObject(value.AuthorList, serializer) : JToken.FromObject(new int[0]) },
+                { nameof(McModInfo.Screenshots).ToLower(), value.Screenshots != null ? JToken.FromObject(value.Screenshots) : JToken.FromObject(new int[0]) },
+                { nameof(McModInfo.Dependencies).ToLower(), value.Dependencies != null ? JToken.FromObject(value.Dependencies) : JToken.FromObject(new int[0]) }
             };
+            writer.WriteRaw("[\n");
             jo.WriteTo(writer);
+            writer.WriteRaw("\n]");
         }
     }
 }

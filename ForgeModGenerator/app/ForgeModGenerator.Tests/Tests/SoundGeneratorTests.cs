@@ -4,19 +4,21 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 
 namespace ForgeModGenerator.Tests
 {
     [TestClass]
     public class SoundGeneratorTests : IntegratedUnitTests
     {
-        private readonly string expectedSoundEventsJson = "{\"sounds\":{\"replace\":false,\"subtitle\":\"\",\"sounds\":[{\"name\":\"testmod:test\",\"volume\":1.0,\"pitch\":1.0,\"weight\":1,\"stream\":false,\"attenuation_distance\":0,\"preload\":false,\"type\":\"file\"},{\"name\":\"testmod:testCopy2\",\"volume\":0.5,\"pitch\":2.0,\"weight\":2,\"stream\":true,\"attenuation_distance\":1,\"preload\":true,\"type\":\"event\"}]},\"entity.vatras\":{\"replace\":true,\"subtitle\":\"Some subtitle2\",\"sounds\":[{\"name\":\"testmod:entity/vatras/greet\",\"volume\":1.0,\"pitch\":1.0,\"weight\":1,\"stream\":true,\"attenuation_distance\":0,\"preload\":true,\"type\":\"event\"}]}}";
+        private readonly string soundsPath = ModPaths.SoundsFolder(TestModName, TestModModid);
+        private readonly string deserializeJson = "{\"sounds\":{\"replace\":false,\"subtitle\":\"\",\"sounds\":[{\"name\":\"" + TestModModid + ":test\",\"volume\":1.0,\"pitch\":1.0,\"weight\":1,\"stream\":false,\"attenuation_distance\":0,\"preload\":false,\"type\":\"file\"},{\"name\":\"" + TestModModid + ":testCopy2\",\"volume\":0.5,\"pitch\":2.0,\"weight\":2,\"stream\":true,\"attenuation_distance\":1,\"preload\":true,\"type\":\"event\"}]},\"entity.vatras\":{\"replace\":true,\"subtitle\":\"Some subtitle2\",\"sounds\":[{\"name\":\"" + TestModModid + ":entity/vatras/greet\",\"volume\":1.0,\"pitch\":1.0,\"weight\":1,\"stream\":true,\"attenuation_distance\":0,\"preload\":true,\"type\":\"event\"}]}}";
         private readonly SoundEventConverter soundEventConverter = new SoundEventConverter();
         private readonly SoundConverter soundConverter = new SoundConverter();
-        private readonly SoundCollectionConverter soundEventCollectionConverter = new SoundCollectionConverter("TestMod", "testmod");
+        private readonly SoundCollectionConverter soundEventCollectionConverter = new SoundCollectionConverter(TestModName, TestModModid);
 
         private Sound CreateSoundTest() =>
-            new Sound("testmod", @"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\TestMod\src\main\resources\assets\testmod\sounds\test.ogg") {
+            new Sound(TestModModid, Path.Combine(soundsPath, "test.ogg")) {
                 Volume = 1.0f,
                 Pitch = 1.0f,
                 Weight = 1,
@@ -27,7 +29,7 @@ namespace ForgeModGenerator.Tests
             };
 
         private Sound CreateSoundTestCopy2() =>
-            new Sound("testmod", @"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\TestMod\src\main\resources\assets\testmod\sounds\testCopy2.ogg") {
+            new Sound(TestModModid, Path.Combine(soundsPath, "testCopy2.ogg")) {
                 Volume = 0.5f,
                 Pitch = 2.0f,
                 Weight = 2,
@@ -38,7 +40,7 @@ namespace ForgeModGenerator.Tests
             };
 
         private Sound CreateSoundGreet() =>
-            new Sound("testmod", @"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\TestMod\src\main\resources\assets\testmod\sounds\entity\vatras\greet.ogg") {
+            new Sound(TestModModid, Path.Combine(soundsPath, "entity", "vatras", "greet.ogg")) {
                 Volume = 1.0f,
                 Pitch = 1.0f,
                 Weight = 1,
@@ -53,32 +55,57 @@ namespace ForgeModGenerator.Tests
         [TestMethod]
         public void SoundSerialize()
         {
-            string expectedJson = "{\"name\":\"testmod:testCopy2\",\"volume\":0.5,\"pitch\":2.0,\"weight\":2,\"stream\":true,\"attenuation_distance\":1,\"preload\":true,\"type\":\"event\"}";
             Sound sound = CreateSoundTestCopy2();
             sound.FormatName();
             string json = JsonConvert.SerializeObject(sound, soundConverter);
-            Assert.AreEqual(expectedJson, json);
+            Assert.IsTrue(json.Contains($"\"name\":\"{TestModModid}:testCopy2\""));
+            Assert.IsTrue(json.Contains("\"volume\":0.5"));
+            Assert.IsTrue(json.Contains("\"pitch\":2.0"));
+            Assert.IsTrue(json.Contains("\"weight\":2"));
+            Assert.IsTrue(json.Contains("\"stream\":true"));
+            Assert.IsTrue(json.Contains("\"attenuation_distance\":1"));
+            Assert.IsTrue(json.Contains("\"preload\":true"));
+            Assert.IsTrue(json.Contains("\"type\":\"event\""));
         }
 
         [TestMethod]
         public void SoundEventSerialize()
         {
-            string expectedJson = "\"sounds\":{\"replace\":false,\"subtitle\":\"Some subtitle\",\"sounds\":[{\"name\":\"testmod:test\",\"volume\":1.0,\"pitch\":1.0,\"weight\":1,\"stream\":false,\"attenuation_distance\":0,\"preload\":false,\"type\":\"file\"},{\"name\":\"testmod:testCopy2\",\"volume\":0.5,\"pitch\":2.0,\"weight\":2,\"stream\":true,\"attenuation_distance\":1,\"preload\":true,\"type\":\"event\"}]}";
             Collection<Sound> sounds = new Collection<Sound>() {
                 CreateSoundTest(), CreateSoundTestCopy2()
             };
-            SoundEvent soundEvent = new SoundEvent(@"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\TestMod\src\main\resources\assets\testmod\sounds", sounds) {
+            SoundEvent soundEvent = new SoundEvent(soundsPath, sounds) {
                 Subtitle = "Some subtitle",
                 Replace = false
             };
             string json = JsonConvert.SerializeObject(soundEvent, soundEventConverter);
-            Assert.AreEqual(expectedJson, json);
+            Assert.IsTrue(json.Contains("\"sounds\":{"));
+            Assert.IsTrue(json.Contains("\"replace\":false"));
+            Assert.IsTrue(json.Contains("\"subtitle\":\"Some subtitle\""));
+            Assert.IsTrue(json.Contains("\"sounds\":[{"));
+
+            Assert.IsTrue(json.Contains($"\"name\":\"{TestModModid}:test\""));
+            Assert.IsTrue(json.Contains("\"volume\":1.0"));
+            Assert.IsTrue(json.Contains("\"pitch\":1.0"));
+            Assert.IsTrue(json.Contains("\"weight\":1"));
+            Assert.IsTrue(json.Contains("\"stream\":false"));
+            Assert.IsTrue(json.Contains("\"attenuation_distance\":0"));
+            Assert.IsTrue(json.Contains("\"preload\":false"));
+            Assert.IsTrue(json.Contains("\"type\":\"file\""));
+
+            Assert.IsTrue(json.Contains($"\"name\":\"{TestModModid}:testCopy2\""));
+            Assert.IsTrue(json.Contains("\"volume\":0.5"));
+            Assert.IsTrue(json.Contains("\"pitch\":2.0"));
+            Assert.IsTrue(json.Contains("\"weight\":2"));
+            Assert.IsTrue(json.Contains("\"stream\":true"));
+            Assert.IsTrue(json.Contains("\"attenuation_distance\":1"));
+            Assert.IsTrue(json.Contains("\"preload\":true"));
+            Assert.IsTrue(json.Contains("\"type\":\"event\""));
         }
 
         [TestMethod]
         public void SoundEventListSerialize()
         {
-            string expectedSoundEventsJson = "{\"sounds\":{\"replace\":false,\"subtitle\":\"\",\"sounds\":[{\"name\":\"testmod:test\",\"volume\":1.0,\"pitch\":1.0,\"weight\":1,\"stream\":false,\"attenuation_distance\":0,\"preload\":false,\"type\":\"file\"},{\"name\":\"testmod:testCopy2\",\"volume\":0.5,\"pitch\":2.0,\"weight\":2,\"stream\":true,\"attenuation_distance\":1,\"preload\":true,\"type\":\"event\"}]},\"entity.vatras.greet\":{\"replace\":true,\"subtitle\":\"Some subtitle2\",\"sounds\":[{\"name\":\"testmod:entity/vatras/greet\",\"volume\":1.0,\"pitch\":1.0,\"weight\":1,\"stream\":true,\"attenuation_distance\":0,\"preload\":true,\"type\":\"event\"}]}}";
             Collection<Sound> sounds1 = new Collection<Sound>() {
                 CreateSoundTest(), CreateSoundTestCopy2()
             };
@@ -86,17 +113,43 @@ namespace ForgeModGenerator.Tests
                 CreateSoundGreet()
             };
             List<SoundEvent> soundEvent = new List<SoundEvent>(){
-                new SoundEvent(@"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\TestMod\src\main\resources\assets\testmod\sounds", sounds1) {
+                new SoundEvent(soundsPath, sounds1) {
                     Subtitle = "",
                     Replace = false
                 },
-                new SoundEvent(@"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\TestMod\src\main\resources\assets\testmod\sounds\entity\vatras", sounds2) {
+                new SoundEvent(Path.Combine(soundsPath, "entity", "vatras"), sounds2) {
                     Subtitle = "Some subtitle2",
                     Replace = true
                 }
             };
             string json = JsonConvert.SerializeObject(soundEvent, soundEventCollectionConverter);
-            Assert.AreEqual(expectedSoundEventsJson, json);
+            Assert.IsTrue(json.Contains("\"sounds\":{"));
+            Assert.IsTrue(json.Contains("\"replace\":false"));
+            Assert.IsTrue(json.Contains("\"subtitle\":\"\""));
+            Assert.IsTrue(json.Contains("\"sounds\":[{"));
+
+            Assert.IsTrue(json.Contains($"\"name\":\"{TestModModid}:test\""));
+            Assert.IsTrue(json.Contains("\"volume\":1.0"));
+            Assert.IsTrue(json.Contains("\"pitch\":1.0"));
+            Assert.IsTrue(json.Contains("\"weight\":1"));
+            Assert.IsTrue(json.Contains("\"stream\":false"));
+            Assert.IsTrue(json.Contains("\"attenuation_distance\":0"));
+            Assert.IsTrue(json.Contains("\"preload\":false"));
+            Assert.IsTrue(json.Contains("\"type\":\"file\""));
+
+            Assert.IsTrue(json.Contains($"\"name\":\"{TestModModid}:testCopy2\""));
+            Assert.IsTrue(json.Contains("\"volume\":0.5"));
+            Assert.IsTrue(json.Contains("\"pitch\":2.0"));
+            Assert.IsTrue(json.Contains("\"weight\":2"));
+            Assert.IsTrue(json.Contains("\"stream\":true"));
+            Assert.IsTrue(json.Contains("\"attenuation_distance\":1"));
+            Assert.IsTrue(json.Contains("\"preload\":true"));
+            Assert.IsTrue(json.Contains("\"type\":\"event\""));
+            
+            Assert.IsTrue(json.Contains("\"entity.vatras.greet\":{"));
+            Assert.IsTrue(json.Contains("\"replace\":true"));
+            Assert.IsTrue(json.Contains("\"subtitle\":\"Some subtitle2\""));
+            Assert.IsTrue(json.Contains($"\"name\":\"{TestModModid}:entity/vatras/greet\""));
         }
 
 
@@ -105,10 +158,10 @@ namespace ForgeModGenerator.Tests
         [TestMethod]
         public void SoundDeserialize()
         {
-            string json = "{\"name\":\"testmod:testCopy2\",\"volume\":0.5,\"pitch\":2.0,\"weight\":2,\"stream\":true,\"attenuation_distance\":1,\"preload\":true,\"type\":\"event\"}";
+            string json = "{\"name\":\"" + TestModModid + ":testCopy2\",\"volume\":0.5,\"pitch\":2.0,\"weight\":2,\"stream\":true,\"attenuation_distance\":1,\"preload\":true,\"type\":\"event\"}";
             Sound sound = JsonConvert.DeserializeObject<Sound>(json, soundConverter);
             Assert.IsNotNull(sound);
-            Assert.AreEqual("testmod:testCopy2", sound.Name);
+            Assert.AreEqual($"{TestModModid}:testCopy2", sound.Name);
             Assert.AreEqual(0.5, sound.Volume);
             Assert.AreEqual(2.0, sound.Pitch);
             Assert.AreEqual(2, sound.Weight);
@@ -121,7 +174,7 @@ namespace ForgeModGenerator.Tests
         [TestMethod]
         public void SoundEventDeserialize()
         {
-            string json = "{\"replace\":false,\"subtitle\":\"Some subtitle\",\"sounds\":[{\"name\":\"testmod:test\",\"volume\":1.0,\"pitch\":1.0,\"weight\":1,\"stream\":false,\"attenuation_distance\":0,\"preload\":false,\"type\":\"file\"},{\"name\":\"testmod:testCopy2\",\"volume\":0.5,\"pitch\":2.0,\"weight\":2,\"stream\":true,\"attenuation_distance\":1,\"preload\":true,\"type\":\"event\"}]}";
+            string json = "{\"replace\":false,\"subtitle\":\"Some subtitle\",\"sounds\":[{\"name\":\"" + TestModModid + ":test\",\"volume\":1.0,\"pitch\":1.0,\"weight\":1,\"stream\":false,\"attenuation_distance\":0,\"preload\":false,\"type\":\"file\"},{\"name\":\"" + TestModModid + ":testCopy2\",\"volume\":0.5,\"pitch\":2.0,\"weight\":2,\"stream\":true,\"attenuation_distance\":1,\"preload\":true,\"type\":\"event\"}]}";
             SoundEvent soundEvent = JsonConvert.DeserializeObject<SoundEvent>(json, soundEventConverter);
             Assert.IsNotNull(soundEvent);
             Assert.AreEqual(false, soundEvent.Replace);
@@ -130,7 +183,7 @@ namespace ForgeModGenerator.Tests
             Assert.AreEqual(2, soundEvent.Files.Count);
             Assert.IsNotNull(soundEvent.Files[0]);
             Assert.IsNotNull(soundEvent.Files[1]);
-            Assert.AreEqual("testmod:test", soundEvent.Files[0].Name);
+            Assert.AreEqual($"{TestModModid}:test", soundEvent.Files[0].Name);
             Assert.AreEqual(1.0, soundEvent.Files[0].Volume);
             Assert.AreEqual(1.0, soundEvent.Files[0].Pitch);
             Assert.AreEqual(1, soundEvent.Files[0].Weight);
@@ -138,7 +191,7 @@ namespace ForgeModGenerator.Tests
             Assert.AreEqual(0, soundEvent.Files[0].AttenuationDistance);
             Assert.AreEqual(false, soundEvent.Files[0].Preload);
             Assert.AreEqual(Sound.SoundType.file, soundEvent.Files[0].Type);
-            Assert.AreEqual("testmod:testCopy2", soundEvent.Files[1].Name);
+            Assert.AreEqual($"{TestModModid}:testCopy2", soundEvent.Files[1].Name);
             Assert.AreEqual(0.5, soundEvent.Files[1].Volume);
             Assert.AreEqual(2.0, soundEvent.Files[1].Pitch);
             Assert.AreEqual(2, soundEvent.Files[1].Weight);
@@ -151,7 +204,7 @@ namespace ForgeModGenerator.Tests
         [TestMethod]
         public void SoundEventListDeserialize()
         {
-            List<SoundEvent> soundEvents = JsonConvert.DeserializeObject<List<SoundEvent>>(expectedSoundEventsJson, soundEventCollectionConverter);
+            List<SoundEvent> soundEvents = JsonConvert.DeserializeObject<List<SoundEvent>>(deserializeJson, soundEventCollectionConverter);
             Assert.IsNotNull(soundEvents);
             Assert.AreEqual(2, soundEvents.Count);
             Assert.AreEqual("sounds", soundEvents[0].EventName);
@@ -168,7 +221,7 @@ namespace ForgeModGenerator.Tests
             Assert.IsNotNull(soundEvents[0].Files[1]);
             Assert.IsNotNull(soundEvents[1].Files[0]);
 
-            Assert.AreEqual("testmod:test", soundEvents[0].Files[0].Name);
+            Assert.AreEqual($"{TestModModid}:test", soundEvents[0].Files[0].Name);
             Assert.AreEqual(1.0, soundEvents[0].Files[0].Volume);
             Assert.AreEqual(1.0, soundEvents[0].Files[0].Pitch);
             Assert.AreEqual(1, soundEvents[0].Files[0].Weight);
@@ -177,7 +230,7 @@ namespace ForgeModGenerator.Tests
             Assert.AreEqual(false, soundEvents[0].Files[0].Preload);
             Assert.AreEqual(Sound.SoundType.file, soundEvents[0].Files[0].Type);
 
-            Assert.AreEqual("testmod:testCopy2", soundEvents[0].Files[1].Name);
+            Assert.AreEqual($"{TestModModid}:testCopy2", soundEvents[0].Files[1].Name);
             Assert.AreEqual(0.5, soundEvents[0].Files[1].Volume);
             Assert.AreEqual(2.0, soundEvents[0].Files[1].Pitch);
             Assert.AreEqual(2, soundEvents[0].Files[1].Weight);
@@ -186,7 +239,7 @@ namespace ForgeModGenerator.Tests
             Assert.AreEqual(true, soundEvents[0].Files[1].Preload);
             Assert.AreEqual(Sound.SoundType.@event, soundEvents[0].Files[1].Type);
 
-            Assert.AreEqual("testmod:entity/vatras/greet", soundEvents[1].Files[0].Name);
+            Assert.AreEqual($"{TestModModid}:entity/vatras/greet", soundEvents[1].Files[0].Name);
             Assert.AreEqual(1.0, soundEvents[1].Files[0].Volume);
             Assert.AreEqual(1.0, soundEvents[1].Files[0].Pitch);
             Assert.AreEqual(1, soundEvents[1].Files[0].Weight);
@@ -199,7 +252,7 @@ namespace ForgeModGenerator.Tests
         [TestMethod]
         public void SoundEventCollectionDeserialize()
         {
-            Collection<SoundEvent> soundEvents = JsonConvert.DeserializeObject<Collection<SoundEvent>>(expectedSoundEventsJson, soundEventCollectionConverter);
+            Collection<SoundEvent> soundEvents = JsonConvert.DeserializeObject<Collection<SoundEvent>>(deserializeJson, soundEventCollectionConverter);
             Assert.IsNotNull(soundEvents);
             Assert.AreEqual(2, soundEvents.Count);
             Assert.AreEqual("sounds", soundEvents[0].EventName);
@@ -216,7 +269,7 @@ namespace ForgeModGenerator.Tests
             Assert.IsNotNull(soundEvents[0].Files[1]);
             Assert.IsNotNull(soundEvents[1].Files[0]);
 
-            Assert.AreEqual("testmod:test", soundEvents[0].Files[0].Name);
+            Assert.AreEqual($"{TestModModid}:test", soundEvents[0].Files[0].Name);
             Assert.AreEqual(1.0, soundEvents[0].Files[0].Volume);
             Assert.AreEqual(1.0, soundEvents[0].Files[0].Pitch);
             Assert.AreEqual(1, soundEvents[0].Files[0].Weight);
@@ -225,7 +278,7 @@ namespace ForgeModGenerator.Tests
             Assert.AreEqual(false, soundEvents[0].Files[0].Preload);
             Assert.AreEqual(Sound.SoundType.file, soundEvents[0].Files[0].Type);
 
-            Assert.AreEqual("testmod:testCopy2", soundEvents[0].Files[1].Name);
+            Assert.AreEqual($"{TestModModid}:testCopy2", soundEvents[0].Files[1].Name);
             Assert.AreEqual(0.5, soundEvents[0].Files[1].Volume);
             Assert.AreEqual(2.0, soundEvents[0].Files[1].Pitch);
             Assert.AreEqual(2, soundEvents[0].Files[1].Weight);
@@ -234,7 +287,7 @@ namespace ForgeModGenerator.Tests
             Assert.AreEqual(true, soundEvents[0].Files[1].Preload);
             Assert.AreEqual(Sound.SoundType.@event, soundEvents[0].Files[1].Type);
 
-            Assert.AreEqual("testmod:entity/vatras/greet", soundEvents[1].Files[0].Name);
+            Assert.AreEqual($"{TestModModid}:entity/vatras/greet", soundEvents[1].Files[0].Name);
             Assert.AreEqual(1.0, soundEvents[1].Files[0].Volume);
             Assert.AreEqual(1.0, soundEvents[1].Files[0].Pitch);
             Assert.AreEqual(1, soundEvents[1].Files[0].Weight);
@@ -247,7 +300,7 @@ namespace ForgeModGenerator.Tests
         [TestMethod]
         public void SoundEventObservableCollectionDeserialize()
         {
-            ObservableCollection<SoundEvent> soundEvents = JsonConvert.DeserializeObject<ObservableCollection<SoundEvent>>(expectedSoundEventsJson, soundEventCollectionConverter);
+            ObservableCollection<SoundEvent> soundEvents = JsonConvert.DeserializeObject<ObservableCollection<SoundEvent>>(deserializeJson, soundEventCollectionConverter);
             Assert.IsNotNull(soundEvents);
             Assert.AreEqual(2, soundEvents.Count);
             Assert.AreEqual("sounds", soundEvents[0].EventName);
@@ -264,7 +317,7 @@ namespace ForgeModGenerator.Tests
             Assert.IsNotNull(soundEvents[0].Files[1]);
             Assert.IsNotNull(soundEvents[1].Files[0]);
 
-            Assert.AreEqual("testmod:test", soundEvents[0].Files[0].Name);
+            Assert.AreEqual($"{TestModModid}:test", soundEvents[0].Files[0].Name);
             Assert.AreEqual(1.0, soundEvents[0].Files[0].Volume);
             Assert.AreEqual(1.0, soundEvents[0].Files[0].Pitch);
             Assert.AreEqual(1, soundEvents[0].Files[0].Weight);
@@ -273,7 +326,7 @@ namespace ForgeModGenerator.Tests
             Assert.AreEqual(false, soundEvents[0].Files[0].Preload);
             Assert.AreEqual(Sound.SoundType.file, soundEvents[0].Files[0].Type);
 
-            Assert.AreEqual("testmod:testCopy2", soundEvents[0].Files[1].Name);
+            Assert.AreEqual($"{TestModModid}:testCopy2", soundEvents[0].Files[1].Name);
             Assert.AreEqual(0.5, soundEvents[0].Files[1].Volume);
             Assert.AreEqual(2.0, soundEvents[0].Files[1].Pitch);
             Assert.AreEqual(2, soundEvents[0].Files[1].Weight);
@@ -282,7 +335,7 @@ namespace ForgeModGenerator.Tests
             Assert.AreEqual(true, soundEvents[0].Files[1].Preload);
             Assert.AreEqual(Sound.SoundType.@event, soundEvents[0].Files[1].Type);
 
-            Assert.AreEqual("testmod:entity/vatras/greet", soundEvents[1].Files[0].Name);
+            Assert.AreEqual($"{TestModModid}:entity/vatras/greet", soundEvents[1].Files[0].Name);
             Assert.AreEqual(1.0, soundEvents[1].Files[0].Volume);
             Assert.AreEqual(1.0, soundEvents[1].Files[0].Pitch);
             Assert.AreEqual(1, soundEvents[1].Files[0].Weight);
