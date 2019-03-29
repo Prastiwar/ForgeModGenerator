@@ -38,7 +38,7 @@ namespace ForgeModGenerator
         {
             base.RegisterRequiredTypes(containerRegistry);
 
-            containerRegistry.RegisterInstance<ISessionContextService>(SessionContextService.Instance);
+            containerRegistry.RegisterInstance<ISessionContextService>(WpfSessionContextService.Instance);
 
             containerRegistry.Register<IDialogService, DialogService>();
             containerRegistry.Register<ISnackbarService, SnackbarService>();

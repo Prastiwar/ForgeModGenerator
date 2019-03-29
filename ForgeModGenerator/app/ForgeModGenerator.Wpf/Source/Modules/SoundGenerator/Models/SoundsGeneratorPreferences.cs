@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace ForgeModGenerator.SoundGenerator.Persistence
 {
-    public class SoundsGeneratorPreferences : PreferenceData
+    public class SoundsGeneratorPreferences : DefaultPreferenceData
     {
         public SoundsGeneratorPreferences() => JsonFormatting = Formatting.None;
 

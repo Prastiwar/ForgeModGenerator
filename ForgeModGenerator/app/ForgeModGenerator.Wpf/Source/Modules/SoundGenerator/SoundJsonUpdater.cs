@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace ForgeModGenerator.SoundGenerator.Persistence
 {
-    public class SoundJsonUpdater : JsonUpdater<SoundEvent>
+    public class SoundJsonUpdater : CollectionJsonUpdater<SoundEvent>
     {
         public SoundJsonUpdater(IEnumerable<SoundEvent> target, string jsonPath) : base(target, jsonPath) { }
         public SoundJsonUpdater(IEnumerable<SoundEvent> target, string jsonPath, JsonSerializerSettings settings) : base(target, jsonPath, settings) { }
@@ -26,17 +26,6 @@ namespace ForgeModGenerator.SoundGenerator.Persistence
                 }
             }
             return true;
-        }
-
-        public bool JsonContains(SoundEvent soundEvent, Sound sound)
-        {
-            string json = GetJsonFromFile();
-            string itemJson = Serialize();
-            if (json.Contains(itemJson))
-            {
-                itemJson = JsonConvert.SerializeObject(Target, Formatting == Formatting.Indented ? Formatting.None : Formatting.Indented);
-            }
-            return json.Contains(itemJson);
         }
     }
 }

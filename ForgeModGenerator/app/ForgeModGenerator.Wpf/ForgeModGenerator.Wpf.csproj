@@ -224,7 +224,7 @@
     <Compile Include="Source\Utility\Extensions\ValidationExtensions.cs" />
     <Compile Include="Source\Utility\Helpers\IOHelperWin.cs" />
     <Compile Include="Source\Persistence\JsonUpdater.cs" />
-    <Compile Include="Source\Persistence\PreferenceData.cs" />
+    <Compile Include="Source\Persistence\DefaultPreferenceData.cs" />
     <Compile Include="Source\Modules\ApplicationModule\BugReporter.xaml.cs">
       <DependentUpon>BugReporter.xaml</DependentUpon>
     </Compile>
@@ -269,7 +269,7 @@
     <Compile Include="Source\Modules\ItemGenerator\Item.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\Recipe.cs" />
     <Compile Include="Source\Modules\SoundGenerator\Models\Sound.cs" />
-    <Compile Include="Source\Services\SessionContextService.cs" />
+    <Compile Include="Source\Services\WpfSessionContextService.cs" />
     <Compile Include="Source\Modules\SoundGenerator\Controls\SoundEditForm.xaml.cs">
       <DependentUpon>SoundEditForm.xaml</DependentUpon>
     </Compile>
