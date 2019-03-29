@@ -8,7 +8,7 @@ namespace ForgeModGenerator.Controls
 {
     public class PathNameSubmitTextBox : SubmitTextBox
     {
-        public PathNameSubmitTextBox() : base() { }
+        public PathNameSubmitTextBox() : base() => TextSubmitted += UpdateFullPath;
 
         public static readonly DependencyProperty FullPathProperty =
             DependencyProperty.Register("FullPath", typeof(string), typeof(PathNameSubmitTextBox), new PropertyMetadata(null));
@@ -64,6 +64,18 @@ namespace ForgeModGenerator.Controls
             }
             System.Windows.Controls.Validation.ClearInvalid(binding);
             return true;
+        }
+
+        private void UpdateFullPath(object sender, string e)
+        {
+            if (sender is PathNameSubmitTextBox pathSender)
+            {
+                BindingExpression binding = pathSender.GetBindingExpression(FullPathProperty);
+                if (binding != null)
+                {
+                    binding.UpdateTarget();
+                }
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -15,6 +16,8 @@ namespace ForgeModGenerator.Controls
             get => (ICommand)GetValue(TextSubmitedCommandProperty);
             set => SetValue(TextSubmitedCommandProperty, value);
         }
+
+        public event EventHandler<string> TextSubmitted;
 
         private void SubmitTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
@@ -42,6 +45,7 @@ namespace ForgeModGenerator.Controls
                         sender.TextSubmitedCommand.Execute(text);
                     }
                 }
+                TextSubmitted?.Invoke(this, text);
             }
         }
 

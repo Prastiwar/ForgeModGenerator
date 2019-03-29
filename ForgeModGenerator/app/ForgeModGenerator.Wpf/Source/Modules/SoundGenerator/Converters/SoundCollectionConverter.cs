@@ -61,29 +61,10 @@ namespace ForgeModGenerator.SoundGenerator.Converters
                     }
                     catch (Exception)
                     {
-                        soundEvent.Files.RemoveAt(i);
+                        soundEvent.Files.RemoveAt(i); // if file doesn't exist, sound can't be loaded
                     }
                     sound.IsDirty = false;
                 }
-
-                //foreach (Sound sound in soundEvent.Files)
-                //{
-                //    string soundName = sound.Name;
-                //    int modidLength = sound.Name.IndexOf(":") + 1;
-                //    if (modidLength != -1)
-                //    {
-                //        soundName = sound.Name.Remove(0, modidLength);
-                //    }
-                //    try
-                //    {
-                //        sound.SetInfo(Path.Combine(soundsPath, $"{soundName}.ogg"));
-                //    }
-                //    catch (Exception)
-                //    {
-                //        throw;
-                //    }
-                //    sound.IsDirty = false;
-                //}
                 soundEvent.IsDirty = false;
                 folders.Add(soundEvent);
             }

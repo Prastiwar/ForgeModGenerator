@@ -51,6 +51,7 @@ namespace ForgeModGenerator
             }
         }
 
+        public string NameWithoutExtension => Info != null ? Path.GetFileNameWithoutExtension(Info.FullName) : null;
         public string Name => Info?.Name;
         public string FullName => Info?.FullName;
         public string Extension => Info?.Extension;

@@ -20,7 +20,7 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
                         <controls:PathNameSubmitTextBox IsTabStop="True"
-                                                        Text="{Binding Info.Name, Mode=OneWay}"
+                                                        Text="{Binding Info.NameWithoutExtension, Mode=OneWay}"
                                                         TextSubmitedCommand="{Binding ., Converter={StaticResource MethodToCommandConverter}, ConverterParameter=Rename}">
                             <controls:PathNameSubmitTextBox.FullPath>
                                 <Binding Path="Info.FullName"

@@ -31,7 +31,11 @@ namespace ForgeModGenerator
             }
         }
 
-        public void Rename(string newName) => Info.Info.Rename(newName);
+        public void Rename(string newName)
+        {
+            Info.Info.Rename(newName);
+            RaisePropertyChanged(nameof(Info));
+        }
 
         protected virtual void Info_PropertyChanged(object sender, PropertyChangedEventArgs e) { }
 
