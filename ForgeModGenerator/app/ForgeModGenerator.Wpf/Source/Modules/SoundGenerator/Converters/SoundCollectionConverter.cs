@@ -45,17 +45,45 @@ namespace ForgeModGenerator.SoundGenerator.Converters
                 SoundEvent soundEvent = item.GetValue(property.Key).ToObject<SoundEvent>();
                 soundEvent.EventName = property.Key;
                 soundEvent.SetInfo(soundsPath);
-                foreach (Sound sound in soundEvent.Files)
+
+                for (int i = soundEvent.Files.Count - 1; i >= 0; i--)
                 {
+                    Sound sound = soundEvent.Files[i];
                     string soundName = sound.Name;
                     int modidLength = sound.Name.IndexOf(":") + 1;
                     if (modidLength != -1)
                     {
                         soundName = sound.Name.Remove(0, modidLength);
                     }
-                    sound.SetInfo(Path.Combine(soundsPath, $"{soundName}.ogg"));
+                    try
+                    {
+                        sound.SetInfo(Path.Combine(soundsPath, $"{soundName}.ogg"));
+                    }
+                    catch (Exception)
+                    {
+                        soundEvent.Files.RemoveAt(i);
+                    }
                     sound.IsDirty = false;
                 }
+
+                //foreach (Sound sound in soundEvent.Files)
+                //{
+                //    string soundName = sound.Name;
+                //    int modidLength = sound.Name.IndexOf(":") + 1;
+                //    if (modidLength != -1)
+                //    {
+                //        soundName = sound.Name.Remove(0, modidLength);
+                //    }
+                //    try
+                //    {
+                //        sound.SetInfo(Path.Combine(soundsPath, $"{soundName}.ogg"));
+                //    }
+                //    catch (Exception)
+                //    {
+                //        throw;
+                //    }
+                //    sound.IsDirty = false;
+                //}
                 soundEvent.IsDirty = false;
                 folders.Add(soundEvent);
             }

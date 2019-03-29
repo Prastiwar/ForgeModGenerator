@@ -155,19 +155,21 @@ namespace ForgeModGenerator.ViewModels
         /// <summary> Removes folder and if it's empty, sends it to RecycleBin </summary>
         protected void RemoveFolder(TFolder folder)
         {
+            string folderPath = folder.Info.FullName;
             if (Folders.Remove(folder))
             {
                 for (int i = folder.Files.Count - 1; i >= 0; i--)
                 {
-                    if (FileSystemInfoReference.GetReferenceCount(folder.Files[i].Info.FullName) <= 1 && File.Exists(folder.Files[i].Info.FullName))
+                    string filePath = folder.Files[i].Info.FullName;
+                    if (FileSystemInfoReference.GetReferenceCount(filePath) <= 1 && File.Exists(filePath))
                     {
-                        IOSafeWin.DeleteFileRecycle(folder.Files[i].Info.FullName);
+                        IOSafeWin.DeleteFileRecycle(filePath);
                     }
                 }
                 folder.Clear();
-                if (Directory.Exists(folder.Info.FullName) && IOHelper.IsEmpty(folder.Info.FullName))
+                if (Directory.Exists(folderPath) && IOHelper.IsEmpty(folderPath))
                 {
-                    IOSafeWin.DeleteDirectoryRecycle(folder.Info.FullName);
+                    IOSafeWin.DeleteDirectoryRecycle(folderPath);
                 }
             }
         }

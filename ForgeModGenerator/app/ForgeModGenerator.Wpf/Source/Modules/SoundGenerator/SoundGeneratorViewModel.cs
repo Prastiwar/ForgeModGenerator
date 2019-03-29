@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -55,6 +56,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
                 FolderFactory = new SoundEventsFactory(Folders, SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid, AllowedFileExtensionsPatterns);
                 FileSynchronizer = new SoundEventsSynchronizer(SyncInvokeObject.Default, Folders, FolderFactory, FoldersRootPath, AllowedFileExtensionsPatterns);
                 Folders.AddRange(await FileSynchronizer.Factory.FindFoldersAsync(FoldersJsonFilePath, true));
+                HasEmptyFolders = Folders.Files.Any(x => x.Count == 0);
                 SubscribeFolderEvents(Folders, new FileChangedEventArgs<SoundEvent>(Folders.Files, FileChange.Add));
                 Folders.FilesChanged += SubscribeFolderEvents;
                 Folders.FilesChanged += OnFoldersCollectionChanged;
@@ -126,6 +128,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
         {
             ForceJsonFileUpdate();
             CheckForUpdate();
+            HasEmptyFolders = Folders.Files.Any(x => x.Count == 0);
         }
 
         private string OnSoundEventValidate(SoundEvent sender, string propertyName) => new SoundEventValidator(Folders.Files).Validate(sender, propertyName).ToString();

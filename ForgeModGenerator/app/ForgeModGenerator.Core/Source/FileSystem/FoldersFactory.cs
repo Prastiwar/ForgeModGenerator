@@ -53,9 +53,8 @@ namespace ForgeModGenerator
             {
                 deserializedFolders = new List<TFolder>(DeserializeFolders(content));
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                //Log.Error(ex, $"Couldnt load {path}", true, $"File content: {content}");
                 return new Collection<TFolder>();
             }
             if (loadOnlyExisting)
