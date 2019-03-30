@@ -199,7 +199,7 @@ namespace ForgeModGenerator
         {
             if (!IOHelper.IsSubPathOf(actualPath, RootPath))
             {
-                throw new InvalidSynchronizationArgument(RootPath, actualPath);
+                throw new InvalidSynchronizationArgumentException(RootPath, actualPath);
             }
         }
     }

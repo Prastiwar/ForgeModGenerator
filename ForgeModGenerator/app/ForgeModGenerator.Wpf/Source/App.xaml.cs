@@ -17,6 +17,7 @@ using ForgeModGenerator.SoundGenerator.ViewModels;
 using ForgeModGenerator.SoundGenerator.Views;
 using ForgeModGenerator.TextureGenerator.ViewModels;
 using ForgeModGenerator.TextureGenerator.Views;
+using NLog.Extensions.Logging;
 using Prism.Ioc;
 using Prism.Unity;
 using System.Windows;
@@ -38,9 +39,13 @@ namespace ForgeModGenerator
         {
             base.RegisterRequiredTypes(containerRegistry);
 
-            containerRegistry.RegisterInstance<ISessionContextService>(WpfSessionContextService.Instance);
+            DialogService dialogService = new DialogService();
+            containerRegistry.RegisterInstance<IDialogService>(dialogService);
 
-            containerRegistry.Register<IDialogService, DialogService>();
+            NLogLoggerFactory fac = new NLogLoggerFactory();
+            Log.Initialize(dialogService, fac.CreateLogger("ErrorLog"), fac.CreateLogger("InfoLog"));
+
+            containerRegistry.RegisterInstance<ISessionContextService>(WpfSessionContextService.Instance);
             containerRegistry.Register<ISnackbarService, SnackbarService>();
 
             containerRegistry.Register<IWorkspaceSetupService, WorkspaceSetupService>();

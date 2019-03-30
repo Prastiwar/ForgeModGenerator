@@ -101,6 +101,7 @@ namespace ForgeModGenerator.Services
                 if (TryGetModFromPath(path, out Mod imported))
                 {
                     found.Add(imported);
+                    Log.Info($"Mod {imported.ModInfo.Name} detected");
                 }
             }
             return new ObservableCollection<Mod>(found);
@@ -115,6 +116,7 @@ namespace ForgeModGenerator.Services
             {
                 ForgeVersion version = new ForgeVersion(path);
                 found.Add(version);
+                Log.Info($"Forge Version {version.Name} detected");
             }
             return new ObservableCollection<ForgeVersion>(found);
         }

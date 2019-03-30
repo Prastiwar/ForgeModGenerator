@@ -224,7 +224,6 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
                 if (organizationChanged)
                 {
                     string oldOrganizationPath = ModPaths.OrganizationRootFolder(oldValues.ModInfo.Name, oldValues.Organization);
-                    //string newOrganizationPath = ModPaths.OrganizationRootFolder(oldValues.ModInfo.Name, mod.Organization);
                     if (!IOSafeWin.RenameDirectory(oldOrganizationPath, mod.Organization))
                     {
                         DialogService.ShowMessage(IOSafeWin.GetOperationFailedMessage(oldOrganizationPath), "Rename failed");
@@ -234,7 +233,6 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
                 if (modidChanged)
                 {
                     string oldAssetPath = ModPaths.AssetsFolder(oldValues.ModInfo.Name, oldValues.ModInfo.Modid);
-                    //string newAssetPath = ModPaths.AssetsFolder(oldValues.ModInfo.Name, mod.ModInfo.Modid);
                     if (!IOSafeWin.RenameDirectory(oldAssetPath, mod.ModInfo.Modid))
                     {
                         DialogService.ShowMessage(IOSafeWin.GetOperationFailedMessage(oldAssetPath), "Rename failed");
@@ -245,7 +243,6 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
                 {
                     bool canChangeName = true;
                     string oldSourceCodePath = ModPaths.SourceCodeRootFolder(oldValues.ModInfo.Name, mod.Organization);
-                    //IOHelper.MoveDirectory(oldSourceCodePath, newSourceCodePath);
                     if (!IOSafeWin.RenameDirectory(oldSourceCodePath, mod.ModInfo.Name.ToLower()))
                     {
                         DialogService.ShowMessage(IOSafeWin.GetOperationFailedMessage(oldSourceCodePath), "Rename failed");
@@ -253,7 +250,6 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
                     }
 
                     string oldNamePath = ModPaths.ModRootFolder(oldValues.ModInfo.Name);
-                    //string newNamePath = ModPaths.ModRootFolder(mod.ModInfo.Name);
                     if (canChangeName && !IOSafeWin.RenameDirectory(oldNamePath, mod.ModInfo.Name))
                     {
                         DialogService.ShowMessage(IOSafeWin.GetOperationFailedMessage(oldNamePath), "Rename failed");

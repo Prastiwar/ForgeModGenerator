@@ -25,7 +25,6 @@ namespace ForgeModGenerator.Services
         protected override bool TryGetModFromPath(string path, out Mod mod)
         {
             mod = ModHelper.ImportMod(path);
-            Log.Info($"Mod {mod.ModInfo.Name} detected");
             return mod != null;
         }
 

@@ -1,56 +1,78 @@
-﻿using NLog;
+﻿using ForgeModGenerator.Services;
+using Microsoft.Extensions.Logging;
 using System;
-using System.Windows;
 
 namespace ForgeModGenerator
 {
     public static class Log
     {
         public static string UnexpectedErrorMessage = "Something went wrong, this should never happened. Please, report a bug at https://github.com/Prastiwar/ForgeModGenerator/issues/new?template=bug_report.md";
-
-        public static readonly ILogger ErrorLogger = LogManager.GetLogger("ErrorLog");
-        public static readonly ILogger InfoLogger = LogManager.GetLogger("InfoLog");
+        
+        private static IDialogService dialogService;
+        private static ILogger errorLogger;
+        private static ILogger infoLogger;
+        private static bool isInitialized;
 
         private static string FormatMoreInformation(string message, string moreInformation) => $"{message}{Environment.NewLine}More information: {moreInformation}";
 
+        public static void Initialize(IDialogService dialogService, ILogger errorLogger, ILogger infoLogger)
+        {
+            Log.dialogService = dialogService;
+            Log.errorLogger = errorLogger;
+            Log.infoLogger = infoLogger;
+            isInitialized = true;
+        }
+
+        private static void InitCheck()
+        {
+            if (!isInitialized)
+            {
+                throw new ClassNotInitializedException(typeof(Log));
+            }
+        }
+
         public static void Error(Exception ex, string message = "", bool messageClient = false, string moreInformation = null)
         {
+            InitCheck();
             if (messageClient)
             {
-                MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                dialogService.ShowError(message, "Error", "OK", null);
             }
             string msg = string.IsNullOrEmpty(moreInformation) ? message : FormatMoreInformation(message, moreInformation);
-            ErrorLogger.Error(ex, msg);
+            errorLogger.LogError(ex, msg);
         }
 
         public static void Info(string message, bool messageClient = false, string moreInformation = null)
         {
+            InitCheck();
             if (messageClient)
             {
-                MessageBox.Show(message, "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+                dialogService.ShowMessage(message, "Info", "OK", null);
             }
             string msg = string.IsNullOrEmpty(moreInformation) ? message : FormatMoreInformation(message, moreInformation);
-            InfoLogger.Info(msg);
+            infoLogger.LogInformation(msg);
         }
 
         public static void Warning(string message, bool messageClient = false, string moreInformation = null)
         {
+            InitCheck();
             if (messageClient)
             {
-                MessageBox.Show(message, "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                dialogService.ShowMessage(message, "Warning", "OK", null);
             }
             string msg = string.IsNullOrEmpty(moreInformation) ? message : FormatMoreInformation(message, moreInformation);
-            InfoLogger.Warn(msg);
+            infoLogger.LogWarning(msg);
         }
 
         public static void Warning(Exception ex, string message = "", bool messageClient = false, string moreInformation = null)
         {
+            InitCheck();
             if (messageClient)
             {
-                MessageBox.Show(message, "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                dialogService.ShowMessage(message, "Warning", "OK", null);
             }
             string msg = string.IsNullOrEmpty(moreInformation) ? message : FormatMoreInformation(message, moreInformation);
-            ErrorLogger.Warn(ex, msg);
+            errorLogger.LogWarning(ex, msg);
         }
     }
 }
