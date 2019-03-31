@@ -63,7 +63,6 @@
             <controls:FolderListBox x:Name="FoldersListBox"
                                     Grid.Row="1"
                                     FoldersSource="{Binding Folders.Files, Mode=OneWay}"
-                                    SelectedFolder="{Binding SelectedFolder}"
                                     AddFolderCommand="{Binding AddFolderCommand}"
                                     ShowEmptyMessage="{Binding SessionContext.IsModSelected, Converter={StaticResource InvertBooleanConverter}}"
                                     FolderTemplate="{StaticResource FolderTemplate}" />

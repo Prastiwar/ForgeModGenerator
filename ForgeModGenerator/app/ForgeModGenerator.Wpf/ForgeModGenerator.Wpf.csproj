@@ -212,10 +212,13 @@
     <Compile Include="Source\Controls\Proxy\SelectorDecorator.cs" />
     <Compile Include="Source\Common\SyncInvokeObject.cs" />
     <Compile Include="Source\Controls\PathNameSubmitTextBox.cs" />
+    <Compile Include="Source\Converters\DialogResultAssemblyConverter.cs" />
     <Compile Include="Source\Converters\Json\ForgeVersionJsonConverter.cs" />
     <Compile Include="Source\Converters\Json\McModInfoJsonConverter.cs" />
     <Compile Include="Source\Converters\Json\ModJsonConverter.cs" />
     <Compile Include="Source\Converters\MethodToCommandConverter.cs" />
+    <Compile Include="Source\FileSystem\Dialog\FileBrowserDialog.cs" />
+    <Compile Include="Source\FileSystem\Dialog\FolderBrowserDialog.cs" />
     <Compile Include="Source\Utility\Extensions\BindingExtensions.cs" />
     <Compile Include="Source\Utility\Helpers\ModHelper.cs" />
     <Compile Include="Source\Common\ThirdParty\WpfObservableRangeCollection.cs" />
@@ -236,7 +239,7 @@
     <Compile Include="Source\Modules\SoundGenerator\SoundEventsSynchronizer.cs" />
     <Compile Include="Source\Services\DialogService.cs" />
     <Compile Include="Source\Services\SnackbarService.cs" />
-    <Compile Include="Source\FileSystem\ObservableFolder.cs" />
+    <Compile Include="Source\FileSystem\WpfObservableFolder.cs" />
     <Compile Include="Source\Utility\Extensions\ValidationExtensions.cs" />
     <Compile Include="Source\Utility\Helpers\IOHelperWin.cs" />
     <Compile Include="Source\Persistence\JsonUpdater.cs" />

@@ -40,9 +40,14 @@ namespace ForgeModGenerator
 
         ObservableRangeCollection<T> Files { get; }
 
+        int Count { get; }
+
         void AddRange(IEnumerable<T> items);
         bool Add(T item);
+
         bool Remove(T item);
+        bool RemoveAt(int index);
+
         bool Contains(T item);
         bool TryGetFile(string path, out T folder);
     }

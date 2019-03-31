@@ -36,7 +36,6 @@
                                                     Visibility="{Binding Path=ShowEmptyMessage, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}, Converter={StaticResource InvertedBoolToVisibility}}" />
                                             <ListBox x:Name="FoldersListBox"
                                                      ItemsSource="{Binding Path=FoldersSource, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
-                                                     SelectedItem="{Binding Path=SelectedFolder, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
                                                      ItemTemplate="{Binding Path=FolderTemplate, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
                                                      HorizontalContentAlignment="Stretch"
                                                      VerticalContentAlignment="Stretch"
@@ -103,7 +102,6 @@
                                             </StackPanel>
                                             <ListBox x:Name="FoldersListBox"
                                                      ItemsSource="{Binding Path=FoldersSource, RelativeSource={RelativeSource AncestorType=soundControls:SoundFolderListBox}}"
-                                                     SelectedItem="{Binding Path=SelectedFolder, RelativeSource={RelativeSource AncestorType=soundControls:SoundFolderListBox}}"
                                                      ItemTemplate="{Binding Path=FolderTemplate, RelativeSource={RelativeSource AncestorType=soundControls:SoundFolderListBox}}"
                                                      HorizontalContentAlignment="Stretch"
                                                      VerticalContentAlignment="Stretch"

@@ -35,13 +35,6 @@ namespace ForgeModGenerator.Controls
             set => SetValue(FolderProperty, value);
         }
 
-        public static readonly DependencyProperty SelectedFileProperty =
-            DependencyProperty.Register("SelectedFile", typeof(object), typeof(FolderExpanderControl), new PropertyMetadata(null));
-        public object SelectedFile {
-            get => GetValue(SelectedFileProperty);
-            set => SetValue(SelectedFileProperty, value);
-        }
-
         public static readonly DependencyProperty FileItemTemplateProperty =
             DependencyProperty.Register("FileItemTemplate", typeof(DataTemplate), typeof(FolderExpanderControl), new PropertyMetadata(null));
         public DataTemplate FileItemTemplate {

@@ -60,7 +60,6 @@
                             </Expander.HeaderTemplate>
                             <ListBox x:Name="FilesListBox"
                                      ItemsSource="{Binding Path=Folder.Files, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
-                                     SelectedItem="{Binding Path=SelectedFile, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
                                      ItemTemplate="{Binding Path=FileItemTemplate, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
                                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                      ScrollViewer.VerticalScrollBarVisibility="Disabled"
@@ -140,7 +139,6 @@
                             </Expander.HeaderTemplate>
                             <ListBox x:Name="FilesListBox"
                                      ItemsSource="{Binding Path=Folder.Files, RelativeSource={RelativeSource AncestorType=soundControls:SoundFolderExpanderControl}}"
-                                     SelectedItem="{Binding Path=SelectedFile, RelativeSource={RelativeSource AncestorType=soundControls:SoundFolderExpanderControl}}"
                                      ItemTemplate="{Binding Path=FileItemTemplate, RelativeSource={RelativeSource AncestorType=soundControls:SoundFolderExpanderControl}}"
                                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                      VirtualizingPanel.IsVirtualizing="True"

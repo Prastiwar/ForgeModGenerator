@@ -8,7 +8,7 @@ namespace ForgeModGenerator.SoundGenerator
 {
     public class SoundEventsSynchronizer : FoldersSynchronizer<SoundEvent, Sound>
     {
-        public SoundEventsSynchronizer(ISynchronizeInvoke synchronizeObject,WpfObservableFolder<SoundEvent> foldersToSync, FoldersFactory<SoundEvent, Sound> factory, string rootPath = null, string filters = null)
+        public SoundEventsSynchronizer(ISynchronizeInvoke synchronizeObject, IFolderObject<SoundEvent> foldersToSync, FoldersFactory<SoundEvent, Sound> factory, string rootPath = null, string filters = null)
             : base(synchronizeObject, foldersToSync, factory, rootPath, filters) { }
 
         /// <inheritdoc/>

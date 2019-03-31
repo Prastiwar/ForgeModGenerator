@@ -203,7 +203,7 @@ namespace ForgeModGenerator.ViewModels
 
         protected async void ShowFileDialogAndCreateFolder()
         {
-            DialogResult dialogResult = OpenFileDialog.ShowDialog();
+            DialogResult dialogResult = DialogResultAssemblyConverter.Convert(OpenFileDialog.ShowDialog());
             if (dialogResult == DialogResult.OK)
             {
                 string newFolderPath = null;
@@ -215,7 +215,7 @@ namespace ForgeModGenerator.ViewModels
 
         protected virtual async void ShowFileDialogAndCopyToFolder(TFolder folder)
         {
-            DialogResult dialogResult = OpenFileDialog.ShowDialog();
+            DialogResult dialogResult = DialogResultAssemblyConverter.Convert(OpenFileDialog.ShowDialog());
             if (dialogResult == DialogResult.OK)
             {
                 await CopyFilesToFolderAsync(folder, OpenFileDialog.FileNames);

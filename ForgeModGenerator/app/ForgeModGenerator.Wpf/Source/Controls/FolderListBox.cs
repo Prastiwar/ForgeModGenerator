@@ -22,13 +22,6 @@ namespace ForgeModGenerator.Controls
             set => SetValue(FoldersSourceProperty, value);
         }
 
-        public static readonly DependencyProperty SelectedFolderProperty =
-            DependencyProperty.Register("SelectedFolder", typeof(object), typeof(FolderListBox), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
-        public object SelectedFolder {
-            get => GetValue(SelectedFolderProperty);
-            set => SetValue(SelectedFolderProperty, value);
-        }
-
         public static readonly DependencyProperty EmptyMessageProperty =
             DependencyProperty.Register("EmptyMessage", typeof(string), typeof(FolderListBox), new PropertyMetadata("Select mod"));
         public string EmptyMessage {
