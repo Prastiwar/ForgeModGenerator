@@ -219,6 +219,7 @@
     <Compile Include="Source\Converters\MethodToCommandConverter.cs" />
     <Compile Include="Source\FileSystem\Dialog\FileBrowserDialog.cs" />
     <Compile Include="Source\FileSystem\Dialog\FolderBrowserDialog.cs" />
+    <Compile Include="Source\FileSystem\FileSystemWin.cs" />
     <Compile Include="Source\Utility\Extensions\BindingExtensions.cs" />
     <Compile Include="Source\Utility\Helpers\ModHelper.cs" />
     <Compile Include="Source\Common\ThirdParty\WpfObservableRangeCollection.cs" />
@@ -241,7 +242,6 @@
     <Compile Include="Source\Services\SnackbarService.cs" />
     <Compile Include="Source\FileSystem\WpfObservableFolder.cs" />
     <Compile Include="Source\Utility\Extensions\ValidationExtensions.cs" />
-    <Compile Include="Source\Utility\Helpers\IOHelperWin.cs" />
     <Compile Include="Source\Persistence\JsonUpdater.cs" />
     <Compile Include="Source\Persistence\DefaultPreferenceData.cs" />
     <Compile Include="Source\Modules\ApplicationModule\BugReporter.xaml.cs">
@@ -280,7 +280,6 @@
     </Compile>
     <Compile Include="Source\Converters\PathToNameConverter.cs" />
     <Compile Include="Source\Utility\Extensions\JsonExtensions.cs" />
-    <Compile Include="Source\Utility\Helpers\IOSafeWin.cs" />
     <Compile Include="Source\Utility\Helpers\WPFHelper.cs" />
     <Compile Include="Source\Modules\AchievementGenerator\Achievement.cs" />
     <Compile Include="Source\Modules\BlockGenerator\Block.cs" />
@@ -303,8 +302,6 @@
     <Compile Include="Source\Modules\BlockGenerator\BlockGeneratorViewModel.cs" />
     <Compile Include="Source\Modules\CommandGenerator\CommandGeneratorViewModel.cs" />
     <Compile Include="Source\Modules\ItemGenerator\ItemGeneratorViewModel.cs" />
-    <Compile Include="Source\ViewModels\FoldersWatcherViewModelBase.cs" />
-    <Compile Include="Source\ViewModels\FoldersViewModelBase.cs" />
     <Compile Include="Source\Modules\ModGenerator\ModGeneratorViewModel.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\RecipeGeneratorViewModel.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundGeneratorViewModel.cs" />

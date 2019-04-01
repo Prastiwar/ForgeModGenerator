@@ -14,11 +14,14 @@ namespace ForgeModGenerator.ViewModels
         where TFolder : class, IFolderObject<TFile>
         where TFile : class, IFileObject, IValidable
     {
-        public FoldersViewModelBase(ISessionContextService sessionContext, IDialogService dialogService, ISnackbarService snackbarService) :
-            base(sessionContext, dialogService, snackbarService)
+        public FoldersViewModelBase(ISessionContextService sessionContext, IDialogService dialogService, IFileSystem fileSystem) :
+            base(sessionContext, dialogService, fileSystem)
         { }
 
-        public EditorForm<TFile> FileEditor { get; protected set; }
+        /// <summary> Path to json file that can be deserialized to folders </summary>
+        public abstract string FoldersJsonFilePath { get; }
+
+        public IEditorForm<TFile> FileEditor { get; protected set; }
 
         private bool isFileUpdateAvailable;
         public bool IsFileUpdateAvailable {
@@ -32,12 +35,12 @@ namespace ForgeModGenerator.ViewModels
         private ICommand resolveJsonFileCommand;
         public ICommand ResolveJsonFileCommand => resolveJsonFileCommand ?? (resolveJsonFileCommand = new DelegateCommand(ResolveJsonFile));
 
-        protected CollectionJsonUpdater<TFolder> JsonUpdater { get; set; }
+        protected JsonUpdaterBase<IEnumerable<TFolder>> JsonUpdater { get; set; }
 
         /// <summary> Deserialized folders from FoldersJsonFilePath and checks if any file doesn't exists, if so, prompt if should fix this </summary>
         protected async void CheckJsonFileMismatch()
         {
-            IEnumerable<TFolder> deserializedFolders = FolderFactory.FindFoldersFromFile(FoldersJsonFilePath, false);
+            IEnumerable<TFolder> deserializedFolders = Explorer.FolderFactory.FindFoldersFromFile(FoldersJsonFilePath, false);
             bool hasNotExistingFile = deserializedFolders != null ? deserializedFolders.Any(folder => folder.Files.Any(file => !File.Exists(file.Info.FullName))) : false;
             if (hasNotExistingFile)
             {
@@ -58,7 +61,7 @@ namespace ForgeModGenerator.ViewModels
         /// <summary> Adds found files that are not referenced in json file </summary>
         protected void ResolveJsonFile()
         {
-            FileSynchronizer.AddNotReferencedFiles();
+            Explorer.FileSynchronizer.AddNotReferencedFiles();
             CheckForUpdate();
             ForceJsonFileUpdate();
         }
@@ -71,7 +74,7 @@ namespace ForgeModGenerator.ViewModels
         {
             if (SessionContext.SelectedMod != null)
             {
-                return FolderFactory.EnumerateFilteredFiles(FoldersRootPath, SearchOption.AllDirectories).All(filePath => FileSystemInfoReference.IsReferenced(filePath));
+                return Explorer.FolderFactory.EnumerateFilteredFiles(Explorer.FoldersRootPath, SearchOption.AllDirectories).All(filePath => FileSystemInfoReference.IsReferenced(filePath));
             }
             return true;
         }

@@ -79,7 +79,7 @@ namespace ForgeModGenerator
             }
             catch (Exception ex)
             {
-                //Log.Error(ex, $"Couldnt load {path}", true, $"File content: {content}");
+                Log.Error(ex, $"Couldnt load {path}", true, $"File content: {content}");
                 return new Collection<TFolder>();
             }
             if (loadOnlyExisting)

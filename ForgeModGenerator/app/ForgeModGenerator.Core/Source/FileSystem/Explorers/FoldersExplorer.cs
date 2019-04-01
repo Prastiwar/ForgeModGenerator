@@ -13,10 +13,11 @@ namespace ForgeModGenerator
         where TFolder : class, IFolderObject<TFile>
         where TFile : class, IFileObject
     {
-        public FoldersExplorer(string foldersRootPath, IDialogService dialogService)
+        public FoldersExplorer(string foldersRootPath, IDialogService dialogService, IFileSystem fileSystem)
         {
             FoldersRootPath = foldersRootPath;
             DialogService = dialogService ?? throw new ArgumentNullException(nameof(foldersRootPath));
+            FileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
             AllowedFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         }
 
@@ -37,6 +38,8 @@ namespace ForgeModGenerator
         public string AllowedFileExtensionsPatterns => AllowedFileExtensions != null ? "*" + string.Join("|*", AllowedFileExtensions) : "";
 
         protected IDialogService DialogService { get; }
+
+        protected IFileSystem FileSystem { get; }
 
         private IFolderObject<TFolder> folders;
         public IFolderObject<TFolder> Folders {
@@ -94,10 +97,10 @@ namespace ForgeModGenerator
                         bool overwrite = await DialogService.ShowMessage($"File {newPath} already exists.{Environment.NewLine}Do you want to overwrite it?", "Existing file conflict", "Yes", "No", null);
                         if (overwrite)
                         {
-                            //if (!IOSafeWin.CopyFile(filePath, newPath, true))
-                            //{
-                            //    await DialogService.ShowMessage(IOSafeWin.GetOperationFailedMessage(filePath), "Copy failed");
-                            //}
+                            if (!FileSystem.CopyFile(filePath, newPath, true))
+                            {
+                                await DialogService.ShowMessage(StaticMessage.GetOperationFailedMessage(filePath), "Copy failed");
+                            }
                         }
                     }
                     else
@@ -107,10 +110,10 @@ namespace ForgeModGenerator
                 }
                 else
                 {
-                    //if (!IOSafeWin.CopyFile(filePath, newPath))
-                    //{
-                    //    await DialogService.ShowMessage(IOSafeWin.GetOperationFailedMessage(filePath), "Copy failed");
-                    //}
+                    if (!FileSystem.CopyFile(filePath, newPath))
+                    {
+                        await DialogService.ShowMessage(StaticMessage.GetOperationFailedMessage(filePath), "Copy failed");
+                    }
                 }
             }
         }
@@ -126,13 +129,13 @@ namespace ForgeModGenerator
                     string filePath = folder.Files[i].Info.FullName;
                     if (FileSystemInfoReference.GetReferenceCount(filePath) <= 1 && File.Exists(filePath))
                     {
-                        //IOSafeWin.DeleteFileRecycle(filePath);
+                        FileSystem.DeleteFile(filePath, true);
                     }
                 }
                 folder.Clear();
                 if (Directory.Exists(folderPath) && IOHelper.IsEmpty(folderPath))
                 {
-                    //IOSafeWin.DeleteDirectoryRecycle(folderPath);
+                    FileSystem.DeleteDirectory(folderPath, true);
                 }
             }
         }
@@ -143,11 +146,11 @@ namespace ForgeModGenerator
             {
                 if (!FileSystemInfoReference.IsReferenced(file.Info.FullName))
                 {
-                    //if (!IOSafeWin.DeleteFileRecycle(param.Item2.Info.FullName))
-                    //{
-                    //    DialogService.ShowMessage(IOSafeWin.GetOperationFailedMessage(param.Item2.Info.FullName), "Deletion failed");
-                    //    param.Item1.Add(param.Item2);
-                    //}
+                    if (!FileSystem.DeleteFile(file.Info.FullName, true))
+                    {
+                        DialogService.ShowMessage(StaticMessage.GetOperationFailedMessage(file.Info.FullName), "Deletion failed");
+                        folder.Add(file);
+                    }
                 }
             }
         }

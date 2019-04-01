@@ -23,11 +23,12 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
     /// <summary> ModGenerator Business ViewModel </summary>
     public class ModGeneratorViewModel : BindableBase
     {
-        public ModGeneratorViewModel(ISessionContextService sessionContext, IWorkspaceSetupService workspaceService, IDialogService dialogService)
+        public ModGeneratorViewModel(ISessionContextService sessionContext, IWorkspaceSetupService workspaceService, IDialogService dialogService, IFileSystem fileSystem)
         {
             SessionContext = sessionContext;
             WorkspaceService = workspaceService;
             DialogService = dialogService;
+            FileSystem = fileSystem;
             ResetNewMod();
             Form = new ModForm() {
                 AddForgeVersionCommand = AddNewForgeVersionCommand,
@@ -51,6 +52,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
         public ISessionContextService SessionContext { get; }
         public IWorkspaceSetupService WorkspaceService { get; }
         public IDialogService DialogService { get; }
+        public IFileSystem FileSystem { get; }
 
         public IEnumerable<ModSide> Sides => Enum.GetValues(typeof(ModSide)).Cast<ModSide>();
 
@@ -94,7 +96,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
                 {
                     try
                     {
-                        IOHelperWin.DeleteDirectoryRecycle(ModPaths.ModRootFolder(mod.ModInfo.Name));
+                        FileSystem.DeleteDirectory(ModPaths.ModRootFolder(mod.ModInfo.Name), true);
                     }
                     catch (Exception ex)
                     {
@@ -202,7 +204,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
             string javaSource = ModPaths.JavaSourceFolder(mod.ModInfo.Name);
             foreach (string organization in Directory.EnumerateDirectories(javaSource))
             {
-                IOHelperWin.DeleteDirectoryPerm(organization);
+                FileSystem.DeleteDirectory(organization, false);
             }
         }
 
@@ -224,18 +226,18 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
                 if (organizationChanged)
                 {
                     string oldOrganizationPath = ModPaths.OrganizationRootFolder(oldValues.ModInfo.Name, oldValues.Organization);
-                    if (!IOSafeWin.RenameDirectory(oldOrganizationPath, mod.Organization))
+                    if (!FileSystem.RenameDirectory(oldOrganizationPath, mod.Organization))
                     {
-                        DialogService.ShowMessage(IOSafeWin.GetOperationFailedMessage(oldOrganizationPath), "Rename failed");
+                        DialogService.ShowMessage(StaticMessage.GetOperationFailedMessage(oldOrganizationPath), "Rename failed");
                         mod.Organization = oldValues.Organization;
                     }
                 }
                 if (modidChanged)
                 {
                     string oldAssetPath = ModPaths.AssetsFolder(oldValues.ModInfo.Name, oldValues.ModInfo.Modid);
-                    if (!IOSafeWin.RenameDirectory(oldAssetPath, mod.ModInfo.Modid))
+                    if (!FileSystem.RenameDirectory(oldAssetPath, mod.ModInfo.Modid))
                     {
-                        DialogService.ShowMessage(IOSafeWin.GetOperationFailedMessage(oldAssetPath), "Rename failed");
+                        DialogService.ShowMessage(StaticMessage.GetOperationFailedMessage(oldAssetPath), "Rename failed");
                         mod.ModInfo.Modid = oldValues.ModInfo.Modid;
                     }
                 }
@@ -243,19 +245,19 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
                 {
                     bool canChangeName = true;
                     string oldSourceCodePath = ModPaths.SourceCodeRootFolder(oldValues.ModInfo.Name, mod.Organization);
-                    if (!IOSafeWin.RenameDirectory(oldSourceCodePath, mod.ModInfo.Name.ToLower()))
+                    if (!FileSystem.RenameDirectory(oldSourceCodePath, mod.ModInfo.Name.ToLower()))
                     {
-                        DialogService.ShowMessage(IOSafeWin.GetOperationFailedMessage(oldSourceCodePath), "Rename failed");
+                        DialogService.ShowMessage(StaticMessage.GetOperationFailedMessage(oldSourceCodePath), "Rename failed");
                         mod.Name = oldValues.Name;
                     }
 
                     string oldNamePath = ModPaths.ModRootFolder(oldValues.ModInfo.Name);
-                    if (canChangeName && !IOSafeWin.RenameDirectory(oldNamePath, mod.ModInfo.Name))
+                    if (canChangeName && !FileSystem.RenameDirectory(oldNamePath, mod.ModInfo.Name))
                     {
-                        DialogService.ShowMessage(IOSafeWin.GetOperationFailedMessage(oldNamePath), "Rename failed");
+                        DialogService.ShowMessage(StaticMessage.GetOperationFailedMessage(oldNamePath), "Rename failed");
                         string sourceCodeParentPath = new DirectoryInfo(oldSourceCodePath).Parent.FullName;
                         string newSourceCodePath = Path.Combine(sourceCodeParentPath, mod.ModInfo.Name.ToLower());
-                        IOHelperWin.RenameDirectory(newSourceCodePath, oldValues.Name.ToLower());
+                        FileSystem.RenameDirectory(newSourceCodePath, oldValues.Name.ToLower());
                         mod.Name = oldValues.Name;
                     }
                 }
@@ -307,7 +309,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
                 DirectoryInfo info = new DirectoryInfo(directory);
                 if (info.Name != "src")
                 {
-                    IOHelperWin.DeleteDirectoryRecycle(directory);
+                    FileSystem.DeleteDirectory(directory, true);
                 }
             }
 
@@ -317,7 +319,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
                 FileInfo info = new FileInfo(file);
                 if (info.Name != ModPaths.FmgInfoFileName)
                 {
-                    IOHelperWin.DeleteFileRecycle(file);
+                    FileSystem.DeleteFile(file, true);
                 }
             }
 
@@ -326,9 +328,9 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
             Directory.CreateDirectory(tempDirPath);
             mod.ForgeVersion.UnZip(tempDirPath);
 
-            IOHelperWin.DeleteDirectoryPerm(Path.Combine(tempDirPath, "src"));
-            IOHelperWin.MoveDirectoriesAndFiles(tempDirPath, modRoot);
-            IOHelperWin.DeleteDirectoryPerm(tempDirPath);
+            FileSystem.DeleteDirectory(Path.Combine(tempDirPath, "src"), false);
+            FileSystem.MoveDirectoriesAndFiles(tempDirPath, modRoot);
+            FileSystem.DeleteDirectory(tempDirPath, false);
             Log.Info($"Changed forge version for {mod.CachedName} to {mod.ForgeVersion.Name}");
         }
     }

@@ -47,6 +47,7 @@ namespace ForgeModGenerator
 
             containerRegistry.RegisterInstance<ISessionContextService>(WpfSessionContextService.Instance);
             containerRegistry.Register<ISnackbarService, SnackbarService>();
+            containerRegistry.Register<IFileSystem, FileSystemWin>();
 
             containerRegistry.Register<IWorkspaceSetupService, WorkspaceSetupService>();
             containerRegistry.Register<IModBuildService, ModBuildService>();

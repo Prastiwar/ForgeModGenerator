@@ -66,7 +66,7 @@
                          Value="0"
                          IsIndeterminate="True" />
             <sControls:SoundFolderListBox x:Name="FoldersListBox"
-                                          FoldersSource="{Binding Folders.Files, Mode=OneWay}"
+                                          FoldersSource="{Binding Explorer.Folders.Files, Mode=OneWay}"
                                           AddFolderCommand="{Binding AddFolderCommand}"
                                           AddFileAsFolderCommand="{Binding AddFileAsFolderCommand}"
                                           ShowEmptyMessage="{Binding SessionContext.IsModSelected, Converter={StaticResource InvertBooleanConverter}}"
