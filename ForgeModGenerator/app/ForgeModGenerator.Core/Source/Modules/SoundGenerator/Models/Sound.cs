@@ -1,23 +1,18 @@
 ﻿using ForgeModGenerator.Models;
-using ForgeModGenerator.SoundGenerator.Converters;
 using ForgeModGenerator.Validation;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using System.ComponentModel;
 using System.IO;
 
 namespace ForgeModGenerator.SoundGenerator.Models
 {
-    [JsonConverter(typeof(SoundConverter))]
     public class Sound : FileObject, IValidable
     {
-        [JsonConverter(typeof(StringEnumConverter))]
         public enum SoundType { file, @event }
 
         protected Sound() => PropertyChanged += Sound_PropertyChanged;
 
         /// <summary> IMPORTANT: Prefer to use ctor, this is used for serialization purposes </summary>
-        internal static Sound CreateEmpty(string name = null, string modid = null) => new Sound() { Name = name, modid = modid };
+        public static Sound CreateEmpty(string name = null, string modid = null) => new Sound() { Name = name, modid = modid };
 
         public Sound(string filePath) : this(Mod.GetModidFromPath(filePath), filePath) { }
 

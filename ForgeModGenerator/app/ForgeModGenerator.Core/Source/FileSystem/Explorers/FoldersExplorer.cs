@@ -142,11 +142,12 @@ namespace ForgeModGenerator
 
         public void RemoveFileFromFolder(TFolder folder, TFile file)
         {
+            string filePath = file.Info.FullName;
             if (folder.Remove(file))
             {
-                if (!FileSystemInfoReference.IsReferenced(file.Info.FullName))
+                if (!FileSystemInfoReference.IsReferenced(filePath))
                 {
-                    if (!FileSystem.DeleteFile(file.Info.FullName, true))
+                    if (!FileSystem.DeleteFile(filePath, true))
                     {
                         DialogService.ShowMessage(StaticMessage.GetOperationFailedMessage(file.Info.FullName), "Deletion failed");
                         folder.Add(file);

@@ -12,7 +12,7 @@ namespace ForgeModGenerator.SoundGenerator.Converters
         {
             JObject item = JObject.Load(reader);
             string soundsJson = item.GetValue("sounds", StringComparison.OrdinalIgnoreCase).ToString();
-            List<Sound> sounds = JsonConvert.DeserializeObject<List<Sound>>(soundsJson);
+            List<Sound> sounds = JsonConvert.DeserializeObject<List<Sound>>(soundsJson, new SoundConverter());
 
             SoundEvent soundEvent = SoundEvent.CreateEmpty(sounds);
             soundEvent.EventName = SoundEvent.FormatDottedSoundNameFromSoundName(sounds[0].Name);
@@ -40,7 +40,7 @@ namespace ForgeModGenerator.SoundGenerator.Converters
             {
                 writer.WriteRawValue(" ");
             }
-
+            serializer.Converters.Add(new SoundConverter());
             JObject jo = new JObject {
                 { nameof(SoundEvent.Replace).ToLower(), value.Replace },
                 { nameof(SoundEvent.Subtitle).ToLower(), value.Subtitle ?? "" },

@@ -7,7 +7,7 @@ namespace ForgeModGenerator.Models
     {
         public bool IsDirty { get; set; }
 
-        protected bool DirtSetProperty<T>(ref T variable, T newValue, [CallerMemberName] string propertyName = null)
+        protected virtual bool DirtSetProperty<T>(ref T variable, T newValue, [CallerMemberName] string propertyName = null)
         {
             bool set = SetProperty(ref variable, newValue, propertyName);
             if (set)

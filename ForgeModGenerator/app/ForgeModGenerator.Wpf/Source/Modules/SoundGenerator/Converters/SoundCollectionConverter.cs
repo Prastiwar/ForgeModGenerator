@@ -39,10 +39,10 @@ namespace ForgeModGenerator.SoundGenerator.Converters
             string soundsPath = ModPaths.SoundsFolder(ModName, Modid);
             ICollection<SoundEvent> folders = new Collection<SoundEvent>();
             JObject item = JObject.Load(reader);
-
+            serializer.Converters.Add(new SoundEventConverter());
             foreach (KeyValuePair<string, JToken> property in item)
             {
-                SoundEvent soundEvent = item.GetValue(property.Key).ToObject<SoundEvent>();
+                SoundEvent soundEvent = item.GetValue(property.Key).ToObject<SoundEvent>(serializer);
                 soundEvent.EventName = property.Key;
                 soundEvent.SetInfo(soundsPath);
 
@@ -110,7 +110,7 @@ namespace ForgeModGenerator.SoundGenerator.Converters
             foreach (SoundEvent folder in folders.Where(folder => folder.Files.Count > 0))
             {
                 itemBuilder.Clear();
-                string json = JsonConvert.SerializeObject(folder, Formatting.Indented);
+                string json = JsonConvert.SerializeObject(folder, Formatting.Indented, new SoundEventConverter());
                 itemBuilder.Append(json);
 
                 bool isLastElement = i < folders.Count() - 1;

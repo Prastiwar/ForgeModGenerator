@@ -1,27 +1,23 @@
-﻿using ForgeModGenerator.SoundGenerator.Converters;
-using ForgeModGenerator.Validation;
-using ForgeModGenerator.Validations;
-using Newtonsoft.Json;
+﻿using ForgeModGenerator.Validation;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
-using System.Windows.Data;
 
 namespace ForgeModGenerator.SoundGenerator.Models
 {
-    [JsonConverter(typeof(SoundEventConverter))]
-    public class SoundEvent : WpfObservableFolder<Sound>, IDataErrorInfo, IValidable
+    public class SoundEvent : ObservableFolder<Sound>, IDataErrorInfo, IValidable
     {
         /// <summary> IMPORTANT: Prefer other ctor, this is used for serialization purposes </summary>
         protected SoundEvent() { }
 
         /// <summary> IMPORTANT: Prefer to use ctor, this is used for serialization purposes </summary>
-        internal static SoundEvent CreateEmpty(IEnumerable<Sound> files = null)
+        public static SoundEvent CreateEmpty(IEnumerable<Sound> files = null)
         {
             SoundEvent soundEvent = new SoundEvent();
             if (files != null)
             {
-                soundEvent.Files = new WpfObservableRangeCollection<Sound>(files);
+                soundEvent.Files = new ObservableRangeCollection<Sound>(files);
                 foreach (Sound file in soundEvent.Files)
                 {
                     file.PropertyChanged += soundEvent.File_PropertyChanged;
@@ -75,7 +71,7 @@ namespace ForgeModGenerator.SoundGenerator.Models
 
         public override object DeepClone()
         {
-            WpfObservableFolder<Sound> baseClone = (WpfObservableFolder<Sound>)base.DeepClone();
+            ObservableFolder<Sound> baseClone = (ObservableFolder<Sound>)base.DeepClone();
             SoundEvent clone = new SoundEvent() {
                 Replace = Replace,
                 Subtitle = Subtitle,

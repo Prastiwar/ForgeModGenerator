@@ -286,7 +286,6 @@
     <Compile Include="Source\Modules\CommandGenerator\Command.cs" />
     <Compile Include="Source\Modules\ItemGenerator\Item.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\Recipe.cs" />
-    <Compile Include="Source\Modules\SoundGenerator\Models\Sound.cs" />
     <Compile Include="Source\Services\WpfSessionContextService.cs" />
     <Compile Include="Source\Modules\SoundGenerator\Controls\SoundEditForm.xaml.cs">
       <DependentUpon>SoundEditForm.xaml</DependentUpon>
