@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>7.1</LangVersion>
+    <AssemblyName>ForgeModGenerator.Core</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,6 +14,11 @@
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
     <PackageReference Include="Prism.Core" Version="7.1.0.431" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Source\Modules\GUIGenerator\" />
+    <Folder Include="Source\Modules\TextureGenerator\" />
   </ItemGroup>
 
 </Project>

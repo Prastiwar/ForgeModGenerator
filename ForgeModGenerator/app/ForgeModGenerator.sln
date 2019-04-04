@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForgeModGenerator.Wpf", "Fo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForgeModGenerator.Tests", "ForgeModGenerator.Tests\ForgeModGenerator.Tests.csproj", "{8A08D269-C232-4743-9551-9ADF3649C19B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForgeModGenerator.Core", "ForgeModGenerator.Core\ForgeModGenerator.Core.csproj", "{0E6FCE50-BBB3-4E73-A821-28DEF11B1B48}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ForgeModGenerator.Core", "ForgeModGenerator.Core\ForgeModGenerator.Core.csproj", "{0E6FCE50-BBB3-4E73-A821-28DEF11B1B48}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

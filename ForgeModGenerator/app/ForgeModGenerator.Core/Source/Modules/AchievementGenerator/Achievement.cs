@@ -1,5 +1,4 @@
 ﻿using Prism.Mvvm;
-using System.Drawing;
 
 namespace ForgeModGenerator.AchievementGenerator.Models
 {
@@ -17,10 +16,10 @@ namespace ForgeModGenerator.AchievementGenerator.Models
             set => SetProperty(ref description, value);
         }
 
-        private Image icon;
-        public Image Icon {
-            get => icon;
-            set => SetProperty(ref icon, value);
+        private string iconPath;
+        public string IconPath {
+            get => iconPath;
+            set => SetProperty(ref iconPath, value);
         }
     }
 }

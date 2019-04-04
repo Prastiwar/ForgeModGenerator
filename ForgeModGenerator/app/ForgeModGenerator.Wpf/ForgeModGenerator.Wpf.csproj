@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>ForgeModGenerator</RootNamespace>
     <AssemblyName>ForgeModGenerator</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -29,6 +29,7 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -217,9 +218,11 @@
     <Compile Include="Source\Converters\Json\McModInfoJsonConverter.cs" />
     <Compile Include="Source\Converters\Json\ModJsonConverter.cs" />
     <Compile Include="Source\Converters\MethodToCommandConverter.cs" />
+    <Compile Include="Source\Converters\ValidateResultAssemblyConverter.cs" />
     <Compile Include="Source\FileSystem\Dialog\FileBrowserDialog.cs" />
     <Compile Include="Source\FileSystem\Dialog\FolderBrowserDialog.cs" />
     <Compile Include="Source\FileSystem\FileSystemWin.cs" />
+    <Compile Include="Source\Services\PrismRegionNavigationBridge.cs" />
     <Compile Include="Source\Utility\Extensions\BindingExtensions.cs" />
     <Compile Include="Source\Utility\Helpers\ModHelper.cs" />
     <Compile Include="Source\Common\ThirdParty\WpfObservableRangeCollection.cs" />
@@ -237,7 +240,6 @@
     <Compile Include="Source\Modules\SoundGenerator\Controls\SoundFolderListBox.cs" />
     <Compile Include="Source\Modules\SoundGenerator\ObservableSoundEvents.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundEventsFactory.cs" />
-    <Compile Include="Source\Modules\SoundGenerator\SoundEventsSynchronizer.cs" />
     <Compile Include="Source\Services\DialogService.cs" />
     <Compile Include="Source\Services\SnackbarService.cs" />
     <Compile Include="Source\FileSystem\WpfObservableFolder.cs" />
@@ -268,8 +270,7 @@
     <Compile Include="Source\Modules\ModGenerator\SourceCodeGeneration\RegistryHandlerCodeGenerator.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundCodeGenerator.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundJsonUpdater.cs" />
-    <Compile Include="Source\Modules\SoundGenerator\Models\SoundsGeneratorPreferences.cs" />
-    <Compile Include="Source\Modules\SoundGenerator\Models\SoundEvent.cs" />
+    <Compile Include="Source\Modules\SoundGenerator\SoundsGeneratorPreferences.cs" />
     <Compile Include="Source\Services\CommandTracker.cs" />
     <Compile Include="Source\Controls\FolderExpanderControl.cs" />
     <Compile Include="Source\Modules\ModGenerator\BuildConfiguration\ModBuildForm.xaml.cs">
@@ -281,11 +282,6 @@
     <Compile Include="Source\Converters\PathToNameConverter.cs" />
     <Compile Include="Source\Utility\Extensions\JsonExtensions.cs" />
     <Compile Include="Source\Utility\Helpers\WPFHelper.cs" />
-    <Compile Include="Source\Modules\AchievementGenerator\Achievement.cs" />
-    <Compile Include="Source\Modules\BlockGenerator\Block.cs" />
-    <Compile Include="Source\Modules\CommandGenerator\Command.cs" />
-    <Compile Include="Source\Modules\ItemGenerator\Item.cs" />
-    <Compile Include="Source\Modules\RecipeGenerator\Recipe.cs" />
     <Compile Include="Source\Services\WpfSessionContextService.cs" />
     <Compile Include="Source\Modules\SoundGenerator\Controls\SoundEditForm.xaml.cs">
       <DependentUpon>SoundEditForm.xaml</DependentUpon>
@@ -296,18 +292,8 @@
     <Compile Include="Source\Validations\FullPathValidator.cs" />
     <Compile Include="Source\Validations\NotEmptyRule.cs" />
     <Compile Include="Source\Modules\SoundGenerator\Validation\SoundEventValidator.cs" />
-    <Compile Include="Source\Modules\ModGenerator\BuildConfiguration\BuildConfigurationViewModel.cs" />
-    <Compile Include="Source\Modules\AchievementGenerator\AchievementGeneratorViewModel.cs" />
-    <Compile Include="Source\Modules\BlockGenerator\BlockGeneratorViewModel.cs" />
-    <Compile Include="Source\Modules\CommandGenerator\CommandGeneratorViewModel.cs" />
-    <Compile Include="Source\Modules\ItemGenerator\ItemGeneratorViewModel.cs" />
     <Compile Include="Source\Modules\ModGenerator\ModGeneratorViewModel.cs" />
-    <Compile Include="Source\Modules\RecipeGenerator\RecipeGeneratorViewModel.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundGeneratorViewModel.cs" />
-    <Compile Include="Source\Modules\ApplicationModule\SettingsViewModel.cs" />
-    <Compile Include="Source\Modules\ApplicationModule\DashboardViewModel.cs" />
-    <Compile Include="Source\Modules\ApplicationModule\MainWindowViewModel.cs" />
-    <Compile Include="Source\Modules\ApplicationModule\NavigationMenuViewModel.cs" />
     <Compile Include="Source\Modules\TextureGenerator\TextureGeneratorPage.xaml.cs">
       <DependentUpon>TextureGeneratorPage.xaml</DependentUpon>
     </Compile>
@@ -473,6 +459,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
+    <None Include="app.config" />
     <None Include="Config\app.manifest" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

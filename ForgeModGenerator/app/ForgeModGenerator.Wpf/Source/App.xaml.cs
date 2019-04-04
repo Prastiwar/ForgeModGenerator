@@ -19,7 +19,10 @@ using ForgeModGenerator.TextureGenerator.ViewModels;
 using ForgeModGenerator.TextureGenerator.Views;
 using NLog.Extensions.Logging;
 using Prism.Ioc;
+using Prism.Mvvm;
 using Prism.Unity;
+using System;
+using System.Globalization;
 using System.Windows;
 
 namespace ForgeModGenerator
@@ -38,6 +41,19 @@ namespace ForgeModGenerator
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
             base.RegisterRequiredTypes(containerRegistry);
+
+            ViewModelLocationProvider.SetDefaultViewTypeToViewModelTypeResolver((viewType) => {
+                string viewName = viewType.FullName.Replace(".Views.", ".ViewModels.");
+                string coreAssemblyName = typeof(MainWindowViewModel).Assembly.FullName;
+                string viewModelName = string.Format(CultureInfo.InvariantCulture, "{0}ViewModel, {1}", viewName, coreAssemblyName);
+                return Type.GetType(viewModelName);
+            });
+
+            ViewModelLocationProvider.SetDefaultViewModelFactory((type) => {
+                return containerRegistry.GetContainer().TryResolve(type);
+            });
+
+            containerRegistry.Register<INavigationService, PrismRegionNavigationBridge>();
 
             DialogService dialogService = new DialogService();
             containerRegistry.RegisterInstance<IDialogService>(dialogService);

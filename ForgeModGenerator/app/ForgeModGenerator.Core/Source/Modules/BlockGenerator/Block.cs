@@ -1,5 +1,4 @@
 ﻿using Prism.Mvvm;
-using System.Drawing;
 
 namespace ForgeModGenerator.BlockGenerator.Models
 {
@@ -30,10 +29,10 @@ namespace ForgeModGenerator.BlockGenerator.Models
             set => SetProperty(ref type, value);
         }
 
-        private Image texture;
-        public Image Texture {
-            get => texture;
-            set => SetProperty(ref texture, value);
+        private string texturePath;
+        public string TexturePath {
+            get => texturePath;
+            set => SetProperty(ref texturePath, value);
         }
 
         private BlockAttributes attributes;

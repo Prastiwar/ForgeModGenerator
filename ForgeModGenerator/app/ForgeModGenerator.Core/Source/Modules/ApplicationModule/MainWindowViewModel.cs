@@ -2,7 +2,6 @@ using ForgeModGenerator.Models;
 using ForgeModGenerator.Services;
 using Prism.Commands;
 using Prism.Mvvm;
-using Prism.Regions;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
@@ -11,20 +10,20 @@ namespace ForgeModGenerator.ApplicationModule.ViewModels
     /// <summary> MainWindow Business ViewModel </summary>
     public class MainWindowViewModel : BindableBase
     {
-        private readonly IRegionManager regionManager;
-        private readonly IModBuildService modBuilder;
-
-        public ISessionContextService SessionContext { get; }
-
-        public MainWindowViewModel(IRegionManager regionManager, ISessionContextService sessionContext, IModBuildService modBuilder)
+        public MainWindowViewModel(INavigationService navigation, ISessionContextService sessionContext, IModBuildService modBuilder)
         {
-            this.regionManager = regionManager;
+            this.navigation = navigation;
             this.modBuilder = modBuilder;
             SessionContext = sessionContext;
         }
 
+        private readonly INavigationService navigation;
+        private readonly IModBuildService modBuilder;
+
+        public ISessionContextService SessionContext { get; }
+
         private ICommand openSettingsCommand;
-        public ICommand OpenSettingsCommand => openSettingsCommand ?? (openSettingsCommand = new DelegateCommand(() => { regionManager.RequestNavigate("Page", Pages.Settings); }));
+        public ICommand OpenSettingsCommand => openSettingsCommand ?? (openSettingsCommand = new DelegateCommand(NavigateToSettings));
 
         private ICommand refreshCommand;
         public ICommand RefreshCommand => refreshCommand ?? (refreshCommand = new DelegateCommand(ForceRefresh));
@@ -46,5 +45,7 @@ namespace ForgeModGenerator.ApplicationModule.ViewModels
         private void RunSelectedMod(Mod mod) => modBuilder.Run(mod);
 
         private void ForceRefresh() => SessionContext.Refresh();
+
+        private void NavigateToSettings() => navigation.NavigateTo(Pages.Settings);
     }
 }

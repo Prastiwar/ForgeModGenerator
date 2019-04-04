@@ -1,4 +1,4 @@
-﻿namespace ForgeModGenerator
+﻿namespace ForgeModGenerator.Converters
 {
     public class DialogResultAssemblyConverter
     {
