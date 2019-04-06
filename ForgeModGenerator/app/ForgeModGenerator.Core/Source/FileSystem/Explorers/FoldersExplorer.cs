@@ -9,27 +9,28 @@ using System.Threading.Tasks;
 
 namespace ForgeModGenerator
 {
-    public class FoldersExplorer<TFolder, TFile> : BindableBase, IFoldersExplorer<TFolder, TFile>
+    public class FoldersExplorer<TFolder, TFile> : BindableBase, IFoldersExplorer<TFolder, TFile>, IDisposable
         where TFolder : class, IFolderObject<TFile>
         where TFile : class, IFileObject
     {
-        public FoldersExplorer(string foldersRootPath, IDialogService dialogService, IFileSystem fileSystem)
+        public FoldersExplorer(IDialogService dialogService, IFileSystem fileSystem, IFolderSynchronizer<TFolder, TFile> fileSynchronizer)
         {
-            FoldersRootPath = foldersRootPath;
-            DialogService = dialogService ?? throw new ArgumentNullException(nameof(foldersRootPath));
+            DialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
             FileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
             AllowedFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            OpenFileDialog = fileSystem.CreateFileBrowser();
+            OpenFolderDialog = fileSystem.CreateFolderBrowser();
+            FileSynchronizer = fileSynchronizer;
+            Folders = fileSynchronizer.Factory.CreateFolders();
         }
 
-        public string FoldersRootPath { get; set; }
+        protected IDialogService DialogService { get; }
 
-        public FoldersFactory<TFolder, TFile> FolderFactory { get; set; }
+        protected IFileSystem FileSystem { get; }
 
-        public FoldersSynchronizer<TFolder, TFile> FileSynchronizer { get; set; }
+        public IFileBrowser OpenFileDialog { get; }
 
-        public IFileBrowser OpenFileDialog { get; set; }
-
-        public IFolderBrowser OpenFolderDialog { get; set; }
+        public IFolderBrowser OpenFolderDialog { get; }
 
         public HashSet<string> AllowedFileExtensions { get; protected set; }
 
@@ -37,18 +38,33 @@ namespace ForgeModGenerator
 
         public string AllowedFileExtensionsPatterns => AllowedFileExtensions != null ? "*" + string.Join("|*", AllowedFileExtensions) : "";
 
-        protected IDialogService DialogService { get; }
-
-        protected IFileSystem FileSystem { get; }
-
         private IFolderObject<TFolder> folders;
         public IFolderObject<TFolder> Folders {
             get => folders;
-            set {
+            protected set {
+                if (folders != null)
+                {
+                    folders.Clear();
+                }
                 SetProperty(ref folders, value);
                 if (folders != null && FileSynchronizer != null)
                 {
                     FileSynchronizer.SyncedFolders = folders;
+                }
+            }
+        }
+
+        private IFolderSynchronizer<TFolder, TFile> fileSynchronizer;
+        public IFolderSynchronizer<TFolder, TFile> FileSynchronizer {
+            get => fileSynchronizer;
+            set {
+                if (fileSynchronizer != value)
+                {
+                    if (fileSynchronizer != null)
+                    {
+                        fileSynchronizer.Dispose();
+                    }
+                    fileSynchronizer = value;
                 }
             }
         }
@@ -77,10 +93,10 @@ namespace ForgeModGenerator
         }
 
         /// <summary> Copies directory to root path, if directory with given name exists, add (n) number to its name </summary>
-        public async Task CopyFolderToRoot(string path)
+        public async Task CopyFolderToRoot(string rootPath, string path)
         {
             path = IOHelper.GetDirectoryPath(path);
-            string newFolderPath = IOHelper.GetUniqueName(Path.Combine(FoldersRootPath, new DirectoryInfo(path).Name), (name) => !Directory.Exists(name));
+            string newFolderPath = IOHelper.GetUniqueName(Path.Combine(rootPath, new DirectoryInfo(path).Name), (name) => !Directory.Exists(name));
             await IOHelper.DirectoryCopyAsync(path, newFolderPath, AllowedFileExtensionsPatterns);
         }
 
@@ -156,6 +172,8 @@ namespace ForgeModGenerator
             }
         }
 
-        public TFolder CreateFolder(string path) => FolderFactory.ConstructFolderInstance(path, null);
+        public TFolder CreateFolder(string path) => FileSynchronizer.Factory.Create(path, null);
+
+        public void Dispose() => fileSynchronizer.Dispose();
     }
 }

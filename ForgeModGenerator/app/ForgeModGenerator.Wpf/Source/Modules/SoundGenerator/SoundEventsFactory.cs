@@ -1,4 +1,5 @@
-﻿using ForgeModGenerator.SoundGenerator.Converters;
+﻿using ForgeModGenerator.Serialization;
+using ForgeModGenerator.SoundGenerator.Converters;
 using ForgeModGenerator.SoundGenerator.Models;
 using ForgeModGenerator.Utility;
 using Newtonsoft.Json;
@@ -9,20 +10,17 @@ using System.Linq;
 
 namespace ForgeModGenerator.SoundGenerator
 {
-    public class SoundEventsFactory : FoldersFactory<SoundEvent, Sound>
+    public class SoundEventsFactory : WpfFoldersFactory<SoundEvent, Sound>
     {
-        public SoundEventsFactory(IFolderObject<SoundEvent> soundEvents, string modname, string modid, string filters) : base(filters)
-        {
-            SetModInfo(modname, modid);
-            SoundEvents = soundEvents;
-        }
+        public SoundEventsFactory(ISerializer serializer) : base(serializer) { }
 
-        protected IFolderObject<SoundEvent> SoundEvents { get; }
+        protected IFolderObject<SoundEvent> SoundEvents { get; set; }
         protected string Modname { get; set; }
         protected string Modid { get; set; }
 
-        public void SetModInfo(string modname, string modid)
+        public void Initialize(IFolderObject<SoundEvent> soundEvents, string modname, string modid)
         {
+            SoundEvents = soundEvents;
             Modname = modname;
             Modid = modid;
         }
@@ -46,11 +44,11 @@ namespace ForgeModGenerator.SoundGenerator
             SoundCollectionConverter converter = new SoundCollectionConverter(Modname, Modid);
             return JsonConvert.DeserializeObject<Collection<SoundEvent>>(fileCotent, converter);
         }
-
+        
         /// <inheritdoc/>
-        public override SoundEvent ConstructFolderInstance(string path, IEnumerable<string> filePaths)
+        public override SoundEvent Create(string path, IEnumerable<string> filePaths)
         {
-            SoundEvent soundEvent = base.ConstructFolderInstance(path, filePaths);
+            SoundEvent soundEvent = base.Create(path, filePaths);
             soundEvent.EventName = IOHelper.GetUniqueName(soundEvent.EventName, (name) => SoundEvents.Files.All(inFolder => inFolder.EventName != name));
             return soundEvent;
         }

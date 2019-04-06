@@ -100,6 +100,10 @@ namespace ForgeModGenerator.Utility
         /// <summary> Directory.EnumerateFiles with multiple patterns splitted by "|" (e.g *.txt|*.log) </summary>
         public static IEnumerable<string> EnumerateFiles(string path, string patterns, SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
+            if (string.IsNullOrEmpty(patterns))
+            {
+                patterns = "*";
+            }
             foreach (string pattern in patterns.Split('|'))
             {
                 foreach (string file in Directory.EnumerateFiles(path, pattern, searchOption))
@@ -112,6 +116,10 @@ namespace ForgeModGenerator.Utility
         /// <summary> DirectoryInfo.EnumerateFiles with multiple patterns splitted by "|" (e.g *.txt|*.log) </summary>
         public static IEnumerable<FileInfo> EnumerateFileInfos(string path, string patterns, SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
+            if (string.IsNullOrEmpty(patterns))
+            {
+                patterns = "*";
+            }
             foreach (string pattern in patterns.Split('|'))
             {
                 foreach (FileInfo file in new DirectoryInfo(path).EnumerateFiles(pattern, searchOption))
@@ -124,6 +132,10 @@ namespace ForgeModGenerator.Utility
         /// <summary> Directory.EnumerateDirectories with multiple patterns splitted by "|" (e.g a*|b*) </summary>
         public static IEnumerable<string> EnumerateDirectories(string path, string patterns, SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
+            if (string.IsNullOrEmpty(patterns))
+            {
+                patterns = "*";
+            }
             foreach (string pattern in patterns.Split('|'))
             {
                 foreach (string file in Directory.EnumerateDirectories(path, pattern, searchOption))
@@ -136,6 +148,10 @@ namespace ForgeModGenerator.Utility
         /// <summary> DirectoryInfo.EnumerateDirectories with multiple patterns splitted by "|" (e.g a*|b*) </summary>
         public static IEnumerable<DirectoryInfo> EnumerateDirectoryInfos(string path, string patterns, SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
+            if (string.IsNullOrEmpty(patterns))
+            {
+                patterns = "*";
+            }
             foreach (string pattern in patterns.Split('|'))
             {
                 foreach (DirectoryInfo file in new DirectoryInfo(path).EnumerateDirectories(pattern, searchOption))

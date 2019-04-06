@@ -1,5 +1,5 @@
-﻿using ForgeModGenerator.Utility;
-using Newtonsoft.Json;
+﻿using ForgeModGenerator.Serialization;
+using ForgeModGenerator.Utility;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,7 +12,11 @@ namespace ForgeModGenerator
         where TFolder : class, IFolderObject<TFile>
         where TFile : class, IFileObject
     {
-        public DefaultFoldersFactory(string filters) : base(filters) { }
+        public DefaultFoldersFactory(ISerializer serializer) => Serializer = serializer;
+
+        protected ISerializer Serializer { get; }
+
+        public virtual IFolderObject<TFile> Create(string FoldersPathRoot) => new ObservableFolder<TFile>(FoldersPathRoot);
 
         public override IEnumerable<TFolder> FindFolders(string path, bool createRootIfEmpty = false)
         {
@@ -38,6 +42,6 @@ namespace ForgeModGenerator
             return found.ToList();
         }
 
-        protected override ICollection<TFolder> DeserializeFolders(string fileCotent) => JsonConvert.DeserializeObject<Collection<TFolder>>(fileCotent);
+        protected override ICollection<TFolder> DeserializeFolders(string fileCotent) => Serializer.DeserializeObject<Collection<TFolder>>(fileCotent);
     }
 }

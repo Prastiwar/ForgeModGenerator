@@ -12,7 +12,10 @@ using ForgeModGenerator.ModGenerator.ViewModels;
 using ForgeModGenerator.ModGenerator.Views;
 using ForgeModGenerator.RecipeGenerator.ViewModels;
 using ForgeModGenerator.RecipeGenerator.Views;
+using ForgeModGenerator.Serialization;
 using ForgeModGenerator.Services;
+using ForgeModGenerator.SoundGenerator;
+using ForgeModGenerator.SoundGenerator.Models;
 using ForgeModGenerator.SoundGenerator.ViewModels;
 using ForgeModGenerator.SoundGenerator.Views;
 using ForgeModGenerator.TextureGenerator.ViewModels;
@@ -22,6 +25,7 @@ using Prism.Ioc;
 using Prism.Mvvm;
 using Prism.Unity;
 using System;
+using System.ComponentModel;
 using System.Globalization;
 using System.Windows;
 
@@ -42,6 +46,25 @@ namespace ForgeModGenerator
         {
             base.RegisterRequiredTypes(containerRegistry);
 
+            SetProvider(containerRegistry);
+
+            DialogService dialogService = new DialogService();
+            NLogLoggerFactory fac = new NLogLoggerFactory();
+            Log.Initialize(dialogService, fac.CreateLogger("ErrorLog"), fac.CreateLogger("InfoLog"));
+
+            containerRegistry.RegisterInstance<IDialogService>(dialogService);
+            RegisterServices(containerRegistry);
+
+            containerRegistry.RegisterInstance<ISynchronizeInvoke>(SyncInvokeObject.Default);
+            containerRegistry.Register<IFileSystem, FileSystemWin>();
+            containerRegistry.Register<ISerializer, JsonSerializer>();
+
+            RegisterFactories(containerRegistry);
+            RegisterPages(containerRegistry);
+        }
+
+        private static void SetProvider(IContainerRegistry containerRegistry)
+        {
             ViewModelLocationProvider.SetDefaultViewTypeToViewModelTypeResolver((viewType) => {
                 string viewName = viewType.FullName.Replace(".Views.", ".ViewModels.");
                 string coreAssemblyName = typeof(MainWindowViewModel).Assembly.FullName;
@@ -52,25 +75,28 @@ namespace ForgeModGenerator
             ViewModelLocationProvider.SetDefaultViewModelFactory((type) => {
                 return containerRegistry.GetContainer().TryResolve(type);
             });
+        }
 
-            containerRegistry.Register<INavigationService, PrismRegionNavigationBridge>();
+        private void RegisterFactories(IContainerRegistry containerRegistry)
+        {
+            containerRegistry.Register<IFoldersFactory<SoundEvent, Sound>, SoundEventsFactory>();
+            containerRegistry.Register<IFolderSynchronizerFactory<SoundEvent, Sound>, SoundEventsSynchronizerFactory>();
+            containerRegistry.Register(typeof(IFoldersFactory<,>), typeof(WpfFoldersFactory<,>));
+            containerRegistry.Register(typeof(IFolderSynchronizerFactory<,>), typeof(FolderSynchronizerFactory<,>));
+            containerRegistry.Register(typeof(IFoldersExplorerFactory<,>), typeof(FoldersExplorerFactory<,>));
+        }
 
-            DialogService dialogService = new DialogService();
-            containerRegistry.RegisterInstance<IDialogService>(dialogService);
-
-            NLogLoggerFactory fac = new NLogLoggerFactory();
-            Log.Initialize(dialogService, fac.CreateLogger("ErrorLog"), fac.CreateLogger("InfoLog"));
-
+        private void RegisterServices(IContainerRegistry containerRegistry)
+        {
             containerRegistry.RegisterInstance<ISessionContextService>(WpfSessionContextService.Instance);
+            containerRegistry.Register<INavigationService, PrismRegionNavigationBridge>();
             containerRegistry.Register<ISnackbarService, SnackbarService>();
-            containerRegistry.Register<IFileSystem, FileSystemWin>();
-
             containerRegistry.Register<IWorkspaceSetupService, WorkspaceSetupService>();
             containerRegistry.Register<IModBuildService, ModBuildService>();
+        }
 
-            containerRegistry.Register<NavigationMenuViewModel>();
-            containerRegistry.Register<MainWindowViewModel>();
-
+        private void RegisterPages(IContainerRegistry containerRegistry)
+        {
             containerRegistry.RegisterForNavigation<DashboardPage, DashboardViewModel>(Pages.Dashboard);
             containerRegistry.RegisterForNavigation<BuildConfigurationPage, BuildConfigurationViewModel>(Pages.BuildConfiguration);
             containerRegistry.RegisterForNavigation<ModGeneratorPage, ModGeneratorViewModel>(Pages.ModGenerator);

@@ -8,15 +8,17 @@ using System.Threading.Tasks;
 
 namespace ForgeModGenerator
 {
-    public abstract class FoldersFactory<TFolder, TFile>
+    public abstract class FoldersFactory<TFolder, TFile> : IFoldersFactory<TFolder, TFile>
         where TFolder : class, IFolderObject<TFile>
         where TFile : class, IFileObject
     {
-        public FoldersFactory(string filters) => Filters = filters;
-
-        public string Filters { get; set; }
+        public string Filters { get; set; } = "*";
 
         public abstract IEnumerable<TFolder> FindFolders(string path, bool createRootIfEmpty = false);
+
+        public virtual IFolderObject<TFolder> CreateFolders() => ObservableFolder<TFolder>.CreateEmpty();
+        public virtual TFolder Create() => Create(null, null);
+        TFolder IFoldersFactory<TFolder, TFile>.Create(string path, IEnumerable<string> filePaths) => Create(path, filePaths);
 
         public Task<IEnumerable<TFolder>> FindFoldersAsync(string path, bool createRootIfEmpty = false) => Task.Run(() => { return FindFolders(path, createRootIfEmpty); });
 
@@ -26,7 +28,7 @@ namespace ForgeModGenerator
             IEnumerable<string> filePaths = EnumerateFilteredFiles(path);
             if (filePaths.Any())
             {
-                TFolder folder = ConstructFolderInstance(path, filePaths);
+                TFolder folder = Create(path, filePaths);
                 yield return folder;
             }
             foreach (string directory in IOHelper.EnumerateAllDirectories(path))
@@ -34,7 +36,7 @@ namespace ForgeModGenerator
                 filePaths = EnumerateFilteredFiles(directory);
                 if (filePaths.Any())
                 {
-                    TFolder folder = ConstructFolderInstance(directory, filePaths);
+                    TFolder folder = Create(directory, filePaths);
                     yield return folder;
                 }
             }
@@ -123,21 +125,29 @@ namespace ForgeModGenerator
         }
 
         /// <summary> Create TFolder instance and subscribe its events </summary>
-        public virtual TFolder ConstructFolderInstance(string path, IEnumerable<string> filePaths)
+        public virtual TFolder Create(string path, IEnumerable<string> filePaths)
         {
             TFolder folder = null;
-            try
+            if (path == null)
             {
-                folder = ReflectionExtensions.CreateInstance<TFolder>(path, filePaths);
-            }
-            catch (Exception)
-            {
-                folder = ReflectionExtensions.CreateInstance<TFolder>(path);
+                folder = ReflectionExtensions.CreateInstance<TFolder>(true);
                 if (filePaths != null)
                 {
-                    foreach (string filePath in filePaths)
+                    folder.AddRange(filePaths);
+                }
+            }
+            else
+            {
+                try
+                {
+                    folder = ReflectionExtensions.CreateInstance<TFolder>(path, filePaths);
+                }
+                catch (Exception)
+                {
+                    folder = ReflectionExtensions.CreateInstance<TFolder>(path);
+                    if (filePaths != null)
                     {
-                        folder.Add(filePath);
+                        folder.AddRange(filePaths);
                     }
                 }
             }
@@ -147,6 +157,6 @@ namespace ForgeModGenerator
         /// <summary> Deserializes Json content to ICollection<TFolder> </summary>
         protected abstract ICollection<TFolder> DeserializeFolders(string fileCotent);
 
-        protected ICollection<TFolder> CreateEmptyFoldersRoot(string folderPath) => new Collection<TFolder>() { ConstructFolderInstance(IOHelper.GetDirectoryPath(folderPath), null) };
+        protected ICollection<TFolder> CreateEmptyFoldersRoot(string folderPath) => new Collection<TFolder>() { Create(IOHelper.GetDirectoryPath(folderPath), null) };
     }
 }

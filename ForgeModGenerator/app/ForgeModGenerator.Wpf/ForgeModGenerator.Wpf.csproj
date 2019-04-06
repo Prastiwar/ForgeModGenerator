@@ -222,6 +222,8 @@
     <Compile Include="Source\FileSystem\Dialog\FileBrowserDialog.cs" />
     <Compile Include="Source\FileSystem\Dialog\FolderBrowserDialog.cs" />
     <Compile Include="Source\FileSystem\FileSystemWin.cs" />
+    <Compile Include="Source\FileSystem\FoldersExplorerFactory.cs" />
+    <Compile Include="Source\Serialization\JsonSerializer.cs" />
     <Compile Include="Source\Services\PrismRegionNavigationBridge.cs" />
     <Compile Include="Source\Utility\Extensions\BindingExtensions.cs" />
     <Compile Include="Source\Utility\Helpers\ModHelper.cs" />
@@ -235,7 +237,7 @@
     <Compile Include="Source\Converters\IntToVisibilityConverter.cs" />
     <Compile Include="Source\Converters\InvertBooleanConverter.cs" />
     <Compile Include="Source\Controls\NavButton.cs" />
-    <Compile Include="Source\FileSystem\DefaultFoldersFactory.cs" />
+    <Compile Include="Source\FileSystem\WpfFoldersFactory.cs" />
     <Compile Include="Source\Modules\ModGenerator\ModValidator.cs" />
     <Compile Include="Source\Modules\SoundGenerator\Controls\SoundFolderListBox.cs" />
     <Compile Include="Source\Modules\SoundGenerator\ObservableSoundEvents.cs" />
@@ -297,7 +299,6 @@
     <Compile Include="Source\Modules\TextureGenerator\TextureGeneratorPage.xaml.cs">
       <DependentUpon>TextureGeneratorPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Source\Modules\TextureGenerator\TextureGeneratorViewModel.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\RecipeGeneratorPage.xaml.cs">
       <DependentUpon>RecipeGeneratorPage.xaml</DependentUpon>
     </Compile>

@@ -6,9 +6,9 @@ using System.Linq;
 
 namespace ForgeModGenerator.SoundGenerator
 {
-    public class SoundEventsSynchronizer : FoldersSynchronizer<SoundEvent, Sound>
+    public class SoundEventsSynchronizer : FolderSynchronizer<SoundEvent, Sound>
     {
-        public SoundEventsSynchronizer(ISynchronizeInvoke synchronizeObject, IFolderObject<SoundEvent> foldersToSync, FoldersFactory<SoundEvent, Sound> factory, string rootPath = null, string filters = null)
+        public SoundEventsSynchronizer(ISynchronizeInvoke synchronizeObject, IFolderObject<SoundEvent> foldersToSync, IFoldersFactory<SoundEvent, Sound> factory, string rootPath = null, string filters = null)
             : base(synchronizeObject, foldersToSync, factory, rootPath, filters) { }
 
         /// <inheritdoc/>
@@ -19,7 +19,7 @@ namespace ForgeModGenerator.SoundGenerator
             {
                 string dirPath = IOHelper.GetDirectoryPath(filePath);
                 filePaths[0] = filePath;
-                SoundEvent folder = Factory.ConstructFolderInstance(dirPath, filePaths);
+                SoundEvent folder = Factory.Create(dirPath, filePaths);
                 SyncedFolders.Add(folder);
             }
         }
@@ -28,7 +28,7 @@ namespace ForgeModGenerator.SoundGenerator
         protected override bool SyncCreateFile(string path)
         {
             SynchronizationCheck(path);
-            SoundEvent soundEvent = Factory.ConstructFolderInstance(path, new string[] { path });
+            SoundEvent soundEvent = Factory.Create(path, new string[] { path });
             return SyncedFolders.Add(soundEvent);
         }
 

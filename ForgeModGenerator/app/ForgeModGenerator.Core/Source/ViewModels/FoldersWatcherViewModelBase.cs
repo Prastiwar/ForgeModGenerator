@@ -13,19 +13,17 @@ namespace ForgeModGenerator.ViewModels
         where TFolder : class, IFolderObject<TFile>
         where TFile : class, IFileObject
     {
-        public FoldersWatcherViewModelBase(ISessionContextService sessionContext, IDialogService dialogService, IFileSystem fileSystem)
+        public FoldersWatcherViewModelBase(ISessionContextService sessionContext)
         {
-            Explorer = new FoldersExplorer<TFolder, TFile>(null, dialogService, fileSystem);
             SessionContext = sessionContext;
-            DialogService = dialogService;
             SessionContext.PropertyChanged += OnSessionContexPropertyChanged;
         }
 
-        public IFoldersExplorer<TFolder, TFile> Explorer { get; protected set; }
+        public abstract IFoldersExplorer<TFolder, TFile> Explorer { get; }
+
+        public abstract string FoldersRootPath { get; }
 
         protected ISessionContextService SessionContext { get; }
-
-        protected IDialogService DialogService { get; }
 
         private bool isLoading;
         /// <summary> Determines when folders are loading - used to show loading circle </summary>
@@ -59,7 +57,7 @@ namespace ForgeModGenerator.ViewModels
 
         protected virtual async void OnLoaded() => await Refresh();
 
-        protected virtual bool CanRefresh() => SessionContext.SelectedMod != null && Directory.Exists(Explorer.FoldersRootPath);
+        protected virtual bool CanRefresh() => SessionContext.SelectedMod != null && Directory.Exists(FoldersRootPath);
 
         public abstract Task<bool> Refresh();
 
@@ -70,7 +68,7 @@ namespace ForgeModGenerator.ViewModels
             DialogResult dialogResult = Explorer.ShowFolderDialog(out IFolderBrowser browser);
             if (dialogResult == DialogResult.OK)
             {
-                await Explorer.CopyFolderToRoot(browser.SelectedPath);
+                await Explorer.CopyFolderToRoot(FoldersRootPath, browser.SelectedPath);
             }
         }
 
@@ -80,7 +78,8 @@ namespace ForgeModGenerator.ViewModels
             if (dialogResult == DialogResult.OK)
             {
                 string newFolderPath = null;
-                string newFolderName = IOHelper.GetUniqueName(Path.GetFileNameWithoutExtension(browser.FileName), name => !Directory.Exists((newFolderPath = Path.Combine(Explorer.FoldersRootPath, name))));
+                string newFolderName = IOHelper.GetUniqueName(Path.GetFileNameWithoutExtension(browser.FileName),
+                                                                name => !Directory.Exists((newFolderPath = Path.Combine(FoldersRootPath, name))));
                 TFolder folder = Explorer.CreateFolder(newFolderPath);
                 await Explorer.CopyFilesToFolderAsync(folder, browser.FileNames);
             }

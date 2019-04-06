@@ -14,14 +14,14 @@ namespace ForgeModGenerator.ViewModels
         where TFolder : class, IFolderObject<TFile>
         where TFile : class, IFileObject, IValidable
     {
-        public FoldersViewModelBase(ISessionContextService sessionContext, IDialogService dialogService, IFileSystem fileSystem) :
-            base(sessionContext, dialogService, fileSystem)
-        { }
+        public FoldersViewModelBase(ISessionContextService sessionContext, IDialogService dialogService) : base(sessionContext) => DialogService = dialogService;
 
         /// <summary> Path to json file that can be deserialized to folders </summary>
         public abstract string FoldersJsonFilePath { get; }
 
         public IEditorForm<TFile> FileEditor { get; protected set; }
+
+        public IDialogService DialogService { get; protected set; }
 
         private bool isFileUpdateAvailable;
         public bool IsFileUpdateAvailable {
@@ -40,7 +40,7 @@ namespace ForgeModGenerator.ViewModels
         /// <summary> Deserialized folders from FoldersJsonFilePath and checks if any file doesn't exists, if so, prompt if should fix this </summary>
         protected async void CheckJsonFileMismatch()
         {
-            IEnumerable<TFolder> deserializedFolders = Explorer.FolderFactory.FindFoldersFromFile(FoldersJsonFilePath, false);
+            IEnumerable<TFolder> deserializedFolders = Explorer.FileSynchronizer.Factory.FindFoldersFromFile(FoldersJsonFilePath, false);
             bool hasNotExistingFile = deserializedFolders != null ? deserializedFolders.Any(folder => folder.Files.Any(file => !File.Exists(file.Info.FullName))) : false;
             if (hasNotExistingFile)
             {
@@ -74,7 +74,7 @@ namespace ForgeModGenerator.ViewModels
         {
             if (SessionContext.SelectedMod != null)
             {
-                return Explorer.FolderFactory.EnumerateFilteredFiles(Explorer.FoldersRootPath, SearchOption.AllDirectories).All(filePath => FileSystemInfoReference.IsReferenced(filePath));
+                return Explorer.FileSynchronizer.Factory.EnumerateFilteredFiles(FoldersRootPath, SearchOption.AllDirectories).All(filePath => FileSystemInfoReference.IsReferenced(filePath));
             }
             return true;
         }

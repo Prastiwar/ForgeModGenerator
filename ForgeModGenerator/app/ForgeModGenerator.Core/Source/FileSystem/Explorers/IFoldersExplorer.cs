@@ -7,18 +7,13 @@ namespace ForgeModGenerator
         where TFolder : class, IFolderObject<TFile>
         where TFile : class, IFileObject
     {
-        /// <summary> Path to folder root where are all files localized </summary>
-        string FoldersRootPath { get; set; }
+        IFolderObject<TFolder> Folders { get; }
 
-        IFolderObject<TFolder> Folders { get; set; }
+        IFolderSynchronizer<TFolder, TFile> FileSynchronizer { get; }
 
-        FoldersFactory<TFolder, TFile> FolderFactory { get; set; }
+        IFileBrowser OpenFileDialog { get; }
 
-        FoldersSynchronizer<TFolder, TFile> FileSynchronizer { get; set; }
-
-        IFileBrowser OpenFileDialog { get; set; }
-
-        IFolderBrowser OpenFolderDialog { get; set; }
+        IFolderBrowser OpenFolderDialog { get; }
 
         HashSet<string> AllowedFileExtensions { get; }
 
@@ -37,7 +32,7 @@ namespace ForgeModGenerator
 
         DialogResult ShowFileDialog(out IFileBrowser browser);
 
-        Task CopyFolderToRoot(string path);
+        Task CopyFolderToRoot(string rootPath, string path);
 
         Task CopyFilesToFolderAsync(TFolder folder, params string[] fileNames);
 

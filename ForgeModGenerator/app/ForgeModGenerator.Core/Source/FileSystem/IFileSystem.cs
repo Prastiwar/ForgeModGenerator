@@ -26,5 +26,8 @@
         bool DeleteFile(string path, bool recycle);
 
         bool RenameFile(string name, string newName);
+
+        IFileBrowser CreateFileBrowser();
+        IFolderBrowser CreateFolderBrowser();
     }
 }

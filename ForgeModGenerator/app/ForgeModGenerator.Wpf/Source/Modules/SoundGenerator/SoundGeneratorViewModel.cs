@@ -15,30 +15,30 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
     /// <summary> SoundGenerator Business ViewModel </summary>
     public class SoundGeneratorViewModel : FoldersViewModelBase<SoundEvent, Sound>
     {
-        public SoundGeneratorViewModel(ISessionContextService sessionContext, IDialogService dialogService, IFileSystem fileSystem) : base(sessionContext, dialogService, fileSystem)
+        public SoundGeneratorViewModel(ISessionContextService sessionContext, IDialogService dialogService, IFoldersExplorerFactory<SoundEvent, Sound> factory) : base(sessionContext, dialogService)
         {
-            Explorer.AllowedFileExtensions.Add(".ogg");
-            Explorer.OpenFileDialog = new FileBrowserDialog {
-                Filter = "Sound file (*.ogg) | *.ogg",
-                Multiselect = true,
-                CheckFileExists = true,
-                ValidateNames = true
-            };
-            Explorer.OpenFolderDialog = new FolderBrowserDialog {
-                ShowNewFolderButton = true
-            };
+            explorer = factory.Create();
+            explorer.AllowedFileExtensions.Add(".ogg");
+            explorer.OpenFileDialog.Filter = "Sound file (*.ogg) | *.ogg";
+            explorer.OpenFileDialog.Multiselect = true;
+            explorer.OpenFileDialog.CheckFileExists = true;
+            explorer.OpenFileDialog.ValidateNames = true;
+            explorer.OpenFolderDialog.ShowNewFolderButton = true;
             FileEditor = new EditorForm<Sound>(Cache.Default, DialogService, new SoundEditForm());
             FileEditor.ItemEdited += OnSoundEdited;
         }
 
-        private string FoldersRootPath => SessionContext.SelectedMod != null ? ModPaths.SoundsFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid) : null;
+        private readonly IFoldersExplorer<SoundEvent, Sound> explorer;
+        public override IFoldersExplorer<SoundEvent, Sound> Explorer => explorer;
+
+        public override string FoldersRootPath => SessionContext.SelectedMod != null ? ModPaths.SoundsFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid) : null;
 
         public override string FoldersJsonFilePath => SessionContext.SelectedMod != null ? ModPaths.SoundsJson(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid) : null;
 
         protected SoundsGeneratorPreferences Preferences { get; set; }
 
         private SoundEventValidator soundEventValidator;
-        public SoundEventValidator SoundEventValidator => soundEventValidator ?? (soundEventValidator = new SoundEventValidator(Explorer.Folders.Files));
+        public SoundEventValidator SoundEventValidator => soundEventValidator ?? (soundEventValidator = new SoundEventValidator(explorer.Folders.Files));
 
         protected SoundCollectionConverter GetActualConverter() => new SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
 
@@ -50,21 +50,21 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             {
                 Preferences = SessionContext.GetOrCreatePreferences<SoundsGeneratorPreferences>();
                 soundEventValidator = null; // will lazy load itself when needed
-                if (Explorer.Folders != null)
+                if (explorer.Folders != null)
                 {
-                    Explorer.Folders.FilesChanged -= SubscribeFolderEvents;
-                    Explorer.Folders.Clear();
+                    explorer.Folders.FilesChanged -= SubscribeFolderEvents;
+                    explorer.Folders.Clear();
                 }
-                Explorer.FoldersRootPath = FoldersRootPath;
-                Explorer.Folders = new ObservableSoundEvents(FoldersRootPath, System.Linq.Enumerable.Empty<SoundEvent>());
-                Explorer.FolderFactory = new SoundEventsFactory(Explorer.Folders, SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid, Explorer.AllowedFileExtensionsPatterns);
-                Explorer.FileSynchronizer = new SoundEventsSynchronizer(SyncInvokeObject.Default, Explorer.Folders, Explorer.FolderFactory, FoldersRootPath, Explorer.AllowedFileExtensionsPatterns);
-                Explorer.Folders.AddRange(await Explorer.FolderFactory.FindFoldersAsync(FoldersJsonFilePath, true));
+                ((SoundEventsFactory)explorer.FileSynchronizer.Factory).Initialize(explorer.Folders, SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
+                explorer.Folders.AddRange(await explorer.FileSynchronizer.Factory.FindFoldersAsync(FoldersJsonFilePath, true));
+                explorer.FileSynchronizer.RootPath = FoldersRootPath;
+                explorer.FileSynchronizer.SynchronizingObject = SyncInvokeObject.Default;
+                explorer.FileSynchronizer.SetEnableSynchronization(true);
                 RaisePropertyChanged(nameof(HasEmptyFolders));
-                SubscribeFolderEvents(Explorer.Folders, new FileChangedEventArgs<SoundEvent>(Explorer.Folders.Files, FileChange.Add));
-                Explorer.Folders.FilesChanged += SubscribeFolderEvents;
-                Explorer.Folders.FilesChanged += OnFoldersCollectionChanged;
-                JsonUpdater = new SoundJsonUpdater(Explorer.Folders.Files, FoldersJsonFilePath, Preferences.JsonFormatting, GetActualConverter());
+                SubscribeFolderEvents(explorer.Folders, new FileChangedEventArgs<SoundEvent>(explorer.Folders.Files, FileChange.Add));
+                explorer.Folders.FilesChanged += SubscribeFolderEvents;
+                explorer.Folders.FilesChanged += OnFoldersCollectionChanged;
+                JsonUpdater = new SoundJsonUpdater(explorer.Folders.Files, FoldersJsonFilePath, Preferences.JsonFormatting, GetActualConverter());
                 CheckJsonFileMismatch();
                 CheckForUpdate();
                 return true;
@@ -135,7 +135,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             RaisePropertyChanged(nameof(HasEmptyFolders));
         }
 
-        private string OnSoundEventValidate(SoundEvent sender, string propertyName) => new SoundEventValidator(Explorer.Folders.Files).Validate(sender, propertyName).ToString();
+        private string OnSoundEventValidate(SoundEvent sender, string propertyName) => new SoundEventValidator(explorer.Folders.Files).Validate(sender, propertyName).ToString();
 
         private void OnSoundPropertyChanged(Sound file, PropertyChangedEventArgs e)
         {

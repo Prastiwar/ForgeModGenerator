@@ -216,5 +216,9 @@ namespace ForgeModGenerator
             }
             return true;
         }
+
+        public IFileBrowser CreateFileBrowser() => new FileBrowserDialog();
+
+        public IFolderBrowser CreateFolderBrowser() => new FolderBrowserDialog();
     }
 }

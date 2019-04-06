@@ -13,7 +13,9 @@ namespace ForgeModGenerator
     public class ObservableFolder<T> : ObservableDirtyObject, IFolderObject<T>
         where T : IFileSystemObject
     {
-        protected ObservableFolder() { }
+        internal static ObservableFolder<T> CreateEmpty() => new ObservableFolder<T>();
+
+        protected ObservableFolder() => Files = new ObservableRangeCollection<T>();
 
         public ObservableFolder(string path)
         {

@@ -4,7 +4,6 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:ForgeModGenerator.SoundGenerator.Views"
-      xmlns:vm="clr-namespace:ForgeModGenerator.ViewModels"
       xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
       xmlns:sControls="clr-namespace:ForgeModGenerator.SoundGenerator.Controls"
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"

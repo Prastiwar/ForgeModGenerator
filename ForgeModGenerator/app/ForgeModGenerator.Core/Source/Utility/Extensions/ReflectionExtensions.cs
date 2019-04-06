@@ -7,7 +7,12 @@ namespace ForgeModGenerator.Utility
 {
     public static class ReflectionExtensions
     {
+        private const BindingFlags NonPublicFlags = BindingFlags.NonPublic | BindingFlags.Instance;
+        private const BindingFlags PublicFlags = BindingFlags.Public | BindingFlags.Instance;
+
+        public static T CreateInstance<T>(bool nonPublic) => (T)Activator.CreateInstance(typeof(T), nonPublic);
         public static T CreateInstance<T>(params object[] args) => (T)Activator.CreateInstance(typeof(T), args);
+        public static T CreateInstance<T>(bool nonPublic, params object[] args) => (T)Activator.CreateInstance(typeof(T), NonPublicFlags, null, args, null);
 
         public static bool HasProperty(this Type obj, string propertyName) => obj.GetProperty(propertyName) != null;
 

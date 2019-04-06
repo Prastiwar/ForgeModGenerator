@@ -8,32 +8,40 @@ using System.Linq;
 
 namespace ForgeModGenerator
 {
-    public class FoldersSynchronizer<TFolder, TFile>
+    public class FolderSynchronizer<TFolder, TFile> : IFolderSynchronizer<TFolder, TFile>
         where TFolder : class, IFolderObject<TFile>
         where TFile : class, IFileObject
     {
-        public FoldersSynchronizer(ISynchronizeInvoke synchronizingObject, IFolderObject<TFolder> foldersToSync, FoldersFactory<TFolder, TFile> factory, string rootPath = null, string filters = null)
+        public FolderSynchronizer(ISynchronizeInvoke synchronizingObject, IFolderObject<TFolder> foldersToSync, IFoldersFactory<TFolder, TFile> factory, string rootPath = null, string filters = null)
         {
             this.rootPath = rootPath;
             this.filters = filters;
+            this.synchronizingObject = synchronizingObject;
             Factory = factory;
             SyncedFolders = foldersToSync;
 
-            FileWatcher = new FileSystemWatcherExtended(RootPath, Filters) {
-                IncludeSubdirectories = true,
-                MonitorDirectoryChanges = true,
-                EnableRaisingEvents = true,
-                SynchronizingObject = synchronizingObject,
-                NotifyFilter = NotifyFilters.DirectoryName | NotifyFilters.FileName
-            };
+            if (string.IsNullOrEmpty(rootPath))
+            {
+                FileWatcher = new FileSystemWatcherExtended() {
+                    Filters = filters
+                };
+            }
+            else
+            {
+                FileWatcher = new FileSystemWatcherExtended(RootPath, Filters);
+            }
+            FileWatcher.IncludeSubdirectories = true;
+            FileWatcher.MonitorDirectoryChanges = true;
+            FileWatcher.SynchronizingObject = synchronizingObject;
+            FileWatcher.NotifyFilter = NotifyFilters.DirectoryName | NotifyFilters.FileName;
             FileWatcher.FileCreated += FileWatcher_Created;
             FileWatcher.FileDeleted += FileWatcher_Deleted;
             FileWatcher.FileRenamed += FileWatcher_Renamed;
             FileWatcher.FileSubPathRenamed += FileWatcher_SubPathRenamed;
         }
 
-        private FoldersFactory<TFolder, TFile> factory;
-        public FoldersFactory<TFolder, TFile> Factory {
+        private IFoldersFactory<TFolder, TFile> factory;
+        public IFoldersFactory<TFolder, TFile> Factory {
             get => factory;
             set => factory = value ?? throw new ArgumentNullException(nameof(value));
         }
@@ -41,7 +49,16 @@ namespace ForgeModGenerator
         private IFolderObject<TFolder> syncedFolders;
         public IFolderObject<TFolder> SyncedFolders {
             get => syncedFolders;
-            set => syncedFolders = value ?? throw new ArgumentNullException(nameof(value));
+            set => syncedFolders = value ?? ObservableFolder<TFolder>.CreateEmpty();
+        }
+
+        private ISynchronizeInvoke synchronizingObject;
+        public ISynchronizeInvoke SynchronizingObject{
+            get => synchronizingObject;
+            set {
+                synchronizingObject = value;
+                FileWatcher.SynchronizingObject = synchronizingObject;
+            }
         }
 
         private string rootPath;
@@ -58,11 +75,15 @@ namespace ForgeModGenerator
             get => filters;
             set {
                 filters = value;
-                FileWatcher.Filter = Filters;
+                FileWatcher.Filters = Filters;
+                Factory.Filters = Filters;
             }
         }
 
         protected FileSystemWatcherExtended FileWatcher { get; set; }
+
+        public bool IsEnabled => FileWatcher.EnableRaisingEvents;
+        public void SetEnableSynchronization(bool enabled) => FileWatcher.EnableRaisingEvents = enabled;
 
         /// <summary> Searches root path for files that are not referenced in Folders collection and adds them </summary>
         public virtual void AddNotReferencedFiles()
@@ -73,7 +94,7 @@ namespace ForgeModGenerator
                 string dirPath = IOHelper.GetDirectoryPath(filePath);
                 if (!SyncedFolders.TryGetFile(dirPath, out TFolder folder))
                 {
-                    folder = Factory.ConstructFolderInstance(dirPath, null);
+                    folder = Factory.Create(dirPath, null);
                     SyncedFolders.Add(folder);
                 }
                 List<string> notReferencedFilesForFolder = notReferencedFiles.Where(path => IOHelper.GetDirectoryPath(path) == folder.Info.FullName).ToList();
@@ -106,7 +127,7 @@ namespace ForgeModGenerator
         protected virtual bool SyncCreateFolder(string path, bool includeSubDirectories = true)
         {
             SynchronizationCheck(path);
-            SyncedFolders.Add(Factory.ConstructFolderInstance(path, null));
+            SyncedFolders.Add(Factory.Create(path, null));
             if (includeSubDirectories)
             {
                 IEnumerable<TFolder> foundFolders = Factory.FindFoldersFromDirectory(path);
@@ -202,5 +223,7 @@ namespace ForgeModGenerator
                 throw new InvalidSynchronizationArgumentException(RootPath, actualPath);
             }
         }
+
+        public void Dispose() => FileWatcher.Dispose();
     }
 }

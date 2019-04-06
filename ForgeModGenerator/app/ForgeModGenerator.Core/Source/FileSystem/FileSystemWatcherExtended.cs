@@ -19,7 +19,11 @@ namespace ForgeModGenerator
 
     public class FileSystemWatcherExtended : FileSystemWatcher
     {
-        public FileSystemWatcherExtended() : this(string.Empty) { }
+        public FileSystemWatcherExtended() : base()
+        {
+            strictMatchPatternMethodInfo = GetStrictMatchMethod();
+            SubscribeBaseEvents();
+        }
 
         /// <param name="path">The directory to monitor, in standard or Universal Naming Convention (UNC) notation.</param>
         public FileSystemWatcherExtended(string path) : this(path, "*") { }
@@ -29,11 +33,8 @@ namespace ForgeModGenerator
         public FileSystemWatcherExtended(string path, string filters) : base(path, "*")
         {
             Filters = filters;
-            strictMatchPatternMethodInfo = typeof(FileSystemWatcher).Assembly.GetTypes().First(x => x.Name == "PatternMatcher").GetMethod("StrictMatchPattern");
-            Changed += NotifyEvent;
-            Created += NotifyEvent;
-            Deleted += NotifyEvent;
-            Renamed += NotifyEvent;
+            strictMatchPatternMethodInfo = GetStrictMatchMethod();
+            SubscribeBaseEvents();
         }
 
         /// <summary> Occurs when a file or directory in the specified Path that matches Filters is changed. </summary>
@@ -158,6 +159,16 @@ namespace ForgeModGenerator
             parameters[0] = expression;
             parameters[1] = name;
             return (bool)strictMatchPatternMethodInfo.Invoke(null, parameters);
+        }
+
+        private MethodInfo GetStrictMatchMethod() => typeof(FileSystemWatcher).Assembly.GetTypes().First(x => x.Name == "PatternMatcher").GetMethod("StrictMatchPattern");
+
+        private void SubscribeBaseEvents()
+        {
+            Changed += NotifyEvent;
+            Created += NotifyEvent;
+            Deleted += NotifyEvent;
+            Renamed += NotifyEvent;
         }
     }
 }
