@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace ForgeModGenerator
+﻿namespace ForgeModGenerator
 {
     public interface IFolderSynchronizerFactory<TFolder, TFile>
         where TFolder : class, IFolderObject<TFile>

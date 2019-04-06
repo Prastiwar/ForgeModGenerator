@@ -3,6 +3,7 @@ using System;
 
 namespace ForgeModGenerator
 {
+    /// <summary> Wrapper for System.Windows.Forms.FolderBrowserDialog </summary>
     public sealed class FolderBrowserDialog : IFolderBrowser
     {
         private readonly System.Windows.Forms.FolderBrowserDialog dialog = new System.Windows.Forms.FolderBrowserDialog();

@@ -222,7 +222,6 @@
     <Compile Include="Source\FileSystem\Dialog\FileBrowserDialog.cs" />
     <Compile Include="Source\FileSystem\Dialog\FolderBrowserDialog.cs" />
     <Compile Include="Source\FileSystem\FileSystemWin.cs" />
-    <Compile Include="Source\FileSystem\FoldersExplorerFactory.cs" />
     <Compile Include="Source\Serialization\JsonSerializer.cs" />
     <Compile Include="Source\Services\PrismRegionNavigationBridge.cs" />
     <Compile Include="Source\Utility\Extensions\BindingExtensions.cs" />
