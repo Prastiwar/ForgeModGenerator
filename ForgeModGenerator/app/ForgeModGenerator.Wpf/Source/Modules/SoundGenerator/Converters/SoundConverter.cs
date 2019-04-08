@@ -47,7 +47,7 @@ namespace ForgeModGenerator.SoundGenerator.Converters
 
         public override void WriteJson(JsonWriter writer, Sound value, JsonSerializer serializer)
         {
-            JObject jo = new JObject {
+               JObject jo = new JObject {
                 { nameof(Sound.Name).ToLower(), value.Name },
                 { nameof(Sound.Volume).ToLower(), value.Volume },
                 { nameof(Sound.Pitch).ToLower(), value.Pitch },
@@ -55,7 +55,7 @@ namespace ForgeModGenerator.SoundGenerator.Converters
                 { nameof(Sound.Stream).ToLower(), value.Stream },
                 { "attenuation_distance", value.AttenuationDistance },
                 { nameof(Sound.Preload).ToLower(), value.Preload },
-                { nameof(Sound.Type).ToLower(), JToken.FromObject(value.Type, serializer) }
+                { nameof(Sound.Type).ToLower(), value.Type.ToString() }
             };
             jo.WriteTo(writer);
         }

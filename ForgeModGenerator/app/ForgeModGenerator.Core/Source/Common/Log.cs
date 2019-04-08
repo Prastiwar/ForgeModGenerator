@@ -4,6 +4,7 @@ using System;
 
 namespace ForgeModGenerator
 {
+    /// <summary> Static convenient class for logging. Need to be initialized with Initialize() </summary>
     public static class Log
     {
         public static string UnexpectedErrorMessage = "Something went wrong, this should never happened. Please, report a bug at https://github.com/Prastiwar/ForgeModGenerator/issues/new?template=bug_report.md";

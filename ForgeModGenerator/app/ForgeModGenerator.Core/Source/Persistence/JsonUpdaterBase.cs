@@ -5,24 +5,7 @@ using System.Threading.Tasks;
 
 namespace ForgeModGenerator.Persistence
 {
-    public interface IJsonUpdater
-    {
-        string Path { get; set; }
-
-        string Serialize(bool prettyPrint);
-
-        void ForceJsonUpdate();
-        void ForceJsonUpdateAsync();
-
-        bool IsValidToSerialize();
-        bool IsUpdateAvailable();
-    }
-
-    public interface IJsonUpdater<T> : IJsonUpdater
-    {
-        T Target { get; set; }
-    }
-
+    /// <summary> Base class to synchronize T target with json file </summary>
     public abstract class JsonUpdaterBase<T> : IJsonUpdater<T>
     {
         public JsonUpdaterBase(T target, string jsonPath)

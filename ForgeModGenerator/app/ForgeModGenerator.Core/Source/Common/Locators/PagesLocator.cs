@@ -2,7 +2,7 @@ using System;
 
 namespace ForgeModGenerator
 {
-    // Holds information about page key and page type(class)
+    /// <summary> Holds information about page key and page type(class) </summary>
     public class PageInfo
     {
         public readonly string key;
@@ -15,14 +15,14 @@ namespace ForgeModGenerator
         }
     }
 
-    // Holds information about page key, page type(class) and it's viewmodel
+    /// <summary> Holds information about page key, page type(class) and it's viewmodel </summary>
     public class PageInfo<T> : PageInfo
     {
         public Type ViewModelType;
         public PageInfo(string key, Type pageType) : base(key, pageType) => ViewModelType = typeof(T);
     }
 
-    // Holds info about every page in application
+    /// <summary> Holds info about every page in application </summary>
     public static class Pages
     {
         public const string RegionName = "PageRegion";

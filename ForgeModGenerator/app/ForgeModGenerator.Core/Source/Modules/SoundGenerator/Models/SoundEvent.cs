@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
 
 namespace ForgeModGenerator.SoundGenerator.Models
 {
+    /// <summary> Collection of Sound files. Minecrafts SoundEvent representation. </summary>
     public class SoundEvent : ObservableFolder<Sound>, IDataErrorInfo, IValidable
     {
         /// <summary> IMPORTANT: Prefer other ctor, this is used for serialization purposes </summary>
@@ -34,10 +34,6 @@ namespace ForgeModGenerator.SoundGenerator.Models
         public SoundEvent(string path, IEnumerable<Sound> files) : base(path, files) => Init();
         public SoundEvent(string path, IEnumerable<string> filePaths) : base(path, filePaths) => Init();
 
-        public SoundEvent(string path, SearchOption searchOption) : base(path, searchOption) => Init();
-        public SoundEvent(string path, string fileSearchPatterns) : base(path, fileSearchPatterns) => Init();
-        public SoundEvent(string path, string fileSearchPatterns, SearchOption searchOption) : base(path, fileSearchPatterns, searchOption) => Init();
-
         private string eventName;
         public string EventName {
             get => eventName;
@@ -56,18 +52,10 @@ namespace ForgeModGenerator.SoundGenerator.Models
             set => DirtSetProperty(ref subtitle, value);
         }
 
-        private void Init()
-        {
-            if (Count == 1)
-            {
-                EventName = FormatDottedSoundNameFromFullPath(Files[0].Info.FullName);
-            }
-            else
-            {
-                EventName = FormatDottedSoundNameFromFullPath(Info.FullName);
-            }
-            IsDirty = false;
-        }
+        public event PropertyValidationEventHandler<SoundEvent> ValidateProperty;
+
+        string IDataErrorInfo.Error => null;
+        string IDataErrorInfo.this[string propertyName] => OnValidate(propertyName);
 
         public override object DeepClone()
         {
@@ -96,17 +84,26 @@ namespace ForgeModGenerator.SoundGenerator.Models
             return false;
         }
 
-        public event PropertyValidationEventHandler<SoundEvent> ValidateProperty;
-        string IDataErrorInfo.Error => null;
-
         public ValidateResult Validate()
         {
             string errorString = OnValidate(nameof(EventName));
             return new ValidateResult(string.IsNullOrEmpty(errorString), errorString);
         }
 
-        string IDataErrorInfo.this[string propertyName] => OnValidate(propertyName);
         private string OnValidate(string propertyName) => ValidateHelper.OnValidateError(ValidateProperty, this, propertyName);
+
+        private void Init()
+        {
+            if (Count == 1)
+            {
+                EventName = FormatDottedSoundNameFromFullPath(Files[0].Info.FullName);
+            }
+            else
+            {
+                EventName = FormatDottedSoundNameFromFullPath(Info.FullName);
+            }
+            IsDirty = false;
+        }
 
         // Get formatted sound from full path, "shorten.path.toFile"
         public static string FormatDottedSoundNameFromFullPath(string path)

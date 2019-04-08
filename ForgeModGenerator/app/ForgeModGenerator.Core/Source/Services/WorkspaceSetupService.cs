@@ -5,11 +5,6 @@ using System.Runtime.CompilerServices;
 
 namespace ForgeModGenerator.Services
 {
-    public interface IWorkspaceSetupService : INotifyPropertyChanged
-    {
-        ObservableCollection<WorkspaceSetup> Setups { get; }
-    }
-
     public class WorkspaceSetupService : IWorkspaceSetupService
     {
         public WorkspaceSetupService() => Setups = new ObservableCollection<WorkspaceSetup>() {

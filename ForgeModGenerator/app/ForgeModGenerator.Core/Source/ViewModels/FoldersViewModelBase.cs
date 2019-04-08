@@ -9,7 +9,7 @@ using System.Windows.Input;
 
 namespace ForgeModGenerator.ViewModels
 {
-    /// <summary> Business ViewModel Base class for making file list </summary>
+    /// <summary> Base ViewModel class with json updater </summary>
     public abstract class FoldersViewModelBase<TFolder, TFile> : FoldersWatcherViewModelBase<TFolder, TFile>
         where TFolder : class, IFolderObject<TFile>
         where TFile : class, IFileObject, IValidable

@@ -2,6 +2,7 @@
 
 namespace ForgeModGenerator.Models
 {
+    /// <summary> Base class for workspace to setup for manual changes in mod </summary>
     public abstract class WorkspaceSetup
     {
         public static WorkspaceSetup NONE = new EmptyWorkspace();

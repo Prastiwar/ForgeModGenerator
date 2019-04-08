@@ -10,8 +10,10 @@ namespace ForgeModGenerator.Utility
         private const char LF = '\n';
         private const char NULLCHAR = (char)0;
 
+        /// <summary> Replaces inconsistent path separator to forwardSlash or backwards </summary>
         public static string NormalizePath(this string path, bool forwardSlash = true) => forwardSlash ? path.Replace("\\", "/") : path.Replace("/", "\\");
 
+        /// <summary> Replaces inconsistent path separator to forwardSlash or backwards after getting FullPath </summary>
         public static string NormalizeFullPath(this string path, bool forwardSlash = true) => forwardSlash ? Path.GetFullPath(path).Replace("\\", "/") : Path.GetFullPath(path).Replace("/", "\\");
 
         /// <summary> Compares two paths and returns true if they're equal. Always returns false if one of path is not valid path </summary>

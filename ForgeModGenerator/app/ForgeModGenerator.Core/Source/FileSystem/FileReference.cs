@@ -43,10 +43,12 @@ namespace ForgeModGenerator
             private set {
                 if (SetProperty(ref info, value))
                 {
+                    RaisePropertyChanged(nameof(NameWithoutExtension));
                     RaisePropertyChanged(nameof(Name));
                     RaisePropertyChanged(nameof(FullName));
                     RaisePropertyChanged(nameof(Extension));
                     RaisePropertyChanged(nameof(ReferenceCount));
+                    RaisePropertyChanged(nameof(IsValidReference));
                 }
             }
         }

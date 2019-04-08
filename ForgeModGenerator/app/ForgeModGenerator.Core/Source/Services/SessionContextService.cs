@@ -10,6 +10,7 @@ using System.Runtime.CompilerServices;
 
 namespace ForgeModGenerator.Services
 {
+    /// <summary> Holds shared data context over whole application </summary>
     public abstract class SessionContextService : ISessionContextService
     {
         public abstract Uri StartPage { get; }

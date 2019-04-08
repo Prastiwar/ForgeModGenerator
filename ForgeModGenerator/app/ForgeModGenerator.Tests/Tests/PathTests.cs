@@ -18,6 +18,15 @@ namespace ForgeModGenerator.Tests
         }
 
         [TestMethod]
+        public void PathRename()
+        {
+            Assert.AreEqual(@"C:/foo/smth.png", IOHelper.GetRenamedFileFullName(@"C:/foo/someFile.png", "smth").NormalizeFullPath());
+            Assert.AreEqual(@"C:/foo/smth.txt", IOHelper.GetRenamedFileFullName(@"C:/foo/someFile.png", "smth.txt", true).NormalizeFullPath());
+
+            Assert.AreEqual(@"C:/foo/smth", IOHelper.GetRenamedDirectoryFullName(@"C:/foo/boo", "smth").NormalizeFullPath());
+        }
+
+        [TestMethod]
         public void PathExists()
         {
             FileInfo info = new FileInfo(Path.GetTempFileName());

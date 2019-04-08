@@ -8,26 +8,15 @@ namespace ForgeModGenerator
         where TFile : class, IFileObject
     {
         IFolderObject<TFolder> Folders { get; }
-
         IFolderSynchronizer<TFolder, TFile> FileSynchronizer { get; }
-
         IFileBrowser OpenFileDialog { get; }
-
         IFolderBrowser OpenFolderDialog { get; }
-
         HashSet<string> AllowedFileExtensions { get; }
-
         bool HasEmptyFolders { get; }
-
-        void RemoveFolder(TFolder folder);
-
+        
         void RemoveEmptyFolders();
-
-        TFolder CreateFolder(string path);
-
-        DialogResult ShowFolderDialog(out IFolderBrowser browser);
-
-        DialogResult ShowFileDialog(out IFileBrowser browser);
+        void RemoveFolder(TFolder folder);
+        void RemoveFileFromFolder(TFolder folder, TFile file);
 
         Task CopyFolderToRootAsync(string rootPath, string path);
         void CopyFolderToRoot(string rootPath, string path);
@@ -35,6 +24,9 @@ namespace ForgeModGenerator
         Task CopyFilesToFolderAsync(TFolder folder, params string[] fileNames);
         void CopyFilesToFolder(TFolder folder, params string[] fileNames);
 
-        void RemoveFileFromFolder(TFolder folder, TFile file);
+        TFolder CreateFolder(string path);
+
+        DialogResult ShowFolderDialog(out IFolderBrowser browser);
+        DialogResult ShowFileDialog(out IFileBrowser browser);
     }
 }

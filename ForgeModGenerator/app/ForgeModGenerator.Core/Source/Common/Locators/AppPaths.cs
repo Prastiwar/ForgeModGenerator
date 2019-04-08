@@ -3,6 +3,7 @@ using System.IO;
 
 namespace ForgeModGenerator
 {
+    /// <summary> Constains common application path locations </summary>
     public static class AppPaths
     {
         private static string AppRootPath => new DirectoryInfo(Binary).Parent.FullName;

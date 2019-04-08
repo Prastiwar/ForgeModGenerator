@@ -1,5 +1,6 @@
 ﻿namespace ForgeModGenerator.CodeGeneration
 {
+    /// <summary> Holds information about class name, file path and namespace </summary>
     public class ClassLocator
     {
         public ClassLocator(string importFullName)
@@ -33,6 +34,7 @@
         public string InitFieldName { get; }
     }
 
+    /// <summary> Constains folder names in source code </summary>
     public static class SourceCodeFolders
     {
         public const string Root = "fmg";
@@ -51,6 +53,7 @@
         public const string Gui = "gui";
     }
 
+    /// <summary> Constains locators for all classes in source code </summary>
     public static class SourceCodeLocator
     {
         internal const string Prefix = "FMG";

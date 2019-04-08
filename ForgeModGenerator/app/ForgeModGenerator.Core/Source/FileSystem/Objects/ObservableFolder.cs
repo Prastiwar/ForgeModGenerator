@@ -5,11 +5,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 
 namespace ForgeModGenerator
 {
+    /// <summary>
+    /// Observable collection of file objects. It doesn't make use of any IO operations
+    /// Default implementation for IFolderObject<T>
+    /// </summary>
     public class ObservableFolder<T> : ObservableDirtyObject, IFolderObject<T>
         where T : IFileSystemObject
     {
@@ -45,14 +48,6 @@ namespace ForgeModGenerator
             IsDirty = false;
         }
 
-        public ObservableFolder(string path, SearchOption searchOption) : this(path, "*", searchOption) { }
-        public ObservableFolder(string path, string fileSearchPatterns) : this(path, fileSearchPatterns, SearchOption.TopDirectoryOnly) { }
-        public ObservableFolder(string path, string fileSearchPatterns, SearchOption searchOption) : this(path)
-        {
-            AddRange(IOHelper.EnumerateFiles(path, fileSearchPatterns, searchOption));
-            IsDirty = false;
-        }
-
         public event OnFileChangedEventHandler<T> FilesChanged;
         public event OnFilePropertyChangedEventHandler<T> FilePropertyChanged;
 
@@ -70,52 +65,12 @@ namespace ForgeModGenerator
             protected set => InitializeFiles(value);
         }
 
-        protected virtual void InitializeFiles(ObservableRangeCollection<T> value)
-        {
-            if (DirtSetProperty(ref files, value))
-            {
-                if (Files != null)
-                {
-                    Files.CollectionChanged -= Files_CollectionChanged;
-                    Files.CollectionChanged += Files_CollectionChanged;
-                    if (Files.Count > 0)
-                    {
-                        foreach (T file in Files)
-                        {
-                            file.PropertyChanged -= File_PropertyChanged;
-                            file.PropertyChanged += File_PropertyChanged;
-                        }
-                    }
-                }
-            }
-        }
-
         public int Count => Files != null ? Files.Count : 0;
 
         public bool Contains(T item) => Files.Contains(item);
 
-        protected virtual bool CanAdd(T item) => CanAdd(item.Info.FullName);
-        protected virtual bool CanAdd(string filePath) => !Files.Exists(file => file.Info.FullName.ComparePath(filePath));
-
-        /// <summary> Add file without existing check </summary>
-        protected void AddFile(T item)
-        {
-            Files.Add(item);
-            item.PropertyChanged += File_PropertyChanged;
-        }
-
-        /// <summary> Add files without existing check </summary>
-        protected void AddFileRange(IEnumerable<T> items)
-        {
-            foreach (T item in items)
-            {
-                item.PropertyChanged += File_PropertyChanged;
-            }
-            Files.AddRange(items);
-        }
-
-        /// <summary> Add files without existing check </summary>
-        protected void RemoveFileRange(IEnumerable<T> items)
+        /// <summary> Removes files from collection </summary>
+        public void RemoveFileRange(IEnumerable<T> items)
         {
             foreach (T item in items)
             {
@@ -125,7 +80,7 @@ namespace ForgeModGenerator
         }
 
         /// <summary> Enumerates files that are sub paths of given folder path </summary>
-        public IEnumerable<T> EnumerateSubPathFiles(string path) => Files.Where(file => IOHelper.IsSubPathOf(file.Info.FullName, path));
+        public IEnumerable<T> EnumerateSubPathFiles(string folderPath) => Files.Where(file => IOHelper.IsSubPathOf(file.Info.FullName, folderPath));
 
         public bool TryGetFile(string path, out T file)
         {
@@ -217,6 +172,26 @@ namespace ForgeModGenerator
             }
         }
 
+        protected virtual bool CanAdd(T item) => CanAdd(item.Info.FullName);
+        protected virtual bool CanAdd(string filePath) => !Files.Exists(file => file.Info.FullName.ComparePath(filePath));
+
+        /// <summary> Forces Add file without CanAdd() check </summary>
+        protected void AddFile(T item)
+        {
+            Files.Add(item);
+            item.PropertyChanged += File_PropertyChanged;
+        }
+
+        /// <summary> Forces Add files without CanAdd() check </summary>
+        protected void AddFileRange(IEnumerable<T> items)
+        {
+            foreach (T item in items)
+            {
+                item.PropertyChanged += File_PropertyChanged;
+            }
+            Files.AddRange(items);
+        }
+
         protected T CreateFileFromPath(string filePath)
         {
             try
@@ -227,6 +202,27 @@ namespace ForgeModGenerator
             {
                 Log.Error(ex, $"Couldnt create instance of {typeof(T)} with {filePath}. Trying to create parameterless..");
                 return Activator.CreateInstance<T>();
+            }
+        }
+
+        /// <summary> Setter for Files </summary>
+        protected virtual void InitializeFiles(ObservableRangeCollection<T> value)
+        {
+            if (DirtSetProperty(ref files, value))
+            {
+                if (Files != null)
+                {
+                    Files.CollectionChanged -= Files_CollectionChanged;
+                    Files.CollectionChanged += Files_CollectionChanged;
+                    if (Files.Count > 0)
+                    {
+                        foreach (T file in Files)
+                        {
+                            file.PropertyChanged -= File_PropertyChanged;
+                            file.PropertyChanged += File_PropertyChanged;
+                        }
+                    }
+                }
             }
         }
 

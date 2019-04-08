@@ -10,6 +10,7 @@ namespace ForgeModGenerator.Utility
 
         public static IEnumerable<Type> GetSubclassTypes(Type baseType) => Assembly.GetAssembly(baseType).GetSubclassTypes(baseType);
 
+        /// <summary> Enumerates over lazily created instance of sub classes of <typeparamref name="T"/> </summary>
         public static IEnumerable<T> EnumerateSubclasses<T>(params object[] constructorArgs) where T : class
         {
             foreach (Type type in GetSubclassTypes<T>())

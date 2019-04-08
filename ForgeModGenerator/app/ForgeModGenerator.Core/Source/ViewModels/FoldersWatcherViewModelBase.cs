@@ -9,6 +9,7 @@ using System.Windows.Input;
 
 namespace ForgeModGenerator.ViewModels
 {
+    /// <summary> Base ViewModel class to explore folders </summary>
     public abstract class FoldersWatcherViewModelBase<TFolder, TFile> : BindableBase
         where TFolder : class, IFolderObject<TFile>
         where TFile : class, IFileObject

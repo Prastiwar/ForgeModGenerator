@@ -12,7 +12,6 @@ namespace ForgeModGenerator
         public TFolder Create() => Create(null, null);
         TFolder IFoldersFactory<TFolder, TFile>.Create(string path, IEnumerable<string> filePaths) => Create(path, filePaths);
 
-        /// <summary> Create TFolder instance and subscribe its events </summary>
         public virtual TFolder Create(string path, IEnumerable<string> filePaths)
         {
             TFolder folder = null;

@@ -16,8 +16,6 @@ namespace ForgeModGenerator
 
         protected ISerializer Serializer { get; }
 
-        public virtual IFolderObject<TFile> Create(string FoldersPathRoot) => new ObservableFolder<TFile>(FoldersPathRoot);
-
         public override IEnumerable<TFolder> FindFolders(string path, bool createRootIfEmpty = false)
         {
             if (!IOHelper.IsPathValid(path))

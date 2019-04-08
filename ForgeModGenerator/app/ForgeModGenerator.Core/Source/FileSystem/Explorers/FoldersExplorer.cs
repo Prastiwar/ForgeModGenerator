@@ -40,6 +40,7 @@ namespace ForgeModGenerator
         protected string AllowedFileExtensionsPatterns => AllowedFileExtensions != null ? "*" + string.Join("|*", AllowedFileExtensions) : "";
 
         private IFolderObject<TFolder> folders;
+        /// <summary> Explored (synchronized) folders </summary>
         public IFolderObject<TFolder> Folders {
             get => folders;
             protected set {
@@ -58,7 +59,7 @@ namespace ForgeModGenerator
         private IFolderSynchronizer<TFolder, TFile> fileSynchronizer;
         public IFolderSynchronizer<TFolder, TFile> FileSynchronizer {
             get => fileSynchronizer;
-            set {
+            protected set {
                 if (fileSynchronizer != value)
                 {
                     if (fileSynchronizer != null)
@@ -81,16 +82,43 @@ namespace ForgeModGenerator
             }
         }
 
-        public DialogResult ShowFolderDialog(out IFolderBrowser browser)
+        /// <summary> Removes folder and if it's empty, sends it to RecycleBin </summary>
+        public void RemoveFolder(TFolder folder)
         {
-            browser = OpenFolderDialog;
-            return OpenFolderDialog.ShowDialog();
+            string folderPath = folder.Info.FullName;
+            if (Folders.Remove(folder))
+            {
+                for (int i = folder.Files.Count - 1; i >= 0; i--)
+                {
+                    string filePath = folder.Files[i].Info.FullName;
+                    if (FileSystemInfoReference.GetReferenceCount(filePath) <= 1 && File.Exists(filePath))
+                    {
+                        FileSystem.DeleteFile(filePath, true);
+                    }
+                }
+                folder.Clear();
+                if (Directory.Exists(folderPath) && IOHelper.IsEmpty(folderPath))
+                {
+                    FileSystem.DeleteDirectory(folderPath, true);
+                }
+            }
         }
 
-        public DialogResult ShowFileDialog(out IFileBrowser browser)
+        /// <summary> Removes file from folder and if it's not referenced anywhere, sends it to RecycleBin </summary>
+        public void RemoveFileFromFolder(TFolder folder, TFile file)
         {
-            browser = OpenFileDialog;
-            return OpenFileDialog.ShowDialog();
+            string filePath = file.Info.FullName;
+            if (folder.Remove(file))
+            {
+                if (!FileSystemInfoReference.IsReferenced(filePath))
+                {
+                    if (!FileSystem.DeleteFile(filePath, true))
+                    {
+                        DialogService.ShowMessage(StaticMessage.GetOperationFailedMessage(file.Info.FullName), "Deletion failed");
+                        folder.Add(file);
+                    }
+                }
+            }
         }
 
         /// <summary> Copies directory to root path, if directory with given name exists, add (n) number to its name </summary>
@@ -146,43 +174,16 @@ namespace ForgeModGenerator
             }
         }
 
-        /// <summary> Removes folder and if it's empty, sends it to RecycleBin </summary>
-        public void RemoveFolder(TFolder folder)
+        public DialogResult ShowFolderDialog(out IFolderBrowser browser)
         {
-            string folderPath = folder.Info.FullName;
-            if (Folders.Remove(folder))
-            {
-                for (int i = folder.Files.Count - 1; i >= 0; i--)
-                {
-                    string filePath = folder.Files[i].Info.FullName;
-                    if (FileSystemInfoReference.GetReferenceCount(filePath) <= 1 && File.Exists(filePath))
-                    {
-                        FileSystem.DeleteFile(filePath, true);
-                    }
-                }
-                folder.Clear();
-                if (Directory.Exists(folderPath) && IOHelper.IsEmpty(folderPath))
-                {
-                    FileSystem.DeleteDirectory(folderPath, true);
-                }
-            }
+            browser = OpenFolderDialog;
+            return OpenFolderDialog.ShowDialog();
         }
 
-        /// <summary> Removes file from folder and if it's not referenced anywhere, sends it to RecycleBin </summary>
-        public void RemoveFileFromFolder(TFolder folder, TFile file)
+        public DialogResult ShowFileDialog(out IFileBrowser browser)
         {
-            string filePath = file.Info.FullName;
-            if (folder.Remove(file))
-            {
-                if (!FileSystemInfoReference.IsReferenced(filePath))
-                {
-                    if (!FileSystem.DeleteFile(filePath, true))
-                    {
-                        DialogService.ShowMessage(StaticMessage.GetOperationFailedMessage(file.Info.FullName), "Deletion failed");
-                        folder.Add(file);
-                    }
-                }
-            }
+            browser = OpenFileDialog;
+            return OpenFileDialog.ShowDialog();
         }
 
         public TFolder CreateFolder(string path) => FileSynchronizer.Finder.Factory.Create(path, null);

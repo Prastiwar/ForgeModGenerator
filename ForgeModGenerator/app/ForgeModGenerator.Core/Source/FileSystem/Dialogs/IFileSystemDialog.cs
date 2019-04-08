@@ -13,12 +13,12 @@ namespace ForgeModGenerator
         string InitialDirectory { get; set; }
         int FilterIndex { get; set; }
         string Filter { get; set; }
-        string[] FileNames { get; }
         bool DereferenceLinks { get; set; }
-        string DefaultExt { get; set; }
         bool CheckPathExists { get; set; }
         bool CheckFileExists { get; set; }
         bool AddExtension { get; set; }
+        string DefaultExt { get; set; }
         string FileName { get; set; }
+        string[] FileNames { get; }
     }
 }

@@ -58,14 +58,14 @@ namespace ForgeModGenerator.Tests
             Sound sound = CreateSoundTestCopy2();
             sound.FormatName();
             string json = JsonConvert.SerializeObject(sound, soundConverter);
-            Assert.IsTrue(json.Contains($"\"name\":\"{TestModModid}:testCopy2\""));
-            Assert.IsTrue(json.Contains("\"volume\":0.5"));
-            Assert.IsTrue(json.Contains("\"pitch\":2.0"));
-            Assert.IsTrue(json.Contains("\"weight\":2"));
-            Assert.IsTrue(json.Contains("\"stream\":true"));
-            Assert.IsTrue(json.Contains("\"attenuation_distance\":1"));
-            Assert.IsTrue(json.Contains("\"preload\":true"));
-            Assert.IsTrue(json.Contains("\"type\":\"event\""));
+            Assert.IsTrue(json.Contains($"\"name\":\"{TestModModid}:testCopy2\""), json);
+            Assert.IsTrue(json.Contains("\"volume\":0.5"), json);
+            Assert.IsTrue(json.Contains("\"pitch\":2.0"), json);
+            Assert.IsTrue(json.Contains("\"weight\":2"), json);
+            Assert.IsTrue(json.Contains("\"stream\":true"), json);
+            Assert.IsTrue(json.Contains("\"attenuation_distance\":1"), json);
+            Assert.IsTrue(json.Contains("\"preload\":true"), json);
+            Assert.IsTrue(json.Contains("\"type\":\"event\""), json);
         }
 
         [TestMethod]
@@ -79,28 +79,28 @@ namespace ForgeModGenerator.Tests
                 Replace = false
             };
             string json = JsonConvert.SerializeObject(soundEvent, soundEventConverter);
-            Assert.IsTrue(json.Contains("\"sounds\":{"));
-            Assert.IsTrue(json.Contains("\"replace\":false"));
-            Assert.IsTrue(json.Contains("\"subtitle\":\"Some subtitle\""));
-            Assert.IsTrue(json.Contains("\"sounds\":[{"));
+            Assert.IsTrue(json.Contains("\"sounds\":{"), json);
+            Assert.IsTrue(json.Contains("\"replace\":false"), json);
+            Assert.IsTrue(json.Contains("\"subtitle\":\"Some subtitle\""), json);
+            Assert.IsTrue(json.Contains("\"sounds\":[{"), json);
 
-            Assert.IsTrue(json.Contains($"\"name\":\"{TestModModid}:test\""));
-            Assert.IsTrue(json.Contains("\"volume\":1.0"));
-            Assert.IsTrue(json.Contains("\"pitch\":1.0"));
-            Assert.IsTrue(json.Contains("\"weight\":1"));
-            Assert.IsTrue(json.Contains("\"stream\":false"));
-            Assert.IsTrue(json.Contains("\"attenuation_distance\":0"));
-            Assert.IsTrue(json.Contains("\"preload\":false"));
-            Assert.IsTrue(json.Contains("\"type\":\"file\""));
+            Assert.IsTrue(json.Contains($"\"name\":\"{TestModModid}:test\""), json);
+            Assert.IsTrue(json.Contains("\"volume\":1.0"), json);
+            Assert.IsTrue(json.Contains("\"pitch\":1.0"), json);
+            Assert.IsTrue(json.Contains("\"weight\":1"), json);
+            Assert.IsTrue(json.Contains("\"stream\":false"), json);
+            Assert.IsTrue(json.Contains("\"attenuation_distance\":0"), json);
+            Assert.IsTrue(json.Contains("\"preload\":false"), json);
+            Assert.IsTrue(json.Contains("\"type\":\"file\""), json);
 
-            Assert.IsTrue(json.Contains($"\"name\":\"{TestModModid}:testCopy2\""));
-            Assert.IsTrue(json.Contains("\"volume\":0.5"));
-            Assert.IsTrue(json.Contains("\"pitch\":2.0"));
-            Assert.IsTrue(json.Contains("\"weight\":2"));
-            Assert.IsTrue(json.Contains("\"stream\":true"));
-            Assert.IsTrue(json.Contains("\"attenuation_distance\":1"));
-            Assert.IsTrue(json.Contains("\"preload\":true"));
-            Assert.IsTrue(json.Contains("\"type\":\"event\""));
+            Assert.IsTrue(json.Contains($"\"name\":\"{TestModModid}:testCopy2\""), json);
+            Assert.IsTrue(json.Contains("\"volume\":0.5"), json);
+            Assert.IsTrue(json.Contains("\"pitch\":2.0"), json);
+            Assert.IsTrue(json.Contains("\"weight\":2"), json);
+            Assert.IsTrue(json.Contains("\"stream\":true"), json);
+            Assert.IsTrue(json.Contains("\"attenuation_distance\":1"), json);
+            Assert.IsTrue(json.Contains("\"preload\":true"), json);
+            Assert.IsTrue(json.Contains("\"type\":\"event\""), json);
         }
 
         [TestMethod]
@@ -123,33 +123,33 @@ namespace ForgeModGenerator.Tests
                 }
             };
             string json = JsonConvert.SerializeObject(soundEvent, soundEventCollectionConverter);
-            Assert.IsTrue(json.Contains("\"sounds\":{"));
-            Assert.IsTrue(json.Contains("\"replace\":false"));
-            Assert.IsTrue(json.Contains("\"subtitle\":\"\""));
-            Assert.IsTrue(json.Contains("\"sounds\":[{"));
+            Assert.IsTrue(json.Contains("\"sounds\":{"), json);
+            Assert.IsTrue(json.Contains("\"replace\":false"), json);
+            Assert.IsTrue(json.Contains("\"subtitle\":\"\""), json);
+            Assert.IsTrue(json.Contains("\"sounds\":[{"), json);
 
-            Assert.IsTrue(json.Contains($"\"name\":\"{TestModModid}:test\""));
-            Assert.IsTrue(json.Contains("\"volume\":1.0"));
-            Assert.IsTrue(json.Contains("\"pitch\":1.0"));
-            Assert.IsTrue(json.Contains("\"weight\":1"));
-            Assert.IsTrue(json.Contains("\"stream\":false"));
-            Assert.IsTrue(json.Contains("\"attenuation_distance\":0"));
-            Assert.IsTrue(json.Contains("\"preload\":false"));
-            Assert.IsTrue(json.Contains("\"type\":\"file\""));
+            Assert.IsTrue(json.Contains($"\"name\":\"{TestModModid}:test\""), json);
+            Assert.IsTrue(json.Contains("\"volume\":1.0"), json);
+            Assert.IsTrue(json.Contains("\"pitch\":1.0"), json);
+            Assert.IsTrue(json.Contains("\"weight\":1"), json);
+            Assert.IsTrue(json.Contains("\"stream\":false"), json);
+            Assert.IsTrue(json.Contains("\"attenuation_distance\":0"), json);
+            Assert.IsTrue(json.Contains("\"preload\":false"), json);
+            Assert.IsTrue(json.Contains("\"type\":\"file\""), json);
 
-            Assert.IsTrue(json.Contains($"\"name\":\"{TestModModid}:testCopy2\""));
-            Assert.IsTrue(json.Contains("\"volume\":0.5"));
-            Assert.IsTrue(json.Contains("\"pitch\":2.0"));
-            Assert.IsTrue(json.Contains("\"weight\":2"));
-            Assert.IsTrue(json.Contains("\"stream\":true"));
-            Assert.IsTrue(json.Contains("\"attenuation_distance\":1"));
-            Assert.IsTrue(json.Contains("\"preload\":true"));
-            Assert.IsTrue(json.Contains("\"type\":\"event\""));
+            Assert.IsTrue(json.Contains($"\"name\":\"{TestModModid}:testCopy2\""), json);
+            Assert.IsTrue(json.Contains("\"volume\":0.5"), json);
+            Assert.IsTrue(json.Contains("\"pitch\":2.0"), json);
+            Assert.IsTrue(json.Contains("\"weight\":2"), json);
+            Assert.IsTrue(json.Contains("\"stream\":true"), json);
+            Assert.IsTrue(json.Contains("\"attenuation_distance\":1"), json);
+            Assert.IsTrue(json.Contains("\"preload\":true"), json);
+            Assert.IsTrue(json.Contains("\"type\":\"event\""), json);
             
-            Assert.IsTrue(json.Contains("\"entity.vatras.greet\":{"));
-            Assert.IsTrue(json.Contains("\"replace\":true"));
-            Assert.IsTrue(json.Contains("\"subtitle\":\"Some subtitle2\""));
-            Assert.IsTrue(json.Contains($"\"name\":\"{TestModModid}:entity/vatras/greet\""));
+            Assert.IsTrue(json.Contains("\"entity.vatras.greet\":{"), json);
+            Assert.IsTrue(json.Contains("\"replace\":true"), json);
+            Assert.IsTrue(json.Contains("\"subtitle\":\"Some subtitle2\""), json);
+            Assert.IsTrue(json.Contains($"\"name\":\"{TestModModid}:entity/vatras/greet\""), json);
         }
 
 

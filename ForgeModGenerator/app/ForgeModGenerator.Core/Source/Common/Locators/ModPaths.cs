@@ -2,6 +2,7 @@
 
 namespace ForgeModGenerator
 {
+    /// <summary> Constains common mod path locations </summary>
     public static class ModPaths
     {
         public static readonly string FmgInfoFileName = "FmgModInfo.json";

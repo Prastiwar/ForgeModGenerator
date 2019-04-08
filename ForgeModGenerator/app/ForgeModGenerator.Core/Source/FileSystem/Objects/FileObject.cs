@@ -4,8 +4,6 @@ using System.ComponentModel;
 
 namespace ForgeModGenerator
 {
-    public interface IFileObject : IFileSystemObject { }
-
     public class FileObject : ObservableDirtyObject, IFileObject
     {
         protected FileObject() { }

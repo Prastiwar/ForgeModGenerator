@@ -8,9 +8,7 @@ namespace ForgeModGenerator
     public class ClassNotInitializedException : Exception
     {
         public ClassNotInitializedException(Type type) { }
-
         public ClassNotInitializedException(Type type, string message) : base(message) { }
-
         public ClassNotInitializedException(Type type, string message, Exception innerException) : base(message, innerException) { }
 
         protected ClassNotInitializedException(SerializationInfo info, StreamingContext context) : base(info, context) { }

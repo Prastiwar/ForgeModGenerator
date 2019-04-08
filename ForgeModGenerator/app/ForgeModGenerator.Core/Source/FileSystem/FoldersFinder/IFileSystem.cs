@@ -1,5 +1,6 @@
 ﻿namespace ForgeModGenerator
 {
+    /// <summary> File System with most common IO operations </summary>
     public interface IFileSystem
     {
         bool MoveDirectoriesAndFiles(string from, string destination);
