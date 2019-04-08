@@ -94,7 +94,6 @@ namespace ForgeModGenerator
             containerRegistry.RegisterInstance<ISessionContextService>(WpfSessionContextService.Instance);
             containerRegistry.Register<INavigationService, PrismRegionNavigationBridge>();
             containerRegistry.Register<ISnackbarService, SnackbarService>();
-            containerRegistry.Register<IWorkspaceSetupService, WorkspaceSetupService>();
             containerRegistry.Register<IModBuildService, ModBuildService>();
         }
 

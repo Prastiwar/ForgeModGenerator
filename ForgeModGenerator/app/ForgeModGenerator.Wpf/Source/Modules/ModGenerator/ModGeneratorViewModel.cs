@@ -23,16 +23,15 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
     /// <summary> ModGenerator Business ViewModel </summary>
     public class ModGeneratorViewModel : BindableBase
     {
-        public ModGeneratorViewModel(ISessionContextService sessionContext, IWorkspaceSetupService workspaceService, IDialogService dialogService, IFileSystem fileSystem)
+        public ModGeneratorViewModel(ISessionContextService sessionContext, IDialogService dialogService, IFileSystem fileSystem)
         {
             SessionContext = sessionContext;
-            WorkspaceService = workspaceService;
             DialogService = dialogService;
             FileSystem = fileSystem;
             ResetNewMod();
             Form = new ModForm() {
                 AddForgeVersionCommand = AddNewForgeVersionCommand,
-                Setups = WorkspaceService.Setups,
+                Setups = new ObservableCollection<WorkspaceSetup>(ReflectionHelper.EnumerateSubclasses<WorkspaceSetup>()),
                 ForgeVersions = SessionContext.ForgeVersions,
                 Sides = Sides
             };
@@ -50,7 +49,6 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
         protected EditorForm<Mod> EditorForm { get; set; }
 
         public ISessionContextService SessionContext { get; }
-        public IWorkspaceSetupService WorkspaceService { get; }
         public IDialogService DialogService { get; }
         public IFileSystem FileSystem { get; }
 
