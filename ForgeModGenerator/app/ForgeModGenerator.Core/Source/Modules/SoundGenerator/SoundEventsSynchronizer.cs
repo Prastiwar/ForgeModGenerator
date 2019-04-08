@@ -8,18 +8,18 @@ namespace ForgeModGenerator.SoundGenerator
 {
     public class SoundEventsSynchronizer : FolderSynchronizer<SoundEvent, Sound>
     {
-        public SoundEventsSynchronizer(ISynchronizeInvoke synchronizeObject, IFolderObject<SoundEvent> foldersToSync, IFoldersFactory<SoundEvent, Sound> factory, string rootPath = null, string filters = null)
-            : base(synchronizeObject, foldersToSync, factory, rootPath, filters) { }
+        public SoundEventsSynchronizer(ISynchronizeInvoke synchronizeObject, IFolderObject<SoundEvent> foldersToSync, IFoldersFinder<SoundEvent, Sound> finder, string rootPath = null, string filters = null)
+            : base(synchronizeObject, foldersToSync, finder, rootPath, filters) { }
 
         /// <inheritdoc/>
         public override void AddNotReferencedFiles()
         {
             string[] filePaths = new string[1];
-            foreach (string filePath in Factory.EnumerateNotReferencedFiles(RootPath, SearchOption.AllDirectories))
+            foreach (string filePath in Finder.EnumerateNotReferencedFiles(RootPath, SearchOption.AllDirectories))
             {
                 string dirPath = IOHelper.GetDirectoryPath(filePath);
                 filePaths[0] = filePath;
-                SoundEvent folder = Factory.Create(dirPath, filePaths);
+                SoundEvent folder = Finder.Factory.Create(dirPath, filePaths);
                 SyncedFolders.Add(folder);
             }
         }
@@ -28,7 +28,7 @@ namespace ForgeModGenerator.SoundGenerator
         protected override bool SyncCreateFile(string path)
         {
             SynchronizationCheck(path);
-            SoundEvent soundEvent = Factory.Create(path, new string[] { path });
+            SoundEvent soundEvent = Finder.Factory.Create(path, new string[] { path });
             return SyncedFolders.Add(soundEvent);
         }
 

@@ -8,11 +8,11 @@ using System.Linq;
 
 namespace ForgeModGenerator
 {
-    public class DefaultFoldersFactory<TFolder, TFile> : FoldersFactory<TFolder, TFile>
+    public class DefaultFoldersFinder<TFolder, TFile> : FoldersFinder<TFolder, TFile>
         where TFolder : class, IFolderObject<TFile>
         where TFile : class, IFileObject
     {
-        public DefaultFoldersFactory(ISerializer serializer) => Serializer = serializer;
+        public DefaultFoldersFinder(ISerializer serializer, IFoldersFactory<TFolder, TFile> factory) : base(factory) => Serializer = serializer;
 
         protected ISerializer Serializer { get; }
 

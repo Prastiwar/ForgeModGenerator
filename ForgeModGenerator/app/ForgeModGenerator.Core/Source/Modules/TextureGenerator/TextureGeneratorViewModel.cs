@@ -1,6 +1,5 @@
 ﻿using ForgeModGenerator.Services;
 using ForgeModGenerator.ViewModels;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ForgeModGenerator.TextureGenerator.ViewModels
@@ -8,9 +7,9 @@ namespace ForgeModGenerator.TextureGenerator.ViewModels
     /// <summary> TextureGenerator Business ViewModel </summary>
     public class TextureGeneratorViewModel : FoldersWatcherViewModelBase<ObservableFolder<FileObject>, FileObject>
     {
-        public TextureGeneratorViewModel(ISessionContextService sessionContext, IFoldersExplorerFactory<ObservableFolder<FileObject>, FileObject> factory) : base(sessionContext)
+        public TextureGeneratorViewModel(ISessionContextService sessionContext, IFoldersExplorerFactory<ObservableFolder<FileObject>, FileObject> explorerFactory) : base(sessionContext)
         {
-            explorer = factory.Create();
+            explorer = explorerFactory.Create();
             explorer.OpenFileDialog.Filter = "Image (*.png) | *.png";
             explorer.OpenFileDialog.Multiselect = true;
             explorer.OpenFileDialog.CheckFileExists = true;
@@ -30,7 +29,7 @@ namespace ForgeModGenerator.TextureGenerator.ViewModels
             {
                 IsLoading = true;
                 explorer.Folders.Clear();
-                explorer.Folders.AddRange(await explorer.FileSynchronizer.Factory.FindFoldersAsync(FoldersRootPath, true));
+                explorer.Folders.AddRange(await explorer.FileSynchronizer.Finder.FindFoldersAsync(FoldersRootPath, true));
                 explorer.FileSynchronizer.RootPath = FoldersRootPath;
                 explorer.FileSynchronizer.SetEnableSynchronization(true);
                 IsLoading = false;

@@ -7,7 +7,7 @@ namespace ForgeModGenerator
         where TFolder : class, IFolderObject<TFile>
         where TFile : class, IFileObject
     {
-        IFoldersFactory<TFolder, TFile> Factory { get; }
+        IFoldersFinder<TFolder, TFile> Finder { get; }
         ISynchronizeInvoke SynchronizingObject { get; set; }
         IFolderObject<TFolder> SyncedFolders { get; set; }
 

@@ -1,13 +1,9 @@
-﻿using ForgeModGenerator.Serialization;
-
-namespace ForgeModGenerator
+﻿namespace ForgeModGenerator
 {
-    public class WpfFoldersFactory<TFolder, TFile> : DefaultFoldersFactory<TFolder, TFile>
+    public class WpfFoldersFactory<TFolder, TFile> : FoldersFactory<TFolder, TFile>
         where TFolder : class, IFolderObject<TFile>
         where TFile : class, IFileObject
     {
-        public WpfFoldersFactory(ISerializer serializer) : base(serializer) { }
-        
         public override IFolderObject<TFolder> CreateFolders() => WpfObservableFolder<TFolder>.CreateEmpty();
     }
 }

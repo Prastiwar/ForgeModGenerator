@@ -68,11 +68,11 @@ namespace ForgeModGenerator.ViewModels
             DialogResult dialogResult = Explorer.ShowFolderDialog(out IFolderBrowser browser);
             if (dialogResult == DialogResult.OK)
             {
-                await Explorer.CopyFolderToRoot(FoldersRootPath, browser.SelectedPath);
+                await Explorer.CopyFolderToRootAsync(FoldersRootPath, browser.SelectedPath);
             }
         }
 
-        protected async void ShowFileDialogAndCreateFolder()
+        protected void ShowFileDialogAndCreateFolder()
         {
             DialogResult dialogResult = Explorer.ShowFileDialog(out IFileBrowser browser);
             if (dialogResult == DialogResult.OK)
@@ -81,16 +81,16 @@ namespace ForgeModGenerator.ViewModels
                 string newFolderName = IOHelper.GetUniqueName(Path.GetFileNameWithoutExtension(browser.FileName),
                                                                 name => !Directory.Exists((newFolderPath = Path.Combine(FoldersRootPath, name))));
                 TFolder folder = Explorer.CreateFolder(newFolderPath);
-                await Explorer.CopyFilesToFolderAsync(folder, browser.FileNames);
+                Explorer.CopyFilesToFolder(folder, browser.FileNames);
             }
         }
 
-        protected async void ShowFileDialogAndCopyToFolder(TFolder folder)
+        protected void ShowFileDialogAndCopyToFolder(TFolder folder)
         {
             DialogResult dialogResult = Explorer.ShowFileDialog(out IFileBrowser browser);
             if (dialogResult == DialogResult.OK)
             {
-                await Explorer.CopyFilesToFolderAsync(folder, browser.FileNames);
+                Explorer.CopyFilesToFolder(folder, browser.FileNames);
             }
         }
 

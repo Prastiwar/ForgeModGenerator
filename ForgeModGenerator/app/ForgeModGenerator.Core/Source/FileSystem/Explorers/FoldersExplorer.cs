@@ -21,7 +21,7 @@ namespace ForgeModGenerator
             OpenFileDialog = fileSystem.CreateFileBrowser();
             OpenFolderDialog = fileSystem.CreateFolderBrowser();
             FileSynchronizer = fileSynchronizer;
-            Folders = fileSynchronizer.Factory.CreateFolders();
+            Folders = fileSynchronizer.Finder.Factory.CreateFolders();
         }
 
         protected IDialogService DialogService { get; }
@@ -36,7 +36,8 @@ namespace ForgeModGenerator
 
         public bool HasEmptyFolders => Folders.Files.Any(x => x.Count == 0);
 
-        public string AllowedFileExtensionsPatterns => AllowedFileExtensions != null ? "*" + string.Join("|*", AllowedFileExtensions) : "";
+        /// <summary> Joined AllowedFileExtensions into patterns format (*.ext|*.ext2) </summary>
+        protected string AllowedFileExtensionsPatterns => AllowedFileExtensions != null ? "*" + string.Join("|*", AllowedFileExtensions) : "";
 
         private IFolderObject<TFolder> folders;
         public IFolderObject<TFolder> Folders {
@@ -93,15 +94,26 @@ namespace ForgeModGenerator
         }
 
         /// <summary> Copies directory to root path, if directory with given name exists, add (n) number to its name </summary>
-        public async Task CopyFolderToRoot(string rootPath, string path)
+        public async Task CopyFolderToRootAsync(string rootPath, string path)
         {
             path = IOHelper.GetDirectoryPath(path);
             string newFolderPath = IOHelper.GetUniqueName(Path.Combine(rootPath, new DirectoryInfo(path).Name), (name) => !Directory.Exists(name));
             await IOHelper.DirectoryCopyAsync(path, newFolderPath, AllowedFileExtensionsPatterns);
         }
 
+        /// <summary> Copies directory to root path, if directory with given name exists, add (n) number to its name </summary>
+        public void CopyFolderToRoot(string rootPath, string path)
+        {
+            path = IOHelper.GetDirectoryPath(path);
+            string newFolderPath = IOHelper.GetUniqueName(Path.Combine(rootPath, new DirectoryInfo(path).Name), (name) => !Directory.Exists(name));
+            IOHelper.DirectoryCopy(path, newFolderPath, AllowedFileExtensionsPatterns);
+        }
+
         /// <summary> Copies files to folder path, if file with given name exists, prompt for overwriting </summary>
-        public async Task CopyFilesToFolderAsync(TFolder folder, params string[] fileNames)
+        public Task CopyFilesToFolderAsync(TFolder folder, params string[] fileNames) => Task.Run(() => { CopyFilesToFolder(folder, fileNames); });
+
+        /// <summary> Copies files to folder path, if file with given name exists, prompt for overwriting </summary>
+        public void CopyFilesToFolder(TFolder folder, params string[] fileNames)
         {
             foreach (string filePath in fileNames)
             {
@@ -110,12 +122,12 @@ namespace ForgeModGenerator
                 {
                     if (filePath != newPath)
                     {
-                        bool overwrite = await DialogService.ShowMessage($"File {newPath} already exists.{Environment.NewLine}Do you want to overwrite it?", "Existing file conflict", "Yes", "No", null);
+                        bool overwrite = DialogService.ShowMessage($"File {newPath} already exists.{Environment.NewLine}Do you want to overwrite it?", "Existing file conflict", "Yes", "No", null).Result;
                         if (overwrite)
                         {
                             if (!FileSystem.CopyFile(filePath, newPath, true))
                             {
-                                await DialogService.ShowMessage(StaticMessage.GetOperationFailedMessage(filePath), "Copy failed");
+                                DialogService.ShowMessage(StaticMessage.GetOperationFailedMessage(filePath), "Copy failed");
                             }
                         }
                     }
@@ -128,7 +140,7 @@ namespace ForgeModGenerator
                 {
                     if (!FileSystem.CopyFile(filePath, newPath))
                     {
-                        await DialogService.ShowMessage(StaticMessage.GetOperationFailedMessage(filePath), "Copy failed");
+                        DialogService.ShowMessage(StaticMessage.GetOperationFailedMessage(filePath), "Copy failed");
                     }
                 }
             }
@@ -156,6 +168,7 @@ namespace ForgeModGenerator
             }
         }
 
+        /// <summary> Removes file from folder and if it's not referenced anywhere, sends it to RecycleBin </summary>
         public void RemoveFileFromFolder(TFolder folder, TFile file)
         {
             string filePath = file.Info.FullName;
@@ -172,7 +185,7 @@ namespace ForgeModGenerator
             }
         }
 
-        public TFolder CreateFolder(string path) => FileSynchronizer.Factory.Create(path, null);
+        public TFolder CreateFolder(string path) => FileSynchronizer.Finder.Factory.Create(path, null);
 
         public void Dispose() => fileSynchronizer.Dispose();
     }

@@ -80,10 +80,13 @@ namespace ForgeModGenerator
         private void RegisterFactories(IContainerRegistry containerRegistry)
         {
             containerRegistry.Register<IFoldersFactory<SoundEvent, Sound>, SoundEventsFactory>();
+            containerRegistry.Register<IFoldersFinder<SoundEvent, Sound>, SoundEventsFinder>();
             containerRegistry.Register<IFolderSynchronizerFactory<SoundEvent, Sound>, SoundEventsSynchronizerFactory>();
+
             containerRegistry.Register(typeof(IFoldersFactory<,>), typeof(WpfFoldersFactory<,>));
             containerRegistry.Register(typeof(IFolderSynchronizerFactory<,>), typeof(FolderSynchronizerFactory<,>));
             containerRegistry.Register(typeof(IFoldersExplorerFactory<,>), typeof(FoldersExplorerFactory<,>));
+            containerRegistry.Register(typeof(IFoldersFinder<,>), typeof(DefaultFoldersFinder<,>));
         }
 
         private void RegisterServices(IContainerRegistry containerRegistry)

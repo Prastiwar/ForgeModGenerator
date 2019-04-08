@@ -12,14 +12,11 @@ namespace ForgeModGenerator
         where TFolder : class, IFolderObject<TFile>
         where TFile : class, IFileObject
     {
-        public FolderSynchronizer(ISynchronizeInvoke synchronizingObject, IFolderObject<TFolder> foldersToSync, IFoldersFactory<TFolder, TFile> factory, string rootPath = null, string filters = null)
+        public FolderSynchronizer(ISynchronizeInvoke synchronizingObject, IFolderObject<TFolder> foldersToSync, IFoldersFinder<TFolder, TFile> finder, string rootPath = null, string filters = null)
         {
-            this.rootPath = rootPath;
-            this.filters = filters;
-            this.synchronizingObject = synchronizingObject;
-            Factory = factory;
+            Finder = finder;
             SyncedFolders = foldersToSync;
-
+            Finder.Filters = filters;
             if (string.IsNullOrEmpty(rootPath))
             {
                 FileWatcher = new FileSystemWatcherExtended() {
@@ -40,10 +37,10 @@ namespace ForgeModGenerator
             FileWatcher.FileSubPathRenamed += FileWatcher_SubPathRenamed;
         }
 
-        private IFoldersFactory<TFolder, TFile> factory;
-        public IFoldersFactory<TFolder, TFile> Factory {
-            get => factory;
-            set => factory = value ?? throw new ArgumentNullException(nameof(value));
+        private IFoldersFinder<TFolder, TFile> finder;
+        public IFoldersFinder<TFolder, TFile> Finder {
+            get => finder;
+            set => finder = value ?? throw new ArgumentNullException(nameof(value));
         }
 
         private IFolderObject<TFolder> syncedFolders;
@@ -52,49 +49,42 @@ namespace ForgeModGenerator
             set => syncedFolders = value ?? ObservableFolder<TFolder>.CreateEmpty();
         }
 
-        private ISynchronizeInvoke synchronizingObject;
-        public ISynchronizeInvoke SynchronizingObject{
-            get => synchronizingObject;
-            set {
-                synchronizingObject = value;
-                FileWatcher.SynchronizingObject = synchronizingObject;
-            }
+        public ISynchronizeInvoke SynchronizingObject {
+            get => FileWatcher.SynchronizingObject;
+            set => FileWatcher.SynchronizingObject = value;
         }
 
-        private string rootPath;
         public string RootPath {
-            get => rootPath;
-            set {
-                rootPath = value;
-                FileWatcher.Path = RootPath;
-            }
+            get => FileWatcher.Path;
+            set => FileWatcher.Path = value;
         }
 
-        private string filters;
+        /// <summary> Synchronized Filters (types of files separated with "|") applied Factory and FileWatcher </summary>
         public string Filters {
-            get => filters;
+            get => FileWatcher.Filters;
             set {
-                filters = value;
-                FileWatcher.Filters = Filters;
-                Factory.Filters = Filters;
+                FileWatcher.Filters = value;
+                Finder.Filters = value;
             }
         }
 
         protected FileSystemWatcherExtended FileWatcher { get; set; }
 
+        /// <summary> Is this instance synchronizing files? </summary>
         public bool IsEnabled => FileWatcher.EnableRaisingEvents;
+
         public void SetEnableSynchronization(bool enabled) => FileWatcher.EnableRaisingEvents = enabled;
 
         /// <summary> Searches root path for files that are not referenced in Folders collection and adds them </summary>
         public virtual void AddNotReferencedFiles()
         {
-            IEnumerable<string> notReferencedFiles = Factory.EnumerateNotReferencedFiles(RootPath, SearchOption.AllDirectories);
+            IEnumerable<string> notReferencedFiles = Finder.EnumerateNotReferencedFiles(RootPath, SearchOption.AllDirectories);
             foreach (string filePath in notReferencedFiles)
             {
                 string dirPath = IOHelper.GetDirectoryPath(filePath);
                 if (!SyncedFolders.TryGetFile(dirPath, out TFolder folder))
                 {
-                    folder = Factory.Create(dirPath, null);
+                    folder = Finder.Factory.Create(dirPath, null);
                     SyncedFolders.Add(folder);
                 }
                 List<string> notReferencedFilesForFolder = notReferencedFiles.Where(path => IOHelper.GetDirectoryPath(path) == folder.Info.FullName).ToList();
@@ -127,10 +117,10 @@ namespace ForgeModGenerator
         protected virtual bool SyncCreateFolder(string path, bool includeSubDirectories = true)
         {
             SynchronizationCheck(path);
-            SyncedFolders.Add(Factory.Create(path, null));
+            SyncedFolders.Add(Finder.Factory.Create(path, null));
             if (includeSubDirectories)
             {
-                IEnumerable<TFolder> foundFolders = Factory.FindFoldersFromDirectory(path);
+                IEnumerable<TFolder> foundFolders = Finder.FindFoldersFromDirectory(path);
                 if (foundFolders.Any())
                 {
                     SyncedFolders.AddRange(foundFolders);

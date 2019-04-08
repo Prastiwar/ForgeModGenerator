@@ -17,11 +17,8 @@ namespace ForgeModGenerator
 
         HashSet<string> AllowedFileExtensions { get; }
 
-        string AllowedFileExtensionsPatterns { get; }
-
         bool HasEmptyFolders { get; }
 
-        /// <summary> Removes folder and if it's empty, sends it to RecycleBin </summary>
         void RemoveFolder(TFolder folder);
 
         void RemoveEmptyFolders();
@@ -32,9 +29,11 @@ namespace ForgeModGenerator
 
         DialogResult ShowFileDialog(out IFileBrowser browser);
 
-        Task CopyFolderToRoot(string rootPath, string path);
+        Task CopyFolderToRootAsync(string rootPath, string path);
+        void CopyFolderToRoot(string rootPath, string path);
 
         Task CopyFilesToFolderAsync(TFolder folder, params string[] fileNames);
+        void CopyFilesToFolder(TFolder folder, params string[] fileNames);
 
         void RemoveFileFromFolder(TFolder folder, TFile file);
     }
