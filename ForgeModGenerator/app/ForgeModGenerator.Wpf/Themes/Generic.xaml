@@ -5,6 +5,7 @@
                     xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                     xmlns:converters="clr-namespace:ForgeModGenerator.Converters"
                     xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
+                    xmlns:appcontrols="clr-namespace:ForgeModGenerator.ApplicationModule.Controls"
                     xmlns:validations="clr-namespace:ForgeModGenerator.Validations">
     <Style TargetType="{x:Type controls:SubmitTextBox}"
            BasedOn="{StaticResource {x:Type TextBox}}" />
@@ -76,6 +77,12 @@
         </Setter>
     </Style>
     <Style TargetType="{x:Type controls:NavButton}">
+        <Setter Property="ToolTipService.InitialShowDelay"
+                Value="800" />
+        <Setter Property="ToolTipService.VerticalOffset"
+                Value="-15" />
+        <Setter Property="ToolTipService.BetweenShowDelay"
+                Value="0" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type controls:NavButton}">
@@ -178,6 +185,118 @@
                                     </ListBox>
                                 </StackPanel>
                             </ScrollViewer>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style TargetType="{x:Type appcontrols:NavigationMenuControl}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type appcontrols:NavigationMenuControl}">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                        <Grid x:Name="MenuGrid"
+                              Background="#2c2c2c">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="40" />
+                                <RowDefinition Height="1*" />
+                                <RowDefinition Height="20*" />
+                                <RowDefinition Height="1*" />
+                            </Grid.RowDefinitions>
+                            <StackPanel>
+                                <ToggleButton x:Name="MenuToggleButton"
+                                              Style="{StaticResource MaterialDesignActionToggleButton}"
+                                              Width="30"
+                                              Height="30"
+                                              Margin="5"
+                                              Background="#FF3C3C3C"
+                                              BorderBrush="#FF232323"
+                                              HorizontalAlignment="Right"
+                                              Command="{Binding ToggleMenu, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type appcontrols:NavigationMenuControl}}}">
+                                    <materialDesign:ToggleButtonAssist.OnContent>
+                                        <materialDesign:PackIcon Kind="ArrowLeft" />
+                                    </materialDesign:ToggleButtonAssist.OnContent>
+                                    <materialDesign:PackIcon Kind="ArrowRight" />
+                                </ToggleButton>
+                            </StackPanel>
+                            <ScrollViewer x:Name="MenuScroll"
+                                          Grid.Row="2"
+                                          VerticalScrollBarVisibility="Hidden">
+                                <StackPanel>
+                                    <controls:NavButton x:Name="DashboardButton"
+                                                        Desc="Dashboard"
+                                                        ToolTip="Dashboard"
+                                                        ToolTipService.IsEnabled="{Binding MenuComponent.IsActive, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type appcontrols:NavigationMenuControl}}, Converter={StaticResource InvertBooleanConverter}}"
+                                                        Kind="ViewDashboard"
+                                                        Command="{Binding OpenDashboard}" />
+                                    <controls:NavButton x:Name="BuildConfigurationButton"
+                                                        Desc="Build Configuration"
+                                                        ToolTip="Build Configuration"
+                                                        ToolTipService.IsEnabled="{Binding MenuComponent.IsActive, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type appcontrols:NavigationMenuControl}}, Converter={StaticResource InvertBooleanConverter}}"
+                                                        Kind="Build"
+                                                        Command="{Binding OpenBuildConfiguration}" />
+                                    <controls:NavButton x:Name="ModGeneratorButton"
+                                                        Desc="Mod Generator"
+                                                        ToolTip="Mod Generator"
+                                                        ToolTipService.IsEnabled="{Binding MenuComponent.IsActive, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type appcontrols:NavigationMenuControl}}, Converter={StaticResource InvertBooleanConverter}}"
+                                                        Kind="CreateNewFolder"
+                                                        Command="{Binding OpenModGenerator}" />
+                                    <controls:NavButton x:Name="TextureGeneratorButton"
+                                                        Desc="Texture Generator"
+                                                        ToolTip="Texture Generator"
+                                                        ToolTipService.IsEnabled="{Binding MenuComponent.IsActive, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type appcontrols:NavigationMenuControl}}, Converter={StaticResource InvertBooleanConverter}}"
+                                                        Kind="Texture"
+                                                        Command="{Binding OpenTextureGenerator}" />
+                                    <controls:NavButton x:Name="BlockGeneratorButton"
+                                                        Desc="Block Generator"
+                                                        ToolTip="Block Generator"
+                                                        ToolTipService.IsEnabled="{Binding MenuComponent.IsActive, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type appcontrols:NavigationMenuControl}}, Converter={StaticResource InvertBooleanConverter}}"
+                                                        Kind="CubeOutline"
+                                                        Command="{Binding OpenBlockGenerator}" />
+                                    <controls:NavButton x:Name="ItemGeneratorButton"
+                                                        Desc="Item Generator"
+                                                        ToolTip="Item Generator"
+                                                        ToolTipService.IsEnabled="{Binding MenuComponent.IsActive, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type appcontrols:NavigationMenuControl}}, Converter={StaticResource InvertBooleanConverter}}"
+                                                        Kind="Pickaxe"
+                                                        Command="{Binding OpenItemGenerator}" />
+                                    <controls:NavButton x:Name="SoundGeneratorButton"
+                                                        Desc="Sound Generator"
+                                                        ToolTip="Sound Generator"
+                                                        ToolTipService.IsEnabled="{Binding MenuComponent.IsActive, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type appcontrols:NavigationMenuControl}}, Converter={StaticResource InvertBooleanConverter}}"
+                                                        Kind="FileMusic"
+                                                        Command="{Binding OpenSoundGenerator}" />
+                                    <controls:NavButton x:Name="CommandGeneratorButton"
+                                                        Desc="Command Generator"
+                                                        ToolTip="Command Generator"
+                                                        ToolTipService.IsEnabled="{Binding MenuComponent.IsActive, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type appcontrols:NavigationMenuControl}}, Converter={StaticResource InvertBooleanConverter}}"
+                                                        Kind="CodeTags"
+                                                        Command="{Binding OpenCommandGenerator}" />
+                                    <controls:NavButton x:Name="AchievementGeneratorButton"
+                                                        Desc="Achievement Generator"
+                                                        ToolTip="Achievement Generator"
+                                                        ToolTipService.IsEnabled="{Binding MenuComponent.IsActive, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type appcontrols:NavigationMenuControl}}, Converter={StaticResource InvertBooleanConverter}}"
+                                                        Kind="Achievement"
+                                                        Command="{Binding OpenAchievementGenerator}" />
+                                    <controls:NavButton x:Name="RecipeGeneratorButton"
+                                                        Desc="Recipe Generator"
+                                                        ToolTip="Recipe Generator"
+                                                        ToolTipService.IsEnabled="{Binding MenuComponent.IsActive, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type appcontrols:NavigationMenuControl}}, Converter={StaticResource InvertBooleanConverter}}"
+                                                        Kind="Group"
+                                                        Command="{Binding OpenRecipeGenerator}" />
+                                </StackPanel>
+                            </ScrollViewer>
+                            <controls:ScrollButton x:Name="ArrowUpButton"
+                                                   Grid.Row="1"
+                                                   ArrowIcon="ArrowUp"
+                                                   ScrollTarget="{Binding ElementName=MenuScroll}"
+                                                   Direction="Top" />
+                            <controls:ScrollButton x:Name="ArrowDownButton"
+                                                   Grid.Row="3"
+                                                   ArrowIcon="ArrowDown"
+                                                   ScrollTarget="{Binding ElementName=MenuScroll}" />
                         </Grid>
                     </Border>
                 </ControlTemplate>

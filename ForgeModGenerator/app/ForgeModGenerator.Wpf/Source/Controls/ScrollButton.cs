@@ -29,10 +29,6 @@ namespace ForgeModGenerator.Controls
                     timer.Start();
                 });
             }
-            if (ScrollTarget == null)
-            {
-                ScrollTarget = new ScrollViewer();
-            }
         }
 
         private readonly DispatcherTimer timer;

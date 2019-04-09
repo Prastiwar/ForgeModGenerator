@@ -122,7 +122,18 @@
                 <ColumnDefinition Width="50" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <views:NavigationMenu x:Name="GenMenu" />
+            <aControls:NavigationMenuControl x:Name="NavigationMenu"
+                                             OpenAchievementGeneratorCommand="{Binding OpenAchievementGeneratorCommand}"
+                                             OpenBlockGeneratorCommand="{Binding OpenBlockGeneratorCommand}"
+                                             OpenBuildConfigurationCommand="{Binding OpenBuildConfigurationCommand}"
+                                             OpenCommandGeneratorCommand="{Binding OpenCommandGeneratorCommand}"
+                                             OpenDashboardCommand="{Binding OpenDashboardCommand}"
+                                             OpenItemGeneratorCommand="{Binding OpenItemGeneratorCommand}"
+                                             OpenModGeneratorCommand="{Binding OpenModGeneratorCommand}"
+                                             OpenRecipeGeneratorCommand="{Binding OpenRecipeGeneratorCommand}"
+                                             OpenSettingsCommandCommand="{Binding OpenSettingsCommandCommand}"
+                                             OpenSoundGeneratorCommand="{Binding OpenSoundGeneratorCommand}"
+                                             OpenTextureGeneratorCommand="{Binding OpenTextureGeneratorCommand}" />
             <Frame x:Name="PageFrame"
                    Grid.Column="1"
                    NavigationUIVisibility="Hidden"

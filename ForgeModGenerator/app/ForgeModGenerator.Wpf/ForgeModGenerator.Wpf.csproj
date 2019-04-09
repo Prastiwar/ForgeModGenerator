@@ -222,6 +222,7 @@
     <Compile Include="Source\FileSystem\Dialog\FileBrowserDialog.cs" />
     <Compile Include="Source\FileSystem\Dialog\FolderBrowserDialog.cs" />
     <Compile Include="Source\FileSystem\FileSystemWin.cs" />
+    <Compile Include="Source\Modules\ApplicationModule\Controls\NavigationMenuControl.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundEventsFinder.cs" />
     <Compile Include="Source\Serialization\JsonSerializer.cs" />
     <Compile Include="Source\Services\PrismRegionNavigationBridge.cs" />
@@ -326,9 +327,6 @@
     <Compile Include="Source\Modules\ModGenerator\BuildConfiguration\BuildConfigurationPage.xaml.cs">
       <DependentUpon>BuildConfigurationPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Source\Modules\ApplicationModule\NavigationMenu.xaml.cs">
-      <DependentUpon>NavigationMenu.xaml</DependentUpon>
-    </Compile>
     <ApplicationDefinition Include="Source\App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -429,10 +427,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Source\Modules\ApplicationModule\NavigationMenu.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Source\Modules\TextureGenerator\TextureGeneratorPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
