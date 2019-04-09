@@ -11,6 +11,16 @@
       d:DesignHeight="450"
       d:DesignWidth="800">
     <Grid Background="{StaticResource PageBackground}">
-        
+        <StackPanel HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+            <Label Content="Recipe Generator"
+                   Foreground="DarkGray"
+                   HorizontalAlignment="Center"
+                   FontSize="50" />
+            <Label Content="In development"
+                   Foreground="DarkGray"
+                   HorizontalAlignment="Center"
+                   FontSize="50" />
+        </StackPanel>
     </Grid>
 </Page>
