@@ -7,7 +7,7 @@ using System.Windows.Forms;
 namespace ForgeModGenerator
 {
     /// <summary> Wrapper for System.Windows.Forms.OpenFileDialog </summary>
-    public sealed class FileBrowserDialog : IFileBrowser
+    public sealed class FileBrowserDialog : IFileBrowser, IDisposable
     {
         private readonly OpenFileDialog dialog = new OpenFileDialog();
 
@@ -56,5 +56,7 @@ namespace ForgeModGenerator
         public void Reset() => dialog.Reset();
 
         public DialogResult ShowDialog() => DialogResultAssemblyConverter.Convert(dialog.ShowDialog());
+        
+        public void Dispose() => dialog.Dispose();
     }
 }

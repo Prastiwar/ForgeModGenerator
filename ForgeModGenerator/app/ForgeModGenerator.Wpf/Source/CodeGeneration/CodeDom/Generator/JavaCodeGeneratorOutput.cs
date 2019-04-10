@@ -8,7 +8,7 @@ using System.Text;
 
 namespace ForgeModGenerator.CodeGeneration.CodeDom
 {
-    public partial class JavaCodeGenerator : ICodeGenerator
+    public sealed partial class JavaCodeGenerator : ICodeGenerator
     {
         private void OutputOperator(CodeBinaryOperatorType op) => output.Write(binaryOperatorChars[op]);
         private void OutputType(CodeTypeReference typeRef) => output.Write(GetTypeOutput(typeRef));

@@ -4,7 +4,7 @@ using System;
 namespace ForgeModGenerator
 {
     /// <summary> Wrapper for System.Windows.Forms.FolderBrowserDialog </summary>
-    public sealed class FolderBrowserDialog : IFolderBrowser
+    public sealed class FolderBrowserDialog : IFolderBrowser, IDisposable
     {
         private readonly System.Windows.Forms.FolderBrowserDialog dialog = new System.Windows.Forms.FolderBrowserDialog();
 
@@ -22,5 +22,7 @@ namespace ForgeModGenerator
         public void Reset() => dialog.Reset();
 
         public DialogResult ShowDialog() => DialogResultAssemblyConverter.Convert(dialog.ShowDialog());
+
+        public void Dispose() => dialog.Dispose();
     }
 }

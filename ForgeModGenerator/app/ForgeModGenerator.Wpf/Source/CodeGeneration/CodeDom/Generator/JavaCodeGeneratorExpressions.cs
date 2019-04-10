@@ -5,7 +5,7 @@ using System.Globalization;
 
 namespace ForgeModGenerator.CodeGeneration.CodeDom
 {
-    public partial class JavaCodeGenerator : ICodeGenerator
+    public sealed partial class JavaCodeGenerator : ICodeGenerator
     {
         private void GenerateSnippetExpression(CodeSnippetExpression e) => output.Write(e.Value);
         private void GenerateBaseReferenceExpression(CodeBaseReferenceExpression e) => output.Write("super");

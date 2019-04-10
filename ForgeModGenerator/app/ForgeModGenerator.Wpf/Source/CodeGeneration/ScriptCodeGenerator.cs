@@ -61,8 +61,6 @@ namespace ForgeModGenerator.CodeGeneration
 
         protected abstract CodeCompileUnit CreateTargetCodeUnit();
 
-        public void Dispose() => JavaProvider.Dispose();
-
         #region Code expression and statements shorthands     
         protected CodeAttributeDeclaration NewAnnotation(string name, params CodeAttributeArgument[] arguments) => new CodeAttributeDeclaration(name, arguments);
         protected CodeAttributeArgument NewAnnotationArg(string valueName, CodeExpression expression) => new CodeAttributeArgument(valueName, expression);
@@ -216,6 +214,24 @@ namespace ForgeModGenerator.CodeGeneration
             targetUnit.Namespaces.Add(package);
             return targetUnit;
         }
+        #endregion
+
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    JavaProvider.Dispose();
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose() => Dispose(true);
         #endregion
     }
 }

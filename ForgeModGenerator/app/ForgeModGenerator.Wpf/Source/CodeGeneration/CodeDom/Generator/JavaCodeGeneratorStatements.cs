@@ -5,7 +5,7 @@ using System.Collections;
 
 namespace ForgeModGenerator.CodeGeneration.CodeDom
 {
-    public partial class JavaCodeGenerator : ICodeGenerator
+    public sealed partial class JavaCodeGenerator : ICodeGenerator
     {
         private void GenerateSnippetStatement(CodeSnippetStatement e) => output.WriteLine(e.Value);
 
