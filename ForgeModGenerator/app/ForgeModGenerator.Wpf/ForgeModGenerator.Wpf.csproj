@@ -224,6 +224,7 @@
     <Compile Include="Source\FileSystem\FileSystemWin.cs" />
     <Compile Include="Source\Modules\ApplicationModule\Controls\NavigationMenuControl.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundEventsFinder.cs" />
+    <Compile Include="Source\Serialization\PreferenceDataSerializer.cs" />
     <Compile Include="Source\Serialization\JsonSerializer.cs" />
     <Compile Include="Source\Services\PrismRegionNavigationBridge.cs" />
     <Compile Include="Source\Utility\Extensions\BindingExtensions.cs" />
@@ -247,8 +248,7 @@
     <Compile Include="Source\Services\SnackbarService.cs" />
     <Compile Include="Source\FileSystem\WpfObservableFolder.cs" />
     <Compile Include="Source\Utility\Extensions\ValidationExtensions.cs" />
-    <Compile Include="Source\Persistence\JsonUpdater.cs" />
-    <Compile Include="Source\Persistence\DefaultPreferenceData.cs" />
+    <Compile Include="Source\Serialization\JsonUpdater.cs" />
     <Compile Include="Source\Modules\ApplicationModule\BugReporter.xaml.cs">
       <DependentUpon>BugReporter.xaml</DependentUpon>
     </Compile>
@@ -273,7 +273,6 @@
     <Compile Include="Source\Modules\ModGenerator\SourceCodeGeneration\RegistryHandlerCodeGenerator.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundCodeGenerator.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundJsonUpdater.cs" />
-    <Compile Include="Source\Modules\SoundGenerator\SoundsGeneratorPreferences.cs" />
     <Compile Include="Source\Services\CommandTracker.cs" />
     <Compile Include="Source\Controls\FolderExpanderControl.cs" />
     <Compile Include="Source\Modules\ModGenerator\BuildConfiguration\ModBuildForm.xaml.cs">

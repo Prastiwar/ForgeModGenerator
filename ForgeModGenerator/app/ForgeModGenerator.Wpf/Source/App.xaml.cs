@@ -56,11 +56,18 @@ namespace ForgeModGenerator
             RegisterServices(containerRegistry);
 
             containerRegistry.RegisterInstance<ISynchronizeInvoke>(SyncInvokeObject.Default);
+            containerRegistry.RegisterInstance(Cache.Default);
             containerRegistry.Register<IFileSystem, FileSystemWin>();
-            containerRegistry.Register<ISerializer, JsonSerializer>();
+            RegisterSerializers(containerRegistry);
 
             RegisterFactories(containerRegistry);
             RegisterPages(containerRegistry);
+        }
+
+        private void RegisterSerializers(IContainerRegistry containerRegistry)
+        {
+            containerRegistry.Register<ISerializer, JsonSerializer>();
+            containerRegistry.Register<ISerializer<PreferenceData>, PreferenceDataSerializer>();
         }
 
         private static void SetProvider(IContainerRegistry containerRegistry)
@@ -95,6 +102,7 @@ namespace ForgeModGenerator
             containerRegistry.Register<INavigationService, PrismRegionNavigationBridge>();
             containerRegistry.Register<ISnackbarService, SnackbarService>();
             containerRegistry.Register<IModBuildService, ModBuildService>();
+            containerRegistry.Register<IPreferenceService, PreferenceService>();
         }
 
         private void RegisterPages(IContainerRegistry containerRegistry)

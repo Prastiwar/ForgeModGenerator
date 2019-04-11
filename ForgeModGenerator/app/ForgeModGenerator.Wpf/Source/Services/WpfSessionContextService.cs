@@ -1,8 +1,5 @@
 ﻿using ForgeModGenerator.Models;
-using ForgeModGenerator.Persistence;
-using Newtonsoft.Json;
 using System;
-using System.IO;
 
 namespace ForgeModGenerator.Services
 {
@@ -11,7 +8,7 @@ namespace ForgeModGenerator.Services
         public static WpfSessionContextService Instance { get; }
         static WpfSessionContextService() => Instance = new WpfSessionContextService();
 
-        public WpfSessionContextService()
+        private WpfSessionContextService()
         {
             Log.Info("Session loading..");
             startPage = new Uri("../ApplicationModule/DashboardPage.xaml", UriKind.Relative);
@@ -26,25 +23,6 @@ namespace ForgeModGenerator.Services
         {
             mod = ModHelper.ImportMod(path);
             return mod != null;
-        }
-
-        protected override bool TryGetPreferencesFromFilePath(string filePath, out PreferenceData preferences)
-        {
-            string jsonText = File.ReadAllText(filePath);
-            try
-            {
-                JsonSerializerSettings settings = new JsonSerializerSettings() {
-                    TypeNameHandling = TypeNameHandling.All
-                };
-                preferences = (PreferenceData)JsonConvert.DeserializeObject(jsonText, settings);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, $"Failed to load preferences {filePath}");
-                preferences = null;
-            }
-            return false;
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace ForgeModGenerator.Persistence
+namespace ForgeModGenerator.Serialization
 {
     public abstract class CollectionJsonUpdater<T> : JsonUpdaterBase<IEnumerable<T>>
     {

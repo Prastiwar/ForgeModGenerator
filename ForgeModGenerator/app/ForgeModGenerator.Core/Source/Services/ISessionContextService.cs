@@ -1,5 +1,4 @@
 ﻿using ForgeModGenerator.Models;
-using ForgeModGenerator.Persistence;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -20,8 +19,5 @@ namespace ForgeModGenerator.Services
         bool IsModSelected { get; }
 
         bool AskBeforeClose { get; set; }
-
-        T GetPreferences<T>() where T : PreferenceData;
-        T GetOrCreatePreferences<T>() where T : PreferenceData;
     }
 }

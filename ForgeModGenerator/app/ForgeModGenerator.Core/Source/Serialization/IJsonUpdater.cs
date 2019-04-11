@@ -1,4 +1,4 @@
-﻿namespace ForgeModGenerator.Persistence
+﻿namespace ForgeModGenerator.Serialization
 {
     public interface IJsonUpdater
     {

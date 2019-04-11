@@ -13,4 +13,12 @@ namespace ForgeModGenerator.Serialization
         string SerializeObject(object value, bool prettyPrint);
         string SerializeObject(object value);
     }
+
+    public interface ISerializer<T>
+    {
+        T DeserializeObject(string value);
+
+        string SerializeObject(T value, bool prettyPrint);
+        string SerializeObject(T value);
+    }
 }

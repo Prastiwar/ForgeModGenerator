@@ -14,13 +14,14 @@ namespace ForgeModGenerator.ViewModels
         where TFolder : class, IFolderObject<TFile>
         where TFile : class, IFileObject
     {
-        public FoldersWatcherViewModelBase(ISessionContextService sessionContext)
+        public FoldersWatcherViewModelBase(ISessionContextService sessionContext, IFoldersExplorerFactory<TFolder, TFile> explorerFactory)
         {
+            Explorer = explorerFactory.Create();
             SessionContext = sessionContext;
             SessionContext.PropertyChanged += OnSessionContexPropertyChanged;
         }
 
-        public abstract IFoldersExplorer<TFolder, TFile> Explorer { get; }
+        public IFoldersExplorer<TFolder, TFile> Explorer { get; }
 
         public abstract string FoldersRootPath { get; }
 

@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace ForgeModGenerator.Persistence
+namespace ForgeModGenerator.Serialization
 {
     /// <summary> Base class to synchronize T target with json file </summary>
     public abstract class JsonUpdaterBase<T> : IJsonUpdater<T>

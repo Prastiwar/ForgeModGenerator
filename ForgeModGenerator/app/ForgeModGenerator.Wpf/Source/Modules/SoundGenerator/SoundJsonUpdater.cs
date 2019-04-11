@@ -1,4 +1,4 @@
-﻿using ForgeModGenerator.Persistence;
+﻿using ForgeModGenerator.Serialization;
 using ForgeModGenerator.SoundGenerator.Models;
 using ForgeModGenerator.Validation;
 using Newtonsoft.Json;

@@ -1,4 +1,4 @@
-﻿using ForgeModGenerator.Persistence;
+﻿using ForgeModGenerator.Serialization;
 using ForgeModGenerator.Services;
 using ForgeModGenerator.Validation;
 using Prism.Commands;
@@ -14,7 +14,7 @@ namespace ForgeModGenerator.ViewModels
         where TFolder : class, IFolderObject<TFile>
         where TFile : class, IFileObject, IValidable
     {
-        public FoldersViewModelBase(ISessionContextService sessionContext, IDialogService dialogService) : base(sessionContext) => DialogService = dialogService;
+        public FoldersViewModelBase(ISessionContextService sessionContext, IDialogService dialogService, IFoldersExplorerFactory<TFolder, TFile> factory) : base(sessionContext, factory) => DialogService = dialogService;
 
         /// <summary> Path to json file that can be deserialized to folders </summary>
         public abstract string FoldersJsonFilePath { get; }

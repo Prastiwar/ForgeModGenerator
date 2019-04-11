@@ -1,5 +1,5 @@
 ﻿using ForgeModGenerator.Models;
-using ForgeModGenerator.Persistence;
+using ForgeModGenerator.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -16,8 +16,6 @@ namespace ForgeModGenerator.Services
         public abstract Uri StartPage { get; }
 
         public bool IsModSelected => SelectedMod != null;
-
-        private Dictionary<Type, PreferenceData> Preferences { get; set; }
 
         private bool askBeforeClose;
         public bool AskBeforeClose {
@@ -56,7 +54,6 @@ namespace ForgeModGenerator.Services
         {
             Mods = FindMods();
             ForgeVersions = FindForgeVersions();
-            Preferences = FindPreferences();
 
             if (SelectedMod == null)
             {
@@ -70,27 +67,6 @@ namespace ForgeModGenerator.Services
                     SelectedMods.Add(SelectedMod);
                 }
             }
-        }
-
-        public T GetPreferences<T>() where T : PreferenceData
-        {
-            Type type = typeof(T);
-            if (Preferences.TryGetValue(type, out PreferenceData data))
-            {
-                return (T)data;
-            }
-            return null;
-        }
-
-        public T GetOrCreatePreferences<T>() where T : PreferenceData
-        {
-            T preferences = GetPreferences<T>();
-            if (preferences == null)
-            {
-                preferences = Activator.CreateInstance<T>();
-                preferences.SavePreferences();
-            }
-            return preferences;
         }
 
         protected ObservableCollection<Mod> FindMods()
@@ -122,22 +98,7 @@ namespace ForgeModGenerator.Services
             return new ObservableCollection<ForgeVersion>(found);
         }
 
-        protected Dictionary<Type, PreferenceData> FindPreferences()
-        {
-            Dictionary<Type, PreferenceData> dictionary = new Dictionary<Type, PreferenceData>();
-            foreach (string filePath in Directory.EnumerateFiles(AppPaths.Preferences))
-            {
-                if (TryGetPreferencesFromFilePath(filePath, out PreferenceData preferences))
-                {
-                    dictionary.Add(preferences.GetType(), preferences);
-                }
-            }
-            return dictionary;
-        }
-
         protected abstract bool TryGetModFromPath(string path, out Mod mod);
-
-        protected abstract bool TryGetPreferencesFromFilePath(string json, out PreferenceData preferences);
 
         public event PropertyChangedEventHandler PropertyChanged;
 
