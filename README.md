@@ -15,6 +15,66 @@
 
 ***Software, tool generator used to make Minecraft mods. The application allows you to create items, blocks, achievements and much more with few clicks. It generates a lot of code for you, but it doesn't stop you from some manual changes***
 
+## Development Status
+
+- [ ] Achievement Generator 
+
+  - [ ] Create achievement
+  - [ ] Update source code
+
+- [ ] Block Generator
+
+  - [ ] Create block json files
+  - [ ] Respect manual changes in files
+  - [ ] Update source code
+
+- [ ] Item Generator
+
+  - [ ] Create item json files
+  - [ ] Respect manual changes in files
+  - [ ] Update source code
+
+- [ ] Command Generator
+  
+  - [ ] Create simple command
+  - [ ] Create complex command
+  - [ ] Update source code
+
+- [ ] GUI Generator
+
+  - [ ] Create GUI code
+  - [ ] Visualize GUI
+  - [ ] Update source code
+
+- [x] Mod Generator *- mod manager*
+
+  - [x] Generate mod structure
+  - [x] Generate important source code
+  - [x] Edit mod info
+  - [ ] Respect manual changes in mcmod.info
+
+- [ ] Recipe Generator
+
+  - [ ] Create recipe json
+  - [ ] Respect manual changes in json
+  - [ ] Update source code
+
+- [ ] Sound Generator *- sounds file explorer*
+
+  - [x] Add Sound Event
+  - [x] Remove Sound Event
+  - [x] Change Sound Event NBT
+  - [x] Change Sound NBT
+  - [ ] Add more than one sound to single Sound Event
+  - [x] Update sounds.json
+  - [ ] Update source code
+
+- [x] Texture Generator *- simple textures file explorer*
+  - [x] Add textures
+  - [x] Remove textures
+  - [x] Change the name of textures
+  - [x] Respect changes in native file explorer
+
 
 ## Installing
 
