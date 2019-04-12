@@ -8,6 +8,8 @@ using ForgeModGenerator.CommandGenerator.ViewModels;
 using ForgeModGenerator.CommandGenerator.Views;
 using ForgeModGenerator.ItemGenerator.ViewModels;
 using ForgeModGenerator.ItemGenerator.Views;
+using ForgeModGenerator.Models;
+using ForgeModGenerator.ModGenerator.Validations;
 using ForgeModGenerator.ModGenerator.ViewModels;
 using ForgeModGenerator.ModGenerator.Views;
 using ForgeModGenerator.RecipeGenerator.ViewModels;
@@ -17,10 +19,12 @@ using ForgeModGenerator.Services;
 using ForgeModGenerator.SoundGenerator;
 using ForgeModGenerator.SoundGenerator.Models;
 using ForgeModGenerator.SoundGenerator.Serialization;
+using ForgeModGenerator.SoundGenerator.Validations;
 using ForgeModGenerator.SoundGenerator.ViewModels;
 using ForgeModGenerator.SoundGenerator.Views;
 using ForgeModGenerator.TextureGenerator.ViewModels;
 using ForgeModGenerator.TextureGenerator.Views;
+using ForgeModGenerator.Validation;
 using Microsoft.Extensions.Caching.Memory;
 using NLog.Extensions.Logging;
 using Prism.Ioc;
@@ -61,13 +65,14 @@ namespace ForgeModGenerator
             containerRegistry.RegisterInstance<ISynchronizeInvoke>(SyncInvokeObject.Default);
             containerRegistry.RegisterInstance<IMemoryCache>(new MemoryCache(new MemoryCacheOptions()));
             containerRegistry.Register<IFileSystem, FileSystemWin>();
-            RegisterSerializers(containerRegistry);
 
+            RegisterSerializers(containerRegistry);
+            RegisterValidators(containerRegistry);
             RegisterFactories(containerRegistry);
             RegisterPages(containerRegistry);
         }
 
-        private static void SetProvider(IContainerRegistry containerRegistry)
+        private void SetProvider(IContainerRegistry containerRegistry)
         {
             ViewModelLocationProvider.SetDefaultViewTypeToViewModelTypeResolver((viewType) => {
                 string viewName = viewType.FullName.Replace(".Views.", ".ViewModels.");
@@ -79,6 +84,12 @@ namespace ForgeModGenerator
             ViewModelLocationProvider.SetDefaultViewModelFactory((type) => {
                 return containerRegistry.GetContainer().TryResolve(type);
             });
+        }
+
+        private void RegisterValidators(IContainerRegistry containerRegistry)
+        {
+            containerRegistry.Register<IUniqueValidator<SoundEvent>, SoundEventValidator>();
+            containerRegistry.Register<IValidator<Mod>, ModValidator>();
         }
 
         private void RegisterSerializers(IContainerRegistry containerRegistry)
