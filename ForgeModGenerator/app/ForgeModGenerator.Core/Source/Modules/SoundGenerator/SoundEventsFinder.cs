@@ -1,9 +1,6 @@
-﻿using ForgeModGenerator.Serialization;
-using ForgeModGenerator.SoundGenerator.Converters;
-using ForgeModGenerator.SoundGenerator.Models;
-using Newtonsoft.Json;
+﻿using ForgeModGenerator.SoundGenerator.Models;
+using ForgeModGenerator.SoundGenerator.Serialization;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 
@@ -11,7 +8,7 @@ namespace ForgeModGenerator.SoundGenerator
 {
     public class SoundEventsFinder : DefaultFoldersFinder<SoundEvent, Sound>
     {
-        public SoundEventsFinder(ISerializer serializer, IFoldersFactory<SoundEvent, Sound> factory) : base(serializer, factory) { }
+        public SoundEventsFinder(ISoundEventsSerializer serializer, IFoldersFactory<SoundEvent, Sound> factory) : base(serializer, factory) { }
 
         protected string Modname { get; set; }
         protected string Modid { get; set; }
@@ -38,8 +35,8 @@ namespace ForgeModGenerator.SoundGenerator
         /// <inheritdoc/>
         protected override ICollection<SoundEvent> DeserializeFolders(string fileCotent)
         {
-            SoundCollectionConverter converter = new SoundCollectionConverter(Modname, Modid);
-            return JsonConvert.DeserializeObject<Collection<SoundEvent>>(fileCotent, converter);
+            ((ISoundEventsSerializer)Serializer).SetModInfo(Modname, Modid);
+            return Serializer.DeserializeObject<ICollection<SoundEvent>>(fileCotent);
         }
     }
 }

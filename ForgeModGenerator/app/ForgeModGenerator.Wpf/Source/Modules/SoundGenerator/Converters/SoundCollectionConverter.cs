@@ -14,13 +14,15 @@ namespace ForgeModGenerator.SoundGenerator.Converters
 {
     public class SoundCollectionConverter : JsonConverter
     {
-        public string ModName { get; set; }
-        public string Modid { get; set; }
+        public SoundCollectionConverter(string modname, string modid) => SetModInfo(modname, modid);
 
         protected static readonly StringBuilder builder = new StringBuilder(32);
         protected static readonly StringBuilder itemBuilder = new StringBuilder(32);
 
-        public SoundCollectionConverter(string modname, string modid)
+        protected string ModName { get; set; }
+        protected string Modid { get; set; }
+
+        public void SetModInfo(string modname, string modid)
         {
             ModName = modname ?? throw new ArgumentNullException(nameof(modname));
             Modid = modid ?? throw new ArgumentNullException(nameof(modid));

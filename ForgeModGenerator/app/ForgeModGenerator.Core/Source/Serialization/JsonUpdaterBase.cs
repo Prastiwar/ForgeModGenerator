@@ -8,17 +8,24 @@ namespace ForgeModGenerator.Serialization
     /// <summary> Base class to synchronize T target with json file </summary>
     public abstract class JsonUpdaterBase<T> : IJsonUpdater<T>
     {
-        public JsonUpdaterBase(T target, string jsonPath)
+        public JsonUpdaterBase(ISerializer<T> serializer, T target, string jsonPath)
         {
+            Serializer = serializer;
             Target = target;
             Path = jsonPath;
         }
 
         public string Path { get; set; }
 
-        public T Target { get; set; }
+        public bool PrettyPrint { get; set; }
 
-        protected bool PrettyPrint;
+        protected T Target { get; set; }
+
+        protected ISerializer<T> Serializer { get; }
+
+        public void SetTarget(T target) => Target = target;
+
+        void IJsonUpdater.SetTarget(object target) => SetTarget((T)target);
 
         protected string GetJsonFromFile() => File.ReadAllText(Path);
 
@@ -26,7 +33,7 @@ namespace ForgeModGenerator.Serialization
 
         protected void OverwriteJson(string json) => File.WriteAllText(Path, json);
 
-        public abstract string Serialize(bool prettyPrint);
+        public string Serialize(bool prettyPrint) => Serializer.Serialize(Target, prettyPrint);
 
         public virtual bool IsValidToSerialize() => true;
 

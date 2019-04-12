@@ -1,12 +1,10 @@
 ﻿using FluentValidation;
 using ForgeModGenerator.Services;
 using ForgeModGenerator.SoundGenerator.Controls;
-using ForgeModGenerator.SoundGenerator.Converters;
 using ForgeModGenerator.SoundGenerator.Models;
-using ForgeModGenerator.SoundGenerator.Persistence;
+using ForgeModGenerator.SoundGenerator.Serialization;
 using ForgeModGenerator.SoundGenerator.Validations;
 using ForgeModGenerator.ViewModels;
-using Newtonsoft.Json;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Threading.Tasks;
@@ -16,9 +14,16 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
     /// <summary> SoundGenerator Business ViewModel </summary>
     public class SoundGeneratorViewModel : FoldersViewModelBase<SoundEvent, Sound>
     {
-        public SoundGeneratorViewModel(ISessionContextService sessionContext, IDialogService dialogService, IFoldersExplorerFactory<SoundEvent, Sound> factory, IPreferenceService preferenceService) : base(sessionContext, dialogService, factory)
+        // TODO: Refactor dependency mess
+        public SoundGeneratorViewModel(ISessionContextService sessionContext,
+                                        IDialogService dialogService,
+                                        IFoldersExplorerFactory<SoundEvent, Sound> factory,
+                                        IPreferenceService preferenceService,
+                                        ISoundJsonUpdaterFactory jsonUpdaterFactory)
+            : base(sessionContext, dialogService, factory)
         {
             PreferenceService = preferenceService;
+            JsonUpdaterFactory = jsonUpdaterFactory;
             Preferences = preferenceService.GetOrCreate<SoundsGeneratorPreferences>();
             Explorer.AllowedFileExtensions.Add(".ogg");
             Explorer.OpenFileDialog.Filter = "Sound file (*.ogg) | *.ogg";
@@ -38,10 +43,10 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
 
         protected SoundsGeneratorPreferences Preferences { get; set; }
 
+        protected ISoundJsonUpdaterFactory JsonUpdaterFactory { get; }
+
         private SoundEventValidator soundEventValidator;
         public SoundEventValidator SoundEventValidator => soundEventValidator ?? (soundEventValidator = new SoundEventValidator(Explorer.Folders.Files));
-
-        protected SoundCollectionConverter GetActualConverter() => new SoundCollectionConverter(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
 
         protected override bool CanRefresh() => SessionContext.SelectedMod != null;
 
@@ -56,6 +61,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
                     Explorer.Folders.FilesChanged -= SubscribeFolderEvents;
                     Explorer.Folders.Clear();
                 }
+                // TODO: Decouple it
                 ((SoundEventsFinder)Explorer.FileSynchronizer.Finder).Initialize(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
                 ((SoundEventsFactory)Explorer.FileSynchronizer.Finder.Factory).SoundEvents = Explorer.Folders;
                 Explorer.Folders.AddRange(await Explorer.FileSynchronizer.Finder.FindFoldersAsync(FoldersJsonFilePath, true));
@@ -66,7 +72,10 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
                 SubscribeFolderEvents(Explorer.Folders, new FileChangedEventArgs<SoundEvent>(Explorer.Folders.Files, FileChange.Add));
                 Explorer.Folders.FilesChanged += SubscribeFolderEvents;
                 Explorer.Folders.FilesChanged += OnFoldersCollectionChanged;
-                JsonUpdater = new SoundJsonUpdater(Explorer.Folders.Files, FoldersJsonFilePath, Preferences.SoundJsonPrettyPrint ? Formatting.Indented : Formatting.None, GetActualConverter());
+                JsonUpdater = JsonUpdaterFactory.Create(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
+                JsonUpdater.SetTarget(Explorer.Folders.Files);
+                JsonUpdater.Path = FoldersJsonFilePath;
+                JsonUpdater.PrettyPrint = Preferences.SoundJsonPrettyPrint;
                 CheckJsonFileMismatch();
                 CheckForUpdate();
                 return true;

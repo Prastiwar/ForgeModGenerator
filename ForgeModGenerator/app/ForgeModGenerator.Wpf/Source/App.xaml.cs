@@ -16,6 +16,7 @@ using ForgeModGenerator.Serialization;
 using ForgeModGenerator.Services;
 using ForgeModGenerator.SoundGenerator;
 using ForgeModGenerator.SoundGenerator.Models;
+using ForgeModGenerator.SoundGenerator.Serialization;
 using ForgeModGenerator.SoundGenerator.ViewModels;
 using ForgeModGenerator.SoundGenerator.Views;
 using ForgeModGenerator.TextureGenerator.ViewModels;
@@ -25,6 +26,7 @@ using Prism.Ioc;
 using Prism.Mvvm;
 using Prism.Unity;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Windows;
@@ -64,12 +66,6 @@ namespace ForgeModGenerator
             RegisterPages(containerRegistry);
         }
 
-        private void RegisterSerializers(IContainerRegistry containerRegistry)
-        {
-            containerRegistry.Register<ISerializer, JsonSerializer>();
-            containerRegistry.Register<ISerializer<PreferenceData>, PreferenceDataSerializer>();
-        }
-
         private static void SetProvider(IContainerRegistry containerRegistry)
         {
             ViewModelLocationProvider.SetDefaultViewTypeToViewModelTypeResolver((viewType) => {
@@ -84,8 +80,19 @@ namespace ForgeModGenerator
             });
         }
 
+        private void RegisterSerializers(IContainerRegistry containerRegistry)
+        {
+            containerRegistry.Register<ISerializer, JsonSerializer>();
+            containerRegistry.Register<ISerializer<PreferenceData>, PreferenceDataSerializer>();
+
+            containerRegistry.Register<ISerializer<IEnumerable<SoundEvent>, SoundEvent>, SoundEventsSerializer>();
+            containerRegistry.Register<ISoundEventsSerializer, SoundEventsSerializer>();
+        }
+
         private void RegisterFactories(IContainerRegistry containerRegistry)
         {
+            containerRegistry.Register<ISoundJsonUpdaterFactory, SoundJsonUpdaterFactory>();
+
             containerRegistry.Register<IFoldersFactory<SoundEvent, Sound>, SoundEventsFactory>();
             containerRegistry.Register<IFoldersFinder<SoundEvent, Sound>, SoundEventsFinder>();
             containerRegistry.Register<IFolderSynchronizerFactory<SoundEvent, Sound>, SoundEventsSynchronizerFactory>();
