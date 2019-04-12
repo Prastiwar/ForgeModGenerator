@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ForgeModGenerator.Services;
+using ForgeModGenerator.Validation;
+using System;
 
 namespace ForgeModGenerator
 {
@@ -8,6 +10,8 @@ namespace ForgeModGenerator
         event EventHandler<ItemEditedEventArgs<TItem>> ItemEdited;
         event EventHandler<TItem> OpenFormFailed;
 
+        IUIElement Form { get; set; }
+        IValidator<TItem> Validator { get; set; }
         TItem EditingItem { get; }
 
         void OpenItemEditor(TItem item);
@@ -26,18 +30,13 @@ namespace ForgeModGenerator
         public TItem ActualItem { get; }
     }
 
-    public class ItemEditorClosingDialogEventArgs<TItem> : EventArgs
+    public class ItemEditorClosingDialogEventArgs<TItem> : DialogClosingArgs
     {
-        public ItemEditorClosingDialogEventArgs(TItem item) => Item = item;
-
-        public bool Result { get; set; }
-        public bool IsCancelled { get; private set; }
+        public ItemEditorClosingDialogEventArgs(object result, TItem item) : base(result) => Item = item;
         public TItem Item { get; }
-
-        public void Cancel() => IsCancelled = true;
     }
 
-    public class ItemEditorOpeningDialogEventArgs<TItem> : EventArgs
+    public class ItemEditorOpeningDialogEventArgs<TItem> : DialogOpenedArgs
     {
         public ItemEditorOpeningDialogEventArgs(TItem item) => Item = item;
         public TItem Item { get; }

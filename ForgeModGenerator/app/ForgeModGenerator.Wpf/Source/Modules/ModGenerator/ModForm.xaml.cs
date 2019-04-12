@@ -7,7 +7,7 @@ using System.Windows.Input;
 
 namespace ForgeModGenerator.ModGenerator.Controls
 {
-    public partial class ModForm : UserControl
+    public partial class ModForm : UserControl, IUIElement
     {
         public ModForm() => InitializeComponent();
 
@@ -71,5 +71,7 @@ namespace ForgeModGenerator.ModGenerator.Controls
                 ModidTextBox.SubmitText(ModidTextBox, text.Text);
             }
         }
+
+        public void SetDataContext(object context) => DataContext = context;
     }
 }

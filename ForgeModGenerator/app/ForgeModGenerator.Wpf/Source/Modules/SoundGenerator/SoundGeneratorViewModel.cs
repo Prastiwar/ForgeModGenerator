@@ -1,9 +1,9 @@
-﻿using FluentValidation;
-using ForgeModGenerator.Services;
+﻿using ForgeModGenerator.Services;
 using ForgeModGenerator.SoundGenerator.Controls;
 using ForgeModGenerator.SoundGenerator.Models;
 using ForgeModGenerator.SoundGenerator.Serialization;
 using ForgeModGenerator.SoundGenerator.Validations;
+using ForgeModGenerator.Validation;
 using ForgeModGenerator.ViewModels;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -19,7 +19,8 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
                                         IDialogService dialogService,
                                         IFoldersExplorerFactory<SoundEvent, Sound> factory,
                                         IPreferenceService preferenceService,
-                                        ISoundJsonUpdaterFactory jsonUpdaterFactory)
+                                        ISoundJsonUpdaterFactory jsonUpdaterFactory,
+                                        IEditorFormFactory<Sound> editorFormFactory)
             : base(sessionContext, dialogService, factory)
         {
             PreferenceService = preferenceService;
@@ -31,7 +32,8 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             Explorer.OpenFileDialog.CheckFileExists = true;
             Explorer.OpenFileDialog.ValidateNames = true;
             Explorer.OpenFolderDialog.ShowNewFolderButton = true;
-            FileEditor = new EditorForm<Sound>(Cache.Default, DialogService, new SoundEditForm());
+            FileEditor = editorFormFactory.Create();
+            FileEditor.Form = new SoundEditForm();
             FileEditor.ItemEdited += OnSoundEdited;
         }
 
@@ -45,8 +47,8 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
 
         protected ISoundJsonUpdaterFactory JsonUpdaterFactory { get; }
 
-        private SoundEventValidator soundEventValidator;
-        public SoundEventValidator SoundEventValidator => soundEventValidator ?? (soundEventValidator = new SoundEventValidator(Explorer.Folders.Files));
+        private IValidator<SoundEvent> soundEventValidator;
+        public IValidator<SoundEvent> SoundEventValidator => soundEventValidator ?? (soundEventValidator = new SoundEventValidator(Explorer.Folders.Files));
 
         protected override bool CanRefresh() => SessionContext.SelectedMod != null;
 
@@ -56,11 +58,13 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             {
                 Preferences = PreferenceService.GetOrCreate<SoundsGeneratorPreferences>();
                 soundEventValidator = null; // will lazy load itself when needed
+
                 if (Explorer.Folders != null)
                 {
                     Explorer.Folders.FilesChanged -= SubscribeFolderEvents;
                     Explorer.Folders.Clear();
                 }
+
                 // TODO: Decouple it
                 ((SoundEventsFinder)Explorer.FileSynchronizer.Finder).Initialize(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
                 ((SoundEventsFactory)Explorer.FileSynchronizer.Finder.Factory).SoundEvents = Explorer.Folders;
@@ -72,10 +76,12 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
                 SubscribeFolderEvents(Explorer.Folders, new FileChangedEventArgs<SoundEvent>(Explorer.Folders.Files, FileChange.Add));
                 Explorer.Folders.FilesChanged += SubscribeFolderEvents;
                 Explorer.Folders.FilesChanged += OnFoldersCollectionChanged;
+
                 JsonUpdater = JsonUpdaterFactory.Create(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
                 JsonUpdater.SetTarget(Explorer.Folders.Files);
                 JsonUpdater.Path = FoldersJsonFilePath;
                 JsonUpdater.PrettyPrint = Preferences.SoundJsonPrettyPrint;
+
                 CheckJsonFileMismatch();
                 CheckForUpdate();
                 return true;
@@ -146,7 +152,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             RaisePropertyChanged(nameof(HasEmptyFolders));
         }
 
-        private string OnSoundEventValidate(SoundEvent sender, string propertyName) => new SoundEventValidator(Explorer.Folders.Files).Validate(sender, propertyName).ToString();
+        private string OnSoundEventValidate(SoundEvent sender, string propertyName) => SoundEventValidator.Validate(sender, propertyName).Error;
 
         private void OnSoundPropertyChanged(Sound file, PropertyChangedEventArgs e)
         {
@@ -158,7 +164,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
 
         private void OnSoundEventPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            FluentValidation.Results.ValidationResult validateResult = SoundEventValidator.Validate((SoundEvent)sender);
+            ValidateResult validateResult = SoundEventValidator.Validate((SoundEvent)sender);
             if (validateResult.IsValid)
             {
                 ForceJsonFileUpdate();

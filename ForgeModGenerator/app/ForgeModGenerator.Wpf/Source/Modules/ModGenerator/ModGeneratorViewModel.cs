@@ -15,7 +15,6 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Windows;
 using System.Windows.Input;
 
 namespace ForgeModGenerator.ModGenerator.ViewModels
@@ -23,11 +22,12 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
     /// <summary> ModGenerator Business ViewModel </summary>
     public class ModGeneratorViewModel : BindableBase
     {
-        public ModGeneratorViewModel(ISessionContextService sessionContext, IDialogService dialogService, IFileSystem fileSystem)
+        public ModGeneratorViewModel(ISessionContextService sessionContext, IDialogService dialogService, IFileSystem fileSystem, IEditorFormFactory<Mod> editorFormFactory)
         {
             SessionContext = sessionContext;
             DialogService = dialogService;
             FileSystem = fileSystem;
+            EditorFormFactory = editorFormFactory;
             ResetNewMod();
             Form = new ModForm() {
                 AddForgeVersionCommand = AddNewForgeVersionCommand,
@@ -35,7 +35,9 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
                 ForgeVersions = SessionContext.ForgeVersions,
                 Sides = Sides
             };
-            EditorForm = new EditorForm<Mod>(Cache.Default, DialogService, Form, ModValidator);
+            EditorForm = editorFormFactory.Create();
+            EditorForm.Validator = ModValidator;
+            EditorForm.Form = Form;
             EditorForm.ItemEdited += Editor_OnItemEdited;
         }
 
@@ -45,8 +47,9 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
 
         protected ModValidator ModValidator { get; set; } = new ModValidator();
 
-        protected FrameworkElement Form { get; set; }
-        protected EditorForm<Mod> EditorForm { get; set; }
+        protected IUIElement Form { get; set; }
+        protected IEditorForm<Mod> EditorForm { get; set; }
+        protected IEditorFormFactory<Mod> EditorFormFactory { get; }
 
         public ISessionContextService SessionContext { get; }
         public IDialogService DialogService { get; }
@@ -132,7 +135,9 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
 
         private void CreateNewMod(Mod mod)
         {
-            EditorForm<Mod> tempEditor = new EditorForm<Mod>(Cache.Default, DialogService, Form, ModValidator);
+            IEditorForm<Mod> tempEditor = EditorFormFactory.Create();
+            tempEditor.Form = Form;
+            tempEditor.Validator = ModValidator;
             tempEditor.ItemEdited += (sender, e) => {
                 if (e.Result)
                 {

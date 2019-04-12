@@ -21,6 +21,7 @@ using ForgeModGenerator.SoundGenerator.ViewModels;
 using ForgeModGenerator.SoundGenerator.Views;
 using ForgeModGenerator.TextureGenerator.ViewModels;
 using ForgeModGenerator.TextureGenerator.Views;
+using Microsoft.Extensions.Caching.Memory;
 using NLog.Extensions.Logging;
 using Prism.Ioc;
 using Prism.Mvvm;
@@ -58,7 +59,7 @@ namespace ForgeModGenerator
             RegisterServices(containerRegistry);
 
             containerRegistry.RegisterInstance<ISynchronizeInvoke>(SyncInvokeObject.Default);
-            containerRegistry.RegisterInstance(Cache.Default);
+            containerRegistry.RegisterInstance<IMemoryCache>(new MemoryCache(new MemoryCacheOptions()));
             containerRegistry.Register<IFileSystem, FileSystemWin>();
             RegisterSerializers(containerRegistry);
 
@@ -101,6 +102,8 @@ namespace ForgeModGenerator
             containerRegistry.Register(typeof(IFolderSynchronizerFactory<,>), typeof(FolderSynchronizerFactory<,>));
             containerRegistry.Register(typeof(IFoldersExplorerFactory<,>), typeof(FoldersExplorerFactory<,>));
             containerRegistry.Register(typeof(IFoldersFinder<,>), typeof(DefaultFoldersFinder<,>));
+
+            containerRegistry.Register(typeof(IEditorFormFactory<>), typeof(EditorFormFactory<>));
         }
 
         private void RegisterServices(IContainerRegistry containerRegistry)
