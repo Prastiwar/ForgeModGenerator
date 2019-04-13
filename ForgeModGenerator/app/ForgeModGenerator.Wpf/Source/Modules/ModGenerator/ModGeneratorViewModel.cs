@@ -1,5 +1,5 @@
 ﻿using ForgeModGenerator.Models;
-using ForgeModGenerator.ModGenerator.SourceCodeGeneration;
+using ForgeModGenerator.Serialization;
 using ForgeModGenerator.Services;
 using ForgeModGenerator.Utility;
 using ForgeModGenerator.Validation;
@@ -23,7 +23,9 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
                                      IFileSystem fileSystem,
                                      IEditorFormFactory<Mod> editorFormFactory,
                                      IValidator<Mod> modValidator,
-                                     ICodeGenerationService codeGenerationService)
+                                     ICodeGenerationService codeGenerationService,
+                                     ISerializer<Mod> modSerializer,
+                                     ISerializer<McModInfo> modInfoSerializer)
         {
             SessionContext = sessionContext;
             DialogService = dialogService;
@@ -31,6 +33,8 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
             EditorFormFactory = editorFormFactory;
             ModValidator = modValidator;
             CodeGenerationService = codeGenerationService;
+            ModSerializer = modSerializer;
+            ModInfoSerializer = modInfoSerializer;
             ResetNewMod();
             Form = new Controls.ModForm() {
                 AddForgeVersionCommand = AddNewForgeVersionCommand,
@@ -53,6 +57,8 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
         protected IEditorForm<Mod> EditorForm { get; set; }
         protected IEditorFormFactory<Mod> EditorFormFactory { get; }
         protected ICodeGenerationService CodeGenerationService { get; }
+        protected ISerializer<Mod> ModSerializer { get; }
+        protected ISerializer<McModInfo> ModInfoSerializer { get; }
 
         public ISessionContextService SessionContext { get; }
         public IDialogService DialogService { get; }
@@ -190,8 +196,8 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
             CodeGenerationService.RegenerateSourceCode(mod);
 
             mod.WorkspaceSetup.Setup(mod);
-            ModHelper.ExportMod(mod);
-            ModHelper.ExportMcInfo(mod.ModInfo);
+            ModHelper.ExportMcInfo(ModInfoSerializer, mod.ModInfo);
+            ModHelper.ExportMod(ModSerializer, mod);
 
             SessionContext.Mods.Add(mod);
             Log.Info($"{mod.ModInfo.Name} was created successfully", true);
@@ -214,7 +220,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
                 Log.Warning($"Selected mod is not valid. Reason: {validation}", true);
                 return;
             }
-            Mod oldValues = ModHelper.ImportMod(ModPaths.ModRootFolder(mod.CachedName));
+            Mod oldValues = ModHelper.ImportMod(ModSerializer, ModPaths.ModRootFolder(mod.CachedName));
             try
             {
                 bool organizationChanged = mod.Organization != oldValues.Organization;
@@ -282,12 +288,11 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
                     bool mcVersionChanged = mod.ModInfo.McVersion != oldValues.ModInfo.McVersion;
                     if (versionChanged || mcVersionChanged)
                     {
-                        CodeGenerationService.RegenerateScript<ModHookCodeGenerator>(mod);
+                        CodeGenerationService.RegenerateScript<SourceCodeGeneration.ModHookCodeGenerator>(mod);
                     }
                 }
-
-                ModHelper.ExportMcInfo(mod.ModInfo);
-                ModHelper.ExportMod(mod);
+                ModHelper.ExportMcInfo(ModInfoSerializer, mod.ModInfo);
+                ModHelper.ExportMod(ModSerializer, mod);
             }
             catch (Exception ex)
             {

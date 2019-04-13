@@ -9,6 +9,7 @@ using ForgeModGenerator.CommandGenerator.Views;
 using ForgeModGenerator.ItemGenerator.ViewModels;
 using ForgeModGenerator.ItemGenerator.Views;
 using ForgeModGenerator.Models;
+using ForgeModGenerator.ModGenerator.Serialization;
 using ForgeModGenerator.ModGenerator.Validation;
 using ForgeModGenerator.ModGenerator.ViewModels;
 using ForgeModGenerator.ModGenerator.Views;
@@ -100,6 +101,9 @@ namespace ForgeModGenerator
 
             containerRegistry.Register<ISerializer<IEnumerable<SoundEvent>, SoundEvent>, SoundEventsSerializer>();
             containerRegistry.Register<ISoundEventsSerializer, SoundEventsSerializer>();
+
+            containerRegistry.Register<ISerializer<Mod>, ModSerializer>();
+            containerRegistry.Register<ISerializer<McModInfo>, ModInfoSerializer>();
         }
 
         private void RegisterFactories(IContainerRegistry containerRegistry)
@@ -121,7 +125,7 @@ namespace ForgeModGenerator
 
         private void RegisterServices(IContainerRegistry containerRegistry)
         {
-            containerRegistry.RegisterInstance<ISessionContextService>(WpfSessionContextService.Instance);
+            containerRegistry.RegisterSingleton<ISessionContextService, WpfSessionContextService>();
             containerRegistry.Register<INavigationService, PrismRegionNavigationBridge>();
             containerRegistry.Register<ISnackbarService, SnackbarService>();
             containerRegistry.Register<IModBuildService, ModBuildService>();

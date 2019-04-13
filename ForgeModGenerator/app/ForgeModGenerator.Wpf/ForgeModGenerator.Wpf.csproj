@@ -221,6 +221,8 @@
     <Compile Include="Source\FileSystem\Dialog\FolderBrowserDialog.cs" />
     <Compile Include="Source\FileSystem\FileSystemWin.cs" />
     <Compile Include="Source\Modules\ApplicationModule\Controls\NavigationMenuControl.cs" />
+    <Compile Include="Source\Modules\ModGenerator\ModInfoSerializer.cs" />
+    <Compile Include="Source\Modules\ModGenerator\ModSerializer.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundEditorFormFactory.cs" />
     <Compile Include="Source\Serialization\PreferenceDataSerializer.cs" />
     <Compile Include="Source\Serialization\JsonSerializer.cs" />
@@ -228,7 +230,6 @@
     <Compile Include="Source\Services\CodeGeneratorService.cs" />
     <Compile Include="Source\Services\PrismRegionNavigationBridge.cs" />
     <Compile Include="Source\Utility\Extensions\BindingExtensions.cs" />
-    <Compile Include="Source\Utility\Helpers\ModHelper.cs" />
     <Compile Include="Source\Common\ThirdParty\WpfObservableRangeCollection.cs" />
     <Compile Include="Source\Controls\EditableList.cs" />
     <Compile Include="Source\Controls\FolderListBox.cs" />
