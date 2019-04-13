@@ -1,9 +1,8 @@
 ﻿using ForgeModGenerator.Serialization;
 using ForgeModGenerator.SoundGenerator.Models;
-using ForgeModGenerator.SoundGenerator.Serialization;
 using System.Collections.Generic;
 
-namespace ForgeModGenerator.SoundGenerator.ViewModels
+namespace ForgeModGenerator.SoundGenerator.Serialization
 {
     public class SoundJsonUpdaterFactory : ISoundJsonUpdaterFactory
     {

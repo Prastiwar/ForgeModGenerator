@@ -4,7 +4,7 @@ using ForgeModGenerator.CodeGeneration;
 using ForgeModGenerator.Models;
 using ForgeModGenerator.ModGenerator.Controls;
 using ForgeModGenerator.ModGenerator.SourceCodeGeneration;
-using ForgeModGenerator.ModGenerator.Validations;
+using ForgeModGenerator.ModGenerator.Validation;
 using ForgeModGenerator.Services;
 using ForgeModGenerator.Utility;
 using Prism.Commands;

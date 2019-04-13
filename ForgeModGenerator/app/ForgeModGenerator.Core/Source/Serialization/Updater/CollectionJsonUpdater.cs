@@ -2,7 +2,7 @@
 
 namespace ForgeModGenerator.Serialization
 {
-    public abstract class CollectionJsonUpdater<TCollection, TItem> : JsonUpdaterBase<TCollection>, IJsonUpdater<TCollection, TItem>
+    public class CollectionJsonUpdater<TCollection, TItem> : JsonUpdater<TCollection>, IJsonUpdater<TCollection, TItem>
         where TCollection : IEnumerable<TItem>
     {
         public CollectionJsonUpdater(ISerializer<TCollection, TItem> serializer, TCollection target, string jsonPath) : base(serializer, target, jsonPath) { }

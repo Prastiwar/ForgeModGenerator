@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 namespace ForgeModGenerator.Serialization
 {
     /// <summary> Base class to synchronize T target with json file </summary>
-    public abstract class JsonUpdaterBase<T> : IJsonUpdater<T>
+    public class JsonUpdater<T> : IJsonUpdater<T>
     {
-        public JsonUpdaterBase(ISerializer<T> serializer, T target, string jsonPath)
+        public JsonUpdater(ISerializer<T> serializer, T target, string jsonPath)
         {
             Serializer = serializer;
             Target = target;

@@ -4,7 +4,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace ForgeModGenerator.Validations
+namespace ForgeModGenerator.Validation
 {
     public class ValidPathRule : ValidationRule
     {

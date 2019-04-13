@@ -4,7 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Windows.Controls;
 
-namespace ForgeModGenerator.Validations
+namespace ForgeModGenerator.Validation
 {
     public class FullPathValidator : AbstractValidator<string>
     {

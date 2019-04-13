@@ -6,7 +6,7 @@
              xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:local="clr-namespace:ForgeModGenerator.ModGenerator.Controls"
-             xmlns:rules="clr-namespace:ForgeModGenerator.ModGenerator.Validations"
+             xmlns:rules="clr-namespace:ForgeModGenerator.ModGenerator.Validation"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d"
              MinWidth="500"

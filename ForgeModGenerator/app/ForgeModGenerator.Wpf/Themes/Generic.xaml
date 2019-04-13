@@ -6,7 +6,7 @@
                     xmlns:converters="clr-namespace:ForgeModGenerator.Converters"
                     xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
                     xmlns:appcontrols="clr-namespace:ForgeModGenerator.ApplicationModule.Controls"
-                    xmlns:validations="clr-namespace:ForgeModGenerator.Validations">
+                    xmlns:validations="clr-namespace:ForgeModGenerator.Validation">
     <Style TargetType="{x:Type controls:SubmitTextBox}"
            BasedOn="{StaticResource {x:Type TextBox}}" />
     <Style TargetType="{x:Type controls:PathNameSubmitTextBox}"
