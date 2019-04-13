@@ -8,19 +8,7 @@ using System.Reflection;
 
 namespace ForgeModGenerator.CodeGeneration
 {
-    public struct Parameter
-    {
-        public string TypeName { get; }
-        public string Name { get; }
-
-        public Parameter(string type, string name)
-        {
-            TypeName = type;
-            Name = name;
-        }
-    }
-
-    public abstract class ScriptCodeGenerator : IDisposable
+    public abstract class ScriptCodeGenerator : IScriptCodeGenerator, IDisposable
     {
         public ScriptCodeGenerator(Mod mod)
         {
@@ -31,7 +19,8 @@ namespace ForgeModGenerator.CodeGeneration
             PackageName = $"com.{Organization}.{ModnameLower}";
         }
 
-        protected Mod Mod { get; }
+        public Mod Mod { get; }
+
         protected string Modname { get; }
         protected string ModnameLower { get; }
         protected string Organization { get; }
@@ -39,7 +28,7 @@ namespace ForgeModGenerator.CodeGeneration
         protected JavaCodeProvider JavaProvider { get; } = new JavaCodeProvider();
         protected CodeGeneratorOptions GeneratorOptions { get; } = new CodeGeneratorOptions() { BracingStyle = "Block" };
 
-        protected abstract string ScriptFilePath { get; }
+        public abstract string ScriptFilePath { get; }
 
         public virtual void RegenerateScript() => RegenerateScript(ScriptFilePath, CreateTargetCodeUnit(), GeneratorOptions);
 

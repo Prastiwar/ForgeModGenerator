@@ -10,7 +10,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
     {
         public RegistryHandlerCodeGenerator(Mod mod) : base(mod) => ScriptFilePath = Path.Combine(ModPaths.SourceCodeRootFolder(Modname, Organization), SourceCodeLocator.RegistryHandler.RelativePath);
 
-        protected override string ScriptFilePath { get; }
+        public override string ScriptFilePath { get; }
 
         private CodeMemberMethod GetRegisterMethod(string className, string fieldName, string registerType)
         {

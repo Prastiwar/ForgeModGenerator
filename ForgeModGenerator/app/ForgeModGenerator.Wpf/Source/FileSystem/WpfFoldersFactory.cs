@@ -6,6 +6,6 @@ namespace ForgeModGenerator
         where TFolder : class, IFolderObject<TFile>
         where TFile : class, IFileObject
     {
-        public override IFolderObject<TFolder> CreateFolders() => ReflectionExtensions.CreateInstance<WpfObservableFolder<TFolder>>(true);
+        public override IFolderObject<TFolder> CreateFolders() => ReflectionHelper.CreateInstance<WpfObservableFolder<TFolder>>(true);
     }
 }

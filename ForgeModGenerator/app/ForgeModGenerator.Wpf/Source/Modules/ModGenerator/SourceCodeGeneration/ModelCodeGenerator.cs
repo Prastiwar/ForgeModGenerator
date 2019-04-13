@@ -10,7 +10,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
         public ModelCodeGenerator(Mod mod) : base(mod) => 
             ScriptFilePath = Path.Combine(ModPaths.SourceCodeRootFolder(Modname, Organization), SourceCodeLocator.ModelInterface.RelativePath);
 
-        protected override string ScriptFilePath { get; }
+        public override string ScriptFilePath { get; }
 
         protected override CodeCompileUnit CreateTargetCodeUnit() => 
             NewCodeUnit(NewInterface(SourceCodeLocator.ModelInterface.ClassName, NewMethod("registerModels", typeof(void).FullName, MemberAttributes.Public)));

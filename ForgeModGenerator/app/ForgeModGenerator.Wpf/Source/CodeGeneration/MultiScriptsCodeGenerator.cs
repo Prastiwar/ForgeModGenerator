@@ -10,7 +10,7 @@ namespace ForgeModGenerator.CodeGeneration
 
         protected abstract string[] ScriptFilePaths { get; }
 
-        protected sealed override string ScriptFilePath => throw new InvalidOperationException($"You should not use {nameof(ScriptFilePath)}, use {nameof(ScriptFilePaths)} instead");
+        public sealed override string ScriptFilePath => throw new InvalidOperationException($"You should not use {nameof(ScriptFilePath)}, use {nameof(ScriptFilePaths)} instead");
         protected sealed override CodeCompileUnit CreateTargetCodeUnit() => new CodeCompileUnit();
 
         public override void RegenerateScript()

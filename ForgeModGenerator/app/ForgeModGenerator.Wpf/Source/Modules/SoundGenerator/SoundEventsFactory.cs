@@ -9,7 +9,7 @@ namespace ForgeModGenerator.SoundGenerator
     {
         public IFolderObject<SoundEvent> SoundEventsRepository { get; set; }
 
-        public override IFolderObject<SoundEvent> CreateFolders() => ReflectionExtensions.CreateInstance<ObservableSoundEvents>(true);
+        public override IFolderObject<SoundEvent> CreateFolders() => ReflectionHelper.CreateInstance<ObservableSoundEvents>(true);
 
         /// <inheritdoc/>
         public override SoundEvent Create(string path, IEnumerable<string> filePaths)

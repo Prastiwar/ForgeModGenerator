@@ -10,7 +10,7 @@ namespace ForgeModGenerator.GUIGenerator
         public CreativeTabCodeGenerator(Mod mod) : base(mod) 
             => ScriptFilePath = Path.Combine(ModPaths.SourceCodeRootFolder(Modname, Organization), SourceCodeLocator.CreativeTab.RelativePath);
 
-        protected override string ScriptFilePath { get; }
+        public override string ScriptFilePath { get; }
 
         protected override CodeCompileUnit CreateTargetCodeUnit()
         {

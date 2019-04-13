@@ -9,7 +9,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
     {
         public ModHookCodeGenerator(Mod mod) : base(mod) => ScriptFilePath = Path.Combine(ModPaths.SourceCodeRootFolder(Modname, Organization), SourceCodeLocator.Hook.RelativePath);
 
-        protected override string ScriptFilePath { get; }
+        public override string ScriptFilePath { get; }
 
         protected CodeMemberField CreateHookString(string variableName, string value) => NewFieldGlobal(typeof(string).FullName, variableName.ToUpper(), NewPrimitive(value));
 

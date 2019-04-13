@@ -17,7 +17,7 @@ namespace ForgeModGenerator
             TFolder folder = null;
             if (path == null)
             {
-                folder = ReflectionExtensions.CreateInstance<TFolder>(true);
+                folder = ReflectionHelper.CreateInstance<TFolder>(true);
                 if (filePaths != null)
                 {
                     folder.AddRange(filePaths);
@@ -27,11 +27,11 @@ namespace ForgeModGenerator
             {
                 try
                 {
-                    folder = ReflectionExtensions.CreateInstance<TFolder>(path, filePaths);
+                    folder = ReflectionHelper.CreateInstance<TFolder>(path, filePaths);
                 }
                 catch (Exception)
                 {
-                    folder = ReflectionExtensions.CreateInstance<TFolder>(path);
+                    folder = ReflectionHelper.CreateInstance<TFolder>(path);
                     if (filePaths != null)
                     {
                         folder.AddRange(filePaths);

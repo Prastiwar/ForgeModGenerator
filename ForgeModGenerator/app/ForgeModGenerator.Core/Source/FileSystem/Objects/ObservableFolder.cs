@@ -196,7 +196,7 @@ namespace ForgeModGenerator
         {
             try
             {
-                return ReflectionExtensions.CreateInstance<T>(filePath);
+                return ReflectionHelper.CreateInstance<T>(filePath);
             }
             catch (Exception ex)
             {

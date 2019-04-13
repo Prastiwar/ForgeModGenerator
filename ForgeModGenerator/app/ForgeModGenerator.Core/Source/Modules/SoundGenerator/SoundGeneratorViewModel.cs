@@ -33,7 +33,6 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             Explorer.OpenFileDialog.ValidateNames = true;
             Explorer.OpenFolderDialog.ShowNewFolderButton = true;
             FileEditor = editorFormFactory.Create();
-            FileEditor.Form = new Controls.SoundEditForm();
             FileEditor.ItemEdited += OnSoundEdited;
         }
 

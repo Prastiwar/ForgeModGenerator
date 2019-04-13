@@ -65,6 +65,7 @@ namespace ForgeModGenerator
             containerRegistry.RegisterInstance<ISynchronizeInvoke>(SyncInvokeObject.Default);
             containerRegistry.RegisterInstance<IMemoryCache>(new MemoryCache(new MemoryCacheOptions()));
             containerRegistry.Register<IFileSystem, FileSystemWin>();
+            containerRegistry.Register<ICodeGenerationService, CodeGeneratorService>();
 
             RegisterSerializers(containerRegistry);
             RegisterValidators(containerRegistry);
@@ -108,6 +109,7 @@ namespace ForgeModGenerator
             containerRegistry.Register<IFoldersFactory<SoundEvent, Sound>, SoundEventsFactory>();
             containerRegistry.Register<IFoldersFinder<SoundEvent, Sound>, SoundEventsFinder>();
             containerRegistry.Register<IFolderSynchronizerFactory<SoundEvent, Sound>, SoundEventsSynchronizerFactory>();
+            containerRegistry.Register(typeof(IEditorFormFactory<Sound>), typeof(SoundEditorFormFactory));
 
             containerRegistry.Register(typeof(IFoldersFactory<,>), typeof(WpfFoldersFactory<,>));
             containerRegistry.Register(typeof(IFolderSynchronizerFactory<,>), typeof(FolderSynchronizerFactory<,>));

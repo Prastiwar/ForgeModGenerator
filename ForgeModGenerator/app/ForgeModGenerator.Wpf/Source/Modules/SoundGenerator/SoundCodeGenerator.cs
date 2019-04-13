@@ -13,7 +13,7 @@ namespace ForgeModGenerator.SoundGenerator.CodeGeneration
         public SoundCodeGenerator(Mod mod, IEnumerable<SoundEvent> soundEvents) : base(mod, soundEvents)
             => ScriptFilePath = Path.Combine(ModPaths.SourceCodeRootFolder(Modname, Organization), SourceCodeLocator.SoundEvents.RelativePath);
 
-        protected override string ScriptFilePath { get; }
+        public override string ScriptFilePath { get; }
 
         protected override string GetElementName(SoundEvent element) => element.EventName;
 
