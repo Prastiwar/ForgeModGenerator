@@ -8,9 +8,9 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 {
     public class ManagerCodeGenerator : ScriptCodeGenerator
     {
-        public ManagerCodeGenerator(Mod mod) : base(mod) => ScriptFilePath = Path.Combine(ModPaths.SourceCodeRootFolder(Modname, Organization), SourceCodeLocator.Manager.RelativePath);
-
-        public override string ScriptFilePath { get; }
+        public ManagerCodeGenerator(Mod mod) : base(mod) => ScriptLocator = SourceCodeLocator.Manager(Modname, Organization);
+        
+        public override ClassLocator ScriptLocator { get; }
 
         private CodeMemberMethod CretePreInitMethod()
         {
@@ -25,7 +25,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
         private CodeMemberMethod CreateInitMethod()
         {
             CodeMemberMethod method = CreateEmptyEventHandler("init", "FMLInitializationEvent");
-            method.Statements.Add(NewMethodInvokeType(SourceCodeLocator.Recipes.ClassName, "init"));
+            method.Statements.Add(NewMethodInvokeType(SourceCodeLocator.Recipes(Modname, Organization).ClassName, "init"));
             return method;
         }
 
@@ -38,8 +38,8 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 
         protected override CodeCompileUnit CreateTargetCodeUnit()
         {
-            CodeTypeDeclaration managerClass = NewClassWithMembers(SourceCodeLocator.Manager.ClassName);
-            string hook = SourceCodeLocator.Hook.ClassName;
+            CodeTypeDeclaration managerClass = NewClassWithMembers(SourceCodeLocator.Manager(Modname, Organization).ClassName);
+            string hook = SourceCodeLocator.Hook(Modname, Organization).ClassName;
             managerClass.CustomAttributes.Add(NewAnnotation("Mod",
                 NewAnnotationArg("modid", NewFieldReferenceType(hook, "MODID")),
                 NewAnnotationArg("name", NewFieldReferenceType(hook, "NAME")),
@@ -65,7 +65,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             managerClass.Members.Add(CreateEmptyEventHandler("postInit", "FMLPostInitializationEvent"));
             managerClass.Members.Add(CreateEmptyEventHandler("serverStart", "FMLServerStartingEvent"));
 
-            CodeMemberMethod getProxyMethod = NewMethod("getProxy", SourceCodeLocator.CommonProxyInterface.ClassName, MemberAttributes.Public | JavaAttributes.StaticOnly);
+            CodeMemberMethod getProxyMethod = NewMethod("getProxy", SourceCodeLocator.CommonProxyInterface(Modname, Organization).ClassName, MemberAttributes.Public | JavaAttributes.StaticOnly);
             getProxyMethod.Statements.Add(NewReturnVar("proxy"));
             managerClass.Members.Add(getProxyMethod);
 
@@ -77,8 +77,8 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
                                              "net.minecraftforge.fml.common.event.FMLPostInitializationEvent",
                                              "net.minecraftforge.fml.common.event.FMLPreInitializationEvent",
                                              "net.minecraftforge.fml.common.event.FMLServerStartingEvent",
-                                             $"{PackageName}.{SourceCodeLocator.Recipes.ImportFullName}",
-                                             $"{PackageName}.{SourceCodeLocator.CommonProxyInterface.ImportFullName}",
+                                             $"{PackageName}.{SourceCodeLocator.Recipes(Modname, Organization).ImportRelativeName}",
+                                             $"{PackageName}.{SourceCodeLocator.CommonProxyInterface(Modname, Organization).ImportRelativeName}",
                                              "org.apache.logging.log4j.Logger");
         }
     }

@@ -143,8 +143,8 @@
                                     IsTabStop="True"
                                     Text="{Binding Path=Name, ValidatesOnDataErrors=True}" />
             <controls:SubmitTextBox x:Name="ModidTextBox"
-                                    TextChanged="LowerText"
                                     IsTabStop="True"
+                                    TextChanged="LowerText"
                                     Text="{Binding Path=Modid, ValidatesOnDataErrors=True}" />
             <TextBox x:Name="DescriptionTextBox"
                      Text="{Binding Path=ModInfo.Description, Mode=TwoWay}"

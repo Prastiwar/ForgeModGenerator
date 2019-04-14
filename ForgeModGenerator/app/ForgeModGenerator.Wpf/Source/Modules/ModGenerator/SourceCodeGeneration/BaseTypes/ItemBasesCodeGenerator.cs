@@ -10,54 +10,53 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 {
     public class ItemBasesCodeGenerator : MultiScriptsCodeGenerator
     {
-        public ItemBasesCodeGenerator(Mod mod) : base(mod)
-        {
-            string sourceFolder = Path.Combine(ModPaths.SourceCodeRootFolder(Modname, Organization));
-            ScriptFilePaths = new string[] {
-                Path.Combine(sourceFolder, SourceCodeLocator.ItemBase.RelativePath),
-                Path.Combine(sourceFolder, SourceCodeLocator.BowBase.RelativePath),
-                Path.Combine(sourceFolder, SourceCodeLocator.FoodBase.RelativePath),
-                Path.Combine(sourceFolder, SourceCodeLocator.ArmorBase.RelativePath),
-                Path.Combine(sourceFolder, SourceCodeLocator.SwordBase.RelativePath),
-                Path.Combine(sourceFolder, SourceCodeLocator.SpadeBase.RelativePath),
-                Path.Combine(sourceFolder, SourceCodeLocator.PickaxeBase.RelativePath),
-                Path.Combine(sourceFolder, SourceCodeLocator.HoeBase.RelativePath),
-                Path.Combine(sourceFolder, SourceCodeLocator.AxeBase.RelativePath),
+        public ItemBasesCodeGenerator(Mod mod) : base(mod) =>
+            ScriptLocators = new ClassLocator[] {
+                SourceCodeLocator.ItemBase(Modname, Organization),
+                SourceCodeLocator.BowBase(Modname, Organization) ,
+                SourceCodeLocator.FoodBase(Modname, Organization),
+                SourceCodeLocator.ArmorBase(Modname, Organization),
+                SourceCodeLocator.SwordBase(Modname, Organization),
+                SourceCodeLocator.SpadeBase(Modname, Organization),
+                SourceCodeLocator.PickaxeBase(Modname, Organization),
+                SourceCodeLocator.HoeBase(Modname, Organization),
+                SourceCodeLocator.AxeBase(Modname, Organization),
             };
-        }
 
-        protected override string[] ScriptFilePaths { get; }
+        public override ClassLocator[] ScriptLocators { get; }
+
+        public override ClassLocator ScriptLocator => ScriptLocators[0];
 
         protected override CodeCompileUnit CreateTargetCodeUnit(string scriptPath)
         {
             Parameter[] parameters = null;
             CodeCompileUnit unit = null;
             string fileName = Path.GetFileNameWithoutExtension(scriptPath);
-            if (fileName == SourceCodeLocator.ItemBase.ClassName)
+            if (fileName == SourceCodeLocator.ItemBase(Modname, Organization).ClassName)
             {
                 return CreateBaseItemUnit(fileName, "Item", false);
             }
-            else if (fileName == SourceCodeLocator.BowBase.ClassName)
+            else if (fileName == SourceCodeLocator.BowBase(Modname, Organization).ClassName)
             {
                 return CreateBaseItemUnit(fileName, "ItemBow", false);
             }
-            else if (fileName == SourceCodeLocator.SwordBase.ClassName)
+            else if (fileName == SourceCodeLocator.SwordBase(Modname, Organization).ClassName)
             {
                 return CreateBaseItemUnit(fileName, "ItemSword", true);
             }
-            else if (fileName == SourceCodeLocator.SpadeBase.ClassName)
+            else if (fileName == SourceCodeLocator.SpadeBase(Modname, Organization).ClassName)
             {
                 return CreateBaseItemUnit(fileName, "ItemSpade", true);
             }
-            else if (fileName == SourceCodeLocator.PickaxeBase.ClassName)
+            else if (fileName == SourceCodeLocator.PickaxeBase(Modname, Organization).ClassName)
             {
                 return CreateBaseItemUnit(fileName, "ItemPickaxe", true);
             }
-            else if (fileName == SourceCodeLocator.HoeBase.ClassName)
+            else if (fileName == SourceCodeLocator.HoeBase(Modname, Organization).ClassName)
             {
                 return CreateBaseItemUnit(fileName, "ItemHoe", true);
             }
-            else if (fileName == SourceCodeLocator.AxeBase.ClassName)
+            else if (fileName == SourceCodeLocator.AxeBase(Modname, Organization).ClassName)
             {
                 unit = CreateBaseItemUnit(fileName, "ItemAxe", true);
                 CodeConstructor ctor = (CodeConstructor)unit.Namespaces[0].Types[0].Members[0];
@@ -67,7 +66,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
                 return unit;
             }
 
-            else if (fileName == SourceCodeLocator.FoodBase.ClassName)
+            else if (fileName == SourceCodeLocator.FoodBase(Modname, Organization).ClassName)
             {
                 parameters = new Parameter[] {
                         new Parameter(typeof(string).FullName, "name"),
@@ -77,7 +76,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
                     };
                 return CreateCustomItemUnit(fileName, "ItemFood", parameters);
             }
-            else if (fileName == SourceCodeLocator.ArmorBase.ClassName)
+            else if (fileName == SourceCodeLocator.ArmorBase(Modname, Organization).ClassName)
             {
                 parameters = new Parameter[] {
                         new Parameter(typeof(string).FullName, "name"),
@@ -117,10 +116,10 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
         private CodeCompileUnit CreateCustomItemUnit(string className, string baseType, params Parameter[] ctorParameters)
         {
             CodeTypeDeclaration clas = CreateBaseItemClass(className, baseType, ctorParameters);
-            return NewCodeUnit(clas, $"{PackageName}.{SourceCodeLocator.Manager.ImportFullName}",
-                                     $"{PackageName}.{SourceCodeLocator.CreativeTab.ImportFullName}",
-                                     $"{PackageName}.{SourceCodeLocator.Items.ImportFullName}",
-                                     $"{PackageName}.{SourceCodeLocator.ModelInterface.ImportFullName}",
+            return NewCodeUnit(clas, $"{PackageName}.{SourceCodeLocator.Manager(Modname, Organization).ImportRelativeName}",
+                                     $"{PackageName}.{SourceCodeLocator.CreativeTab(Modname, Organization).ImportRelativeName}",
+                                     $"{PackageName}.{SourceCodeLocator.Items(Modname, Organization).ImportRelativeName}",
+                                     $"{PackageName}.{SourceCodeLocator.ModelInterface(Modname, Organization).ImportRelativeName}",
                                      $"net.minecraft.item.{baseType}");
         }
 
@@ -128,7 +127,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
         {
             CodeMemberMethod method = NewMethod("registerModels", typeof(void).FullName, MemberAttributes.Public);
             method.CustomAttributes.Add(NewOverrideAnnotation());
-            CodeMethodInvokeExpression getProxy = NewMethodInvokeVar(SourceCodeLocator.Manager.ClassName, "getProxy");
+            CodeMethodInvokeExpression getProxy = NewMethodInvokeVar(SourceCodeLocator.Manager(Modname, Organization).ClassName, "getProxy");
             method.Statements.Add(NewMethodInvoke(getProxy, "registerItemRenderer", NewThis(), NewPrimitive(0), NewPrimitive("inventory")));
             return method;
         }
@@ -157,7 +156,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 
         private CodeTypeDeclaration CreateBaseItemClass(string className, string baseClass, CodeConstructor ctor)
         {
-            CodeTypeDeclaration clas = NewClassWithBases(className, baseClass, SourceCodeLocator.ModelInterface.ClassName);
+            CodeTypeDeclaration clas = NewClassWithBases(className, baseClass, SourceCodeLocator.ModelInterface(Modname, Organization).ClassName);
             clas.Members.Add(ctor);
             clas.Members.Add(CreateItemRegisterModelsMethod());
             return clas;
@@ -178,8 +177,8 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             CodeSuperConstructorInvokeExpression super = new CodeSuperConstructorInvokeExpression(ctorArgs);
             CodeMethodInvokeExpression setUnlocalizedName = NewMethodInvoke("setUnlocalizedName", NewVarReference("name"));
             CodeMethodInvokeExpression setRegistryName = NewMethodInvoke("setRegistryName", NewVarReference("name"));
-            CodeMethodInvokeExpression setCreativeTab = NewMethodInvoke("setCreativeTab", NewFieldReferenceType(SourceCodeLocator.CreativeTab.ClassName, "MODCEATIVETAB"));
-            CodeMethodInvokeExpression addToList = NewMethodInvoke(NewFieldReferenceVar(SourceCodeLocator.Items.ClassName, SourceCodeLocator.Items.InitFieldName), "add", NewThis());
+            CodeMethodInvokeExpression setCreativeTab = NewMethodInvoke("setCreativeTab", NewFieldReferenceType(SourceCodeLocator.CreativeTab(Modname, Organization).ClassName, "MODCEATIVETAB"));
+            CodeMethodInvokeExpression addToList = NewMethodInvoke(NewFieldReferenceVar(SourceCodeLocator.Items(Modname, Organization).ClassName, SourceCodeLocator.Items(Modname, Organization).InitFieldName), "add", NewThis());
             return new CodeExpression[] { super, setUnlocalizedName, setRegistryName, setCreativeTab, addToList };
         }
     }

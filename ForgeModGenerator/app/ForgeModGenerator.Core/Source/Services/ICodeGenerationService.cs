@@ -7,5 +7,6 @@ namespace ForgeModGenerator.Services
     {
         void RegenerateSourceCode(Mod mod);
         void RegenerateScript<TScriptGenerator>(Mod mod) where TScriptGenerator : IScriptCodeGenerator;
+        void RegenerateScript(string className, Mod mod);
     }
 }

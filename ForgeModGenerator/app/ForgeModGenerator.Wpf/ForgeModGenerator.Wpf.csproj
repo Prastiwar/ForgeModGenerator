@@ -211,6 +211,7 @@
     <Compile Include="Source\Controls\Proxy\SelectorDecorator.cs" />
     <Compile Include="Source\Common\SyncInvokeObject.cs" />
     <Compile Include="Source\Controls\PathNameSubmitTextBox.cs" />
+    <Compile Include="Source\Converters\DataBindingDebugConverter.cs" />
     <Compile Include="Source\Converters\DialogResultAssemblyConverter.cs" />
     <Compile Include="Source\Converters\Json\ForgeVersionJsonConverter.cs" />
     <Compile Include="Source\Converters\Json\McModInfoJsonConverter.cs" />
@@ -221,6 +222,7 @@
     <Compile Include="Source\FileSystem\Dialog\FolderBrowserDialog.cs" />
     <Compile Include="Source\FileSystem\FileSystemWin.cs" />
     <Compile Include="Source\Modules\ApplicationModule\Controls\NavigationMenuControl.cs" />
+    <Compile Include="Source\Modules\ModGenerator\ModEditorFormFactory.cs" />
     <Compile Include="Source\Modules\ModGenerator\ModInfoSerializer.cs" />
     <Compile Include="Source\Modules\ModGenerator\ModSerializer.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundEditorFormFactory.cs" />
@@ -293,7 +295,6 @@
     <Compile Include="Source\Validations\FullPathValidator.cs" />
     <Compile Include="Source\Validations\NotEmptyRule.cs" />
     <Compile Include="Source\Modules\SoundGenerator\Validation\SoundEventValidator.cs" />
-    <Compile Include="Source\Modules\ModGenerator\ModGeneratorViewModel.cs" />
     <Compile Include="Source\Modules\TextureGenerator\TextureGeneratorPage.xaml.cs">
       <DependentUpon>TextureGeneratorPage.xaml</DependentUpon>
     </Compile>

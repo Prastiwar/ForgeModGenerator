@@ -10,21 +10,23 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
     public class OtherBasesCodeGenerator : MultiScriptsCodeGenerator
     {
         public OtherBasesCodeGenerator(Mod mod) : base(mod)
-            => ScriptFilePaths = new string[] {
-                Path.Combine(ModPaths.SourceCodeRootFolder(Modname, Organization), SourceCodeLocator.SoundEventBase.RelativePath),
-                Path.Combine(ModPaths.SourceCodeRootFolder(Modname, Organization), SourceCodeLocator.FoodEffectBase.RelativePath)
+            => ScriptLocators = new ClassLocator[] {
+                SourceCodeLocator.SoundEventBase(Modname, Organization),
+                SourceCodeLocator.FoodEffectBase(Modname, Organization)
             };
 
-        protected override string[] ScriptFilePaths { get; }
+        public override ClassLocator[] ScriptLocators { get; }
+
+        public override ClassLocator ScriptLocator => ScriptLocators[0];
 
         protected override CodeCompileUnit CreateTargetCodeUnit(string scriptPath)
         {
             string fileName = Path.GetFileNameWithoutExtension(scriptPath);
-            if (fileName == SourceCodeLocator.SoundEventBase.ClassName)
+            if (fileName == SourceCodeLocator.SoundEventBase(Modname, Organization).ClassName)
             {
                 return CreateSoundEventBase();
             }
-            else if (fileName == SourceCodeLocator.FoodEffectBase.ClassName)
+            else if (fileName == SourceCodeLocator.FoodEffectBase(Modname, Organization).ClassName)
             {
                 return CreateFoodEffectBase();
             }
@@ -36,14 +38,14 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 
         private CodeCompileUnit CreateSoundEventBase()
         {
-            CodeTypeDeclaration clas = NewClassWithBases(SourceCodeLocator.SoundEventBase.ClassName, "SoundEvent");
-            CodeConstructor ctor = NewConstructor(SourceCodeLocator.SoundEventBase.ClassName, MemberAttributes.Public, new Parameter(typeof(string).FullName, "name"));
-            ctor.Statements.Add(new CodeSuperConstructorInvokeExpression(NewObject("ResourceLocation", NewFieldReferenceType(SourceCodeLocator.Hook.ClassName, "MODID"), NewVarReference("name"))));
+            CodeTypeDeclaration clas = NewClassWithBases(SourceCodeLocator.SoundEventBase(Modname, Organization).ClassName, "SoundEvent");
+            CodeConstructor ctor = NewConstructor(SourceCodeLocator.SoundEventBase(Modname, Organization).ClassName, MemberAttributes.Public, new Parameter(typeof(string).FullName, "name"));
+            ctor.Statements.Add(new CodeSuperConstructorInvokeExpression(NewObject("ResourceLocation", NewFieldReferenceType(SourceCodeLocator.Hook(Modname, Organization).ClassName, "MODID"), NewVarReference("name"))));
             ctor.Statements.Add(NewMethodInvoke("setRegistryName", NewVarReference("name")));
-            ctor.Statements.Add(NewMethodInvoke(NewFieldReferenceType(SourceCodeLocator.SoundEvents.ClassName, SourceCodeLocator.SoundEvents.InitFieldName), "add", NewThis()));
+            ctor.Statements.Add(NewMethodInvoke(NewFieldReferenceType(SourceCodeLocator.SoundEvents(Modname, Organization).ClassName, SourceCodeLocator.SoundEvents(Modname, Organization).InitFieldName), "add", NewThis()));
             clas.Members.Add(ctor);
-            CodeNamespace package = NewPackage(clas, $"{PackageName}.{SourceCodeLocator.Hook.ImportFullName}",
-                                                     $"{PackageName}.{SourceCodeLocator.SoundEvents.ImportFullName}",
+            CodeNamespace package = NewPackage(clas, $"{PackageName}.{SourceCodeLocator.Hook(Modname, Organization).ImportRelativeName}",
+                                                     $"{PackageName}.{SourceCodeLocator.SoundEvents(Modname, Organization).ImportRelativeName}",
                                                      "net.minecraft.util.ResourceLocation",
                                                      "net.minecraft.util.SoundEvent");
             return NewCodeUnit(package);
@@ -51,9 +53,9 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 
         private CodeCompileUnit CreateFoodEffectBase()
         {
-            CodeTypeDeclaration clas = NewClassWithBases(SourceCodeLocator.FoodEffectBase.ClassName, "FoodBase");
+            CodeTypeDeclaration clas = NewClassWithBases(SourceCodeLocator.FoodEffectBase(Modname, Organization).ClassName, "FoodBase");
             clas.Members.Add(NewField("PotionEffect", "effect", MemberAttributes.Family));
-            CodeConstructor ctor = NewConstructor(SourceCodeLocator.FoodEffectBase.ClassName, MemberAttributes.Public, new Parameter(typeof(string).FullName, "name"),
+            CodeConstructor ctor = NewConstructor(SourceCodeLocator.FoodEffectBase(Modname, Organization).ClassName, MemberAttributes.Public, new Parameter(typeof(string).FullName, "name"),
                                                                                              new Parameter(typeof(int).FullName, "amount"),
                                                                                              new Parameter(typeof(float).FullName, "saturation"),
                                                                                              new Parameter(typeof(bool).FullName, "isAnimalFood"),

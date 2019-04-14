@@ -16,7 +16,7 @@ namespace ForgeModGenerator.Tests
         {
             ClassLocator locator = new ClassLocator("someFolder.SomeClassName");
             Assert.AreEqual("SomeClassName", locator.ClassName);
-            Assert.AreEqual("someFolder.SomeClassName", locator.ImportFullName);
+            Assert.AreEqual("someFolder.SomeClassName", locator.ImportRelativeName);
             Assert.AreEqual("someFolder/SomeClassName.java", locator.RelativePath);
 
             string sourcePath = ModPaths.SourceCodeRootFolder("TestMod", "testorg");

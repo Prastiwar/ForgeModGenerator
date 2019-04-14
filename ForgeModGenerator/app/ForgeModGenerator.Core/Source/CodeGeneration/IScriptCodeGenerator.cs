@@ -5,8 +5,13 @@ namespace ForgeModGenerator.CodeGeneration
     public interface IScriptCodeGenerator
     {
         Mod Mod { get; }
-        string ScriptFilePath { get; }
+        ClassLocator ScriptLocator { get; }
 
         void RegenerateScript();
+    }
+
+    public interface IMultiScriptCodeGenerator : IScriptCodeGenerator
+    {
+        ClassLocator[] ScriptLocators { get; }
     }
 }

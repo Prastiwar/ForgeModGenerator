@@ -9,6 +9,7 @@ using ForgeModGenerator.CommandGenerator.Views;
 using ForgeModGenerator.ItemGenerator.ViewModels;
 using ForgeModGenerator.ItemGenerator.Views;
 using ForgeModGenerator.Models;
+using ForgeModGenerator.ModGenerator;
 using ForgeModGenerator.ModGenerator.Serialization;
 using ForgeModGenerator.ModGenerator.Validation;
 using ForgeModGenerator.ModGenerator.ViewModels;
@@ -119,6 +120,8 @@ namespace ForgeModGenerator
             containerRegistry.Register(typeof(IFolderSynchronizerFactory<,>), typeof(FolderSynchronizerFactory<,>));
             containerRegistry.Register(typeof(IFoldersExplorerFactory<,>), typeof(FoldersExplorerFactory<,>));
             containerRegistry.Register(typeof(IFoldersFinder<,>), typeof(DefaultFoldersFinder<,>));
+
+            containerRegistry.Register(typeof(IEditorFormFactory<Mod>), typeof(ModEditorFormFactory));
 
             containerRegistry.Register(typeof(IEditorFormFactory<>), typeof(EditorFormFactory<>));
         }

@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace ForgeModGenerator.CodeGeneration
 {
-    public abstract class ScriptCodeGenerator : IScriptCodeGenerator, IDisposable
+    public abstract class ScriptCodeGenerator : IScriptCodeGenerator
     {
         public ScriptCodeGenerator(Mod mod)
         {
@@ -25,26 +25,28 @@ namespace ForgeModGenerator.CodeGeneration
         protected string ModnameLower { get; }
         protected string Organization { get; }
         protected string PackageName { get; }
-        protected JavaCodeProvider JavaProvider { get; } = new JavaCodeProvider();
         protected CodeGeneratorOptions GeneratorOptions { get; } = new CodeGeneratorOptions() { BracingStyle = "Block" };
-
-        public abstract string ScriptFilePath { get; }
-
-        public virtual void RegenerateScript() => RegenerateScript(ScriptFilePath, CreateTargetCodeUnit(), GeneratorOptions);
+        
+        public abstract ClassLocator ScriptLocator { get; }
+        
+        public virtual void RegenerateScript() => RegenerateScript(ScriptLocator.FullPath, CreateTargetCodeUnit(), GeneratorOptions);
 
         protected void RegenerateScript(string scriptPath, CodeCompileUnit targetCodeUnit, CodeGeneratorOptions options)
         {
-            try
+            using (JavaCodeProvider javaProvider = new JavaCodeProvider())
             {
-                new FileInfo(scriptPath).Directory.Create();
-                using (StreamWriter sourceWriter = new StreamWriter(scriptPath))
+                try
                 {
-                    JavaProvider.GenerateCodeFromCompileUnit(targetCodeUnit, sourceWriter, options);
+                    new FileInfo(scriptPath).Directory.Create();
+                    using (StreamWriter sourceWriter = new StreamWriter(scriptPath))
+                    {
+                        javaProvider.GenerateCodeFromCompileUnit(targetCodeUnit, sourceWriter, options);
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, $"Couldnt generate code for file. Make sure it's not accesed by any process. {scriptPath}", true);
+                catch (Exception ex)
+                {
+                    Log.Error(ex, $"Couldnt generate code for file. Make sure it's not accesed by any process. {scriptPath}", true);
+                }
             }
         }
 
@@ -203,24 +205,6 @@ namespace ForgeModGenerator.CodeGeneration
             targetUnit.Namespaces.Add(package);
             return targetUnit;
         }
-        #endregion
-
-        #region IDisposable Support
-        private bool disposedValue = false; // To detect redundant calls
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    JavaProvider.Dispose();
-                }
-                disposedValue = true;
-            }
-        }
-
-        public void Dispose() => Dispose(true);
         #endregion
     }
 }

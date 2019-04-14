@@ -36,15 +36,8 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
             ModSerializer = modSerializer;
             ModInfoSerializer = modInfoSerializer;
             ResetNewMod();
-            Form = new Controls.ModForm() {
-                AddForgeVersionCommand = AddNewForgeVersionCommand,
-                Setups = new ObservableCollection<WorkspaceSetup>(ReflectionHelper.EnumerateSubclasses<WorkspaceSetup>()),
-                ForgeVersions = SessionContext.ForgeVersions,
-                Sides = Sides
-            };
             EditorForm = editorFormFactory.Create();
             EditorForm.Validator = modValidator;
-            EditorForm.Form = Form;
             EditorForm.ItemEdited += Editor_OnItemEdited;
         }
 
@@ -53,7 +46,6 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
         };
 
         protected IValidator<Mod> ModValidator { get; set; }
-        protected IUIElement Form { get; set; }
         protected IEditorForm<Mod> EditorForm { get; set; }
         protected IEditorFormFactory<Mod> EditorFormFactory { get; }
         protected ICodeGenerationService CodeGenerationService { get; }
@@ -77,9 +69,6 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
             get => selectedEditMod;
             set => SetProperty(ref selectedEditMod, value);
         }
-
-        private ICommand addNewForgeVersionCommand;
-        public ICommand AddNewForgeVersionCommand => addNewForgeVersionCommand ?? (addNewForgeVersionCommand = new DelegateCommand(AddNewForge));
 
         private ICommand createModCommand;
         public ICommand CreateModCommand => createModCommand ?? (createModCommand = new DelegateCommand(() => CreateNewMod(NewMod)));
@@ -117,12 +106,6 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
             }
         }
 
-        private void AddNewForge()
-        {
-            Process.Start("https://files.minecraftforge.net/"); // to install version
-            Process.Start(AppPaths.ForgeVersions); // paste zip there
-        }
-
         private void ResetNewMod() => NewMod = new Mod(new McModInfo() {
             Name = "NewExampleMod",
             Modid = "newexamplemod",
@@ -145,7 +128,6 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
         private void CreateNewMod(Mod mod)
         {
             IEditorForm<Mod> tempEditor = EditorFormFactory.Create();
-            tempEditor.Form = Form;
             tempEditor.Validator = ModValidator;
             tempEditor.ItemEdited += (sender, e) => {
                 if (e.Result)
@@ -288,7 +270,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
                     bool mcVersionChanged = mod.ModInfo.McVersion != oldValues.ModInfo.McVersion;
                     if (versionChanged || mcVersionChanged)
                     {
-                        CodeGenerationService.RegenerateScript<SourceCodeGeneration.ModHookCodeGenerator>(mod);
+                        CodeGenerationService.RegenerateScript(CodeGeneration.SourceCodeLocator.Hook(mod.ModInfo.Name, mod.Organization).ClassName, mod);
                     }
                 }
                 ModHelper.ExportMcInfo(ModInfoSerializer, mod.ModInfo);

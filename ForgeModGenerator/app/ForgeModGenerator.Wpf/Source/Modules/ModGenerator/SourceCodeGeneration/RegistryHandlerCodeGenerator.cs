@@ -2,15 +2,14 @@
 using ForgeModGenerator.CodeGeneration.CodeDom;
 using ForgeModGenerator.Models;
 using System.CodeDom;
-using System.IO;
 
 namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 {
     public class RegistryHandlerCodeGenerator : ScriptCodeGenerator
     {
-        public RegistryHandlerCodeGenerator(Mod mod) : base(mod) => ScriptFilePath = Path.Combine(ModPaths.SourceCodeRootFolder(Modname, Organization), SourceCodeLocator.RegistryHandler.RelativePath);
+        public RegistryHandlerCodeGenerator(Mod mod) : base(mod) => ScriptLocator = SourceCodeLocator.RegistryHandler(Modname, Organization);
 
-        public override string ScriptFilePath { get; }
+        public override ClassLocator ScriptLocator { get; }
 
         private CodeMemberMethod GetRegisterMethod(string className, string fieldName, string registerType)
         {
@@ -28,9 +27,9 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
         private CodeForeachStatement CreateRegisterModelForeach(string className, string registerType)
         {
             CodeForeachStatement loop = new CodeForeachStatement(NewVariable(registerType, registerType.ToLower()), NewFieldReferenceType(className, $"{registerType.ToUpper()}S"));
-            CodeMethodInvokeExpression registerModels = NewMethodInvokeVar($"(({SourceCodeLocator.ModelInterface.ClassName}) {registerType.ToLower()})", "registerModels");
+            CodeMethodInvokeExpression registerModels = NewMethodInvokeVar($"(({SourceCodeLocator.ModelInterface(Modname, Organization).ClassName}) {registerType.ToLower()})", "registerModels");
             CodeConditionStatement ifStatement = new CodeConditionStatement(
-                new CodeSnippetExpression($"{registerType.ToLower()} instanceof {SourceCodeLocator.ModelInterface.ClassName}"), new CodeExpressionStatement(registerModels)
+                new CodeSnippetExpression($"{registerType.ToLower()} instanceof {SourceCodeLocator.ModelInterface(Modname, Organization).ClassName}"), new CodeExpressionStatement(registerModels)
             );
             loop.Statements.Add(ifStatement);
             return loop;
@@ -38,20 +37,20 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 
         protected override CodeCompileUnit CreateTargetCodeUnit()
         {
-            CodeTypeDeclaration clas = NewClassWithMembers(SourceCodeLocator.RegistryHandler.ClassName, GetRegisterMethod(SourceCodeLocator.Items.ClassName, SourceCodeLocator.Items.InitFieldName, "Item"),
-                                                                               GetRegisterMethod(SourceCodeLocator.Blocks.ClassName, SourceCodeLocator.Blocks.InitFieldName, "Block"),
-                                                                               GetRegisterMethod(SourceCodeLocator.SoundEvents.ClassName, SourceCodeLocator.SoundEvents.InitFieldName, "SoundEvent"));
+            CodeTypeDeclaration clas = NewClassWithMembers(SourceCodeLocator.RegistryHandler(Modname, Organization).ClassName, GetRegisterMethod(SourceCodeLocator.Items(Modname, Organization).ClassName, SourceCodeLocator.Items(Modname, Organization).InitFieldName, "Item"),
+                                                                               GetRegisterMethod(SourceCodeLocator.Blocks(Modname, Organization).ClassName, SourceCodeLocator.Blocks(Modname, Organization).InitFieldName, "Block"),
+                                                                               GetRegisterMethod(SourceCodeLocator.SoundEvents(Modname, Organization).ClassName, SourceCodeLocator.SoundEvents(Modname, Organization).InitFieldName, "SoundEvent"));
             clas.CustomAttributes.Add(NewEventBusSubscriberAnnotation());
             CodeMemberMethod modelRegister = NewMethod("onModelRegister", typeof(void).FullName, MemberAttributes.Public | JavaAttributes.StaticOnly, new Parameter("ModelRegistryEvent", "event"));
             modelRegister.CustomAttributes.Add(NewSubscribeEventAnnotation());
-            modelRegister.Statements.Add(CreateRegisterModelForeach(SourceCodeLocator.Items.ClassName, "Item"));
-            modelRegister.Statements.Add(CreateRegisterModelForeach(SourceCodeLocator.Blocks.ClassName, "Block"));
+            modelRegister.Statements.Add(CreateRegisterModelForeach(SourceCodeLocator.Items(Modname, Organization).ClassName, "Item"));
+            modelRegister.Statements.Add(CreateRegisterModelForeach(SourceCodeLocator.Blocks(Modname, Organization).ClassName, "Block"));
             clas.Members.Add(modelRegister);
 
-            return NewCodeUnit(clas, $"{PackageName}.{SourceCodeLocator.Blocks.ImportFullName}",
-                                     $"{PackageName}.{SourceCodeLocator.Items.ImportFullName}",
-                                     $"{PackageName}.{SourceCodeLocator.SoundEvents.ImportFullName}",
-                                     $"{PackageName}.{SourceCodeLocator.ModelInterface.ImportFullName}",
+            return NewCodeUnit(clas, $"{PackageName}.{SourceCodeLocator.Blocks(Modname, Organization).ImportRelativeName}",
+                                     $"{PackageName}.{SourceCodeLocator.Items(Modname, Organization).ImportRelativeName}",
+                                     $"{PackageName}.{SourceCodeLocator.SoundEvents(Modname, Organization).ImportRelativeName}",
+                                     $"{PackageName}.{SourceCodeLocator.ModelInterface(Modname, Organization).ImportRelativeName}",
                                      "net.minecraft.block.Block",
                                      "net.minecraft.item.Item",
                                      "net.minecraft.util.SoundEvent",

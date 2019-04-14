@@ -7,8 +7,6 @@ namespace ForgeModGenerator.Services
 {
     public interface ISessionContextService : INotifyPropertyChanged
     {
-        void Refresh();
-
         ObservableCollection<ForgeVersion> ForgeVersions { get; }
 
         ObservableCollection<Mod> Mods { get; }
@@ -19,5 +17,8 @@ namespace ForgeModGenerator.Services
         bool IsModSelected { get; }
 
         bool AskBeforeClose { get; set; }
+
+        void Refresh();
+        void DownloadNewForgeVersion();
     }
 }
