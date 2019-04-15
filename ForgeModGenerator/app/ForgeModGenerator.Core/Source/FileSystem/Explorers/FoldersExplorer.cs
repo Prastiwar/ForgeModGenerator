@@ -143,12 +143,17 @@ namespace ForgeModGenerator
         /// <summary> Copies files to folder path, if file with given name exists, prompt for overwriting </summary>
         public void CopyFilesToFolder(TFolder folder, params string[] fileNames)
         {
+            bool wasEnabled = FileSynchronizer.IsEnabled;
+            if (wasEnabled)
+            {
+                FileSynchronizer.SetEnableSynchronization(false); // prevent auto-synchronization when moving file
+            }
             foreach (string filePath in fileNames)
             {
                 string newPath = Path.Combine(folder.Info.FullName, Path.GetFileName(filePath));
                 if (File.Exists(newPath))
                 {
-                    if (filePath != newPath)
+                    if (!filePath.ComparePath(newPath))
                     {
                         bool overwrite = DialogService.ShowMessage($"File {newPath} already exists.{Environment.NewLine}Do you want to overwrite it?", "Existing file conflict", "Yes", "No", null).Result;
                         if (overwrite)
@@ -166,11 +171,19 @@ namespace ForgeModGenerator
                 }
                 else
                 {
-                    if (!FileSystem.CopyFile(filePath, newPath))
+                    if (FileSystem.CopyFile(filePath, newPath))
+                    {
+                        folder.Add(newPath);
+                    }
+                    else
                     {
                         DialogService.ShowMessage(StaticMessage.GetOperationFailedMessage(filePath), "Copy failed");
                     }
                 }
+            }
+            if (wasEnabled)
+            {
+                FileSynchronizer.SetEnableSynchronization(true);
             }
         }
 

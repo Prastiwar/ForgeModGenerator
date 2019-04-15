@@ -13,6 +13,7 @@ namespace ForgeModGenerator
 
         string RootPath { get; set; }
         string Filters { get; set; }
+        bool IsEnabled { get; }
 
         void SetEnableSynchronization(bool enabled);
         void AddNotReferencedFiles();
