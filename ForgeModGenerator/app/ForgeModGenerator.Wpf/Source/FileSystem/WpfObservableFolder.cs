@@ -7,8 +7,6 @@ namespace ForgeModGenerator
     public class WpfObservableFolder<T> : ObservableFolder<T>
         where T : IFileSystemObject
     {
-        public static WpfObservableFolder<T> CreateEmpty() => new WpfObservableFolder<T>();
-
         protected WpfObservableFolder() => Files = new WpfObservableRangeCollection<T>();
 
         public WpfObservableFolder(string path) : base(path) { }

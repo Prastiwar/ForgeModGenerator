@@ -25,6 +25,9 @@
                                                           Invert="True" />
                 </ResourceDictionary>
                 <ResourceDictionary>
+                    <converters:DataBindingDebugConverter x:Key="DataBindingDebugConverter" />
+                </ResourceDictionary>
+                <ResourceDictionary>
                     <converters:MethodToCommandConverter x:Key="MethodToCommandConverter" />
                 </ResourceDictionary>
                 <ResourceDictionary>

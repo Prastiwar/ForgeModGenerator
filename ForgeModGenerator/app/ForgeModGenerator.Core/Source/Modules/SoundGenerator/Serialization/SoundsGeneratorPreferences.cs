@@ -1,6 +1,6 @@
 ﻿using ForgeModGenerator.Serialization;
 
-namespace ForgeModGenerator.SoundGenerator.Persistence
+namespace ForgeModGenerator.SoundGenerator.Serialization
 {
     public class SoundsGeneratorPreferences : PreferenceData
     {

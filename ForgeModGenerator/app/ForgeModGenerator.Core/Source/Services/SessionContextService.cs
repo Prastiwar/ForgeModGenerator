@@ -1,9 +1,9 @@
 ﻿using ForgeModGenerator.Models;
-using ForgeModGenerator.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -67,6 +67,12 @@ namespace ForgeModGenerator.Services
                     SelectedMods.Add(SelectedMod);
                 }
             }
+        }
+
+        public void DownloadNewForgeVersion()
+        {
+            Process.Start("https://files.minecraftforge.net/"); // to install version
+            Process.Start(AppPaths.ForgeVersions); // paste zip there
         }
 
         protected ObservableCollection<Mod> FindMods()

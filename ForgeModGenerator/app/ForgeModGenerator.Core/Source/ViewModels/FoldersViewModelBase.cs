@@ -35,7 +35,7 @@ namespace ForgeModGenerator.ViewModels
         private ICommand resolveJsonFileCommand;
         public ICommand ResolveJsonFileCommand => resolveJsonFileCommand ?? (resolveJsonFileCommand = new DelegateCommand(ResolveJsonFile));
 
-        protected JsonUpdaterBase<IEnumerable<TFolder>> JsonUpdater { get; set; }
+        protected IJsonUpdater<IEnumerable<TFolder>> JsonUpdater { get; set; }
 
         /// <summary> Deserialized folders from FoldersJsonFilePath and checks if any file doesn't exists, if so, prompt if should fix this </summary>
         protected async void CheckJsonFileMismatch()

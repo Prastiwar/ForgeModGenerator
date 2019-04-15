@@ -1,6 +1,7 @@
 ﻿using ForgeModGenerator.CodeGeneration;
 using ForgeModGenerator.Converters;
 using ForgeModGenerator.Models;
+using ForgeModGenerator.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
@@ -14,15 +15,16 @@ namespace ForgeModGenerator.Tests
         [TestMethod]
         public void TestClassLocator()
         {
-            ClassLocator locator = new ClassLocator("someFolder.SomeClassName");
+            ClassLocator locator = new ClassLocator("com.testorg.testmod.someFolder.SomeClassName");
             Assert.AreEqual("SomeClassName", locator.ClassName);
-            Assert.AreEqual("someFolder.SomeClassName", locator.ImportFullName);
+            Assert.AreEqual("someFolder.SomeClassName", locator.ImportRelativeName);
             Assert.AreEqual("someFolder/SomeClassName.java", locator.RelativePath);
 
             string sourcePath = ModPaths.SourceCodeRootFolder("TestMod", "testorg");
-            string armorBasePath = Path.Combine(sourcePath, SourceCodeLocator.ArmorBase.RelativePath);
+            string armorBasePath = Path.Combine(sourcePath, SourceCodeLocator.ArmorBase("TestMod", "testorg").RelativePath);
             string armorBaseFileName = Path.GetFileNameWithoutExtension(armorBasePath);
-            Assert.AreEqual(armorBaseFileName, SourceCodeLocator.ArmorBase.ClassName);
+            Assert.AreEqual(armorBaseFileName, SourceCodeLocator.ArmorBase("TestMod", "testorg").ClassName);
+            Assert.IsTrue(IOHelper.IsSubPathOf(locator.FullPath, sourcePath));
         }
 
         [TestMethod]

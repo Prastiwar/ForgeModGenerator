@@ -208,11 +208,10 @@
     <Compile Include="Source\CodeGeneration\InitVariablesCodeGenerator.cs" />
     <Compile Include="Source\CodeGeneration\MultiScriptsCodeGenerator.cs" />
     <Compile Include="Source\CodeGeneration\ScriptCodeGenerator.cs" />
-    <Compile Include="Source\Common\Cache.cs" />
-    <Compile Include="Source\Common\EditorForm.cs" />
     <Compile Include="Source\Controls\Proxy\SelectorDecorator.cs" />
     <Compile Include="Source\Common\SyncInvokeObject.cs" />
     <Compile Include="Source\Controls\PathNameSubmitTextBox.cs" />
+    <Compile Include="Source\Converters\DataBindingDebugConverter.cs" />
     <Compile Include="Source\Converters\DialogResultAssemblyConverter.cs" />
     <Compile Include="Source\Converters\Json\ForgeVersionJsonConverter.cs" />
     <Compile Include="Source\Converters\Json\McModInfoJsonConverter.cs" />
@@ -223,12 +222,16 @@
     <Compile Include="Source\FileSystem\Dialog\FolderBrowserDialog.cs" />
     <Compile Include="Source\FileSystem\FileSystemWin.cs" />
     <Compile Include="Source\Modules\ApplicationModule\Controls\NavigationMenuControl.cs" />
-    <Compile Include="Source\Modules\SoundGenerator\SoundEventsFinder.cs" />
+    <Compile Include="Source\Modules\ModGenerator\ModEditorFormFactory.cs" />
+    <Compile Include="Source\Modules\ModGenerator\ModInfoSerializer.cs" />
+    <Compile Include="Source\Modules\ModGenerator\ModSerializer.cs" />
+    <Compile Include="Source\Modules\SoundGenerator\SoundEditorFormFactory.cs" />
     <Compile Include="Source\Serialization\PreferenceDataSerializer.cs" />
     <Compile Include="Source\Serialization\JsonSerializer.cs" />
+    <Compile Include="Source\Modules\SoundGenerator\SoundEventsSerializer.cs" />
+    <Compile Include="Source\Services\CodeGeneratorService.cs" />
     <Compile Include="Source\Services\PrismRegionNavigationBridge.cs" />
     <Compile Include="Source\Utility\Extensions\BindingExtensions.cs" />
-    <Compile Include="Source\Utility\Helpers\ModHelper.cs" />
     <Compile Include="Source\Common\ThirdParty\WpfObservableRangeCollection.cs" />
     <Compile Include="Source\Controls\EditableList.cs" />
     <Compile Include="Source\Controls\FolderListBox.cs" />
@@ -248,7 +251,6 @@
     <Compile Include="Source\Services\SnackbarService.cs" />
     <Compile Include="Source\FileSystem\WpfObservableFolder.cs" />
     <Compile Include="Source\Utility\Extensions\ValidationExtensions.cs" />
-    <Compile Include="Source\Serialization\JsonUpdater.cs" />
     <Compile Include="Source\Modules\ApplicationModule\BugReporter.xaml.cs">
       <DependentUpon>BugReporter.xaml</DependentUpon>
     </Compile>
@@ -272,7 +274,6 @@
     <Compile Include="Source\Modules\ModGenerator\SourceCodeGeneration\ProxyCodeGenerator.cs" />
     <Compile Include="Source\Modules\ModGenerator\SourceCodeGeneration\RegistryHandlerCodeGenerator.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundCodeGenerator.cs" />
-    <Compile Include="Source\Modules\SoundGenerator\SoundJsonUpdater.cs" />
     <Compile Include="Source\Services\CommandTracker.cs" />
     <Compile Include="Source\Controls\FolderExpanderControl.cs" />
     <Compile Include="Source\Modules\ModGenerator\BuildConfiguration\ModBuildForm.xaml.cs">
@@ -294,8 +295,6 @@
     <Compile Include="Source\Validations\FullPathValidator.cs" />
     <Compile Include="Source\Validations\NotEmptyRule.cs" />
     <Compile Include="Source\Modules\SoundGenerator\Validation\SoundEventValidator.cs" />
-    <Compile Include="Source\Modules\ModGenerator\ModGeneratorViewModel.cs" />
-    <Compile Include="Source\Modules\SoundGenerator\SoundGeneratorViewModel.cs" />
     <Compile Include="Source\Modules\TextureGenerator\TextureGeneratorPage.xaml.cs">
       <DependentUpon>TextureGeneratorPage.xaml</DependentUpon>
     </Compile>

@@ -1,22 +1,20 @@
 ﻿using ForgeModGenerator.CodeGeneration;
 using ForgeModGenerator.Models;
 using System.CodeDom;
-using System.IO;
 
 namespace ForgeModGenerator.GUIGenerator
 {
     public class CreativeTabCodeGenerator : ScriptCodeGenerator
     {
-        public CreativeTabCodeGenerator(Mod mod) : base(mod) 
-            => ScriptFilePath = Path.Combine(ModPaths.SourceCodeRootFolder(Modname, Organization), SourceCodeLocator.CreativeTab.RelativePath);
+        public CreativeTabCodeGenerator(Mod mod) : base(mod) => ScriptLocator = SourceCodeLocator.CreativeTab(Modname, Organization);
 
-        protected override string ScriptFilePath { get; }
+        public override ClassLocator ScriptLocator { get; }
 
         protected override CodeCompileUnit CreateTargetCodeUnit()
         {
-            CodeTypeDeclaration clas = NewClassWithMembers(SourceCodeLocator.CreativeTab.ClassName);
+            CodeTypeDeclaration clas = NewClassWithMembers(ScriptLocator.ClassName);
             clas.Members.Add(GetCreativeTab());
-            CodeNamespace package = NewPackage(clas, $"{PackageName}.{SourceCodeLocator.Items.ImportFullName}",
+            CodeNamespace package = NewPackage(clas, $"{PackageName}.{SourceCodeLocator.Items(Modname, Organization).ImportRelativeName}",
                                                       "net.minecraft.creativetab.CreativeTabs",
                                                       "net.minecraft.item.ItemStack",
                                                       "net.minecraftforge.fml.relauncher.Side",
@@ -34,7 +32,7 @@ $"new CreativeTabs(\"{Modname}\") {{" + @"
     @SideOnly(Side.CLIENT)
     @Override
     public ItemStack getTabIconItem() {" +
-$"{System.Environment.NewLine}    	return new ItemStack({SourceCodeLocator.Items.ClassName}.MODLOGO, 1);" + @"
+$"{System.Environment.NewLine}    	return new ItemStack({SourceCodeLocator.Items(Modname, Organization).ClassName}.MODLOGO, 1);" + @"
     }
 
     @SideOnly(Side.CLIENT)

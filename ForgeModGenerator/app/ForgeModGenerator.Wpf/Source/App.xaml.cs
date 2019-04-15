@@ -8,6 +8,10 @@ using ForgeModGenerator.CommandGenerator.ViewModels;
 using ForgeModGenerator.CommandGenerator.Views;
 using ForgeModGenerator.ItemGenerator.ViewModels;
 using ForgeModGenerator.ItemGenerator.Views;
+using ForgeModGenerator.Models;
+using ForgeModGenerator.ModGenerator;
+using ForgeModGenerator.ModGenerator.Serialization;
+using ForgeModGenerator.ModGenerator.Validation;
 using ForgeModGenerator.ModGenerator.ViewModels;
 using ForgeModGenerator.ModGenerator.Views;
 using ForgeModGenerator.RecipeGenerator.ViewModels;
@@ -16,15 +20,20 @@ using ForgeModGenerator.Serialization;
 using ForgeModGenerator.Services;
 using ForgeModGenerator.SoundGenerator;
 using ForgeModGenerator.SoundGenerator.Models;
+using ForgeModGenerator.SoundGenerator.Serialization;
+using ForgeModGenerator.SoundGenerator.Validation;
 using ForgeModGenerator.SoundGenerator.ViewModels;
 using ForgeModGenerator.SoundGenerator.Views;
 using ForgeModGenerator.TextureGenerator.ViewModels;
 using ForgeModGenerator.TextureGenerator.Views;
+using ForgeModGenerator.Validation;
+using Microsoft.Extensions.Caching.Memory;
 using NLog.Extensions.Logging;
 using Prism.Ioc;
 using Prism.Mvvm;
 using Prism.Unity;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Windows;
@@ -56,21 +65,17 @@ namespace ForgeModGenerator
             RegisterServices(containerRegistry);
 
             containerRegistry.RegisterInstance<ISynchronizeInvoke>(SyncInvokeObject.Default);
-            containerRegistry.RegisterInstance(Cache.Default);
+            containerRegistry.RegisterInstance<IMemoryCache>(new MemoryCache(new MemoryCacheOptions()));
             containerRegistry.Register<IFileSystem, FileSystemWin>();
-            RegisterSerializers(containerRegistry);
+            containerRegistry.Register<ICodeGenerationService, CodeGeneratorService>();
 
+            RegisterSerializers(containerRegistry);
+            RegisterValidators(containerRegistry);
             RegisterFactories(containerRegistry);
             RegisterPages(containerRegistry);
         }
 
-        private void RegisterSerializers(IContainerRegistry containerRegistry)
-        {
-            containerRegistry.Register<ISerializer, JsonSerializer>();
-            containerRegistry.Register<ISerializer<PreferenceData>, PreferenceDataSerializer>();
-        }
-
-        private static void SetProvider(IContainerRegistry containerRegistry)
+        private void SetProvider(IContainerRegistry containerRegistry)
         {
             ViewModelLocationProvider.SetDefaultViewTypeToViewModelTypeResolver((viewType) => {
                 string viewName = viewType.FullName.Replace(".Views.", ".ViewModels.");
@@ -84,21 +89,46 @@ namespace ForgeModGenerator
             });
         }
 
+        private void RegisterValidators(IContainerRegistry containerRegistry)
+        {
+            containerRegistry.Register<IUniqueValidator<SoundEvent>, SoundEventValidator>();
+            containerRegistry.Register<IValidator<Mod>, ModValidator>();
+        }
+
+        private void RegisterSerializers(IContainerRegistry containerRegistry)
+        {
+            containerRegistry.Register<ISerializer, JsonSerializer>();
+            containerRegistry.Register<ISerializer<PreferenceData>, PreferenceDataSerializer>();
+
+            containerRegistry.Register<ISerializer<IEnumerable<SoundEvent>, SoundEvent>, SoundEventsSerializer>();
+            containerRegistry.Register<ISoundEventsSerializer, SoundEventsSerializer>();
+
+            containerRegistry.Register<ISerializer<Mod>, ModSerializer>();
+            containerRegistry.Register<ISerializer<McModInfo>, ModInfoSerializer>();
+        }
+
         private void RegisterFactories(IContainerRegistry containerRegistry)
         {
+            containerRegistry.Register<ISoundJsonUpdaterFactory, SoundJsonUpdaterFactory>();
+
             containerRegistry.Register<IFoldersFactory<SoundEvent, Sound>, SoundEventsFactory>();
             containerRegistry.Register<IFoldersFinder<SoundEvent, Sound>, SoundEventsFinder>();
             containerRegistry.Register<IFolderSynchronizerFactory<SoundEvent, Sound>, SoundEventsSynchronizerFactory>();
+            containerRegistry.Register(typeof(IEditorFormFactory<Sound>), typeof(SoundEditorFormFactory));
 
             containerRegistry.Register(typeof(IFoldersFactory<,>), typeof(WpfFoldersFactory<,>));
             containerRegistry.Register(typeof(IFolderSynchronizerFactory<,>), typeof(FolderSynchronizerFactory<,>));
             containerRegistry.Register(typeof(IFoldersExplorerFactory<,>), typeof(FoldersExplorerFactory<,>));
             containerRegistry.Register(typeof(IFoldersFinder<,>), typeof(DefaultFoldersFinder<,>));
+
+            containerRegistry.Register(typeof(IEditorFormFactory<Mod>), typeof(ModEditorFormFactory));
+
+            containerRegistry.Register(typeof(IEditorFormFactory<>), typeof(EditorFormFactory<>));
         }
 
         private void RegisterServices(IContainerRegistry containerRegistry)
         {
-            containerRegistry.RegisterInstance<ISessionContextService>(WpfSessionContextService.Instance);
+            containerRegistry.RegisterSingleton<ISessionContextService, WpfSessionContextService>();
             containerRegistry.Register<INavigationService, PrismRegionNavigationBridge>();
             containerRegistry.Register<ISnackbarService, SnackbarService>();
             containerRegistry.Register<IModBuildService, ModBuildService>();

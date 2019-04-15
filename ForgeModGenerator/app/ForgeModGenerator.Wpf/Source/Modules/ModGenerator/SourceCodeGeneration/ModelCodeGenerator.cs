@@ -1,18 +1,17 @@
 ﻿using ForgeModGenerator.CodeGeneration;
 using ForgeModGenerator.Models;
 using System.CodeDom;
-using System.IO;
 
 namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 {
     public class ModelCodeGenerator : ScriptCodeGenerator
     {
-        public ModelCodeGenerator(Mod mod) : base(mod) => 
-            ScriptFilePath = Path.Combine(ModPaths.SourceCodeRootFolder(Modname, Organization), SourceCodeLocator.ModelInterface.RelativePath);
+        public ModelCodeGenerator(Mod mod) : base(mod) =>
+            ScriptLocator = SourceCodeLocator.ModelInterface(Modname, Organization);
 
-        protected override string ScriptFilePath { get; }
+        public override ClassLocator ScriptLocator { get; }
 
-        protected override CodeCompileUnit CreateTargetCodeUnit() => 
-            NewCodeUnit(NewInterface(SourceCodeLocator.ModelInterface.ClassName, NewMethod("registerModels", typeof(void).FullName, MemberAttributes.Public)));
+        protected override CodeCompileUnit CreateTargetCodeUnit() =>
+            NewCodeUnit(NewInterface(SourceCodeLocator.ModelInterface(Modname, Organization).ClassName, NewMethod("registerModels", typeof(void).FullName, MemberAttributes.Public)));
     }
 }

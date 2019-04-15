@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MaterialDesignThemes.Wpf;
+using System;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -49,5 +50,26 @@ namespace ForgeModGenerator.Services
             afterHideCallback?.Invoke(boolResult);
             return Task.FromResult(boolResult);
         }
+
+        public Task<object> Show(object content) => DialogHost.Show(content);
+        public Task<object> Show(object content, EventHandler<DialogOpenedArgs> openedArgs, EventHandler<DialogClosingArgs> closingArgs) =>
+            DialogHost.Show(content,
+                new DialogOpenedEventHandler((s, args) => {
+                    DialogOpenedArgs extArgs = new DialogOpenedArgs();
+                    openedArgs(s, extArgs);
+                    if (extArgs.ShouldClose)
+                    {
+                        args.Session.Close();
+                    }
+                }),
+                new DialogClosingEventHandler((s, args) => {
+                    DialogClosingArgs extArgs = new DialogClosingArgs(args.Parameter);
+                    closingArgs(s, extArgs);
+                    if (extArgs.IsCancelled)
+                    {
+                        args.Cancel();
+                    }
+                })
+            );
     }
 }

@@ -6,7 +6,7 @@
              xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:local="clr-namespace:ForgeModGenerator.ModGenerator.Controls"
-             xmlns:rules="clr-namespace:ForgeModGenerator.ModGenerator.Validations"
+             xmlns:rules="clr-namespace:ForgeModGenerator.ModGenerator.Validation"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d"
              MinWidth="500"
@@ -143,8 +143,8 @@
                                     IsTabStop="True"
                                     Text="{Binding Path=Name, ValidatesOnDataErrors=True}" />
             <controls:SubmitTextBox x:Name="ModidTextBox"
-                                    TextChanged="LowerText"
                                     IsTabStop="True"
+                                    TextChanged="LowerText"
                                     Text="{Binding Path=Modid, ValidatesOnDataErrors=True}" />
             <TextBox x:Name="DescriptionTextBox"
                      Text="{Binding Path=ModInfo.Description, Mode=TwoWay}"

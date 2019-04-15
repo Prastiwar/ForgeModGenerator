@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ForgeModGenerator.Serialization
 {
@@ -14,11 +15,20 @@ namespace ForgeModGenerator.Serialization
         string SerializeObject(object value);
     }
 
-    public interface ISerializer<T>
+    public interface ISerializer<T> : ISerializer
     {
-        T DeserializeObject(string value);
+        T Deserialize(string value);
 
-        string SerializeObject(T value, bool prettyPrint);
-        string SerializeObject(T value);
+        string Serialize(T value, bool prettyPrint);
+        string Serialize(T value);
+    }
+
+    public interface ISerializer<TCollection, TItem> : ISerializer<TCollection>
+        where TCollection : IEnumerable<TItem>
+    {
+        TItem DeserializeItem(string value);
+
+        string SerializeItem(TItem value, bool prettyPrint);
+        string SerializeItem(TItem value);
     }
 }

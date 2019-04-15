@@ -56,6 +56,7 @@ namespace ForgeModGenerator.Tests
             Assert.IsTrue(IOHelper.IsSubPathOf(@"c:\foo", @"c:"));
             Assert.IsTrue(IOHelper.IsSubPathOf(@"c:\foo", @"c:\"));
             Assert.IsTrue(IOHelper.IsSubPathOf(@"c:\foo", @"c:\foo"));
+            Assert.IsTrue(IOHelper.IsSubPathOf(@"c:\foo", @"C:\FOO"));
             Assert.IsTrue(IOHelper.IsSubPathOf(@"c:\foo", @"c:\foo\"));
             Assert.IsTrue(IOHelper.IsSubPathOf(@"c:\foo\", @"c:\foo"));
             Assert.IsTrue(IOHelper.IsSubPathOf(@"c:\foo\bar\", @"c:\foo\"));

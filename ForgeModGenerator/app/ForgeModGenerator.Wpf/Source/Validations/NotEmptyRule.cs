@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Windows.Controls;
 
-namespace ForgeModGenerator.Validations
+namespace ForgeModGenerator.Validation
 {
     public class NotEmptyRule : ValidationRule
     {

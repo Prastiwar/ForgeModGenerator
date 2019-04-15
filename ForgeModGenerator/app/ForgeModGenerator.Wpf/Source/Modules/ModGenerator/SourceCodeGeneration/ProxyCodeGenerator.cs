@@ -8,30 +8,29 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 {
     public class ProxyCodeGenerator : MultiScriptsCodeGenerator
     {
-        public ProxyCodeGenerator(Mod mod) : base(mod)
-        {
-            string sourcePath = ModPaths.SourceCodeRootFolder(Modname, Organization);
-            ScriptFilePaths = new string[] {
-                Path.Combine(sourcePath, SourceCodeLocator.CommonProxyInterface.RelativePath),
-                Path.Combine(sourcePath, SourceCodeLocator.ClientProxy.RelativePath),
-                Path.Combine(sourcePath, SourceCodeLocator.ServerProxy.RelativePath)
+        public ProxyCodeGenerator(Mod mod) : base(mod) =>
+            ScriptLocators = new ClassLocator[] {
+                SourceCodeLocator.CommonProxyInterface(Modname, Organization),
+                SourceCodeLocator.ClientProxy(Modname, Organization),
+                SourceCodeLocator.ServerProxy(Modname, Organization)
             };
-        }
 
-        protected override string[] ScriptFilePaths { get; }
+        public override ClassLocator[] ScriptLocators { get; }
+
+        public override ClassLocator ScriptLocator => ScriptLocators[0];
 
         protected override CodeCompileUnit CreateTargetCodeUnit(string scriptPath)
         {
             string fileName = Path.GetFileNameWithoutExtension(scriptPath);
-            if (fileName == SourceCodeLocator.CommonProxyInterface.ClassName)
+            if (fileName == SourceCodeLocator.CommonProxyInterface(Modname, Organization).ClassName)
             {
                 return CreateICommonProxyCodeUnit();
             }
-            else if (fileName == SourceCodeLocator.ClientProxy.ClassName)
+            else if (fileName == SourceCodeLocator.ClientProxy(Modname, Organization).ClassName)
             {
                 return CreateClientProxyCodeUnit();
             }
-            else if (fileName == SourceCodeLocator.ServerProxy.ClassName)
+            else if (fileName == SourceCodeLocator.ServerProxy(Modname, Organization).ClassName)
             {
                 return CreateServerProxyCodeUnit();
             }
@@ -43,7 +42,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 
         private CodeCompileUnit CreateClientProxyCodeUnit()
         {
-            CodeTypeDeclaration proxyClass = NewClassWithBases(SourceCodeLocator.ClientProxy.ClassName, SourceCodeLocator.CommonProxyInterface.ClassName);
+            CodeTypeDeclaration proxyClass = NewClassWithBases(SourceCodeLocator.ClientProxy(Modname, Organization).ClassName, SourceCodeLocator.CommonProxyInterface(Modname, Organization).ClassName);
             CodeMemberMethod registerItemRendererMethod = CreateRegisterItemRendererMethod();
             registerItemRendererMethod.Attributes |= MemberAttributes.Override;
             CodeObjectCreateExpression modelResourceLocation = NewObject("ModelResourceLocation", NewMethodInvokeVar("item", "getRegistryName"), NewVarReference("id"));
@@ -56,7 +55,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 
         private CodeCompileUnit CreateServerProxyCodeUnit()
         {
-            CodeTypeDeclaration proxyClass = NewClassWithBases(SourceCodeLocator.ServerProxy.ClassName, SourceCodeLocator.CommonProxyInterface.ClassName);
+            CodeTypeDeclaration proxyClass = NewClassWithBases(SourceCodeLocator.ServerProxy(Modname, Organization).ClassName, SourceCodeLocator.CommonProxyInterface(Modname, Organization).ClassName);
             CodeMemberMethod registerItemRendererMethod = CreateRegisterItemRendererMethod();
             registerItemRendererMethod.Attributes |= MemberAttributes.Override;
             proxyClass.Members.Add(registerItemRendererMethod);
@@ -67,7 +66,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
         {
             CodeMemberMethod registerItemMethod = CreateRegisterItemRendererMethod();
             registerItemMethod.CustomAttributes.Clear();
-            return NewCodeUnit(NewInterface(SourceCodeLocator.CommonProxyInterface.ClassName, registerItemMethod), "net.minecraft.item.Item");
+            return NewCodeUnit(NewInterface(SourceCodeLocator.CommonProxyInterface(Modname, Organization).ClassName, registerItemMethod), "net.minecraft.item.Item");
         }
 
         private CodeMemberMethod CreateRegisterItemRendererMethod()

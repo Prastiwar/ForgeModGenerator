@@ -1,5 +1,4 @@
 ﻿using ForgeModGenerator.Serialization;
-using ForgeModGenerator.Serialization;
 using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.ComponentModel;
@@ -28,7 +27,7 @@ namespace ForgeModGenerator.Services
 
         public void Save(PreferenceData data)
         {
-            string json = serializer.SerializeObject(data, true);
+            string json = serializer.Serialize(data, true);
             File.WriteAllText(data.PreferenceLocation, json);
             data.IsDirty = false;
         }
@@ -60,7 +59,7 @@ namespace ForgeModGenerator.Services
             if (File.Exists(instance.PreferenceLocation))
             {
                 string content = File.ReadAllText(instance.PreferenceLocation);
-                object preferences = serializer.DeserializeObject(content);
+                object preferences = serializer.Deserialize(content);
                 if (preferences is T data)
                 {
                     return data;
@@ -81,7 +80,7 @@ namespace ForgeModGenerator.Services
         {
             FileInfo info = new FileInfo(filePath);
             string content = File.ReadAllText(filePath);
-            PreferenceData preferences = serializer.DeserializeObject(content);
+            PreferenceData preferences = serializer.Deserialize(content);
             if (preferences != null)
             {
                 cache.Set(preferences.GetType(), preferences);

@@ -1,22 +1,22 @@
 ﻿using ForgeModGenerator.CodeGeneration;
 using ForgeModGenerator.Models;
 using System.CodeDom;
-using System.IO;
 
 namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 {
     public class ModHookCodeGenerator : ScriptCodeGenerator
     {
-        public ModHookCodeGenerator(Mod mod) : base(mod) => ScriptFilePath = Path.Combine(ModPaths.SourceCodeRootFolder(Modname, Organization), SourceCodeLocator.Hook.RelativePath);
+        public ModHookCodeGenerator(Mod mod) : base(mod) => ScriptLocator = SourceCodeLocator.Hook(mod.ModInfo.Name, mod.Organization);
 
-        protected override string ScriptFilePath { get; }
+        public override ClassLocator ScriptLocator { get; }
 
         protected CodeMemberField CreateHookString(string variableName, string value) => NewFieldGlobal(typeof(string).FullName, variableName.ToUpper(), NewPrimitive(value));
 
-        protected override CodeCompileUnit CreateTargetCodeUnit() => NewCodeUnit(NewClassWithMembers(SourceCodeLocator.Hook.ClassName, CreateHookString("MODID", Mod.ModInfo.Modid),
-                                                                                                                                       CreateHookString("VERSION", Mod.ModInfo.Version),
-                                                                                                                                       CreateHookString("ACCEPTEDVERSIONS", Mod.ModInfo.McVersion),
-                                                                                                                                       CreateHookString("CLIENTPROXYCLASS", $"{PackageName}.{SourceCodeLocator.ClientProxy.ImportFullName}"),
-                                                                                                                                       CreateHookString("SERVERPROXYCLASS", $"{PackageName}.{SourceCodeLocator.ServerProxy.ImportFullName}")));
+        protected override CodeCompileUnit CreateTargetCodeUnit() => NewCodeUnit(NewClassWithMembers(ScriptLocator.ClassName, 
+                                                                CreateHookString("MODID", Mod.ModInfo.Modid),
+                                                                CreateHookString("VERSION", Mod.ModInfo.Version),
+                                                                CreateHookString("ACCEPTEDVERSIONS", Mod.ModInfo.McVersion),
+                                                                CreateHookString("CLIENTPROXYCLASS", $"{PackageName}.{SourceCodeLocator.ClientProxy(Modname, Organization).ImportRelativeName}"),
+                                                                CreateHookString("SERVERPROXYCLASS", $"{PackageName}.{SourceCodeLocator.ServerProxy(Modname, Organization).ImportRelativeName}")));
     }
 }
