@@ -46,7 +46,7 @@
   - [ ] Visualize GUI
   - [ ] Update source code
 
-- [x] Mod Generator *- mod manager*
+- [ ] Mod Generator *- mod manager*
 
   - [x] Generate mod structure
   - [x] Generate important source code
@@ -65,7 +65,8 @@
   - [x] Remove Sound Event
   - [x] Change Sound Event NBT
   - [x] Change Sound NBT
-  - [ ] Add more than one sound to single Sound Event
+  - [x] Add Sound (multiple sounds in single Sound Event are allowed)
+  - [x] Remove Sound
   - [x] Update sounds.json
   - [ ] Update source code
 
