@@ -22,7 +22,5 @@ namespace ForgeModGenerator.SoundGenerator.CodeGeneration
             return unit;
         }
 
-        protected override IEnumerable<SoundEvent> GetElementsForMod(Mod mod) => base.GetElementsForMod(mod); // TODO: Get SoundEvents for mod
-
     }
 }

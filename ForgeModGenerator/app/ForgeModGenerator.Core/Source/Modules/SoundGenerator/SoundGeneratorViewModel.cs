@@ -1,4 +1,6 @@
-﻿using ForgeModGenerator.Services;
+﻿using ForgeModGenerator.CodeGeneration;
+using ForgeModGenerator.Models;
+using ForgeModGenerator.Services;
 using ForgeModGenerator.SoundGenerator.Models;
 using ForgeModGenerator.SoundGenerator.Serialization;
 using ForgeModGenerator.Validation;
@@ -19,24 +21,27 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
                                         IPreferenceService preferenceService,
                                         ISoundJsonUpdaterFactory jsonUpdaterFactory,
                                         IEditorFormFactory<Sound> editorFormFactory,
-                                        IUniqueValidator<SoundEvent> soundEventValidator)
+                                        IUniqueValidator<SoundEvent> soundEventValidator,
+                                        ICodeGenerationService codeGenerationService)
             : base(sessionContext, dialogService, factory)
         {
+            Preferences = preferenceService.GetOrCreate<SoundsGeneratorPreferences>();
+
             PreferenceService = preferenceService;
             JsonUpdaterFactory = jsonUpdaterFactory;
             SoundEventValidator = soundEventValidator;
-            Preferences = preferenceService.GetOrCreate<SoundsGeneratorPreferences>();
+            CodeGenerationService = codeGenerationService;
+
             Explorer.AllowedFileExtensions.Add(".ogg");
             Explorer.OpenFileDialog.Filter = "Sound file (*.ogg) | *.ogg";
             Explorer.OpenFileDialog.Multiselect = true;
             Explorer.OpenFileDialog.CheckFileExists = true;
             Explorer.OpenFileDialog.ValidateNames = true;
             Explorer.OpenFolderDialog.ShowNewFolderButton = true;
+
             FileEditor = editorFormFactory.Create();
             FileEditor.ItemEdited += OnSoundEdited;
         }
-
-        protected IPreferenceService PreferenceService { get; }
 
         public override string FoldersRootPath => SessionContext.SelectedMod != null ? ModPaths.SoundsFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid) : null;
 
@@ -44,9 +49,10 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
 
         protected SoundsGeneratorPreferences Preferences { get; set; }
 
+        protected IPreferenceService PreferenceService { get; }
         protected ISoundJsonUpdaterFactory JsonUpdaterFactory { get; }
-
-        public IUniqueValidator<SoundEvent> SoundEventValidator { get; }
+        protected ICodeGenerationService CodeGenerationService { get; }
+        protected IUniqueValidator<SoundEvent> SoundEventValidator { get; }
 
         protected override bool CanRefresh() => SessionContext.SelectedMod != null;
 
@@ -101,7 +107,8 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
         protected override void ForceJsonFileUpdate()
         {
             base.ForceJsonFileUpdate();
-            ;// TODO: GetCurrentSoundCodeGenerator().RegenerateScript();
+            Mod mod = SessionContext.SelectedMod;
+            CodeGenerationService.RegenerateInitScript(SourceCodeLocator.SoundEvents(mod.ModInfo.Name, mod.Organization).ClassName, mod, Explorer.Folders.Files);
         }
 
         protected void OnSoundEdited(object sender, ItemEditedEventArgs<Sound> args)

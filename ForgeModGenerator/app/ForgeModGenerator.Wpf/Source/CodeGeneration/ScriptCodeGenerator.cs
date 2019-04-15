@@ -37,8 +37,9 @@ namespace ForgeModGenerator.CodeGeneration
             {
                 try
                 {
-                    new FileInfo(scriptPath).Directory.Create();
-                    using (StreamWriter sourceWriter = new StreamWriter(scriptPath))
+                    FileInfo scriptFileInfo = new FileInfo(scriptPath);
+                    scriptFileInfo.Directory.Create();
+                    using (StreamWriter sourceWriter = scriptFileInfo.CreateText())
                     {
                         javaProvider.GenerateCodeFromCompileUnit(targetCodeUnit, sourceWriter, options);
                     }

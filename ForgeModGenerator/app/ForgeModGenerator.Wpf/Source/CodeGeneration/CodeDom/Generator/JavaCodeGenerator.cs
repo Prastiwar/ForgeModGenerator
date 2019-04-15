@@ -101,19 +101,15 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
             { CodeBinaryOperatorType.GreaterThanOrEqual, ">=" }
         };
 
+        private static bool IsKeyword(string value) => keywords.Contains(value);
+
         private string InvalidIndentifier(string value) => $"Indentifier is not valid: {value}";
         private string InvalidElementType(Type type) => $"InvalidElementType {type.FullName}";
 
         private bool GetUserData(CodeObject e, string property, bool defaultValue) => e.UserData[property] != null && e.UserData[property] is bool boolVal ? boolVal : defaultValue;
-        private bool IsKeyword(string value) => keywords.Contains(value);
         private bool IsPrefixTwoUnderscore(string value) => value.Length < 3 ? false : (value[0] == '_') && (value[1] == '_') && (value[2] != '_');
 
-        public bool Supports(GeneratorSupport support) => ((support & LanguageSupport) == support);
-
-        // Any identifier started with two consecutive underscores are reserved
-        public string CreateEscapedIdentifier(string name) => IsKeyword(name) || IsPrefixTwoUnderscore(name) ? "$" + name : name;
-
-        public bool IsValidIdentifier(string value)
+        public static bool IsValidJavaIdentifier(string value)
         {
             // identifiers must be 1 char or longer
             if (value == null || value.Length == 0 || value.Length > 512)
@@ -135,6 +131,13 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
             }
             return CodeGenerator.IsValidLanguageIndependentIdentifier(value);
         }
+
+        public bool Supports(GeneratorSupport support) => ((support & LanguageSupport) == support);
+
+        // Any identifier started with two consecutive underscores are reserved
+        public string CreateEscapedIdentifier(string name) => IsKeyword(name) || IsPrefixTwoUnderscore(name) ? "$" + name : name;
+
+        public bool IsValidIdentifier(string value) => IsValidJavaIdentifier(value);
 
         public void ValidateIdentifier(string value)
         {
@@ -1003,7 +1006,7 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                 this.options = null;
             }
         }
-        
+
         public void Dispose() => output.Dispose();
     }
 }

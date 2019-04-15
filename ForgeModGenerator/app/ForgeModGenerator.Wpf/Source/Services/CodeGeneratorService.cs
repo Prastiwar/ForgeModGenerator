@@ -1,4 +1,5 @@
-﻿using ForgeModGenerator.CodeGeneration;
+﻿using System.Collections.Generic;
+using ForgeModGenerator.CodeGeneration;
 using ForgeModGenerator.Models;
 using ForgeModGenerator.Utility;
 
@@ -19,6 +20,18 @@ namespace ForgeModGenerator.Services
         public void RegenerateScript(string className, Mod mod)
         {
             foreach (ScriptCodeGenerator generator in ReflectionHelper.EnumerateSubclasses<ScriptCodeGenerator>(mod))
+            {
+                if (string.Compare(generator.ScriptLocator.ClassName, className) == 0)
+                {
+                    generator.RegenerateScript();
+                    break;
+                }
+            }
+        }
+
+        public void RegenerateInitScript<T>(string className, Mod mod, IEnumerable<T> repository)
+        {
+            foreach (ScriptCodeGenerator generator in ReflectionHelper.EnumerateSubclasses<InitVariablesCodeGenerator<T>>(mod, repository))
             {
                 if (string.Compare(generator.ScriptLocator.ClassName, className) == 0)
                 {

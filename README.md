@@ -17,7 +17,7 @@
 
 ## Development Status
 
-- [ ] Achievement Generator 
+- [ ] Achievement Generator
 
   - [ ] Create achievement
   - [ ] Update source code
@@ -35,7 +35,7 @@
   - [ ] Update source code
 
 - [ ] Command Generator
-  
+
   - [ ] Create simple command
   - [ ] Create complex command
   - [ ] Update source code
@@ -46,7 +46,7 @@
   - [ ] Visualize GUI
   - [ ] Update source code
 
-- [x] Mod Generator *- mod manager*
+- [ ] Mod Generator *- mod manager*
 
   - [x] Generate mod structure
   - [x] Generate important source code
@@ -59,15 +59,16 @@
   - [ ] Respect manual changes in json
   - [ ] Update source code
 
-- [ ] Sound Generator *- sounds file explorer*
+- [x] Sound Generator *- sounds file explorer*
 
   - [x] Add Sound Event
   - [x] Remove Sound Event
   - [x] Change Sound Event NBT
   - [x] Change Sound NBT
-  - [ ] Add more than one sound to single Sound Event
+  - [x] Add Sound (multiple sounds in single Sound Event are allowed)
+  - [x] Remove Sound
   - [x] Update sounds.json
-  - [ ] Update source code
+  - [x] Update source code
 
 - [x] Texture Generator *- simple textures file explorer*
   - [x] Add textures
