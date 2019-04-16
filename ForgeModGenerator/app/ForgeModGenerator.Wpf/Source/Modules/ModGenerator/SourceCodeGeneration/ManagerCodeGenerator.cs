@@ -2,14 +2,13 @@
 using ForgeModGenerator.CodeGeneration.CodeDom;
 using ForgeModGenerator.Models;
 using System.CodeDom;
-using System.IO;
 
 namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 {
     public class ManagerCodeGenerator : ScriptCodeGenerator
     {
         public ManagerCodeGenerator(Mod mod) : base(mod) => ScriptLocator = SourceCodeLocator.Manager(Modname, Organization);
-        
+
         public override ClassLocator ScriptLocator { get; }
 
         private CodeMemberMethod CretePreInitMethod()
@@ -47,11 +46,11 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
                 NewAnnotationArg("acceptedMinecraftVersions", NewFieldReferenceType(hook, "ACCEPTEDVERSIONS"))
             ));
 
-            CodeMemberField instanceField = NewField(Modname, "instance", MemberAttributes.Private | JavaAttributes.StaticOnly);
+            CodeMemberField instanceField = NewField(SourceCodeLocator.Manager(Modname, Organization).ClassName, "instance", MemberAttributes.Private | JavaAttributes.StaticOnly);
             instanceField.CustomAttributes.Add(NewInstanceAnnotation());
             managerClass.Members.Add(instanceField);
 
-            CodeMemberField proxyField = NewField("CommonProxy", "proxy", MemberAttributes.Private | JavaAttributes.StaticOnly);
+            CodeMemberField proxyField = NewField(SourceCodeLocator.CommonProxyInterface(Modname, Organization).ClassName, "proxy", MemberAttributes.Private | JavaAttributes.StaticOnly);
             proxyField.CustomAttributes.Add(NewAnnotation("SidedProxy",
                 NewAnnotationArg("clientSide", NewFieldReferenceType(hook, "CLIENTPROXYCLASS")),
                 NewAnnotationArg("serverSide", NewFieldReferenceType(hook, "SERVERPROXYCLASS"))
@@ -69,7 +68,8 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             getProxyMethod.Statements.Add(NewReturnVar("proxy"));
             managerClass.Members.Add(getProxyMethod);
 
-            return NewCodeUnit(managerClass, "net.minecraftforge.fml.common.Mod",
+            return NewCodeUnit(SourceCodeLocator.Manager(Modname, Organization).PackageName, managerClass,
+                                             "net.minecraftforge.fml.common.Mod",
                                              "net.minecraftforge.fml.common.SidedProxy",
                                              "net.minecraftforge.fml.common.Mod.EventHandler",
                                              "net.minecraftforge.fml.common.Mod.Instance",
@@ -77,8 +77,8 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
                                              "net.minecraftforge.fml.common.event.FMLPostInitializationEvent",
                                              "net.minecraftforge.fml.common.event.FMLPreInitializationEvent",
                                              "net.minecraftforge.fml.common.event.FMLServerStartingEvent",
-                                             $"{PackageName}.{SourceCodeLocator.Recipes(Modname, Organization).ImportRelativeName}",
-                                             $"{PackageName}.{SourceCodeLocator.CommonProxyInterface(Modname, Organization).ImportRelativeName}",
+                                             $"{SourceRootPackageName}.{SourceCodeLocator.Recipes(Modname, Organization).ImportRelativeName}",
+                                             $"{SourceRootPackageName}.{SourceCodeLocator.CommonProxyInterface(Modname, Organization).ImportRelativeName}",
                                              "org.apache.logging.log4j.Logger");
         }
     }

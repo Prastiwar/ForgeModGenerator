@@ -222,9 +222,12 @@
     <Compile Include="Source\FileSystem\Dialog\FolderBrowserDialog.cs" />
     <Compile Include="Source\FileSystem\FileSystemWin.cs" />
     <Compile Include="Source\Modules\ApplicationModule\Controls\NavigationMenuControl.cs" />
+    <Compile Include="Source\Modules\BlockGenerator\BlockCodeGenerator.cs" />
+    <Compile Include="Source\Modules\ItemGenerator\ItemCodeGenerator.cs" />
     <Compile Include="Source\Modules\ModGenerator\ModEditorFormFactory.cs" />
     <Compile Include="Source\Modules\ModGenerator\ModInfoSerializer.cs" />
     <Compile Include="Source\Modules\ModGenerator\ModSerializer.cs" />
+    <Compile Include="Source\Modules\RecipeGenerator\RecipeCodeGenerator.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundEditorFormFactory.cs" />
     <Compile Include="Source\Serialization\PreferenceDataSerializer.cs" />
     <Compile Include="Source\Serialization\JsonSerializer.cs" />

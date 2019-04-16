@@ -14,7 +14,8 @@ namespace ForgeModGenerator.GUIGenerator
         {
             CodeTypeDeclaration clas = NewClassWithMembers(ScriptLocator.ClassName);
             clas.Members.Add(GetCreativeTab());
-            CodeNamespace package = NewPackage(clas, $"{PackageName}.{SourceCodeLocator.Items(Modname, Organization).ImportRelativeName}",
+            CodeNamespace package = NewPackage(SourceCodeLocator.CreativeTab(Modname, Organization).PackageName, clas,
+                                                      $"{SourceRootPackageName}.{SourceCodeLocator.Items(Modname, Organization).ImportRelativeName}",
                                                       "net.minecraft.creativetab.CreativeTabs",
                                                       "net.minecraft.item.ItemStack",
                                                       "net.minecraftforge.fml.relauncher.Side",

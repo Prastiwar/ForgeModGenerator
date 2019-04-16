@@ -12,11 +12,13 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 
         protected CodeMemberField CreateHookString(string variableName, string value) => NewFieldGlobal(typeof(string).FullName, variableName.ToUpper(), NewPrimitive(value));
 
-        protected override CodeCompileUnit CreateTargetCodeUnit() => NewCodeUnit(NewClassWithMembers(ScriptLocator.ClassName, 
+        protected override CodeCompileUnit CreateTargetCodeUnit() => NewCodeUnit(SourceCodeLocator.Hook(Modname, Organization).PackageName,
+                                                                NewClassWithMembers(ScriptLocator.ClassName, 
+                                                                CreateHookString("NAME", Mod.ModInfo.Name),
                                                                 CreateHookString("MODID", Mod.ModInfo.Modid),
                                                                 CreateHookString("VERSION", Mod.ModInfo.Version),
                                                                 CreateHookString("ACCEPTEDVERSIONS", Mod.ModInfo.McVersion),
-                                                                CreateHookString("CLIENTPROXYCLASS", $"{PackageName}.{SourceCodeLocator.ClientProxy(Modname, Organization).ImportRelativeName}"),
-                                                                CreateHookString("SERVERPROXYCLASS", $"{PackageName}.{SourceCodeLocator.ServerProxy(Modname, Organization).ImportRelativeName}")));
+                                                                CreateHookString("CLIENTPROXYCLASS", $"{SourceRootPackageName}.{SourceCodeLocator.ClientProxy(Modname, Organization).ImportRelativeName}"),
+                                                                CreateHookString("SERVERPROXYCLASS", $"{SourceRootPackageName}.{SourceCodeLocator.ServerProxy(Modname, Organization).ImportRelativeName}")));
     }
 }

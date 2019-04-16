@@ -12,6 +12,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
         public override ClassLocator ScriptLocator { get; }
 
         protected override CodeCompileUnit CreateTargetCodeUnit() =>
-            NewCodeUnit(NewInterface(SourceCodeLocator.ModelInterface(Modname, Organization).ClassName, NewMethod("registerModels", typeof(void).FullName, MemberAttributes.Public)));
+            NewCodeUnit(SourceCodeLocator.ModelInterface(Modname, Organization).PackageName,
+                        NewInterface(SourceCodeLocator.ModelInterface(Modname, Organization).ClassName, NewMethod("registerModels", typeof(void).FullName, MemberAttributes.Public)));
     }
 }

@@ -32,7 +32,16 @@ namespace ForgeModGenerator.CodeGeneration
         {
             CodeTypeDeclaration clas = NewClassWithMembers(className);
 
-            CodeMemberField listField = new CodeMemberField($"List<{elementType}>", elementType.ToUpper() + "S") {
+            string listVarName = null;
+            if (ScriptLocator is InitClassLocator initLocator)
+            {
+                listVarName = initLocator.InitFieldName;
+            }
+            else
+            {
+                listVarName = elementType.ToUpper() + "S";
+            }
+            CodeMemberField listField = new CodeMemberField($"List<{elementType}>", listVarName) {
                 Attributes = MemberAttributes.Public | MemberAttributes.Static | MemberAttributes.Final,
                 InitExpression = new CodeObjectCreateExpression($"ArrayList<{elementType}>")
             };
@@ -46,9 +55,9 @@ namespace ForgeModGenerator.CodeGeneration
                 }
             }
 
-            CodeNamespace package = NewPackage(clas, "java.util.ArrayList",
-                                                     "java.util.List",
-                                                     $"net.minecraft.util.{elementType}");
+            CodeNamespace package = NewPackage(SourceCodeLocator.Manager(Modname, Organization).PackageName, clas,
+                                                     "java.util.ArrayList",
+                                                     "java.util.List");
             return NewCodeUnit(package);
         }
 

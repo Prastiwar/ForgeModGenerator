@@ -1,4 +1,5 @@
 ﻿using ForgeModGenerator.Models;
+using System.Diagnostics;
 
 namespace ForgeModGenerator.Services
 {
@@ -20,9 +21,25 @@ namespace ForgeModGenerator.Services
         }
 
         /// <summary> Ignore LanuchSetup and run client for this mod </summary>
-        public void RunClient(Mod mod) => throw new System.NotImplementedException();
+        public void RunClient(Mod mod)
+        {
+            string path = ModPaths.ModRootFolder(mod.ModInfo.Name);
+            ProcessStartInfo psi = new ProcessStartInfo {
+                FileName = "CMD.EXE",
+                Arguments = $"/K cd \"{path}\" & gradlew runClient"
+            };
+            Process.Start(psi);
+        }
 
         /// <summary> Ignore LanuchSetup and run server for this mod </summary>
-        public void RunServer(Mod mod) => throw new System.NotImplementedException();
+        public void RunServer(Mod mod)
+        {
+            string path = ModPaths.ModRootFolder(mod.ModInfo.Name);
+            ProcessStartInfo psi = new ProcessStartInfo {
+                FileName = "CMD.EXE",
+                Arguments = $"/K cd \"{path}\" & gradlew runServer"
+            };
+            Process.Start(psi);
+        }
     }
 }

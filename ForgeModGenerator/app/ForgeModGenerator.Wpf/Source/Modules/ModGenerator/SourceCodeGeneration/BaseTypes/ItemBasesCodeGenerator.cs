@@ -34,31 +34,31 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             string fileName = Path.GetFileNameWithoutExtension(scriptPath);
             if (fileName == SourceCodeLocator.ItemBase(Modname, Organization).ClassName)
             {
-                return CreateBaseItemUnit(fileName, "Item", false);
+                return CreateBaseItemUnit(SourceCodeLocator.ItemBase(Modname, Organization).PackageName, fileName, "Item", false);
             }
             else if (fileName == SourceCodeLocator.BowBase(Modname, Organization).ClassName)
             {
-                return CreateBaseItemUnit(fileName, "ItemBow", false);
+                return CreateBaseItemUnit(SourceCodeLocator.BowBase(Modname, Organization).PackageName, fileName, "ItemBow", false);
             }
             else if (fileName == SourceCodeLocator.SwordBase(Modname, Organization).ClassName)
             {
-                return CreateBaseItemUnit(fileName, "ItemSword", true);
+                return CreateBaseItemUnit(SourceCodeLocator.SwordBase(Modname, Organization).PackageName, fileName, "ItemSword", true);
             }
             else if (fileName == SourceCodeLocator.SpadeBase(Modname, Organization).ClassName)
             {
-                return CreateBaseItemUnit(fileName, "ItemSpade", true);
+                return CreateBaseItemUnit(SourceCodeLocator.SpadeBase(Modname, Organization).PackageName, fileName, "ItemSpade", true);
             }
             else if (fileName == SourceCodeLocator.PickaxeBase(Modname, Organization).ClassName)
             {
-                return CreateBaseItemUnit(fileName, "ItemPickaxe", true);
+                return CreateBaseItemUnit(SourceCodeLocator.PickaxeBase(Modname, Organization).PackageName, fileName, "ItemPickaxe", true);
             }
             else if (fileName == SourceCodeLocator.HoeBase(Modname, Organization).ClassName)
             {
-                return CreateBaseItemUnit(fileName, "ItemHoe", true);
+                return CreateBaseItemUnit(SourceCodeLocator.HoeBase(Modname, Organization).PackageName, fileName, "ItemHoe", true);
             }
             else if (fileName == SourceCodeLocator.AxeBase(Modname, Organization).ClassName)
             {
-                unit = CreateBaseItemUnit(fileName, "ItemAxe", true);
+                unit = CreateBaseItemUnit(SourceCodeLocator.AxeBase(Modname, Organization).PackageName, fileName, "ItemAxe", true);
                 CodeConstructor ctor = (CodeConstructor)unit.Namespaces[0].Types[0].Members[0];
                 CodeSuperConstructorInvokeExpression super = (CodeSuperConstructorInvokeExpression)((CodeExpressionStatement)ctor.Statements[0]).Expression;
                 super.AddParameter(6.0F);
@@ -74,7 +74,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
                         new Parameter(typeof(float).FullName, "saturation"),
                         new Parameter(typeof(bool).FullName, "isAnimalFood")
                     };
-                return CreateCustomItemUnit(fileName, "ItemFood", parameters);
+                return CreateCustomItemUnit(SourceCodeLocator.FoodBase(Modname, Organization).PackageName, fileName, "ItemFood", parameters);
             }
             else if (fileName == SourceCodeLocator.ArmorBase(Modname, Organization).ClassName)
             {
@@ -84,7 +84,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
                         new Parameter(typeof(int).FullName, "renderIndexIn"),
                         new Parameter("EntityEquipmentSlot", "equipmentSlotIn")
                     };
-                unit = CreateCustomItemUnit(fileName, "ItemArmor", parameters);
+                unit = CreateCustomItemUnit(SourceCodeLocator.ArmorBase(Modname, Organization).PackageName, fileName, "ItemArmor", parameters);
                 unit.Namespaces[0].Imports.Add(new CodeNamespaceImport("net.minecraft.inventory.EntityEquipmentSlot"));
                 return unit;
             }
@@ -94,7 +94,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             }
         }
 
-        private CodeCompileUnit CreateBaseItemUnit(string className, string baseType, bool tool = false)
+        private CodeCompileUnit CreateBaseItemUnit(string packageName, string className, string baseType, bool tool = false)
         {
             Parameter[] toolParameters = null;
             if (tool)
@@ -110,16 +110,18 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
                     new Parameter(typeof(string).FullName, "name")
                 };
             }
-            return CreateCustomItemUnit(className, baseType, toolParameters);
+            return CreateCustomItemUnit(packageName, className, baseType, toolParameters);
         }
 
-        private CodeCompileUnit CreateCustomItemUnit(string className, string baseType, params Parameter[] ctorParameters)
+        private CodeCompileUnit CreateCustomItemUnit(string packageName, string className, string baseType, params Parameter[] ctorParameters)
         {
             CodeTypeDeclaration clas = CreateBaseItemClass(className, baseType, ctorParameters);
-            return NewCodeUnit(clas, $"{PackageName}.{SourceCodeLocator.Manager(Modname, Organization).ImportRelativeName}",
-                                     $"{PackageName}.{SourceCodeLocator.CreativeTab(Modname, Organization).ImportRelativeName}",
-                                     $"{PackageName}.{SourceCodeLocator.Items(Modname, Organization).ImportRelativeName}",
-                                     $"{PackageName}.{SourceCodeLocator.ModelInterface(Modname, Organization).ImportRelativeName}",
+            // Package name differs
+            return NewCodeUnit(packageName, clas,
+                                     $"{SourceRootPackageName}.{SourceCodeLocator.Manager(Modname, Organization).ImportRelativeName}",
+                                     $"{SourceRootPackageName}.{SourceCodeLocator.CreativeTab(Modname, Organization).ImportRelativeName}",
+                                     $"{SourceRootPackageName}.{SourceCodeLocator.Items(Modname, Organization).ImportRelativeName}",
+                                     $"{SourceRootPackageName}.{SourceCodeLocator.ModelInterface(Modname, Organization).ImportRelativeName}",
                                      $"net.minecraft.item.{baseType}");
         }
 

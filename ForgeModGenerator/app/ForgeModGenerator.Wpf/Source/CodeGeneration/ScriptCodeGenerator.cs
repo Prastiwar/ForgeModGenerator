@@ -16,7 +16,7 @@ namespace ForgeModGenerator.CodeGeneration
             Modname = mod.ModInfo.Name;
             ModnameLower = Modname.ToLower();
             Organization = mod.Organization;
-            PackageName = $"com.{Organization}.{ModnameLower}";
+            SourceRootPackageName = $"com.{Organization}.{ModnameLower}";
         }
 
         public Mod Mod { get; }
@@ -24,7 +24,7 @@ namespace ForgeModGenerator.CodeGeneration
         protected string Modname { get; }
         protected string ModnameLower { get; }
         protected string Organization { get; }
-        protected string PackageName { get; }
+        protected string SourceRootPackageName { get; }
         protected CodeGeneratorOptions GeneratorOptions { get; } = new CodeGeneratorOptions() { BracingStyle = "Block" };
         
         public abstract ClassLocator ScriptLocator { get; }
@@ -177,16 +177,16 @@ namespace ForgeModGenerator.CodeGeneration
             return newInterface;
         }
 
-        protected CodeNamespace NewPackage(CodeTypeDeclaration defaultType, params string[] imports)
+        protected CodeNamespace NewPackage(string packageName, CodeTypeDeclaration defaultType, params string[] imports)
         {
-            CodeNamespace package = NewPackage(imports);
+            CodeNamespace package = NewPackage(packageName, imports);
             package.Types.Add(defaultType);
             return package;
         }
 
-        protected CodeNamespace NewPackage(params string[] imports)
+        protected CodeNamespace NewPackage(string packageName, params string[] imports)
         {
-            CodeNamespace package = new CodeNamespace(PackageName);
+            CodeNamespace package = new CodeNamespace(packageName);
             if (imports != null)
             {
                 foreach (string import in imports)
@@ -198,7 +198,7 @@ namespace ForgeModGenerator.CodeGeneration
         }
 
         protected CodeNamespaceImport NewImport(string import) => new CodeNamespaceImport(import);
-        protected CodeCompileUnit NewCodeUnit(CodeTypeDeclaration defaultType, params string[] imports) => NewCodeUnit(NewPackage(defaultType, imports));
+        protected CodeCompileUnit NewCodeUnit(string packageName, CodeTypeDeclaration defaultType, params string[] imports) => NewCodeUnit(NewPackage(packageName, defaultType, imports));
 
         protected CodeCompileUnit NewCodeUnit(CodeNamespace package)
         {
