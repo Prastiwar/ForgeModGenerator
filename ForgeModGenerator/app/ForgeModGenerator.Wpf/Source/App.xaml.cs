@@ -4,6 +4,7 @@ using ForgeModGenerator.ApplicationModule.ViewModels;
 using ForgeModGenerator.ApplicationModule.Views;
 using ForgeModGenerator.BlockGenerator.ViewModels;
 using ForgeModGenerator.BlockGenerator.Views;
+using ForgeModGenerator.CodeGeneration;
 using ForgeModGenerator.CommandGenerator.ViewModels;
 using ForgeModGenerator.CommandGenerator.Views;
 using ForgeModGenerator.ItemGenerator.ViewModels;
@@ -61,11 +62,14 @@ namespace ForgeModGenerator
             NLogLoggerFactory fac = new NLogLoggerFactory();
             Log.Initialize(dialogService, fac.CreateLogger("ErrorLog"), fac.CreateLogger("InfoLog"));
 
+            MemoryCache cache = new MemoryCache(new MemoryCacheOptions());
+            containerRegistry.RegisterInstance<IMemoryCache>(cache);
+            SourceCodeLocator.Initialize(cache);
+
             containerRegistry.RegisterInstance<IDialogService>(dialogService);
             RegisterServices(containerRegistry);
 
             containerRegistry.RegisterInstance<ISynchronizeInvoke>(SyncInvokeObject.Default);
-            containerRegistry.RegisterInstance<IMemoryCache>(new MemoryCache(new MemoryCacheOptions()));
             containerRegistry.Register<IFileSystem, FileSystemWin>();
             containerRegistry.Register<ICodeGenerationService, CodeGeneratorService>();
 
