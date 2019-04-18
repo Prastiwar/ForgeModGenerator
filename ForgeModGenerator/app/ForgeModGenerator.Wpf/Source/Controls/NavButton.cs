@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace ForgeModGenerator.Controls
 {
@@ -27,6 +28,29 @@ namespace ForgeModGenerator.Controls
         public ICommand Command {
             get => (ICommand)GetValue(CommandProperty);
             set => SetValue(CommandProperty, value);
+        }
+
+        public static readonly DependencyProperty IsSelectedProperty =
+            DependencyProperty.Register("IsSelected", typeof(bool), typeof(NavButton), new PropertyMetadata(false));
+        public bool IsSelected {
+            get => (bool)GetValue(IsSelectedProperty);
+            set => SetValue(IsSelectedProperty, value);
+        }
+
+        protected void NavButton_Click()
+        {
+            IsSelected = true;
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(Parent); i++)
+            {
+                DependencyObject child = VisualTreeHelper.GetChild(Parent, i);
+                if (child is NavButton navBtn)
+                {
+                    if (navBtn != this)
+                    {
+                        navBtn.IsSelected = false;
+                    }
+                }
+            }
         }
     }
 }
