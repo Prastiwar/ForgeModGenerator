@@ -13,28 +13,27 @@
       mc:Ignorable="d"
 	  d:DesignHeight="450"
 	  d:DesignWidth="800">
-	<Grid Background="{StaticResource PageBackground}">
-		<ScrollViewer VerticalScrollBarVisibility="Auto">
-			<StackPanel>
-				<materialDesign:Card Background="#FF535353"
+    <Grid Background="{StaticResource PageBackground}">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <materialDesign:Card Background="#FF535353"
 									 Margin="10">
-					<StackPanel>
-						<ListBox ItemsSource="{Binding SessionContext.Mods}"
+                    <StackPanel>
+                        <ListBox ItemsSource="{Binding SessionContext.Mods}"
 								 HorizontalContentAlignment="Stretch">
-							<ListBox.ItemTemplate>
-								<DataTemplate>
-									<mControls:ModBuildForm DataContext="{Binding}"
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <mControls:ModBuildForm DataContext="{Binding}"
 															RunClientCommand="{Binding DataContext.RunClientCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
 															RunServerCommand="{Binding DataContext.RunServerCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
-															RunBothCommand="{Binding DataContext.RunBothCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
 															CompileCommand="{Binding DataContext.CompileCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
 															ToggleSelectCommand="{Binding DataContext.ToggleSelectCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" />
-								</DataTemplate>
-							</ListBox.ItemTemplate>
-						</ListBox>
-					</StackPanel>
-				</materialDesign:Card>
-			</StackPanel>
-		</ScrollViewer>
-	</Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
+                </materialDesign:Card>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
 </Page>

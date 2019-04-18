@@ -88,7 +88,7 @@ namespace ForgeModGenerator
                 return Type.GetType(viewModelName);
             });
 
-            ViewModelLocationProvider.SetDefaultViewModelFactory((type) => {
+            ViewModelLocationProvider.SetDefaultViewModelFactory(type => {
                 return containerRegistry.GetContainer().TryResolve(type);
             });
         }

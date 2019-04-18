@@ -122,7 +122,7 @@ namespace ForgeModGenerator.Tests
                 "testorg",
                 new ForgeVersion("forge - 1.12.2 - 14.23.5.2772", "C:/Dev/ForgeModGenerator/ForgeModGenerator/forgeversions/forge - 1.12.2 - 14.23.5.2772 - mdk.zip"),
                 ModSide.ClientServer,
-                new LaunchSetup(true, true),
+                LaunchSetup.Client,
                 WorkspaceSetup.NONE
             );
             JsonSerializerSettings settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All };
@@ -176,8 +176,7 @@ namespace ForgeModGenerator.Tests
             Assert.AreEqual("OtherMod", mod.ModInfo.Dependencies[0]);
             Assert.AreEqual("forge - 1.12.2 - 14.23.5.2772", mod.ForgeVersion.Name);
             Assert.AreEqual("C:/Dev/ForgeModGenerator/ForgeModGenerator/forgeversions/forge - 1.12.2 - 14.23.5.2772 - mdk.zip", mod.ForgeVersion.ZipPath);
-            Assert.IsTrue(mod.LaunchSetup.RunClient);
-            Assert.IsTrue(mod.LaunchSetup.RunServer);
+            Assert.IsTrue(mod.LaunchSetup == LaunchSetup.Client);
             Assert.AreEqual("Empty", mod.WorkspaceSetup.Name);
 
             mod = JsonConvert.DeserializeObject<Mod>("{}", settings);

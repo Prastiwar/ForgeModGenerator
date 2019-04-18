@@ -24,7 +24,7 @@ namespace ForgeModGenerator.Converters
                 side = sideValue.ToObject<ModSide>();
             }
 
-            LaunchSetup launchSetup = null;
+            LaunchSetup launchSetup = LaunchSetup.Client;
             if (item.TryGetValue(nameof(Mod.LaunchSetup), StringComparison.OrdinalIgnoreCase, out JToken launchValue))
             {
                 launchSetup = launchValue.ToObject<LaunchSetup>();

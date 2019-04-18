@@ -35,12 +35,5 @@ namespace ForgeModGenerator.ModGenerator.Controls
             get => (ICommand)GetValue(RunClientCommandProperty);
             set => SetValue(RunClientCommandProperty, value);
         }
-
-        public static readonly DependencyProperty RunBothCommandProperty =
-            DependencyProperty.Register("RunBothCommand", typeof(ICommand), typeof(ModBuildForm), new PropertyMetadata(null));
-        public ICommand RunBothCommand {
-            get => (ICommand)GetValue(RunBothCommandProperty);
-            set => SetValue(RunBothCommandProperty, value);
-        }
     }
 }

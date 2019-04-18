@@ -25,6 +25,9 @@
                                                           Invert="True" />
                 </ResourceDictionary>
                 <ResourceDictionary>
+                    <converters:BoolToLaunchSetupConverter x:Key="BoolToLaunchSetupConverter" />
+                </ResourceDictionary>
+                <ResourceDictionary>
                     <converters:DataBindingDebugConverter x:Key="DataBindingDebugConverter" />
                 </ResourceDictionary>
                 <ResourceDictionary>

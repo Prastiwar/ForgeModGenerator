@@ -16,6 +16,17 @@ namespace ForgeModGenerator.Models
 
     public class Mod : ObservableDirtyObject, ICopiable<Mod>, IDataErrorInfo, IValidable<Mod>
     {
+        public Mod(McModInfo modInfo, string organization, ForgeVersion forgeVersion, ModSide side = ModSide.ClientServer, LaunchSetup launchSetup = LaunchSetup.Client, WorkspaceSetup workspaceSetup = null)
+        {
+            ModInfo = modInfo;
+            Organization = organization;
+            ForgeVersion = forgeVersion;
+            Side = side;
+            LaunchSetup = launchSetup;
+            WorkspaceSetup = workspaceSetup ?? WorkspaceSetup.NONE;
+            CachedName = ModInfo.Name;
+        }
+
         private string organization;
         public string Organization {
             get => organization;
@@ -53,23 +64,6 @@ namespace ForgeModGenerator.Models
         }
 
         public string CachedName { get; private set; }
-
-        public Mod(McModInfo modInfo, string organization, ForgeVersion forgeVersion, ModSide side = ModSide.ClientServer, LaunchSetup launchSetup = null, WorkspaceSetup workspaceSetup = null)
-        {
-            ModInfo = modInfo;
-            Organization = organization;
-            ForgeVersion = forgeVersion;
-            Side = side;
-            LaunchSetup = launchSetup ?? (
-                Side == ModSide.Client
-                    ? new LaunchSetup()
-                    : Side == ModSide.Server
-                        ? new LaunchSetup(false, true)
-                        : new LaunchSetup(true, true)
-            );
-            WorkspaceSetup = workspaceSetup ?? WorkspaceSetup.NONE;
-            CachedName = ModInfo.Name;
-        }
 
         /// <summary> Shorthand for ModInfo.Name (used also for WPF validation) </summary>
         public string Name { get => ModInfo.Name; set => ModInfo.Name = value; }
@@ -180,7 +174,7 @@ namespace ForgeModGenerator.Models
                                 Organization,
                                 new ForgeVersion(ForgeVersion.ZipPath),
                                 Side,
-                                new LaunchSetup(LaunchSetup.RunClient, LaunchSetup.RunServer),
+                                launchSetup,
                                 WorkspaceSetup);
             return clone;
         }
