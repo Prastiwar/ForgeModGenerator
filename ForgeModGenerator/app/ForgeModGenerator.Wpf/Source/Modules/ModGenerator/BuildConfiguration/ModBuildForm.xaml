@@ -28,14 +28,18 @@
                                Margin="0"
                                Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
                     <StackPanel Orientation="Horizontal">
-                        <RadioButton Style="{StaticResource MaterialDesignTabRadioButton}"
+                        <RadioButton x:Name="RunClientRadioButton"
+                                     Style="{StaticResource MaterialDesignTabRadioButton}"
                                      Margin="4"
                                      IsChecked="{Binding LaunchSetup, Mode=TwoWay, Converter={StaticResource BoolToLaunchSetupConverter}}"
-                                     Content="RUN CLIENT" />
-                        <RadioButton Style="{StaticResource MaterialDesignTabRadioButton}"
+                                     Content="RUN CLIENT"
+                                     Visibility="{Binding Path=IsChecked, ElementName=Includer, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        <RadioButton x:Name="RunServerRadioButton"
+                                     Style="{StaticResource MaterialDesignTabRadioButton}"
                                      Margin="4"
-                                     IsChecked="False"
-                                     Content="RUN SERVER" />
+                                     IsChecked="{Binding Path=IsChecked, ElementName=RunClientRadioButton, Converter={StaticResource InvertBooleanConverter}}"
+                                     Content="RUN SERVER"
+                                     Visibility="{Binding Path=IsChecked, ElementName=Includer, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     </StackPanel>
                     <Button x:Name="CompileButton"
                             Padding="5"

@@ -1,4 +1,5 @@
 ﻿using ForgeModGenerator.Models;
+using ForgeModGenerator.Serialization;
 using ForgeModGenerator.Services;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -12,10 +13,12 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
         private readonly IModBuildService modBuilder;
 
         public ISessionContextService SessionContext { get; }
+        protected ISerializer<Mod> ModSerializer { get; }
 
-        public BuildConfigurationViewModel(ISessionContextService sessionContext, IModBuildService modBuilder)
+        public BuildConfigurationViewModel(ISessionContextService sessionContext, IModBuildService modBuilder, ISerializer<Mod> modSerializer)
         {
             this.modBuilder = modBuilder;
+            ModSerializer = modSerializer;
             SessionContext = sessionContext;
         }
 
@@ -43,10 +46,20 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
             if (isSelected)
             {
                 SessionContext.SelectedMods.Remove(mod);
+                mod.PropertyChanged -= Mod_PropertyChanged;
             }
             else
             {
                 SessionContext.SelectedMods.Add(mod);
+                mod.PropertyChanged += Mod_PropertyChanged;
+            }
+        }
+
+        private void Mod_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Mod.LaunchSetup))
+            {
+                ModHelper.ExportMod(ModSerializer, (Mod)sender);
             }
         }
     }
