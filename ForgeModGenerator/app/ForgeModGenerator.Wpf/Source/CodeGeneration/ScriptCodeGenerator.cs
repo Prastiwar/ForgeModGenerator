@@ -26,9 +26,9 @@ namespace ForgeModGenerator.CodeGeneration
         protected string Organization { get; }
         protected string SourceRootPackageName { get; }
         protected CodeGeneratorOptions GeneratorOptions { get; } = new CodeGeneratorOptions() { BracingStyle = "Block" };
-        
+
         public abstract ClassLocator ScriptLocator { get; }
-        
+
         public virtual void RegenerateScript() => RegenerateScript(ScriptLocator.FullPath, CreateTargetCodeUnit(), GeneratorOptions);
 
         protected void RegenerateScript(string scriptPath, CodeCompileUnit targetCodeUnit, CodeGeneratorOptions options)
@@ -37,12 +37,15 @@ namespace ForgeModGenerator.CodeGeneration
             {
                 try
                 {
-                    FileInfo scriptFileInfo = new FileInfo(scriptPath);
+                    FileInfo scriptFileInfo = new FileInfo(scriptPath) {
+                        IsReadOnly = false
+                    };
                     scriptFileInfo.Directory.Create();
                     using (StreamWriter sourceWriter = scriptFileInfo.CreateText())
                     {
                         javaProvider.GenerateCodeFromCompileUnit(targetCodeUnit, sourceWriter, options);
                     }
+                    scriptFileInfo.IsReadOnly = true;
                 }
                 catch (Exception ex)
                 {
