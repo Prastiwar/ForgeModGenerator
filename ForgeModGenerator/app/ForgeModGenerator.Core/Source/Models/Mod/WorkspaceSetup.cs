@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ForgeModGenerator.Serialization;
+using System.Diagnostics;
+using System.IO;
 
 namespace ForgeModGenerator.Models
 {
@@ -22,16 +24,87 @@ namespace ForgeModGenerator.Models
 
     public class EclipseWorkspace : WorkspaceSetup
     {
-        public override void Setup(Mod mod) => throw new NotImplementedException();
+        public override void Setup(Mod mod)
+        {
+            string modPath = ModPaths.ModRootFolder(mod.ModInfo.Name);
+            ProcessStartInfo psi = new ProcessStartInfo {
+                FileName = "CMD.EXE",
+                Arguments = $"/K cd \"{modPath}\" & gradlew setupDecompWorkspace"
+            };
+            Process.Start(psi);
+            psi.Arguments = $"/K cd \"{modPath}\" & gradlew eclipse";
+            Process.Start(psi);
+        }
     }
 
     public class IntelliJIDEAWorkspace : WorkspaceSetup
     {
-        public override void Setup(Mod mod) => throw new NotImplementedException();
+        public override void Setup(Mod mod)
+        {
+            string modPath = ModPaths.ModRootFolder(mod.ModInfo.Name);
+            ProcessStartInfo psi = new ProcessStartInfo {
+                FileName = "CMD.EXE",
+                Arguments = $"/K cd \"{modPath}\" & gradlew setupDecompWorkspace"
+            };
+            Process.Start(psi);
+            psi.Arguments = $"/K cd \"{modPath}\" & gradlew idea";
+            Process.Start(psi);
+        }
     }
 
     public class VSCodeWorkspace : WorkspaceSetup
     {
-        public override void Setup(Mod mod) => throw new NotImplementedException();
+        public VSCodeWorkspace(ISerializer<VSCLaunch> serializer) => this.serializer = serializer;
+
+        private readonly ISerializer<VSCLaunch> serializer;
+
+        public override void Setup(Mod mod)
+        {
+            string modPath = ModPaths.ModRootFolder(mod.ModInfo.Name);
+            string vscPath = Path.Combine(modPath, ".vscode");
+            string workspacePath = Path.Combine(modPath, "workspace.code-workspace");
+            string launchPath = Path.Combine(vscPath, "launch.json");
+
+            string buildProgramPath = "${workspaceFolder}/.vscode/build.py";
+
+            VSCConfiguration build = new VSCConfiguration {
+                Name = "Build",
+                Program = buildProgramPath,
+                Console = "externalTerminal",
+                Type = "python",
+                Request = "launch",
+                Args = new string[] { "build", mod.ModInfo.Name }
+            };
+
+            VSCConfiguration runClient = new VSCConfiguration {
+                Name = "Run Client",
+                Program = buildProgramPath,
+                Console = "externalTerminal",
+                Type = "python",
+                Request = "launch",
+                Args = new string[] { "run", mod.ModInfo.Name, "client" }
+            };
+
+            VSCConfiguration runServer = new VSCConfiguration {
+                Name = "Run Server",
+                Program = buildProgramPath,
+                Console = "externalTerminal",
+                Type = "python",
+                Request = "launch",
+                Args = new string[] { "run", mod.ModInfo.Name, "server" }
+            };
+
+            VSCLaunch launcher = new VSCLaunch {
+                Version = "0.2.0",
+                Configurations = new VSCConfiguration[] {
+                    build, runClient, runServer
+                }
+            };
+
+            string json = serializer.Serialize(launcher, true);
+            new FileInfo(launchPath).Directory.Create();
+            File.WriteAllText(launchPath, json);
+            File.WriteAllText(workspacePath, "{ \"folders\": [ { \"path\": \".\" } ] }");
+        }
     }
 }

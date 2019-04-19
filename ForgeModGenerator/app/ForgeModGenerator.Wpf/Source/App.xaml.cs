@@ -35,6 +35,7 @@ using Prism.Mvvm;
 using Prism.Unity;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
 using System.Windows;
@@ -73,24 +74,43 @@ namespace ForgeModGenerator
             containerRegistry.Register<IFileSystem, FileSystemWin>();
             containerRegistry.Register<ICodeGenerationService, CodeGeneratorService>();
 
+            RegisterWorkspaceSetups(containerRegistry);
             RegisterSerializers(containerRegistry);
             RegisterValidators(containerRegistry);
+
+            ObservableCollection<WorkspaceSetup> workspaceSetups = new ObservableCollection<WorkspaceSetup>();
+            foreach (Unity.Registration.IContainerRegistration registry in containerRegistry.GetContainer().Registrations)
+            {
+                if (registry.RegisteredType == typeof(WorkspaceSetup))
+                {
+                    WorkspaceSetup setup = (WorkspaceSetup)containerRegistry.GetContainer().Resolve(typeof(WorkspaceSetup), registry.Name);
+                    workspaceSetups.Add(setup);
+                }
+            }
+            containerRegistry.RegisterInstance(workspaceSetups);
+
             RegisterFactories(containerRegistry);
             RegisterPages(containerRegistry);
         }
 
+        private void RegisterWorkspaceSetups(IContainerRegistry containerRegistry)
+        {
+            containerRegistry.Register(typeof(WorkspaceSetup), typeof(EmptyWorkspace), "None");
+            containerRegistry.Register(typeof(WorkspaceSetup), typeof(VSCodeWorkspace), "VSCode");
+            containerRegistry.Register(typeof(WorkspaceSetup), typeof(IntelliJIDEAWorkspace), "IntelliJIDEA");
+            containerRegistry.Register(typeof(WorkspaceSetup), typeof(EclipseWorkspace), "Eclipse");
+        }
+
         private void SetProvider(IContainerRegistry containerRegistry)
         {
-            ViewModelLocationProvider.SetDefaultViewTypeToViewModelTypeResolver((viewType) => {
+            ViewModelLocationProvider.SetDefaultViewTypeToViewModelTypeResolver(viewType => {
                 string viewName = viewType.FullName.Replace(".Views.", ".ViewModels.");
                 string coreAssemblyName = typeof(MainWindowViewModel).Assembly.FullName;
                 string viewModelName = string.Format(CultureInfo.InvariantCulture, "{0}ViewModel, {1}", viewName, coreAssemblyName);
                 return Type.GetType(viewModelName);
             });
 
-            ViewModelLocationProvider.SetDefaultViewModelFactory(type => {
-                return containerRegistry.GetContainer().TryResolve(type);
-            });
+            ViewModelLocationProvider.SetDefaultViewModelFactory(type => containerRegistry.GetContainer().TryResolve(type));
         }
 
         private void RegisterValidators(IContainerRegistry containerRegistry)
@@ -103,6 +123,7 @@ namespace ForgeModGenerator
         {
             containerRegistry.Register<ISerializer, JsonSerializer>();
             containerRegistry.Register<ISerializer<PreferenceData>, PreferenceDataSerializer>();
+            containerRegistry.Register<ISerializer<VSCLaunch>, VSCLaunchSerializer>();
 
             containerRegistry.Register<ISerializer<IEnumerable<SoundEvent>, SoundEvent>, SoundEventsSerializer>();
             containerRegistry.Register<ISoundEventsSerializer, SoundEventsSerializer>();

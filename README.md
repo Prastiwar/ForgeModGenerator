@@ -51,6 +51,7 @@
   - [x] Generate mod structure
   - [x] Generate important source code
   - [x] Edit mod info
+  - [x] Create workspace for manual changes: eclipse, IntelliJ IDEA, VSCode
   - [ ] Respect manual changes in mcmod.info
 
 - [ ] Recipe Generator
