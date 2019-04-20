@@ -65,6 +65,7 @@
                          Value="0"
                          IsIndeterminate="True" />
             <sControls:SoundFolderListBox x:Name="FoldersListBox"
+                                          Visibility="{Binding IsLoading, Converter={StaticResource InvertedBoolToVisibility}}"
                                           FoldersSource="{Binding Explorer.Folders.Files, Mode=OneWay}"
                                           AddFolderCommand="{Binding AddFolderCommand}"
                                           AddFileAsFolderCommand="{Binding AddFileAsFolderCommand}"

@@ -60,11 +60,13 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
         {
             if (CanRefresh())
             {
+                IsLoading = true;
                 Preferences = PreferenceService.GetOrCreate<SoundsGeneratorPreferences>();
 
                 if (Explorer.Folders != null)
                 {
                     Explorer.Folders.FilesChanged -= SubscribeFolderEvents;
+                    Explorer.Folders.FilesChanged -= OnFoldersCollectionChanged;
                     Explorer.Folders.Clear();
                 }
 
@@ -84,7 +86,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
                 {
                     throw new System.InvalidOperationException($"{Explorer.FileSynchronizer.Finder} must be {typeof(SoundEventsFinder)}");
                 }
-                Explorer.Folders.AddRange(await Explorer.FileSynchronizer.Finder.FindFoldersAsync(FoldersJsonFilePath, true));
+                await InitializeFoldersAsync(await Explorer.FileSynchronizer.Finder.FindFoldersAsync(FoldersJsonFilePath, true));
                 Explorer.FileSynchronizer.RootPath = FoldersRootPath;
                 Explorer.FileSynchronizer.SetEnableSynchronization(true);
                 RaisePropertyChanged(nameof(HasEmptyFolders));
@@ -97,6 +99,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
                 JsonUpdater.Path = FoldersJsonFilePath;
                 JsonUpdater.PrettyPrint = Preferences.SoundJsonPrettyPrint;
 
+                IsLoading = false;
                 CheckJsonFileMismatch();
                 CheckForUpdate();
                 return true;

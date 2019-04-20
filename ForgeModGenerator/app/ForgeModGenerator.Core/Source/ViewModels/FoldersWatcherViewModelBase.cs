@@ -3,6 +3,8 @@ using ForgeModGenerator.Utility;
 using Prism.Commands;
 using Prism.Mvvm;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -64,6 +66,21 @@ namespace ForgeModGenerator.ViewModels
         public abstract Task<bool> Refresh();
 
         protected void RemoveFileFromFolder(Tuple<TFolder, TFile> param) => Explorer.RemoveFileFromFolder(param.Item1, param.Item2);
+
+        protected async Task InitializeFoldersAsync(IEnumerable<TFolder> folders)
+        {
+            foreach (TFolder folder in folders)
+            {
+                ObservableRangeCollection<TFile> temp = folder.Files.DeepClone<ObservableRangeCollection<TFile>, TFile>();
+                folder.Clear();
+                Explorer.Folders.Add(folder);
+                foreach (TFile file in temp)
+                {
+                    folder.Add(file);
+                    await Task.Delay(1);
+                }
+            }
+        }
 
         protected async void ShowFolderDialogAndCopyToRoot()
         {

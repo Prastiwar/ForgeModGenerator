@@ -62,6 +62,7 @@
                          IsIndeterminate="True" />
             <controls:FolderListBox x:Name="FoldersListBox"
                                     Grid.Row="1"
+                                    Visibility="{Binding IsLoading, Converter={StaticResource InvertedBoolToVisibility}}"
                                     FoldersSource="{Binding Explorer.Folders.Files, Mode=OneWay}"
                                     AddFolderCommand="{Binding AddFolderCommand}"
                                     ShowEmptyMessage="{Binding SessionContext.IsModSelected, Converter={StaticResource InvertBooleanConverter}}"

@@ -25,7 +25,7 @@ namespace ForgeModGenerator.TextureGenerator.ViewModels
             {
                 IsLoading = true;
                 Explorer.Folders.Clear();
-                Explorer.Folders.AddRange(await Explorer.FileSynchronizer.Finder.FindFoldersAsync(FoldersRootPath, true));
+                await InitializeFoldersAsync(await Explorer.FileSynchronizer.Finder.FindFoldersAsync(FoldersRootPath, true));
                 Explorer.FileSynchronizer.RootPath = FoldersRootPath;
                 Explorer.FileSynchronizer.SetEnableSynchronization(true);
                 IsLoading = false;
