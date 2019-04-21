@@ -63,12 +63,9 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
                 IsLoading = true;
                 Preferences = PreferenceService.GetOrCreate<SoundsGeneratorPreferences>();
 
-                if (Explorer.Folders != null)
-                {
-                    Explorer.Folders.FilesChanged -= SubscribeFolderEvents;
-                    Explorer.Folders.FilesChanged -= OnFoldersCollectionChanged;
-                    Explorer.Folders.Clear();
-                }
+                Explorer.Folders.FilesChanged -= SubscribeFolderEvents;
+                Explorer.Folders.FilesChanged -= OnFoldersCollectionChanged;
+                Explorer.Folders.Clear();
 
                 if (Explorer.FileSynchronizer.Finder is SoundEventsFinder finder)
                 {

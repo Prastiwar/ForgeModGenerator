@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ForgeModGenerator
 {
-    public class FoldersExplorer<TFolder, TFile> : BindableBase, IFoldersExplorer<TFolder, TFile>, IDisposable
+    public class FoldersExplorer<TFolder, TFile> : BindableBase, IFoldersExplorer<TFolder, TFile>
         where TFolder : class, IFolderObject<TFile>
         where TFile : class, IFileObject
     {
@@ -201,6 +201,22 @@ namespace ForgeModGenerator
 
         public TFolder CreateFolder(string path) => FileSynchronizer.Finder.Factory.Create(path, null);
 
-        public void Dispose() => fileSynchronizer.Dispose();
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    FileSynchronizer.Dispose();
+                    Folders.Clear();
+                    AllowedFileExtensions.Clear();
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose() => Dispose(true);
     }
 }

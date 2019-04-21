@@ -12,7 +12,7 @@ using System.Windows.Input;
 namespace ForgeModGenerator.ViewModels
 {
     /// <summary> Base ViewModel class to explore folders </summary>
-    public abstract class FoldersWatcherViewModelBase<TFolder, TFile> : BindableBase
+    public abstract class FoldersWatcherViewModelBase<TFolder, TFile> : BindableBase, IDisposable
         where TFolder : class, IFolderObject<TFile>
         where TFile : class, IFileObject
     {
@@ -23,9 +23,9 @@ namespace ForgeModGenerator.ViewModels
             SessionContext.PropertyChanged += OnSessionContexPropertyChanged;
         }
 
-        public IFoldersExplorer<TFolder, TFile> Explorer { get; }
-
         public abstract string FoldersRootPath { get; }
+
+        public IFoldersExplorer<TFolder, TFile> Explorer { get; }
 
         protected ISessionContextService SessionContext { get; }
 
@@ -59,7 +59,7 @@ namespace ForgeModGenerator.ViewModels
         private ICommand removeEmptyFoldersCommand;
         public ICommand RemoveEmptyFoldersCommand => removeEmptyFoldersCommand ?? (removeEmptyFoldersCommand = new DelegateCommand(Explorer.RemoveEmptyFolders));
 
-        protected virtual async void OnLoaded() => await Refresh();
+        protected virtual void OnLoaded() => Refresh();
 
         protected virtual bool CanRefresh() => SessionContext.SelectedMod != null && Directory.Exists(FoldersRootPath);
 
@@ -120,5 +120,21 @@ namespace ForgeModGenerator.ViewModels
                 await Refresh();
             }
         }
+
+        protected bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    Explorer.Dispose();
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose() => Dispose(true);
     }
 }

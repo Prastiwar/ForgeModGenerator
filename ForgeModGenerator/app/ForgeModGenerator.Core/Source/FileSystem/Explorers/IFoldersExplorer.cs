@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ForgeModGenerator
 {
-    public interface IFoldersExplorer<TFolder, TFile>
+    public interface IFoldersExplorer<TFolder, TFile> : IDisposable
         where TFolder : class, IFolderObject<TFile>
         where TFile : class, IFileObject
     {
@@ -13,7 +14,7 @@ namespace ForgeModGenerator
         IFolderBrowser OpenFolderDialog { get; }
         HashSet<string> AllowedFileExtensions { get; }
         bool HasEmptyFolders { get; }
-        
+
         void RemoveEmptyFolders();
         void RemoveFolder(TFolder folder);
         void RemoveFileFromFolder(TFolder folder, TFile file);
