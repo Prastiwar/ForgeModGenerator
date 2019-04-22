@@ -5,7 +5,7 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
 {
     public class JavaCodeMemberMethod : CodeMemberMethod
     {
-        public JavaCodeMemberMethod() : base() { }
+        public JavaCodeMemberMethod() : base() => ThrowsExceptions = new List<string>();
         public JavaCodeMemberMethod(params string[] exceptions) => ThrowsExceptions = new List<string>(exceptions);
         public JavaCodeMemberMethod(List<string> exceptions) => ThrowsExceptions = exceptions ?? new List<string>();
 

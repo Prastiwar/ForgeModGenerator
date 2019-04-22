@@ -2,6 +2,7 @@
 using ForgeModGenerator.Converters;
 using ForgeModGenerator.Models;
 using ForgeModGenerator.Utility;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
@@ -12,6 +13,8 @@ namespace ForgeModGenerator.Tests
     [TestClass]
     public class ModGeneratorTests
     {
+        public ModGeneratorTests() => SourceCodeLocator.Initialize(new MemoryCache(new MemoryCacheOptions()));
+
         [TestMethod]
         public void TestClassLocator()
         {
@@ -133,8 +136,7 @@ namespace ForgeModGenerator.Tests
             Assert.IsTrue(json.Contains("\"Organization\":\"testorg\""), json);
             Assert.IsTrue(json.Contains("\"Name\":\"forge - 1.12.2 - 14.23.5.2772\""), json);
             Assert.IsTrue(json.Contains("\"ZipPath\":\"C:/Dev/ForgeModGenerator/ForgeModGenerator/forgeversions/forge - 1.12.2 - 14.23.5.2772 - mdk.zip\""), json);
-            Assert.IsTrue(json.Contains("\"RunClient\":true"), json);
-            Assert.IsTrue(json.Contains("\"RunServer\":true"), json);
+            Assert.IsTrue(json.Contains("\"LaunchSetup\":0"), json);
             Assert.IsTrue(json.Contains("\"Name\":\"Empty\""), json);
             Assert.IsTrue(json.Contains("\"Side\":0"), json);
         }
@@ -142,7 +144,7 @@ namespace ForgeModGenerator.Tests
         [TestMethod]
         public void ImportMod()
         {
-            string json = "{\"Organization\":\"testorg\",\"ModInfo\":{\"modid\":\"testmod\",\"name\":\"TestMod\",\"description\":\"This is example mod\",\"version\":\"1.0\",\"mcVersion\":\"12.2\",\"url\":\"some url\",\"updateUrl\":\"some updateurl\",\"credits\":\"For contributors of ForgeModGenerator\",\"logoFile\":\"some/logofile\",\"authorList\":{\"$type\":\"System.Collections.ObjectModel.ObservableCollection`1[[System.String, mscorlib]], System\",\"$values\":[\"I'm Author\"]},\"screenshots\":[\"some/screenshot\"],\"dependencies\":[\"OtherMod\"]},\"ForgeVersion\":{\"Name\":\"forge - 1.12.2 - 14.23.5.2772\",\"ZipPath\":\"C:/Dev/ForgeModGenerator/ForgeModGenerator/forgeversions/forge - 1.12.2 - 14.23.5.2772 - mdk.zip\"},\"LaunchSetup\":{\"$type\":\"ForgeModGenerator.Models.LaunchSetup, ForgeModGenerator.Core\",\"RunClient\":true,\"RunServer\":true},\"Side\":0,\"WorkspaceSetup\":{\"$type\":\"ForgeModGenerator.Models.EmptyWorkspace, ForgeModGenerator.Core\",\"Name\":\"Empty\"},\"CachedName\":\"NewExampleMod\"}";
+            string json = "{\"Organization\":\"testorg\",\"ModInfo\":{\"modid\":\"testmod\",\"name\":\"TestMod\",\"description\":\"This is example mod\",\"version\":\"1.0\",\"mcVersion\":\"12.2\",\"url\":\"some url\",\"updateUrl\":\"some updateurl\",\"credits\":\"For contributors of ForgeModGenerator\",\"logoFile\":\"some/logofile\",\"authorList\":{\"$type\":\"System.Collections.ObjectModel.ObservableCollection`1[[System.String, mscorlib]], System\",\"$values\":[\"I'm Author\"]},\"screenshots\":[\"some/screenshot\"],\"dependencies\":[\"OtherMod\"]},\"ForgeVersion\":{\"Name\":\"forge - 1.12.2 - 14.23.5.2772\",\"ZipPath\":\"C:/Dev/ForgeModGenerator/ForgeModGenerator/forgeversions/forge - 1.12.2 - 14.23.5.2772 - mdk.zip\"},\"LaunchSetup\":0,\"Side\":0,\"WorkspaceSetup\":{\"$type\":\"ForgeModGenerator.Models.EmptyWorkspace, ForgeModGenerator.Core\",\"Name\":\"Empty\"},\"CachedName\":\"NewExampleMod\"}";
             JsonSerializerSettings settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All };
             settings.Converters.Add(new ModJsonConverter());
             settings.Converters.Add(new McModInfoJsonConverter());

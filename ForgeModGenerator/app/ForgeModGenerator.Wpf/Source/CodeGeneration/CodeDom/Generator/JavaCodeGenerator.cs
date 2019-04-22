@@ -199,7 +199,7 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
             IEnumerator en = e.Members.GetEnumerator();
             while (en.MoveNext())
             {
-                if (en.Current is CodeConstructor)
+                if (en.Current is CodeConstructor codeConstructor)
                 {
                     currentMember = (CodeTypeMember)en.Current;
 
@@ -208,8 +208,7 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                         output.WriteLine();
                     }
                     GenerateCommentStatements(currentMember.Comments);
-                    CodeConstructor imp = (CodeConstructor)en.Current;
-                    GenerateConstructor(imp, e);
+                    GenerateConstructor(codeConstructor, e);
                 }
             }
         }
@@ -339,9 +338,9 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                 output.WriteLine();
             }
 
-            if (member is CodeTypeDeclaration)
+            if (member is CodeTypeDeclaration typeDeclaration)
             {
-                ((ICodeGenerator)this).GenerateCodeFromType((CodeTypeDeclaration)member, output.InnerWriter, options);
+                ((ICodeGenerator)this).GenerateCodeFromType(typeDeclaration, output.InnerWriter, options);
                 currentClass = declaredType; // Nested types clobber the current class, so reset it.
                 return;
             }
@@ -370,14 +369,14 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                         break;
                 }
             }
-            else if (member is CodeSnippetTypeMember)
+            else if (member is CodeSnippetTypeMember snippetMember)
             {
                 // Don't indent snippets, in order to preserve the column
                 // information from the original code.  This improves the debugging
                 // experience.
                 int savedIndent = Indent;
                 Indent = 0;
-                GenerateSnippetMember((CodeSnippetTypeMember)member);
+                GenerateSnippetMember(snippetMember);
                 Indent = savedIndent; // Restore the indent
 
                 // Generate an extra new line at the end of the snippet.
@@ -392,7 +391,7 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
             IEnumerator en = e.Members.GetEnumerator();
             while (en.MoveNext())
             {
-                if (en.Current is CodeTypeConstructor)
+                if (en.Current is CodeTypeConstructor typeConstructor)
                 {
                     currentMember = (CodeTypeMember)en.Current;
 
@@ -401,8 +400,7 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                         output.WriteLine();
                     }
                     GenerateCommentStatements(currentMember.Comments);
-                    CodeTypeConstructor imp = (CodeTypeConstructor)en.Current;
-                    GenerateTypeConstructor(imp);
+                    GenerateTypeConstructor(typeConstructor);
                 }
             }
         }
@@ -413,7 +411,7 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
             bool hasSnippet = false;
             while (en.MoveNext())
             {
-                if (en.Current is CodeSnippetTypeMember)
+                if (en.Current is CodeSnippetTypeMember snippetMember)
                 {
                     hasSnippet = true;
                     currentMember = (CodeTypeMember)en.Current;
@@ -423,14 +421,13 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                         output.WriteLine();
                     }
                     GenerateCommentStatements(currentMember.Comments);
-                    CodeSnippetTypeMember imp = (CodeSnippetTypeMember)en.Current;
 
                     // Don't indent snippets, in order to preserve the column
                     // information from the original code.  This improves the debugging
                     // experience.
                     int savedIndent = Indent;
                     Indent = 0;
-                    GenerateSnippetMember(imp);
+                    GenerateSnippetMember(snippetMember);
                     Indent = savedIndent; // Restore the indent
                 }
             }
@@ -448,14 +445,13 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
             IEnumerator en = e.Members.GetEnumerator();
             while (en.MoveNext())
             {
-                if (en.Current is CodeTypeDeclaration)
+                if (en.Current is CodeTypeDeclaration typeDeclaration)
                 {
                     if (options.BlankLinesBetweenMembers)
                     {
                         output.WriteLine();
                     }
-                    CodeTypeDeclaration currentClass = (CodeTypeDeclaration)en.Current;
-                    ((ICodeGenerator)this).GenerateCodeFromType(currentClass, output.InnerWriter, options);
+                    ((ICodeGenerator)this).GenerateCodeFromType(typeDeclaration, output.InnerWriter, options);
                 }
             }
         }
@@ -541,9 +537,9 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                     }
                     GenerateCommentStatements(currentMember.Comments);
                     CodeMemberMethod imp = (CodeMemberMethod)en.Current;
-                    if (en.Current is CodeEntryPointMethod)
+                    if (en.Current is CodeEntryPointMethod entryPointMethod)
                     {
-                        GenerateEntryPointMethod((CodeEntryPointMethod)en.Current, e);
+                        GenerateEntryPointMethod(entryPointMethod, e);
                     }
                     else
                     {
@@ -599,7 +595,7 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
             {
                 if (je.ThrowsExceptions.Any())
                 {
-                    output.Write("throws ");
+                    output.Write(" throws ");
                     int lastIndex = je.ThrowsExceptions.Count - 1;
                     for (int i = 0; i < je.ThrowsExceptions.Count; i++)
                     {
@@ -631,7 +627,7 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
             IEnumerator en = e.Members.GetEnumerator();
             while (en.MoveNext())
             {
-                if (en.Current is CodeMemberField)
+                if (en.Current is CodeMemberField memberField)
                 {
                     currentMember = (CodeTypeMember)en.Current;
 
@@ -640,8 +636,7 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                         output.WriteLine();
                     }
                     GenerateCommentStatements(currentMember.Comments);
-                    CodeMemberField imp = (CodeMemberField)en.Current;
-                    GenerateField(imp);
+                    GenerateField(memberField);
                 }
             }
         }
