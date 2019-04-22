@@ -25,6 +25,7 @@ namespace ForgeModGenerator.CodeGeneration
             PackageName = ImportFullName.Substring(0, lastDotIndex).ToLower();
         }
 
+        /// <summary> Package name = com.organization.modname.RelativePath </summary>
         public string PackageName { get; }
 
         /// <summary> Class and file Name </summary>

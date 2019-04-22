@@ -21,10 +21,18 @@ namespace ForgeModGenerator.CodeGeneration
 
         public Mod Mod { get; }
 
+        /// <summary> Mod.ModInfo.Name </summary>
         protected string Modname { get; }
+
+        /// <summary> Mod.ModInfo.Name.ToLower() </summary>
         protected string ModnameLower { get; }
+
+        /// <summary> Mod.Organization </summary>
         protected string Organization { get; }
+
+        /// <summary> com.Organization.ModnameLower </summary>
         protected string SourceRootPackageName { get; }
+
         protected CodeGeneratorOptions GeneratorOptions { get; } = new CodeGeneratorOptions() { BracingStyle = "Block" };
 
         public abstract ClassLocator ScriptLocator { get; }

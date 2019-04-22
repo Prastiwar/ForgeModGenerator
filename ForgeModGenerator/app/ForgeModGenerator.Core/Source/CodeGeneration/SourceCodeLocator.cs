@@ -35,6 +35,27 @@ namespace ForgeModGenerator.CodeGeneration
             return cache.Set(key, new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), Prefix + "Hook")), cacheExpirationTime);
         }
 
+        public static ClassLocator Commands(string modname, string organization)
+        {
+            string key = GetKey(nameof(Commands), modname, organization);
+            if (cache.TryGetValue(key, out ClassLocator value))
+            {
+                return value;
+            }
+            return cache.Set(key, new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), Prefix + "Commands")), cacheExpirationTime);
+        }
+
+        public static ClassLocator CustomCommand(string modname, string organization, string commandName)
+        {
+            string key = GetKey(nameof(CustomCommand), modname, organization, commandName);
+            if (cache.TryGetValue(key, out ClassLocator value))
+            {
+                return value;
+            }
+            return cache.Set(key, new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Command, commandName)), cacheExpirationTime);
+        }
+
+        #region Item locators
         public static InitClassLocator Items(string modname, string organization)
         {
             string key = GetKey(nameof(Items), modname, organization);
@@ -144,7 +165,9 @@ namespace ForgeModGenerator.CodeGeneration
             }
             return cache.Set(key, new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Item, SourceCodeFolders.Tool, "AxeBase")), cacheExpirationTime);
         }
+        #endregion
 
+        #region Block locators
         public static InitClassLocator Blocks(string modname, string organization)
         {
             string key = GetKey(nameof(Blocks), modname, organization);
@@ -174,6 +197,7 @@ namespace ForgeModGenerator.CodeGeneration
             }
             return cache.Set(key, new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Block, "OreBase")), cacheExpirationTime);
         }
+        #endregion
 
         public static InitClassLocator SoundEvents(string modname, string organization)
         {
@@ -264,6 +288,7 @@ namespace ForgeModGenerator.CodeGeneration
             }
             return cache.Set(key, new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Handler, "RegistryHandler")), cacheExpirationTime);
         }
+
         public static void Initialize(IMemoryCache cache)
         {
             SourceCodeLocator.cache = cache;
@@ -274,15 +299,19 @@ namespace ForgeModGenerator.CodeGeneration
         private static string GetPackageName(string modname, string organization) => ClassLocator.CombineImport("com", organization, modname, SourceCodeFolders.Root);
 
         /// <summary> Returns cache key for specific Mod and locator </summary>
-        private static string GetKey(string locator, string modname, string organization)
+        private static string GetKey(params string[] ids)
         {
             InitCheck();
             keyBuilder.Clear();
-            keyBuilder.Append(modname);
-            keyBuilder.Append('.');
-            keyBuilder.Append(organization);
-            keyBuilder.Append('.');
-            keyBuilder.Append(locator);
+            int lastIndex = ids.Length - 1;
+            for (int i = 0; i < ids.Length; i++)
+            {
+                keyBuilder.Append(ids[i]);
+                if (i < lastIndex)
+                {
+                    keyBuilder.Append('.');
+                }
+            }
             return keyBuilder.ToString();
         }
 
@@ -290,7 +319,7 @@ namespace ForgeModGenerator.CodeGeneration
         {
             if (!isInitialized)
             {
-                throw new ClassNotInitializedException(typeof(Log));
+                throw new ClassNotInitializedException(typeof(SourceCodeLocator));
             }
         }
     }
