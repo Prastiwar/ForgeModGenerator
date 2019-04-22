@@ -105,9 +105,9 @@ namespace ForgeModGenerator.CodeGeneration
         protected CodeMethodInvokeExpression NewMethodInvokeType(string typeName, string methodName, params CodeExpression[] arguments) => NewMethodInvoke(NewTypeReferenceExpression(typeName), methodName, arguments);
         protected CodeMethodInvokeExpression NewMethodInvokeVar(string variableName, string methodName, params CodeExpression[] arguments) => NewMethodInvoke(NewVarReference(variableName), methodName, arguments);
 
-        protected CodeMemberMethod NewMethod(string name, string returnType, MemberAttributes attributes, params Parameter[] parameters)
+        protected JavaCodeMemberMethod NewMethod(string name, string returnType, MemberAttributes attributes, params Parameter[] parameters)
         {
-            CodeMemberMethod method = new CodeMemberMethod() {
+            JavaCodeMemberMethod method = new JavaCodeMemberMethod() {
                 Name = name,
                 ReturnType = NewTypeReference(returnType),
                 Attributes = attributes

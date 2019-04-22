@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace ForgeModGenerator.CodeGeneration.CodeDom
@@ -13,9 +14,6 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
     public sealed partial class JavaCodeGenerator : ICodeGenerator, IDisposable
     {
         public JavaCodeGenerator() { }
-        public JavaCodeGenerator(IDictionary<string, string> providerOptions) => provOptions = providerOptions;
-
-        private readonly IDictionary<string, string> provOptions;
 
         private const int ParameterMultilineThreshold = 15;
         private const int MaxLineLength = 80;
@@ -25,8 +23,6 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
 
         private bool inNestedBinary = false;
         private bool generatingForLoop = false;
-
-        private string FileExtension => ".java";
 
         private CodeTypeDeclaration currentClass;
         private CodeTypeMember currentMember;
@@ -352,11 +348,11 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
 
             GenerateCommentStatements(member.Comments);
 
-            if (member is CodeMemberField)
+            if (member is CodeMemberField fieldMember)
             {
-                GenerateField((CodeMemberField)member);
+                GenerateField(fieldMember);
             }
-            else if (member is CodeMemberMethod)
+            else if (member is CodeMemberMethod methodMember)
             {
                 switch (member)
                 {
@@ -370,7 +366,7 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                         GenerateEntryPointMethod(val, declaredType);
                         break;
                     default:
-                        GenerateMethod((CodeMemberMethod)member, declaredType);
+                        GenerateMethod(methodMember, declaredType);
                         break;
                 }
             }
@@ -598,6 +594,23 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
             output.Write("(");
             OutputParameters(e.Parameters);
             output.Write(")");
+
+            if (e is JavaCodeMemberMethod je)
+            {
+                if (je.ThrowsExceptions.Any())
+                {
+                    output.Write("throws ");
+                    int lastIndex = je.ThrowsExceptions.Count - 1;
+                    for (int i = 0; i < je.ThrowsExceptions.Count; i++)
+                    {
+                        output.Write(je.ThrowsExceptions[i]);
+                        if (i < lastIndex)
+                        {
+                            output.Write(", ");
+                        }
+                    }
+                }
+            }
 
             if (!IsCurrentInterface && (e.Attributes & MemberAttributes.ScopeMask) != MemberAttributes.Abstract)
             {
@@ -907,7 +920,10 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
 
         private void GenerateCompileUnitStart(CodeCompileUnit e)
         {
-            OutputGenerationMessage();
+            if (GetUserData(e, SharedUserData.GenerateWarningMessage, true))
+            {
+                OutputGenerationMessage();
+            }
 
             SortedList importList = new SortedList(StringComparer.Ordinal);
             foreach (CodeNamespace nspace in e.Namespaces)

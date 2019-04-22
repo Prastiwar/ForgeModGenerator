@@ -195,11 +195,13 @@
     <Compile Include="Source\CodeGeneration\CodeDom\Generator\JavaCodeGeneratorStatements.cs" />
     <Compile Include="Source\CodeGeneration\CodeDom\Indentation.cs" />
     <Compile Include="Source\CodeGeneration\CodeDom\JavaCodeExtensions.cs" />
+    <Compile Include="Source\CodeGeneration\CodeDom\JavaCodeMemberMethod.cs" />
     <Compile Include="Source\CodeGeneration\CodeDom\JavaCodeProvider.cs" />
     <Compile Include="Source\CodeGeneration\CodeDom\JavaMemberAttributeConverter.cs" />
     <Compile Include="Source\CodeGeneration\CodeDom\JavaMemberAttributes.cs" />
     <Compile Include="Source\CodeGeneration\CodeDom\JavaModifierAttributeConverter.cs" />
     <Compile Include="Source\CodeGeneration\CodeDom\JavaTypeAttributeConverter.cs" />
+    <Compile Include="Source\CodeGeneration\CodeDom\SharedUserData.cs" />
     <Compile Include="Source\CodeGeneration\CodeDom\Statements\CodeBreakLabelStatement.cs" />
     <Compile Include="Source\CodeGeneration\CodeDom\Statements\CodeContinueLabelStatement.cs" />
     <Compile Include="Source\CodeGeneration\CodeDom\Statements\CodeForeachStatement.cs" />
@@ -225,6 +227,8 @@
     <Compile Include="Source\FileSystem\FileSystemWin.cs" />
     <Compile Include="Source\Modules\ApplicationModule\Controls\NavigationMenuControl.cs" />
     <Compile Include="Source\Modules\BlockGenerator\BlockCodeGenerator.cs" />
+    <Compile Include="Source\Modules\CommandGenerator\CommandCodeGenerator.cs" />
+    <Compile Include="Source\Modules\CommandGenerator\CustomCommandCodeGenerator.cs" />
     <Compile Include="Source\Modules\ItemGenerator\ItemCodeGenerator.cs" />
     <Compile Include="Source\Modules\ModGenerator\ModEditorFormFactory.cs" />
     <Compile Include="Source\Modules\ModGenerator\ModInfoSerializer.cs" />
