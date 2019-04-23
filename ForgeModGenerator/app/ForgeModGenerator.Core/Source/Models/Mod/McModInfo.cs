@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 namespace ForgeModGenerator.Models
 {
     /// <summary> mcmod.info file representation </summary>
-    public class McModInfo : BindableBase, ICopiable<McModInfo>
+    public sealed class McModInfo : BindableBase, ICopiable<McModInfo>
     {
         private string modid;
         public string Modid {

@@ -5,7 +5,7 @@ using System;
 
 namespace ForgeModGenerator.Serialization
 {
-    public class VSCLaunchSerializer : ISerializer<VSCLaunch>
+    public sealed class VSCLaunchSerializer : ISerializer<VSCLaunch>
     {
         private static readonly JsonSerializerSettings settings = new JsonSerializerSettings() {
             ContractResolver = new LowercasePropertyResolver()

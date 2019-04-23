@@ -6,7 +6,7 @@ using System;
 
 namespace ForgeModGenerator.ModGenerator.Serialization
 {
-    public class ModSerializer : ISerializer<Mod>
+    public sealed class ModSerializer : ISerializer<Mod>
     {
         private static readonly JsonSerializerSettings settings = GetSettings();
 

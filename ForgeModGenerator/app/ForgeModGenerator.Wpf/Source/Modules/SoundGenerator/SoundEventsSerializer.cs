@@ -7,39 +7,39 @@ using System.Collections.Generic;
 
 namespace ForgeModGenerator.SoundGenerator.Serialization
 {
-    public class SoundEventsSerializer : ISoundEventsSerializer
+    public sealed class SoundEventsSerializer : ISoundEventsSerializer
     {
         public SoundEventsSerializer() { }
 
-        protected string ModName { get; set; }
-        protected string Modid { get; set; }
-        protected SoundCollectionConverter Converter { get; set; }
+        private string modname;
+        private string modid;
+        private SoundCollectionConverter converter;
 
         public void SetModInfo(string modname, string modid)
         {
-            ModName = modname ?? throw new ArgumentNullException(nameof(modname));
-            Modid = modid ?? throw new ArgumentNullException(nameof(modid));
-            if (Converter == null)
+            this.modname = modname ?? throw new ArgumentNullException(nameof(modname));
+            this.modid = modid ?? throw new ArgumentNullException(nameof(modid));
+            if (converter == null)
             {
-                Converter = new SoundCollectionConverter(modname, modid);
+                converter = new SoundCollectionConverter(modname, modid);
             }
             else
             {
-                Converter.SetModInfo(modname, modid);
+                converter.SetModInfo(modname, modid);
             }
         }
 
-        public IEnumerable<SoundEvent> Deserialize(string value) => JsonConvert.DeserializeObject<IEnumerable<SoundEvent>>(value, Converter);
+        public IEnumerable<SoundEvent> Deserialize(string value) => JsonConvert.DeserializeObject<IEnumerable<SoundEvent>>(value, converter);
 
         public SoundEvent DeserializeItem(string value) => JsonConvert.DeserializeObject<SoundEvent>(value);
 
-        public string Serialize(IEnumerable<SoundEvent> value, bool prettyPrint) => JsonConvert.SerializeObject(value, prettyPrint ? Formatting.Indented : Formatting.None, Converter);
-        public string Serialize(IEnumerable<SoundEvent> value) => JsonConvert.SerializeObject(value, Converter);
+        public string Serialize(IEnumerable<SoundEvent> value, bool prettyPrint) => JsonConvert.SerializeObject(value, prettyPrint ? Formatting.Indented : Formatting.None, converter);
+        public string Serialize(IEnumerable<SoundEvent> value) => JsonConvert.SerializeObject(value, converter);
 
-        public string SerializeItem(SoundEvent value, bool prettyPrint) => JsonConvert.SerializeObject(value, prettyPrint ? Formatting.Indented : Formatting.None, Converter);
-        public string SerializeItem(SoundEvent value) => JsonConvert.SerializeObject(value, Converter);
+        public string SerializeItem(SoundEvent value, bool prettyPrint) => JsonConvert.SerializeObject(value, prettyPrint ? Formatting.Indented : Formatting.None, converter);
+        public string SerializeItem(SoundEvent value) => JsonConvert.SerializeObject(value, converter);
 
-        T ISerializer.DeserializeObject<T>(string value) => JsonConvert.DeserializeObject<T>(value, Converter);
+        T ISerializer.DeserializeObject<T>(string value) => JsonConvert.DeserializeObject<T>(value, converter);
         object ISerializer.DeserializeObject(string value) => Deserialize(value);
         object ISerializer.DeserializeObject(string value, Type type) => Deserialize(value);
         string ISerializer.SerializeObject(object value, Type type, bool prettyPrint) => Serialize((IEnumerable<SoundEvent>)value);

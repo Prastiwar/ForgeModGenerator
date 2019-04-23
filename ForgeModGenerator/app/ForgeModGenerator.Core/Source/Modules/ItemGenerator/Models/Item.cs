@@ -1,22 +1,8 @@
 ﻿using Prism.Mvvm;
+using System.Collections.Generic;
 
 namespace ForgeModGenerator.ItemGenerator.Models
 {
-    public enum ItemType
-    {
-        Hand,
-        Hoe,
-        Axe,
-        Sword,
-        Spade,
-        Pickaxe
-    }
-
-    public struct ItemAttributes
-    {
-        public float Damage;
-    }
-
     public class Item : BindableBase
     {
         private string name;
@@ -37,10 +23,22 @@ namespace ForgeModGenerator.ItemGenerator.Models
             set => SetProperty(ref texturePath, value);
         }
 
-        private ItemAttributes attributes;
-        public ItemAttributes Attributes {
-            get => attributes;
-            set => SetProperty(ref attributes, value);
+        private float maxDamage;
+        public float MaxDamage {
+            get => maxDamage;
+            set => SetProperty(ref maxDamage, value);
+        }
+
+        private int stackSize;
+        public int StackSize {
+            get => stackSize;
+            set => SetProperty(ref stackSize, value);
+        }
+
+        private KeyValuePair<string, int> harvestLevel;
+        public KeyValuePair<string, int> HarvestLevel {
+            get => harvestLevel;
+            set => SetProperty(ref harvestLevel, value);
         }
     }
 }

@@ -6,27 +6,21 @@ using System.CodeDom;
 
 namespace ForgeModGenerator.CommandGenerator.CodeGeneration
 {
-    public class CustomCommandCodeGenerator : ScriptCodeGenerator
+    public class CustomCommandCodeGenerator : CustomScriptGenerator<Command>
     {
-        public CustomCommandCodeGenerator(Mod mod, Command command) : base(mod)
-        {
-            ScriptLocator = SourceCodeLocator.CustomCommand(mod.ModInfo.Name, mod.Organization, command.Name);
-            Command = command;
-        }
+        public CustomCommandCodeGenerator(Mod mod, Command command) : base(mod, command) => ScriptLocator = SourceCodeLocator.CustomCommand(mod.ModInfo.Name, mod.Organization, command.Name);
 
         public override ClassLocator ScriptLocator { get; }
 
-        protected Command Command { get; }
-
         protected override CodeCompileUnit CreateTargetCodeUnit()
         {
-            CodeTypeDeclaration clas = NewClassWithMembers(ScriptLocator.ClassName);
+            CodeCompileUnit unit = base.CreateTargetCodeUnit();
 
             CodeMemberMethod getName = NewMethod("getName", typeof(string).FullName, MemberAttributes.Public);
-            getName.Statements.Add(NewReturnPrimitive(Command.Name));
+            getName.Statements.Add(NewReturnPrimitive(Element.Name));
 
             CodeMemberMethod getUsage = NewMethod("getUsage", typeof(string).FullName, MemberAttributes.Public, new Parameter("ICommandSender", "sender"));
-            getUsage.Statements.Add(NewReturnPrimitive(Command.Usage));
+            getUsage.Statements.Add(NewReturnPrimitive(Element.Usage));
 
             JavaCodeMemberMethod execute = NewMethod("execute", typeof(string).FullName, MemberAttributes.Public, new Parameter("MinecraftServer", "server"),
                                                                                                               new Parameter("ICommandSender", "sender"),
@@ -40,20 +34,18 @@ namespace ForgeModGenerator.CommandGenerator.CodeGeneration
             CodeMemberMethod getRequiredPermissionLevel = NewMethod("getRequiredPermissionLevel", typeof(int).FullName, MemberAttributes.Public);
             getUsage.Statements.Add(NewReturnPrimitive(0));
 
-            clas.Members.Add(getName);
-            clas.Members.Add(getUsage);
-            clas.Members.Add(execute);
-            clas.Members.Add(checkPermission);
-            clas.Members.Add(getRequiredPermissionLevel);
+            unit.Namespaces[0].Types[0].Members.Add(getName);
+            unit.Namespaces[0].Types[0].Members.Add(getUsage);
+            unit.Namespaces[0].Types[0].Members.Add(execute);
+            unit.Namespaces[0].Types[0].Members.Add(checkPermission);
+            unit.Namespaces[0].Types[0].Members.Add(getRequiredPermissionLevel);
 
-            CodeNamespace package = NewPackage(ScriptLocator.PackageName, clas,
-                                                "net.minecraft.command.CommandBase",
-                                                "net.minecraft.command.CommandException",
-                                                "net.minecraft.server.MinecraftServer",
-                                                "net.minecraft.command.ICommandSender");
-            CodeCompileUnit codeUnit = NewCodeUnit(package);
-            codeUnit.UserData[SharedUserData.GenerateWarningMessage] = false;
-            return codeUnit;
+            unit.Namespaces[0].Imports.Add(NewImport("net.minecraft.command.CommandBase"));
+            unit.Namespaces[0].Imports.Add(NewImport("net.minecraft.command.CommandException"));
+            unit.Namespaces[0].Imports.Add(NewImport("net.minecraft.server.MinecraftServer"));
+            unit.Namespaces[0].Imports.Add(NewImport("net.minecraft.command.ICommandSender"));
+
+            return unit;
         }
     }
 }

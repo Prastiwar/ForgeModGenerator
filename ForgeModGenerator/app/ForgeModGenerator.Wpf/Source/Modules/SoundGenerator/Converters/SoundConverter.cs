@@ -39,7 +39,7 @@ namespace ForgeModGenerator.SoundGenerator.Converters
             }
             if (item.TryGetValue("type", out JToken type))
             {
-                sound.Type = preload.ToObject<Sound.SoundType>();
+                sound.Type = type.ToObject<Sound.SoundType>();
             }
             sound.IsDirty = false;
             return sound; // NOTE: This is not properly initialized Sound, Info is not initialized
