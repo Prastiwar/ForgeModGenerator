@@ -7,11 +7,11 @@ namespace ForgeModGenerator.Models
     /// <summary> Base class for workspace to setup for manual changes in mod </summary>
     public abstract class WorkspaceSetup
     {
-        public static WorkspaceSetup NONE = new EmptyWorkspace();
+        public static WorkspaceSetup NONE { get; } = new EmptyWorkspace();
 
         public string Name => GetType().Name.Replace("Workspace", "");
 
-        public abstract void Setup(Mod mod);
+        public abstract void Setup(McMod mcMod);
 
         public override bool Equals(object obj) => obj is WorkspaceSetup objSetup && objSetup.Name == Name;
         public override int GetHashCode() => base.GetHashCode();
@@ -19,14 +19,14 @@ namespace ForgeModGenerator.Models
 
     public class EmptyWorkspace : WorkspaceSetup
     {
-        public override void Setup(Mod mod) { }
+        public override void Setup(McMod mcMod) { }
     }
 
     public class EclipseWorkspace : WorkspaceSetup
     {
-        public override void Setup(Mod mod)
+        public override void Setup(McMod mcMod)
         {
-            string modPath = ModPaths.ModRootFolder(mod.ModInfo.Name);
+            string modPath = ModPaths.ModRootFolder(mcMod.ModInfo.Name);
             ProcessStartInfo psi = new ProcessStartInfo {
                 FileName = "CMD.EXE",
                 Arguments = $"/K cd \"{modPath}\" & gradlew setupDecompWorkspace"
@@ -39,9 +39,9 @@ namespace ForgeModGenerator.Models
 
     public class IntelliJIDEAWorkspace : WorkspaceSetup
     {
-        public override void Setup(Mod mod)
+        public override void Setup(McMod mcMod)
         {
-            string modPath = ModPaths.ModRootFolder(mod.ModInfo.Name);
+            string modPath = ModPaths.ModRootFolder(mcMod.ModInfo.Name);
             ProcessStartInfo psi = new ProcessStartInfo {
                 FileName = "CMD.EXE",
                 Arguments = $"/K cd \"{modPath}\" & gradlew setupDecompWorkspace"
@@ -58,9 +58,9 @@ namespace ForgeModGenerator.Models
 
         private readonly ISerializer<VSCLaunch> serializer;
 
-        public override void Setup(Mod mod)
+        public override void Setup(McMod mcMod)
         {
-            string modPath = ModPaths.ModRootFolder(mod.ModInfo.Name);
+            string modPath = ModPaths.ModRootFolder(mcMod.ModInfo.Name);
             string vscPath = Path.Combine(modPath, ".vscode");
             string workspacePath = Path.Combine(modPath, "workspace.code-workspace");
             string launchPath = Path.Combine(vscPath, "launch.json");
@@ -73,7 +73,7 @@ namespace ForgeModGenerator.Models
                 Console = "externalTerminal",
                 Type = "python",
                 Request = "launch",
-                Args = new string[] { "build", mod.ModInfo.Name }
+                Args = new string[] { "build", mcMod.ModInfo.Name }
             };
 
             VSCConfiguration runClient = new VSCConfiguration {
@@ -82,7 +82,7 @@ namespace ForgeModGenerator.Models
                 Console = "externalTerminal",
                 Type = "python",
                 Request = "launch",
-                Args = new string[] { "run", mod.ModInfo.Name, "client" }
+                Args = new string[] { "run", mcMod.ModInfo.Name, "client" }
             };
 
             VSCConfiguration runServer = new VSCConfiguration {
@@ -91,7 +91,7 @@ namespace ForgeModGenerator.Models
                 Console = "externalTerminal",
                 Type = "python",
                 Request = "launch",
-                Args = new string[] { "run", mod.ModInfo.Name, "server" }
+                Args = new string[] { "run", mcMod.ModInfo.Name, "server" }
             };
 
             VSCLaunch launcher = new VSCLaunch {

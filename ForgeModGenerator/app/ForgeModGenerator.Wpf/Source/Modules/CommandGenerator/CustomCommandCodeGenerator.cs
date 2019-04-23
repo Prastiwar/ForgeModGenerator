@@ -8,7 +8,7 @@ namespace ForgeModGenerator.CommandGenerator.CodeGeneration
 {
     public class CustomCommandCodeGenerator : CustomScriptGenerator<Command>
     {
-        public CustomCommandCodeGenerator(Mod mod, Command command) : base(mod, command) => ScriptLocator = SourceCodeLocator.CustomCommand(mod.ModInfo.Name, mod.Organization, command.Name);
+        public CustomCommandCodeGenerator(McMod mcMod, Command command) : base(mcMod, command) => ScriptLocator = SourceCodeLocator.CustomCommand(mcMod.ModInfo.Name, mcMod.Organization, command.Name);
 
         public override ClassLocator ScriptLocator { get; }
 

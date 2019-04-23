@@ -5,20 +5,20 @@ namespace ForgeModGenerator
     /// <summary> Holds information about page key and page type(class) </summary>
     public class PageInfo
     {
-        public readonly string key;
-        public readonly Type type;
+        public string Key { get; }
+        public Type Type { get; }
 
         public PageInfo(string key, Type type)
         {
-            this.key = key;
-            this.type = type;
+            Key = key;
+            Type = type;
         }
     }
 
     /// <summary> Holds information about page key, page type(class) and it's viewmodel </summary>
     public class PageInfo<T> : PageInfo
     {
-        public Type ViewModelType;
+        public Type ViewModelType { get; }
         public PageInfo(string key, Type pageType) : base(key, pageType) => ViewModelType = typeof(T);
     }
 

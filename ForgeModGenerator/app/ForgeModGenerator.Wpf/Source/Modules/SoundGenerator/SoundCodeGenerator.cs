@@ -8,8 +8,8 @@ namespace ForgeModGenerator.SoundGenerator.CodeGeneration
 {
     public class SoundCodeGenerator : InitVariablesCodeGenerator<SoundEvent>
     {
-        public SoundCodeGenerator(Mod mod) : this(mod, null) { }
-        public SoundCodeGenerator(Mod mod, IEnumerable<SoundEvent> elements) : base(mod, elements) => ScriptLocator = SourceCodeLocator.SoundEvents(Modname, Organization);
+        public SoundCodeGenerator(McMod mcMod) : this(mcMod, null) { }
+        public SoundCodeGenerator(McMod mcMod, IEnumerable<SoundEvent> elements) : base(mcMod, elements) => ScriptLocator = SourceCodeLocator.SoundEvents(Modname, Organization);
 
         public override ClassLocator ScriptLocator { get; }
 

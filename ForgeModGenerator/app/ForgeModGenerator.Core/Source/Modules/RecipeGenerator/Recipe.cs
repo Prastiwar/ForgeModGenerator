@@ -7,22 +7,6 @@ namespace ForgeModGenerator.RecipeGenerator.Models
         crafting_shaped
     }
 
-    public struct RecipeResult
-    {
-        public int Data;
-        public int Count;
-        public string Item;
-    }
-
-    public struct RecipeKey
-    {
-        public char Char;
-        public int Data;
-        public string Type;
-        public string Ore;
-        public string Item;
-    }
-
     public class Recipe : BindableBase
     {
         private RecipeType type;

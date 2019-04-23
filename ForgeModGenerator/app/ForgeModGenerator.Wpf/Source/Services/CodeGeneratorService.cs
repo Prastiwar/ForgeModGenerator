@@ -7,19 +7,19 @@ namespace ForgeModGenerator.Services
 {
     public class CodeGeneratorService : ICodeGenerationService
     {
-        public void RegenerateSourceCode(Mod mod)
+        public void RegenerateSourceCode(McMod mcMod)
         {
-            foreach (ScriptCodeGenerator generator in ReflectionHelper.EnumerateSubclasses<ScriptCodeGenerator>(mod))
+            foreach (ScriptCodeGenerator generator in ReflectionHelper.EnumerateSubclasses<ScriptCodeGenerator>(mcMod))
             {
                 generator.RegenerateScript();
             }
         }
 
-        public void RegenerateScript<TScriptGenerator>(Mod mod) where TScriptGenerator : IScriptCodeGenerator => ReflectionHelper.CreateInstance<TScriptGenerator>(mod).RegenerateScript();
+        public void RegenerateScript<TScriptGenerator>(McMod mcMod) where TScriptGenerator : IScriptCodeGenerator => ReflectionHelper.CreateInstance<TScriptGenerator>(mcMod).RegenerateScript();
 
-        public void RegenerateScript(string className, Mod mod)
+        public void RegenerateScript(string className, McMod mcMod)
         {
-            foreach (ScriptCodeGenerator generator in ReflectionHelper.EnumerateSubclasses<ScriptCodeGenerator>(mod))
+            foreach (ScriptCodeGenerator generator in ReflectionHelper.EnumerateSubclasses<ScriptCodeGenerator>(mcMod))
             {
                 if (string.Compare(generator.ScriptLocator.ClassName, className) == 0)
                 {
@@ -29,9 +29,9 @@ namespace ForgeModGenerator.Services
             }
         }
 
-        public void RegenerateInitScript<T>(string className, Mod mod, IEnumerable<T> repository)
+        public void RegenerateInitScript<T>(string className, McMod mcMod, IEnumerable<T> repository)
         {
-            foreach (ScriptCodeGenerator generator in ReflectionHelper.EnumerateSubclasses<InitVariablesCodeGenerator<T>>(mod, repository))
+            foreach (ScriptCodeGenerator generator in ReflectionHelper.EnumerateSubclasses<InitVariablesCodeGenerator<T>>(mcMod, repository))
             {
                 if (string.Compare(generator.ScriptLocator.ClassName, className) == 0)
                 {

@@ -10,7 +10,7 @@ namespace ForgeModGenerator.Utility
         private const BindingFlags NonPublicFlags = BindingFlags.NonPublic | BindingFlags.Instance;
         private const BindingFlags PublicFlags = BindingFlags.Public | BindingFlags.Instance;
 
-        public static bool HasProperty(this Type obj, string propertyName) => obj.GetProperty(propertyName) != null;
+        public static bool HasProperty(this Type type, string propertyName) => type.GetProperty(propertyName) != null;
 
         public static bool HasDefaultConstructor<T>() => typeof(T).HasDefaultConstructor();
         public static bool HasDefaultConstructor(this Type t) => t.IsValueType || t.GetConstructor(Type.EmptyTypes) != null;

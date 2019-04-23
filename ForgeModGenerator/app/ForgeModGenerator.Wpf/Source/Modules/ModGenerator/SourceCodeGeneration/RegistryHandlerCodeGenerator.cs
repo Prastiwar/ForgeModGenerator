@@ -7,7 +7,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 {
     public class RegistryHandlerCodeGenerator : ScriptCodeGenerator
     {
-        public RegistryHandlerCodeGenerator(Mod mod) : base(mod) => ScriptLocator = SourceCodeLocator.RegistryHandler(Modname, Organization);
+        public RegistryHandlerCodeGenerator(McMod mcMod) : base(mcMod) => ScriptLocator = SourceCodeLocator.RegistryHandler(Modname, Organization);
 
         public override ClassLocator ScriptLocator { get; }
 

@@ -114,10 +114,10 @@ namespace ForgeModGenerator.Tests
             string path3 = @"testmod:entity.something.either";
             string path5 = @"\ForgeModGenerator\ForgeModGenerator\mods\TestMod";
 
-            string resultModid1 = Models.Mod.GetModidFromPath(path1);
-            string resultModid2 = Models.Mod.GetModidFromPath(path2);
-            string resultModid3 = Models.Mod.GetModidFromPath(path3);
-            string resultModid5 = Models.Mod.GetModidFromPath(path5);
+            string resultModid1 = Models.McMod.GetModidFromPath(path1);
+            string resultModid2 = Models.McMod.GetModidFromPath(path2);
+            string resultModid3 = Models.McMod.GetModidFromPath(path3);
+            string resultModid5 = Models.McMod.GetModidFromPath(path5);
 
             Assert.AreEqual("testmod", resultModid1);
             Assert.AreEqual("testmod", resultModid2);
@@ -128,11 +128,11 @@ namespace ForgeModGenerator.Tests
             if (Directory.Exists(ModPaths.ModRootFolder("TestMod")))
             {
                 string modPath = @"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\TestMod";
-                string modPathResult = Models.Mod.GetModidFromPath(modPath);
+                string modPathResult = Models.McMod.GetModidFromPath(modPath);
                 Assert.AreEqual("testmod", modPathResult);
 
                 string modPath1 = @"C:\Dev\ForgeModGenerator\ForgeModGenerator\mods\TestMod\src\main\resources";
-                string modPath1Result = Models.Mod.GetModidFromPath(modPath1);
+                string modPath1Result = Models.McMod.GetModidFromPath(modPath1);
                 Assert.AreEqual("testmod", modPath1Result);
             }
         }
@@ -146,11 +146,11 @@ namespace ForgeModGenerator.Tests
             string path3 = @"\ForgeModGenerator\ForgeModGenerator\mods\TestMod";
             string path4 = "C:\\Dev\\ForgeModGenerator\\ForgeModGenerator\\mods\\TestMod\\src\\main\\resources\\assets\\testmod\\sounds\\test.ogg";
 
-            string resultModid = Models.Mod.GetModnameFromPath(path);
-            string resultModid1 = Models.Mod.GetModnameFromPath(path1);
-            string resultModid2 = Models.Mod.GetModnameFromPath(path2);
-            string resultModid3 = Models.Mod.GetModnameFromPath(path3);
-            string resultModid4 = Models.Mod.GetModnameFromPath(path4);
+            string resultModid = Models.McMod.GetModnameFromPath(path);
+            string resultModid1 = Models.McMod.GetModnameFromPath(path1);
+            string resultModid2 = Models.McMod.GetModnameFromPath(path2);
+            string resultModid3 = Models.McMod.GetModnameFromPath(path3);
+            string resultModid4 = Models.McMod.GetModnameFromPath(path4);
 
             Assert.AreEqual("TestMod", resultModid);
             Assert.AreEqual("TestMod", resultModid1);

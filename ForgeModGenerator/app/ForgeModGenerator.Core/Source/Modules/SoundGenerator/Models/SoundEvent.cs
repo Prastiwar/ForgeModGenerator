@@ -6,10 +6,10 @@ using System.ComponentModel;
 namespace ForgeModGenerator.SoundGenerator.Models
 {
     /// <summary> Collection of Sound files. Minecrafts SoundEvent representation. </summary>
-    public class SoundEvent : ObservableFolder<Sound>, IDataErrorInfo, IValidable
+    public sealed class SoundEvent : ObservableFolder<Sound>, IDataErrorInfo, IValidable
     {
         /// <summary> IMPORTANT: Prefer other ctor, this is used for serialization purposes </summary>
-        protected SoundEvent() { }
+        private SoundEvent() { }
 
         /// <summary> IMPORTANT: Prefer to use ctor, this is used for serialization purposes </summary>
         public static SoundEvent CreateEmpty(IEnumerable<Sound> files = null)
@@ -20,7 +20,7 @@ namespace ForgeModGenerator.SoundGenerator.Models
                 soundEvent.Files = new ObservableRangeCollection<Sound>(files);
                 foreach (Sound file in soundEvent.Files)
                 {
-                    file.PropertyChanged += soundEvent.File_PropertyChanged;
+                    file.PropertyChanged += soundEvent.OnFilePropertyChanged;
                 }
             }
             return soundEvent;

@@ -10,7 +10,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 {
     public class ItemBasesCodeGenerator : MultiScriptsCodeGenerator
     {
-        public ItemBasesCodeGenerator(Mod mod) : base(mod) =>
+        public ItemBasesCodeGenerator(McMod mcMod) : base(mcMod) =>
             ScriptLocators = new ClassLocator[] {
                 SourceCodeLocator.ItemBase(Modname, Organization),
                 SourceCodeLocator.BowBase(Modname, Organization) ,

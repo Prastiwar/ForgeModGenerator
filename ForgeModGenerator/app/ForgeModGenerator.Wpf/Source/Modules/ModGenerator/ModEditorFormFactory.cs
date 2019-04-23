@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace ForgeModGenerator.ModGenerator
 {
-    public class ModEditorFormFactory : IEditorFormFactory<Mod>
+    public class ModEditorFormFactory : IEditorFormFactory<McMod>
     {
         public ModEditorFormFactory(IMemoryCache cache, IDialogService dialogService, ISessionContextService sessionContext, ObservableCollection<WorkspaceSetup> setups)
         {
@@ -23,7 +23,7 @@ namespace ForgeModGenerator.ModGenerator
         private readonly ISessionContextService sessionContext;
         private readonly ObservableCollection<WorkspaceSetup> setups;
 
-        public IEditorForm<Mod> Create() => new EditorForm<Mod>(cache, dialogService) {
+        public IEditorForm<McMod> Create() => new EditorForm<McMod>(cache, dialogService) {
             Form = new Controls.ModForm() {
                 AddForgeVersionCommand = new DelegateCommand(sessionContext.DownloadNewForgeVersion),
                 Setups = setups,

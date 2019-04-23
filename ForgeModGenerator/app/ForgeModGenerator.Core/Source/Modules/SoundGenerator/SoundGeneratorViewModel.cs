@@ -107,8 +107,8 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
         protected override void ForceJsonFileUpdate()
         {
             base.ForceJsonFileUpdate();
-            Mod mod = SessionContext.SelectedMod;
-            CodeGenerationService.RegenerateInitScript(SourceCodeLocator.SoundEvents(mod.ModInfo.Name, mod.Organization).ClassName, mod, Explorer.Folders.Files);
+            McMod mcMod = SessionContext.SelectedMod;
+            CodeGenerationService.RegenerateInitScript(SourceCodeLocator.SoundEvents(mcMod.ModInfo.Name, mcMod.Organization).ClassName, mcMod, Explorer.Folders.Files);
         }
 
         protected void OnSoundEdited(object sender, ItemEditedEventArgs<Sound> args)

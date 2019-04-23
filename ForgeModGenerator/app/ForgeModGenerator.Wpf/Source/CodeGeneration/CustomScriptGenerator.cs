@@ -6,7 +6,7 @@ namespace ForgeModGenerator.CodeGeneration
 {
     public abstract class CustomScriptGenerator<T> : ScriptCodeGenerator
     {
-        public CustomScriptGenerator(Mod mod, T element) : base(mod) => Element = element;
+        public CustomScriptGenerator(McMod mcMod, T element) : base(mcMod) => Element = element;
 
         protected T Element { get; }
 

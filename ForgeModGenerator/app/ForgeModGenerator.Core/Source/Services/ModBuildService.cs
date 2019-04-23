@@ -7,29 +7,29 @@ namespace ForgeModGenerator.Services
 {
     public class ModBuildService : IModBuildService
     {
-        public void Compile(Mod mod) => throw new NotImplementedException();
+        public void Compile(McMod mcMod) => throw new NotImplementedException();
 
         /// <summary> Run mod depends on mod.LanuchSetup </summary>
-        public void Run(Mod mod)
+        public void Run(McMod mcMod)
         {
-            switch (mod.LaunchSetup)
+            switch (mcMod.LaunchSetup)
             {
                 case LaunchSetup.Client:
-                    RunClient(mod);
+                    RunClient(mcMod);
                     break;
                 case LaunchSetup.Server:
-                    RunServer(mod);
+                    RunServer(mcMod);
                     break;
                 default:
-                    RunClient(mod);
+                    RunClient(mcMod);
                     break;
             }
         }
 
         /// <summary> Ignore LanuchSetup and run client for this mod </summary>
-        public void RunClient(Mod mod)
+        public void RunClient(McMod mcMod)
         {
-            string modPath = ModPaths.ModRootFolder(mod.ModInfo.Name);
+            string modPath = ModPaths.ModRootFolder(mcMod.ModInfo.Name);
             ProcessStartInfo psi = new ProcessStartInfo {
                 FileName = "CMD.EXE",
                 Arguments = $"/K cd \"{modPath}\" & gradlew runClient"
@@ -38,9 +38,9 @@ namespace ForgeModGenerator.Services
         }
 
         /// <summary> Ignore LanuchSetup and run server for this mod </summary>
-        public void RunServer(Mod mod)
+        public void RunServer(McMod mcMod)
         {
-            string modPath = ModPaths.ModRootFolder(mod.ModInfo.Name);
+            string modPath = ModPaths.ModRootFolder(mcMod.ModInfo.Name);
             string eulaPath = Path.Combine(modPath, "run", "eula.txt");
             FileInfo eulaFile = new FileInfo(eulaPath);
             if (!eulaFile.Exists)

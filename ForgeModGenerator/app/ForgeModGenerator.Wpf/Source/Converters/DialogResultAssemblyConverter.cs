@@ -1,6 +1,6 @@
 ﻿namespace ForgeModGenerator.Converters
 {
-    public class DialogResultAssemblyConverter
+    public static class DialogResultAssemblyConverter
     {
         public static DialogResult Convert(System.Windows.Forms.DialogResult result)
         {

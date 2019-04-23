@@ -6,7 +6,7 @@ namespace ForgeModGenerator.GUIGenerator
 {
     public class CreativeTabCodeGenerator : ScriptCodeGenerator
     {
-        public CreativeTabCodeGenerator(Mod mod) : base(mod) => ScriptLocator = SourceCodeLocator.CreativeTab(Modname, Organization);
+        public CreativeTabCodeGenerator(McMod mcMod) : base(mcMod) => ScriptLocator = SourceCodeLocator.CreativeTab(Modname, Organization);
 
         public override ClassLocator ScriptLocator { get; }
 

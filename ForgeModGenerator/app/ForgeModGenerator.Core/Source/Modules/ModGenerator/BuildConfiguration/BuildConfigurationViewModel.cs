@@ -13,9 +13,9 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
         private readonly IModBuildService modBuilder;
 
         public ISessionContextService SessionContext { get; }
-        protected ISerializer<Mod> ModSerializer { get; }
+        protected ISerializer<McMod> ModSerializer { get; }
 
-        public BuildConfigurationViewModel(ISessionContextService sessionContext, IModBuildService modBuilder, ISerializer<Mod> modSerializer)
+        public BuildConfigurationViewModel(ISessionContextService sessionContext, IModBuildService modBuilder, ISerializer<McMod> modSerializer)
         {
             this.modBuilder = modBuilder;
             ModSerializer = modSerializer;
@@ -23,43 +23,43 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
         }
 
         private ICommand runClientCommand;
-        public ICommand RunClientCommand => runClientCommand ?? (runClientCommand = new DelegateCommand<Mod>((mod) => { modBuilder.RunClient(mod); }));
+        public ICommand RunClientCommand => runClientCommand ?? (runClientCommand = new DelegateCommand<McMod>((mcMod) => modBuilder.RunClient(mcMod)));
 
         private ICommand runServerCommand;
-        public ICommand RunServerCommand => runServerCommand ?? (runServerCommand = new DelegateCommand<Mod>((mod) => { modBuilder.RunServer(mod); }));
+        public ICommand RunServerCommand => runServerCommand ?? (runServerCommand = new DelegateCommand<McMod>((mcMod) => modBuilder.RunServer(mcMod)));
 
         private ICommand runBothCommand;
-        public ICommand RunBothCommand => runBothCommand ?? (runBothCommand = new DelegateCommand<Mod>((mod) => {
-            modBuilder.RunClient(mod);
-            modBuilder.RunServer(mod);
+        public ICommand RunBothCommand => runBothCommand ?? (runBothCommand = new DelegateCommand<McMod>((mcMod) => {
+            modBuilder.RunClient(mcMod);
+            modBuilder.RunServer(mcMod);
         }));
 
         private ICommand compileCommand;
-        public ICommand CompileCommand => compileCommand ?? (compileCommand = new DelegateCommand<Mod>((mod) => { modBuilder.Compile(mod); }));
+        public ICommand CompileCommand => compileCommand ?? (compileCommand = new DelegateCommand<McMod>((mod) => { modBuilder.Compile(mod); }));
 
         private ICommand toggleSelectCommand;
-        public ICommand ToggleSelectCommand => toggleSelectCommand ?? (toggleSelectCommand = new DelegateCommand<Mod>(ToggleLaunchSelection));
+        public ICommand ToggleSelectCommand => toggleSelectCommand ?? (toggleSelectCommand = new DelegateCommand<McMod>(ToggleLaunchSelection));
 
-        private void ToggleLaunchSelection(Mod mod)
+        private void ToggleLaunchSelection(McMod mcMod)
         {
-            bool isSelected = SessionContext.SelectedMods.Contains(mod);
+            bool isSelected = SessionContext.SelectedMods.Contains(mcMod);
             if (isSelected)
             {
-                SessionContext.SelectedMods.Remove(mod);
-                mod.PropertyChanged -= Mod_PropertyChanged;
+                SessionContext.SelectedMods.Remove(mcMod);
+                mcMod.PropertyChanged -= Mod_PropertyChanged;
             }
             else
             {
-                SessionContext.SelectedMods.Add(mod);
-                mod.PropertyChanged += Mod_PropertyChanged;
+                SessionContext.SelectedMods.Add(mcMod);
+                mcMod.PropertyChanged += Mod_PropertyChanged;
             }
         }
 
         private void Mod_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(Mod.LaunchSetup))
+            if (e.PropertyName == nameof(McMod.LaunchSetup))
             {
-                ModHelper.ExportMod(ModSerializer, (Mod)sender);
+                ModHelper.ExportMod(ModSerializer, (McMod)sender);
             }
         }
     }

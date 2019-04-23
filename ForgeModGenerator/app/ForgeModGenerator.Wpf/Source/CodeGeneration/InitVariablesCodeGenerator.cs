@@ -7,7 +7,7 @@ namespace ForgeModGenerator.CodeGeneration
 {
     public abstract class InitVariablesCodeGenerator<T> : ScriptCodeGenerator
     {
-        public InitVariablesCodeGenerator(Mod mod, IEnumerable<T> elements = null) : base(mod) => Elements = elements;
+        public InitVariablesCodeGenerator(McMod mcMod, IEnumerable<T> elements = null) : base(mcMod) => Elements = elements;
 
         protected IEnumerable<T> Elements { get; }
 

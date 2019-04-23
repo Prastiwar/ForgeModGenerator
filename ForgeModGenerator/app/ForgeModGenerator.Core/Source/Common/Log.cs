@@ -7,8 +7,8 @@ namespace ForgeModGenerator
     /// <summary> Static convenient class for logging. Need to be initialized with Initialize() </summary>
     public static class Log
     {
-        public static string UnexpectedErrorMessage = "Something went wrong, this should never happened. Please, report a bug at https://github.com/Prastiwar/ForgeModGenerator/issues/new?template=bug_report.md";
-        
+        public static string UnexpectedErrorMessage => "Something went wrong, this should never happened. Please, report a bug at https://github.com/Prastiwar/ForgeModGenerator/issues/new?template=bug_report.md";
+
         private static IDialogService dialogService;
         private static ILogger errorLogger;
         private static ILogger infoLogger;
@@ -28,7 +28,7 @@ namespace ForgeModGenerator
         {
             if (!isInitialized)
             {
-                throw new ClassNotInitializedException(typeof(Log));
+                throw new ClassNotInitializedException(typeof(Log).FullName);
             }
         }
 

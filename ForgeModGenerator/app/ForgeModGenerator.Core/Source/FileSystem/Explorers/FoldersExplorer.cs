@@ -91,7 +91,7 @@ namespace ForgeModGenerator
                 for (int i = folder.Files.Count - 1; i >= 0; i--)
                 {
                     string filePath = folder.Files[i].Info.FullName;
-                    if (FileSystemInfoReference.GetReferenceCount(filePath) <= 1 && File.Exists(filePath))
+                    if (FileSystemInfoReference.FindReferenceCount(filePath) <= 1 && File.Exists(filePath))
                     {
                         FileSystem.DeleteFile(filePath, true);
                     }
@@ -217,6 +217,10 @@ namespace ForgeModGenerator
             }
         }
 
-        public void Dispose() => Dispose(true);
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
     }
 }

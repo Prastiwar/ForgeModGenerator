@@ -5,7 +5,7 @@ namespace ForgeModGenerator.CodeGeneration
 {
     public abstract class MultiScriptsCodeGenerator : ScriptCodeGenerator, IMultiScriptCodeGenerator
     {
-        public MultiScriptsCodeGenerator(Mod mod) : base(mod) { }
+        public MultiScriptsCodeGenerator(McMod mcMod) : base(mcMod) { }
 
         public abstract ClassLocator[] ScriptLocators { get; }
 

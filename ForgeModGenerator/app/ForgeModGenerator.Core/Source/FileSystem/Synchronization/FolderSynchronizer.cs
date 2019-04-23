@@ -31,10 +31,10 @@ namespace ForgeModGenerator
             FileWatcher.MonitorDirectoryChanges = true;
             FileWatcher.SynchronizingObject = synchronizingObject;
             FileWatcher.NotifyFilter = NotifyFilters.DirectoryName | NotifyFilters.FileName;
-            FileWatcher.FileCreated += FileWatcher_Created;
-            FileWatcher.FileDeleted += FileWatcher_Deleted;
-            FileWatcher.FileRenamed += FileWatcher_Renamed;
-            FileWatcher.FileSubPathRenamed += FileWatcher_SubPathRenamed;
+            FileWatcher.FileCreated += OnFileWatcherCreated;
+            FileWatcher.FileDeleted += OnFileWatcherDeleted;
+            FileWatcher.FileRenamed += OnFileWatcherRenamed;
+            FileWatcher.FileSubPathRenamed += OnFileWatcherSubPathRenamed;
         }
 
         private IFoldersFinder<TFolder, TFile> finder;
@@ -167,7 +167,7 @@ namespace ForgeModGenerator
             return SyncedFolders.TryGetFolderFile(oldPath, out TFile file) ? RenameInfo(file, newPath.NormalizeFullPath()) : false;
         }
 
-        protected void FileWatcher_Created(object sender, FileSystemEventArgs e)
+        protected void OnFileWatcherCreated(object sender, FileSystemEventArgs e)
         {
             if (IOHelper.IsDirectoryPath(e.FullPath))
             {
@@ -179,7 +179,7 @@ namespace ForgeModGenerator
             }
         }
 
-        protected void FileWatcher_Deleted(object sender, FileSystemEventArgs e)
+        protected void OnFileWatcherDeleted(object sender, FileSystemEventArgs e)
         {
             if (IOHelper.IsDirectoryPath(e.FullPath))
             {
@@ -191,7 +191,7 @@ namespace ForgeModGenerator
             }
         }
 
-        protected void FileWatcher_Renamed(object sender, RenamedEventArgs e)
+        protected void OnFileWatcherRenamed(object sender, RenamedEventArgs e)
         {
             if (IOHelper.IsDirectoryPath(e.FullPath))
             {
@@ -203,7 +203,7 @@ namespace ForgeModGenerator
             }
         }
 
-        protected void FileWatcher_SubPathRenamed(object sender, FileSubPathEventArgs e) => SyncRenameFile(e.OldFullPath, e.FullPath);
+        protected void OnFileWatcherSubPathRenamed(object sender, FileSubPathEventArgs e) => SyncRenameFile(e.OldFullPath, e.FullPath);
 
         /// <summary> Throws exception if given path is not sub path of RootPath </summary>
         protected void SynchronizationCheck(string actualPath)
@@ -214,6 +214,24 @@ namespace ForgeModGenerator
             }
         }
 
-        public void Dispose() => FileWatcher.Dispose();
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    FileWatcher.Dispose();
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
     }
 }

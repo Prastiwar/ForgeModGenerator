@@ -6,7 +6,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 {
     public class ModHookCodeGenerator : ScriptCodeGenerator
     {
-        public ModHookCodeGenerator(Mod mod) : base(mod) => ScriptLocator = SourceCodeLocator.Hook(mod.ModInfo.Name, mod.Organization);
+        public ModHookCodeGenerator(McMod mcMod) : base(mcMod) => ScriptLocator = SourceCodeLocator.Hook(mcMod.ModInfo.Name, mcMod.Organization);
 
         public override ClassLocator ScriptLocator { get; }
 
@@ -14,10 +14,10 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 
         protected override CodeCompileUnit CreateTargetCodeUnit() => NewCodeUnit(SourceCodeLocator.Hook(Modname, Organization).PackageName,
                                                                 NewClassWithMembers(ScriptLocator.ClassName, 
-                                                                CreateHookString("NAME", Mod.ModInfo.Name),
-                                                                CreateHookString("MODID", Mod.ModInfo.Modid),
-                                                                CreateHookString("VERSION", Mod.ModInfo.Version),
-                                                                CreateHookString("ACCEPTEDVERSIONS", Mod.ModInfo.McVersion),
+                                                                CreateHookString("NAME", McMod.ModInfo.Name),
+                                                                CreateHookString("MODID", McMod.ModInfo.Modid),
+                                                                CreateHookString("VERSION", McMod.ModInfo.Version),
+                                                                CreateHookString("ACCEPTEDVERSIONS", McMod.ModInfo.McVersion),
                                                                 CreateHookString("CLIENTPROXYCLASS", $"{SourceRootPackageName}.{SourceCodeLocator.ClientProxy(Modname, Organization).ImportRelativeName}"),
                                                                 CreateHookString("SERVERPROXYCLASS", $"{SourceRootPackageName}.{SourceCodeLocator.ServerProxy(Modname, Organization).ImportRelativeName}")));
     }

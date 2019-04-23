@@ -319,7 +319,7 @@ namespace ForgeModGenerator.CodeGeneration
         {
             if (!isInitialized)
             {
-                throw new ClassNotInitializedException(typeof(SourceCodeLocator));
+                throw new ClassNotInitializedException(typeof(SourceCodeLocator).FullName);
             }
         }
     }

@@ -8,8 +8,8 @@ namespace ForgeModGenerator.RecipeGenerator.CodeGeneration
 {
     public class RecipeCodeGenerator : InitVariablesCodeGenerator<Recipe>
     {
-        public RecipeCodeGenerator(Mod mod) : this(mod, null) { }
-        public RecipeCodeGenerator(Mod mod, IEnumerable<Recipe> elements) : base(mod, elements) => ScriptLocator = SourceCodeLocator.Recipes(Modname, Organization);
+        public RecipeCodeGenerator(McMod mcMod) : this(mcMod, null) { }
+        public RecipeCodeGenerator(McMod mcMod, IEnumerable<Recipe> elements) : base(mcMod, elements) => ScriptLocator = SourceCodeLocator.Recipes(Modname, Organization);
 
         public override ClassLocator ScriptLocator { get; }
 

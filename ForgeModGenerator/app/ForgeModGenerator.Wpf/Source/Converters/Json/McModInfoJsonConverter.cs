@@ -35,9 +35,9 @@ namespace ForgeModGenerator.Converters
                 { "updateUrl", value.UpdateUrl ?? "" },
                 { nameof(McModInfo.Credits).ToLower(), value.Credits ?? "" },
                 { "logoFile", value.LogoFile  ?? "" },
-                { "authorList", value.AuthorList != null ? JToken.FromObject(value.AuthorList, serializer) : JToken.FromObject(new int[0]) },
-                { nameof(McModInfo.Screenshots).ToLower(), value.Screenshots != null ? JToken.FromObject(value.Screenshots) : JToken.FromObject(new int[0]) },
-                { nameof(McModInfo.Dependencies).ToLower(), value.Dependencies != null ? JToken.FromObject(value.Dependencies) : JToken.FromObject(new int[0]) }
+                { "authorList", value.AuthorList != null ? JToken.FromObject(value.AuthorList, serializer) : JToken.FromObject(Array.Empty<int>()) },
+                { nameof(McModInfo.Screenshots).ToLower(), value.Screenshots != null ? JToken.FromObject(value.Screenshots) : JToken.FromObject(Array.Empty<int>()) },
+                { nameof(McModInfo.Dependencies).ToLower(), value.Dependencies != null ? JToken.FromObject(value.Dependencies) : JToken.FromObject(Array.Empty<int>()) }
             };
             writer.WriteRaw("[\n");
             jo.WriteTo(writer);

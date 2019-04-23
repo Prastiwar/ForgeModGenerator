@@ -4,7 +4,7 @@ namespace ForgeModGenerator.CodeGeneration
 {
     public interface IScriptCodeGenerator
     {
-        Mod Mod { get; }
+        McMod McMod { get; }
         ClassLocator ScriptLocator { get; }
 
         void RegenerateScript();

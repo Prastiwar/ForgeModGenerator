@@ -8,7 +8,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 {
     public class ProxyCodeGenerator : MultiScriptsCodeGenerator
     {
-        public ProxyCodeGenerator(Mod mod) : base(mod) =>
+        public ProxyCodeGenerator(McMod mcMod) : base(mcMod) =>
             ScriptLocators = new ClassLocator[] {
                 SourceCodeLocator.CommonProxyInterface(Modname, Organization),
                 SourceCodeLocator.ClientProxy(Modname, Organization),

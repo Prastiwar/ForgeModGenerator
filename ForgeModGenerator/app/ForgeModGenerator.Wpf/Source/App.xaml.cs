@@ -117,7 +117,7 @@ namespace ForgeModGenerator
         private void RegisterValidators(IContainerRegistry containerRegistry)
         {
             containerRegistry.Register<IUniqueValidator<SoundEvent>, SoundEventValidator>();
-            containerRegistry.Register<IValidator<Mod>, ModValidator>();
+            containerRegistry.Register<IValidator<McMod>, ModValidator>();
         }
 
         private void RegisterSerializers(IContainerRegistry containerRegistry)
@@ -129,7 +129,7 @@ namespace ForgeModGenerator
             containerRegistry.Register<ISerializer<IEnumerable<SoundEvent>, SoundEvent>, SoundEventsSerializer>();
             containerRegistry.Register<ISoundEventsSerializer, SoundEventsSerializer>();
 
-            containerRegistry.Register<ISerializer<Mod>, ModSerializer>();
+            containerRegistry.Register<ISerializer<McMod>, ModSerializer>();
             containerRegistry.Register<ISerializer<McModInfo>, ModInfoSerializer>();
         }
 
@@ -147,7 +147,7 @@ namespace ForgeModGenerator
             containerRegistry.Register(typeof(IFoldersExplorerFactory<,>), typeof(FoldersExplorerFactory<,>));
             containerRegistry.Register(typeof(IFoldersFinder<,>), typeof(DefaultFoldersFinder<,>));
 
-            containerRegistry.Register(typeof(IEditorFormFactory<Mod>), typeof(ModEditorFormFactory));
+            containerRegistry.Register(typeof(IEditorFormFactory<McMod>), typeof(ModEditorFormFactory));
 
             containerRegistry.Register(typeof(IEditorFormFactory<>), typeof(EditorFormFactory<>));
         }

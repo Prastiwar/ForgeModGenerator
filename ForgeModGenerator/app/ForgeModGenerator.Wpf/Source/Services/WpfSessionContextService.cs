@@ -6,7 +6,7 @@ namespace ForgeModGenerator.Services
 {
     public sealed class WpfSessionContextService : SessionContextService
     {
-        public WpfSessionContextService(ISerializer<Mod> modSerializer)
+        public WpfSessionContextService(ISerializer<McMod> modSerializer)
         {
             Log.Info("Session loading..");
             this.modSerializer = modSerializer;
@@ -15,15 +15,15 @@ namespace ForgeModGenerator.Services
             Log.Info("Session loaded");
         }
 
-        private readonly ISerializer<Mod> modSerializer;
+        private readonly ISerializer<McMod> modSerializer;
 
         private readonly Uri startPage;
         public override Uri StartPage => startPage;
 
-        protected override bool TryGetModFromPath(string path, out Mod mod)
+        protected override bool TryGetModFromPath(string path, out McMod mcMod)
         {
-            mod = ModHelper.ImportMod(modSerializer, path);
-            return mod != null;
+            mcMod = ModHelper.ImportMod(modSerializer, path);
+            return mcMod != null;
         }
     }
 }

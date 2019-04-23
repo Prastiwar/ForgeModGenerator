@@ -10,16 +10,16 @@ namespace ForgeModGenerator.CodeGeneration
 {
     public abstract class ScriptCodeGenerator : IScriptCodeGenerator
     {
-        public ScriptCodeGenerator(Mod mod)
+        public ScriptCodeGenerator(McMod mcMod)
         {
-            Mod = mod;
-            Modname = mod.ModInfo.Name;
+            McMod = mcMod;
+            Modname = mcMod.ModInfo.Name;
             ModnameLower = Modname.ToLower();
-            Organization = mod.Organization;
+            Organization = mcMod.Organization;
             SourceRootPackageName = $"com.{Organization}.{ModnameLower}";
         }
 
-        public Mod Mod { get; }
+        public McMod McMod { get; }
 
         /// <summary> Mod.ModInfo.Name </summary>
         protected string Modname { get; }

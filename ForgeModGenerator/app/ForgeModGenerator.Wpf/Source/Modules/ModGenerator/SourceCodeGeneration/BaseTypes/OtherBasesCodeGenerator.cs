@@ -9,7 +9,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 {
     public class OtherBasesCodeGenerator : MultiScriptsCodeGenerator
     {
-        public OtherBasesCodeGenerator(Mod mod) : base(mod)
+        public OtherBasesCodeGenerator(McMod mcMod) : base(mcMod)
             => ScriptLocators = new ClassLocator[] {
                 SourceCodeLocator.SoundEventBase(Modname, Organization),
                 SourceCodeLocator.FoodEffectBase(Modname, Organization)

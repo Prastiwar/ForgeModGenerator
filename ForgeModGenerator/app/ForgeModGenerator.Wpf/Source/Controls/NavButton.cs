@@ -37,7 +37,7 @@ namespace ForgeModGenerator.Controls
             set => SetValue(IsSelectedProperty, value);
         }
 
-        protected void NavButton_Click()
+        protected void ClickNavButton()
         {
             IsSelected = true;
             for (int i = 0; i < VisualTreeHelper.GetChildrenCount(Parent); i++)

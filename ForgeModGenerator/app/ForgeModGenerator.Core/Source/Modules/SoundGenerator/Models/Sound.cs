@@ -9,12 +9,12 @@ namespace ForgeModGenerator.SoundGenerator.Models
     {
         public enum SoundType { file, @event }
 
-        protected Sound() => PropertyChanged += Sound_PropertyChanged;
+        protected Sound() => PropertyChanged += OnSoundPropertyChanged;
 
         /// <summary> IMPORTANT: Prefer to use ctor, this is used for serialization purposes </summary>
         public static Sound CreateEmpty(string name = null, string modid = null) => new Sound() { Name = name, modid = modid };
 
-        public Sound(string filePath) : this(Mod.GetModidFromPath(filePath), filePath) { }
+        public Sound(string filePath) : this(McMod.GetModidFromPath(filePath), filePath) { }
 
         public Sound(string modid, string filePath) : this()
         {
@@ -83,11 +83,11 @@ namespace ForgeModGenerator.SoundGenerator.Models
 
         public ValidateResult Validate() => ValidateResult.Valid;
 
-        internal string GetSoundsFolder() => ModPaths.SoundsFolder(Mod.GetModnameFromPath(Info.FullName), modid);
+        internal string GetSoundsFolder() => ModPaths.SoundsFolder(McMod.GetModnameFromPath(Info.FullName), modid);
 
         public void FormatName() => Name = FormatSoundNameFromFullPath(modid, Info.FullName);
 
-        protected override void Info_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        protected override void OnInfoPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(FileSystemInfoReference.FullName))
             {
@@ -100,7 +100,7 @@ namespace ForgeModGenerator.SoundGenerator.Models
             }
         }
 
-        protected virtual void Sound_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        protected virtual void OnSoundPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(Info))
             {

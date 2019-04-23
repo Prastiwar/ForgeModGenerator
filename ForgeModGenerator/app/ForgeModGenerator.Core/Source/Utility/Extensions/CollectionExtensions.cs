@@ -7,23 +7,23 @@ namespace ForgeModGenerator.Utility
 {
     public static class CollectionExtensions
     {
-        public static bool HasOnlyOne<T>(this IEnumerable<T> items, Func<T, bool> match) => items.Where(match).Take(2).Count() == 1;
+        public static bool HasOnlyOne<TItem>(this IEnumerable<TItem> items, Func<TItem, bool> match) => items.Where(match).Take(2).Count() == 1;
 
-        public static bool Exists<T>(this Collection<T> items, Predicate<T> match) => items.FindIndex(match) != -1;
+        public static bool Exists<TItem>(this Collection<TItem> items, Predicate<TItem> match) => items.FindIndex(match) != -1;
 
-        public static T DeepClone<T, U>(this T collection)
-            where T : ICollection<U>
-            where U : ICopiable
+        public static TCollection DeepClone<TCollection, TItem>(this TCollection collection)
+            where TCollection : ICollection<TItem>
+            where TItem : ICopiable
         {
-            T newCollection = Activator.CreateInstance<T>();
-            foreach (U item in collection)
+            TCollection newCollection = Activator.CreateInstance<TCollection>();
+            foreach (TItem item in collection)
             {
-                newCollection.Add((U)item.DeepClone());
+                newCollection.Add((TItem)item.DeepClone());
             }
             return newCollection;
         }
 
-        public static T Find<T>(this Collection<T> items, Predicate<T> match)
+        public static TItem Find<TItem>(this Collection<TItem> items, Predicate<TItem> match)
         {
             if (match == null)
             {
@@ -40,14 +40,14 @@ namespace ForgeModGenerator.Utility
             return default;
         }
 
-        public static Collection<T> FindAll<T>(this Collection<T> items, Predicate<T> match)
+        public static Collection<TItem> FindAll<TItem>(this Collection<TItem> items, Predicate<TItem> match)
         {
             if (match == null)
             {
                 throw new ArgumentNullException(nameof(match));
             }
 
-            Collection<T> collection = new Collection<T>();
+            Collection<TItem> collection = new Collection<TItem>();
             for (int i = 0; i < items.Count; i++)
             {
                 if (match(items[i]))
@@ -58,11 +58,11 @@ namespace ForgeModGenerator.Utility
             return collection;
         }
 
-        public static int FindIndex<T>(this Collection<T> items, Predicate<T> match) => items.FindIndex(0, items.Count, match);
+        public static int FindIndex<TItem>(this Collection<TItem> items, Predicate<TItem> match) => items.FindIndex(0, items.Count, match);
 
-        public static int FindIndex<T>(this Collection<T> items, int startIndex, Predicate<T> match) => items.FindIndex(startIndex, items.Count - startIndex, match);
+        public static int FindIndex<TItem>(this Collection<TItem> items, int startIndex, Predicate<TItem> match) => items.FindIndex(startIndex, items.Count - startIndex, match);
 
-        public static int FindIndex<T>(this Collection<T> items, int startIndex, int count, Predicate<T> match)
+        public static int FindIndex<TItem>(this Collection<TItem> items, int startIndex, int count, Predicate<TItem> match)
         {
             if (startIndex > items.Count)
             {
@@ -88,7 +88,7 @@ namespace ForgeModGenerator.Utility
             return -1;
         }
 
-        public static T FindLast<T>(this Collection<T> items, Predicate<T> match)
+        public static TItem FindLast<TItem>(this Collection<TItem> items, Predicate<TItem> match)
         {
             if (match == null)
             {
@@ -105,11 +105,11 @@ namespace ForgeModGenerator.Utility
             return default;
         }
 
-        public static int FindLastIndex<T>(this Collection<T> items, Predicate<T> match) => items.FindLastIndex(items.Count - 1, items.Count, match);
+        public static int FindLastIndex<TItem>(this Collection<TItem> items, Predicate<TItem> match) => items.FindLastIndex(items.Count - 1, items.Count, match);
 
-        public static int FindLastIndex<T>(this Collection<T> items, int startIndex, Predicate<T> match) => items.FindLastIndex(startIndex, startIndex + 1, match);
+        public static int FindLastIndex<TItem>(this Collection<TItem> items, int startIndex, Predicate<TItem> match) => items.FindLastIndex(startIndex, startIndex + 1, match);
 
-        public static int FindLastIndex<T>(this Collection<T> items, int startIndex, int count, Predicate<T> match)
+        public static int FindLastIndex<TItem>(this Collection<TItem> items, int startIndex, int count, Predicate<TItem> match)
         {
             if (match == null)
             {

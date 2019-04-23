@@ -8,7 +8,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 {
     public class BlockBasesCodeGenerator : MultiScriptsCodeGenerator
     {
-        public BlockBasesCodeGenerator(Mod mod) : base(mod) => ScriptLocators = new ClassLocator[] {
+        public BlockBasesCodeGenerator(McMod mcMod) : base(mcMod) => ScriptLocators = new ClassLocator[] {
                 SourceCodeLocator.BlockBase(Modname, Organization),
                 SourceCodeLocator.OreBase(Modname, Organization)
             };

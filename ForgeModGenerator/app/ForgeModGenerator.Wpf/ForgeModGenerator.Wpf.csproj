@@ -220,6 +220,7 @@
     <Compile Include="Source\CodeGeneration\InitVariablesCodeGenerator.cs" />
     <Compile Include="Source\CodeGeneration\MultiScriptsCodeGenerator.cs" />
     <Compile Include="Source\CodeGeneration\ScriptCodeGenerator.cs" />
+    <Compile Include="Source\Components\GridLengthVector.cs" />
     <Compile Include="Source\Controls\Proxy\SelectorDecorator.cs" />
     <Compile Include="Source\Common\SyncInvokeObject.cs" />
     <Compile Include="Source\Controls\PathNameSubmitTextBox.cs" />

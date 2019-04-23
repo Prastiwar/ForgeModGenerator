@@ -7,7 +7,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 {
     public class ManagerCodeGenerator : ScriptCodeGenerator
     {
-        public ManagerCodeGenerator(Mod mod) : base(mod) => ScriptLocator = SourceCodeLocator.Manager(Modname, Organization);
+        public ManagerCodeGenerator(McMod mcMod) : base(mcMod) => ScriptLocator = SourceCodeLocator.Manager(Modname, Organization);
 
         public override ClassLocator ScriptLocator { get; }
 

@@ -4,10 +4,10 @@ namespace ForgeModGenerator.Services
 {
     public interface IModBuildService
     {
-        void Run(Mod mod);
-        void RunClient(Mod mod);
-        void RunServer(Mod mod);
+        void Run(McMod mcMod);
+        void RunClient(McMod mcMod);
+        void RunServer(McMod mcMod);
 
-        void Compile(Mod mod);
+        void Compile(McMod mcMod);
     }
 }

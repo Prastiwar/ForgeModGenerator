@@ -121,7 +121,7 @@ namespace ForgeModGenerator.ViewModels
             }
         }
 
-        protected bool disposedValue = false; // To detect redundant calls
+        private bool disposedValue = false; // To detect redundant calls
 
         protected virtual void Dispose(bool disposing)
         {
@@ -135,6 +135,10 @@ namespace ForgeModGenerator.ViewModels
             }
         }
 
-        public void Dispose() => Dispose(true);
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
     }
 }

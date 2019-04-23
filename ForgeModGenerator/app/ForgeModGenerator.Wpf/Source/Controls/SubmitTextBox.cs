@@ -50,7 +50,7 @@ namespace ForgeModGenerator.Controls
         }
 
         protected virtual bool CanSubmitText(SubmitTextBox sender, string text)
-        {            
+        {
             BindingExpression textBinding = sender.GetBindingExpression(TextProperty);
             if (textBinding != null && textBinding.Status != BindingStatus.Unattached)
             {

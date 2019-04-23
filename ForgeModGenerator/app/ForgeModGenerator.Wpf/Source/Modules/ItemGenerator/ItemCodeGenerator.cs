@@ -8,8 +8,8 @@ namespace ForgeModGenerator.ItemGenerator.CodeGeneration
 {
     public class ItemCodeGenerator : InitVariablesCodeGenerator<Item>
     {
-        public ItemCodeGenerator(Mod mod) : this(mod, null) { }
-        public ItemCodeGenerator(Mod mod, IEnumerable<Item> elements) : base(mod, elements) => ScriptLocator = SourceCodeLocator.Items(Modname, Organization);
+        public ItemCodeGenerator(McMod mcMod) : this(mcMod, null) { }
+        public ItemCodeGenerator(McMod mcMod, IEnumerable<Item> elements) : base(mcMod, elements) => ScriptLocator = SourceCodeLocator.Items(Modname, Organization);
 
         public override ClassLocator ScriptLocator { get; }
 

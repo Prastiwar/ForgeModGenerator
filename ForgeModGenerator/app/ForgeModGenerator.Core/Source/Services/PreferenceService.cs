@@ -6,7 +6,7 @@ using System.IO;
 
 namespace ForgeModGenerator.Services
 {
-    public class PreferenceService : IPreferenceService
+    public sealed class PreferenceService : IPreferenceService, IDisposable
     {
         public PreferenceService(ISerializer<PreferenceData> serializer, IMemoryCache cache, ISynchronizeInvoke synchronizingObject)
         {
@@ -76,9 +76,8 @@ namespace ForgeModGenerator.Services
             }
         }
 
-        private  void CacheFilePreference(string filePath)
+        private void CacheFilePreference(string filePath)
         {
-            FileInfo info = new FileInfo(filePath);
             string content = File.ReadAllText(filePath);
             PreferenceData preferences = serializer.Deserialize(content);
             if (preferences != null)
@@ -92,5 +91,7 @@ namespace ForgeModGenerator.Services
             await System.Threading.Tasks.Task.Delay(500);
             CacheFilePreference(e.FullPath);
         }
+
+        public void Dispose() => fileSystemWatcher.Dispose();
     }
 }

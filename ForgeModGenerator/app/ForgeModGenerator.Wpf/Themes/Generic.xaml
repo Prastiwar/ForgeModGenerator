@@ -99,7 +99,7 @@
                                     Command="{Binding Command, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:NavButton}}}">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="Click">
-                                        <i:InvokeCommandAction Command="{Binding ., Converter={StaticResource MethodToCommandConverter}, ConverterParameter=NavButton_Click, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:NavButton}}}" />
+                                        <i:InvokeCommandAction Command="{Binding ., Converter={StaticResource MethodToCommandConverter}, ConverterParameter=ClickNavButton, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:NavButton}}}" />
                                     </i:EventTrigger>
                                 </i:Interaction.Triggers>
                                 <Grid Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Button}}"

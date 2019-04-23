@@ -162,7 +162,7 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
         private void GenerateSnippetMember(CodeSnippetTypeMember e) => output.Write(e.Text);
         private void GenerateSnippetCompileUnit(CodeSnippetCompileUnit e) => output.WriteLine(e.Value);
 
-        private void GenerateConstructor(CodeConstructor e, CodeTypeDeclaration c)
+        private void GenerateConstructor(CodeConstructor e)
         {
             if (!IsCurrentClass)
             {
@@ -208,7 +208,7 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                         output.WriteLine();
                     }
                     GenerateCommentStatements(currentMember.Comments);
-                    GenerateConstructor(codeConstructor, e);
+                    GenerateConstructor(codeConstructor);
                 }
             }
         }
@@ -356,16 +356,16 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                 switch (member)
                 {
                     case CodeConstructor val:
-                        GenerateConstructor(val, declaredType);
+                        GenerateConstructor(val);
                         break;
                     case CodeTypeConstructor val:
                         GenerateTypeConstructor(val);
                         break;
                     case CodeEntryPointMethod val:
-                        GenerateEntryPointMethod(val, declaredType);
+                        GenerateEntryPointMethod(val);
                         break;
                     default:
-                        GenerateMethod(methodMember, declaredType);
+                        GenerateMethod(methodMember);
                         break;
                 }
             }
@@ -501,7 +501,7 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
             }
         }
 
-        private void GenerateEntryPointMethod(CodeEntryPointMethod e, CodeTypeDeclaration c)
+        private void GenerateEntryPointMethod(CodeEntryPointMethod e)
         {
             if (e.CustomAttributes.Count > 0)
             {
@@ -539,17 +539,17 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                     CodeMemberMethod imp = (CodeMemberMethod)en.Current;
                     if (en.Current is CodeEntryPointMethod entryPointMethod)
                     {
-                        GenerateEntryPointMethod(entryPointMethod, e);
+                        GenerateEntryPointMethod(entryPointMethod);
                     }
                     else
                     {
-                        GenerateMethod(imp, e);
+                        GenerateMethod(imp);
                     }
                 }
             }
         }
 
-        private void GenerateMethod(CodeMemberMethod e, CodeTypeDeclaration c)
+        private void GenerateMethod(CodeMemberMethod e)
         {
             if (!(IsCurrentClass || IsCurrentInterface))
             {

@@ -107,7 +107,7 @@ namespace ForgeModGenerator.Tests
         [TestMethod]
         public void ExportMod()
         {
-            Mod mod = new Mod(
+            McMod mcMod = new McMod(
                 new McModInfo {
                     Modid = IntegratedUnitTests.TestModModid,
                     Name = IntegratedUnitTests.TestModName,
@@ -132,7 +132,7 @@ namespace ForgeModGenerator.Tests
             settings.Converters.Add(new ModJsonConverter());
             settings.Converters.Add(new McModInfoJsonConverter());
             settings.Converters.Add(new ForgeVersionJsonConverter());
-            string json = JsonConvert.SerializeObject(mod, settings);
+            string json = JsonConvert.SerializeObject(mcMod, settings);
             Assert.IsTrue(json.Contains("\"Organization\":\"testorg\""), json);
             Assert.IsTrue(json.Contains("\"Name\":\"forge - 1.12.2 - 14.23.5.2772\""), json);
             Assert.IsTrue(json.Contains("\"ZipPath\":\"C:/Dev/ForgeModGenerator/ForgeModGenerator/forgeversions/forge - 1.12.2 - 14.23.5.2772 - mdk.zip\""), json);
@@ -149,40 +149,40 @@ namespace ForgeModGenerator.Tests
             settings.Converters.Add(new ModJsonConverter());
             settings.Converters.Add(new McModInfoJsonConverter());
             settings.Converters.Add(new ForgeVersionJsonConverter());
-            Mod mod = JsonConvert.DeserializeObject<Mod>(json, settings);
+            McMod mcMod = JsonConvert.DeserializeObject<McMod>(json, settings);
 
-            Assert.IsNotNull(mod.ForgeVersion);
-            Assert.IsNotNull(mod.LaunchSetup);
-            Assert.IsNotNull(mod.WorkspaceSetup);
-            Assert.IsNotNull(mod.ModInfo.AuthorList);
-            Assert.IsNotNull(mod.ModInfo.Screenshots);
-            Assert.IsNotNull(mod.ModInfo.Dependencies);
+            Assert.IsNotNull(mcMod.ForgeVersion);
+            Assert.IsNotNull(mcMod.LaunchSetup);
+            Assert.IsNotNull(mcMod.WorkspaceSetup);
+            Assert.IsNotNull(mcMod.ModInfo.AuthorList);
+            Assert.IsNotNull(mcMod.ModInfo.Screenshots);
+            Assert.IsNotNull(mcMod.ModInfo.Dependencies);
 
-            Assert.AreEqual(IntegratedUnitTests.TestModModid, mod.Modid);
-            Assert.AreEqual(IntegratedUnitTests.TestModName, mod.Name);
-            Assert.AreEqual("testorg", mod.Organization);
-            Assert.AreEqual(ModSide.ClientServer, mod.Side);
-            Assert.AreEqual("This is example mod", mod.ModInfo.Description);
-            Assert.AreEqual("1.0", mod.ModInfo.Version);
-            Assert.AreEqual("12.2", mod.ModInfo.McVersion);
-            Assert.AreEqual("some url", mod.ModInfo.Url);
-            Assert.AreEqual("some updateurl", mod.ModInfo.UpdateUrl);
-            Assert.AreEqual("For contributors of ForgeModGenerator", mod.ModInfo.Credits);
-            Assert.AreEqual("some/logofile", mod.ModInfo.LogoFile);
+            Assert.AreEqual(IntegratedUnitTests.TestModModid, mcMod.Modid);
+            Assert.AreEqual(IntegratedUnitTests.TestModName, mcMod.Name);
+            Assert.AreEqual("testorg", mcMod.Organization);
+            Assert.AreEqual(ModSide.ClientServer, mcMod.Side);
+            Assert.AreEqual("This is example mod", mcMod.ModInfo.Description);
+            Assert.AreEqual("1.0", mcMod.ModInfo.Version);
+            Assert.AreEqual("12.2", mcMod.ModInfo.McVersion);
+            Assert.AreEqual("some url", mcMod.ModInfo.Url);
+            Assert.AreEqual("some updateurl", mcMod.ModInfo.UpdateUrl);
+            Assert.AreEqual("For contributors of ForgeModGenerator", mcMod.ModInfo.Credits);
+            Assert.AreEqual("some/logofile", mcMod.ModInfo.LogoFile);
 
-            Assert.AreEqual(1, mod.ModInfo.AuthorList.Count);
-            Assert.AreEqual(1, mod.ModInfo.Screenshots.Count);
-            Assert.AreEqual(1, mod.ModInfo.Dependencies.Count);
-            Assert.AreEqual("I'm Author", mod.ModInfo.AuthorList[0]);
-            Assert.AreEqual("some/screenshot", mod.ModInfo.Screenshots[0]);
-            Assert.AreEqual("OtherMod", mod.ModInfo.Dependencies[0]);
-            Assert.AreEqual("forge - 1.12.2 - 14.23.5.2772", mod.ForgeVersion.Name);
-            Assert.AreEqual("C:/Dev/ForgeModGenerator/ForgeModGenerator/forgeversions/forge - 1.12.2 - 14.23.5.2772 - mdk.zip", mod.ForgeVersion.ZipPath);
-            Assert.IsTrue(mod.LaunchSetup == LaunchSetup.Client);
-            Assert.AreEqual("Empty", mod.WorkspaceSetup.Name);
+            Assert.AreEqual(1, mcMod.ModInfo.AuthorList.Count);
+            Assert.AreEqual(1, mcMod.ModInfo.Screenshots.Count);
+            Assert.AreEqual(1, mcMod.ModInfo.Dependencies.Count);
+            Assert.AreEqual("I'm Author", mcMod.ModInfo.AuthorList[0]);
+            Assert.AreEqual("some/screenshot", mcMod.ModInfo.Screenshots[0]);
+            Assert.AreEqual("OtherMod", mcMod.ModInfo.Dependencies[0]);
+            Assert.AreEqual("forge - 1.12.2 - 14.23.5.2772", mcMod.ForgeVersion.Name);
+            Assert.AreEqual("C:/Dev/ForgeModGenerator/ForgeModGenerator/forgeversions/forge - 1.12.2 - 14.23.5.2772 - mdk.zip", mcMod.ForgeVersion.ZipPath);
+            Assert.IsTrue(mcMod.LaunchSetup == LaunchSetup.Client);
+            Assert.AreEqual("Empty", mcMod.WorkspaceSetup.Name);
 
-            mod = JsonConvert.DeserializeObject<Mod>("{}", settings);
-            Assert.IsNull(mod);
+            mcMod = JsonConvert.DeserializeObject<McMod>("{}", settings);
+            Assert.IsNull(mcMod);
         }
     }
 }
