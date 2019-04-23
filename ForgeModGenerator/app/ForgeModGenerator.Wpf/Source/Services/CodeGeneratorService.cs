@@ -9,7 +9,7 @@ namespace ForgeModGenerator.Services
     {
         public void RegenerateSourceCode(McMod mcMod)
         {
-            foreach (ScriptCodeGenerator generator in ReflectionHelper.EnumerateSubclasses<ScriptCodeGenerator>(mcMod))
+            foreach (ScriptCodeGenerator generator in ReflectionHelper.EnumerateSubclasses<ScriptCodeGenerator>(false, mcMod))
             {
                 generator.RegenerateScript();
             }
@@ -19,7 +19,7 @@ namespace ForgeModGenerator.Services
 
         public void RegenerateScript(string className, McMod mcMod)
         {
-            foreach (ScriptCodeGenerator generator in ReflectionHelper.EnumerateSubclasses<ScriptCodeGenerator>(mcMod))
+            foreach (ScriptCodeGenerator generator in ReflectionHelper.EnumerateSubclasses<ScriptCodeGenerator>(false, mcMod))
             {
                 if (string.Compare(generator.ScriptLocator.ClassName, className) == 0)
                 {
@@ -31,7 +31,7 @@ namespace ForgeModGenerator.Services
 
         public void RegenerateInitScript<T>(string className, McMod mcMod, IEnumerable<T> repository)
         {
-            foreach (ScriptCodeGenerator generator in ReflectionHelper.EnumerateSubclasses<InitVariablesCodeGenerator<T>>(mcMod, repository))
+            foreach (ScriptCodeGenerator generator in ReflectionHelper.EnumerateSubclasses<InitVariablesCodeGenerator<T>>(false, mcMod, repository))
             {
                 if (string.Compare(generator.ScriptLocator.ClassName, className) == 0)
                 {

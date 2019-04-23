@@ -46,7 +46,7 @@ namespace ForgeModGenerator.ViewModels
             {
                 string fileName = Path.GetFileName(FoldersJsonFilePath);
                 string questionMessage = $"{fileName} file has occurencies that doesn't exist in root folder. Do you want to fix it and overwrite {fileName}? ";
-                bool shouldFix = await DialogService.ShowMessage(questionMessage, "Conflict found", "Yes", "No", null);
+                bool shouldFix = await DialogService.ShowMessage(questionMessage, "Conflict found", "Yes", "No", null).ConfigureAwait(true);
                 if (shouldFix)
                 {
                     ForceJsonFileUpdate();

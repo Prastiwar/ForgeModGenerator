@@ -88,7 +88,7 @@ namespace ForgeModGenerator.Services
 
         private async void FileSystemWatcher_FileChanged(object sender, FileSystemEventArgs e)
         {
-            await System.Threading.Tasks.Task.Delay(500);
+            await System.Threading.Tasks.Task.Delay(500).ConfigureAwait(false);
             CacheFilePreference(e.FullPath);
         }
 

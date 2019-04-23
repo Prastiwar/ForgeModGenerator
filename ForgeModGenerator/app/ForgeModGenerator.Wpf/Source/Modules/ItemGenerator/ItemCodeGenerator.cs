@@ -3,12 +3,13 @@ using ForgeModGenerator.ItemGenerator.Models;
 using ForgeModGenerator.Models;
 using System.CodeDom;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ForgeModGenerator.ItemGenerator.CodeGeneration
 {
     public class ItemCodeGenerator : InitVariablesCodeGenerator<Item>
     {
-        public ItemCodeGenerator(McMod mcMod) : this(mcMod, null) { }
+        public ItemCodeGenerator(McMod mcMod) : this(mcMod, Enumerable.Empty<Item>()) { }
         public ItemCodeGenerator(McMod mcMod, IEnumerable<Item> elements) : base(mcMod, elements) => ScriptLocator = SourceCodeLocator.Items(Modname, Organization);
 
         public override ClassLocator ScriptLocator { get; }

@@ -77,7 +77,7 @@ namespace ForgeModGenerator.ViewModels
                 foreach (TFile file in temp)
                 {
                     folder.Add(file);
-                    await Task.Delay(1);
+                    await Task.Delay(1).ConfigureAwait(true);
                 }
             }
         }
@@ -87,7 +87,7 @@ namespace ForgeModGenerator.ViewModels
             DialogResult dialogResult = Explorer.ShowFolderDialog(out IFolderBrowser browser);
             if (dialogResult == DialogResult.OK)
             {
-                await Explorer.CopyFolderToRootAsync(FoldersRootPath, browser.SelectedPath);
+                await Explorer.CopyFolderToRootAsync(FoldersRootPath, browser.SelectedPath).ConfigureAwait(false);
             }
         }
 
@@ -117,7 +117,7 @@ namespace ForgeModGenerator.ViewModels
         {
             if (e.PropertyName == nameof(SessionContext.SelectedMod))
             {
-                await Refresh();
+                await Refresh().ConfigureAwait(false);
             }
         }
 

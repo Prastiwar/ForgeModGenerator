@@ -3,12 +3,13 @@ using ForgeModGenerator.CodeGeneration;
 using ForgeModGenerator.Models;
 using System.CodeDom;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ForgeModGenerator.BlockGenerator.CodeGeneration
 {
     public class BlockCodeGenerator : InitVariablesCodeGenerator<Block>
     {
-        public BlockCodeGenerator(McMod mcMod) : this(mcMod, null) { }
+        public BlockCodeGenerator(McMod mcMod) : this(mcMod, Enumerable.Empty<Block>()) { }
         public BlockCodeGenerator(McMod mcMod, IEnumerable<Block> elements) : base(mcMod, elements) => ScriptLocator = SourceCodeLocator.Blocks(Modname, Organization);
 
         public override ClassLocator ScriptLocator { get; }

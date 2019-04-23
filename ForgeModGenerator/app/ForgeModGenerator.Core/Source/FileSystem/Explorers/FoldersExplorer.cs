@@ -126,7 +126,7 @@ namespace ForgeModGenerator
         {
             path = IOHelper.GetDirectoryPath(path);
             string newFolderPath = IOHelper.GetUniqueName(Path.Combine(rootPath, new DirectoryInfo(path).Name), (name) => !Directory.Exists(name));
-            await IOHelper.DirectoryCopyAsync(path, newFolderPath, AllowedFileExtensionsPatterns);
+            await IOHelper.DirectoryCopyAsync(path, newFolderPath, AllowedFileExtensionsPatterns).ConfigureAwait(false);
         }
 
         /// <summary> Copies directory to root path, if directory with given name exists, add (n) number to its name </summary>
@@ -138,7 +138,7 @@ namespace ForgeModGenerator
         }
 
         /// <summary> Copies files to folder path, if file with given name exists, prompt for overwriting </summary>
-        public Task CopyFilesToFolderAsync(TFolder folder, params string[] fileNames) => Task.Run(() => { CopyFilesToFolder(folder, fileNames); });
+        public Task CopyFilesToFolderAsync(TFolder folder, params string[] fileNames) => Task.Run(() => CopyFilesToFolder(folder, fileNames));
 
         /// <summary> Copies files to folder path, if file with given name exists, prompt for overwriting </summary>
         public void CopyFilesToFolder(TFolder folder, params string[] fileNames)

@@ -45,15 +45,19 @@ namespace ForgeModGenerator.CodeGeneration
             {
                 try
                 {
-                    FileInfo scriptFileInfo = new FileInfo(scriptPath) {
-                        IsReadOnly = false
-                    };
+                    FileInfo scriptFileInfo = new FileInfo(scriptPath);
+                    if (scriptFileInfo.Exists)
+                    {
+                        scriptFileInfo.IsReadOnly = false;
+                    }
                     scriptFileInfo.Directory.Create();
                     using (StreamWriter sourceWriter = scriptFileInfo.CreateText())
                     {
                         javaProvider.GenerateCodeFromCompileUnit(targetCodeUnit, sourceWriter, options);
                     }
-                    scriptFileInfo.IsReadOnly = true;
+                    scriptFileInfo = new FileInfo(scriptPath) { // create new instance to prevent file deletion
+                        IsReadOnly = true
+                    };
                 }
                 catch (Exception ex)
                 {

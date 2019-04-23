@@ -32,7 +32,7 @@ namespace ForgeModGenerator.ApplicationModule
 
         private async void Quit()
         {
-            await System.Threading.Tasks.Task.Delay(150); // to show click effect
+            await System.Threading.Tasks.Task.Delay(150).ConfigureAwait(false); // to show click effect
             Environment.Exit(0);
         }
     }

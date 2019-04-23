@@ -3,12 +3,13 @@ using ForgeModGenerator.Models;
 using ForgeModGenerator.SoundGenerator.Models;
 using System.CodeDom;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ForgeModGenerator.SoundGenerator.CodeGeneration
 {
     public class SoundCodeGenerator : InitVariablesCodeGenerator<SoundEvent>
     {
-        public SoundCodeGenerator(McMod mcMod) : this(mcMod, null) { }
+        public SoundCodeGenerator(McMod mcMod) : this(mcMod, Enumerable.Empty<SoundEvent>()) { }
         public SoundCodeGenerator(McMod mcMod, IEnumerable<SoundEvent> elements) : base(mcMod, elements) => ScriptLocator = SourceCodeLocator.SoundEvents(Modname, Organization);
 
         public override ClassLocator ScriptLocator { get; }

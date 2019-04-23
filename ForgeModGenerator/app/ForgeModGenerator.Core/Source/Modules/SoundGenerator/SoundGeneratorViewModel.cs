@@ -83,7 +83,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
                 {
                     throw new System.InvalidOperationException($"{Explorer.FileSynchronizer.Finder} must be {typeof(SoundEventsFinder)}");
                 }
-                await InitializeFoldersAsync(await Explorer.FileSynchronizer.Finder.FindFoldersAsync(FoldersJsonFilePath, true));
+                await InitializeFoldersAsync(await Explorer.FileSynchronizer.Finder.FindFoldersAsync(FoldersJsonFilePath, true).ConfigureAwait(true)).ConfigureAwait(false);
                 Explorer.FileSynchronizer.RootPath = FoldersRootPath;
                 Explorer.FileSynchronizer.SetEnableSynchronization(true);
                 RaisePropertyChanged(nameof(HasEmptyFolders));
@@ -180,7 +180,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
 
         private void OnSoundEventPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            ValidateResult validateResult = SoundEventValidator.Validate((SoundEvent)sender);
+            ValidateResult validateResult = SoundEventValidator.Validate((SoundEvent)sender, Explorer.Folders.Files);
             if (validateResult.IsValid)
             {
                 ForceJsonFileUpdate();

@@ -1018,6 +1018,6 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
             }
         }
 
-        public void Dispose() => output.Dispose();
+        public void Dispose() => output?.Dispose();
     }
 }
