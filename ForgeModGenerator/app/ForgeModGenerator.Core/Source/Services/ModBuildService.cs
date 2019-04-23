@@ -7,7 +7,15 @@ namespace ForgeModGenerator.Services
 {
     public class ModBuildService : IModBuildService
     {
-        public void Compile(McMod mcMod) => throw new NotImplementedException();
+        public void Compile(McMod mcMod)
+        {
+            string modPath = ModPaths.ModRootFolder(mcMod.ModInfo.Name);
+            ProcessStartInfo psi = new ProcessStartInfo {
+                FileName = "CMD.EXE",
+                Arguments = $"/K cd \"{modPath}\" & gradlew build"
+            };
+            Process.Start(psi);
+        }
 
         /// <summary> Run mod depends on mod.LanuchSetup </summary>
         public void Run(McMod mcMod)

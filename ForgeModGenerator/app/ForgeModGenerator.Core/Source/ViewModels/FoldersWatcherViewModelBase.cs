@@ -27,7 +27,7 @@ namespace ForgeModGenerator.ViewModels
 
         public IFoldersExplorer<TFolder, TFile> Explorer { get; }
 
-        protected ISessionContextService SessionContext { get; }
+        public ISessionContextService SessionContext { get; }
 
         private bool isLoading;
         /// <summary> Determines when folders are loading - used to show loading circle </summary>
