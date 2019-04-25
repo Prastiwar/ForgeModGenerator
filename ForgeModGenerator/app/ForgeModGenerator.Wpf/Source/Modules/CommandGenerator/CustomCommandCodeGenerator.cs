@@ -32,7 +32,7 @@ namespace ForgeModGenerator.CommandGenerator.CodeGeneration
             checkPermission.Statements.Add(NewReturnPrimitive(false));
 
             CodeMemberMethod getRequiredPermissionLevel = NewMethod("getRequiredPermissionLevel", typeof(int).FullName, MemberAttributes.Public);
-            getUsage.Statements.Add(NewReturnPrimitive(0));
+            getUsage.Statements.Add(NewReturnPrimitive(Element.PermissionLevel));
 
             unit.Namespaces[0].Types[0].Members.Add(getName);
             unit.Namespaces[0].Types[0].Members.Add(getUsage);

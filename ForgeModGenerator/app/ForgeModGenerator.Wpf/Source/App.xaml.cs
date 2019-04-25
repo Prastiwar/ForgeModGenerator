@@ -123,6 +123,7 @@ namespace ForgeModGenerator
         private void RegisterSerializers(IContainerRegistry containerRegistry)
         {
             containerRegistry.Register<ISerializer, JsonSerializer>();
+            containerRegistry.Register(typeof(ISerializer<>), typeof(JsonSerializer<>));
             containerRegistry.Register<ISerializer<PreferenceData>, PreferenceDataSerializer>();
             containerRegistry.Register<ISerializer<VSCLaunch>, VSCLaunchSerializer>();
 
@@ -135,6 +136,8 @@ namespace ForgeModGenerator
 
         private void RegisterFactories(IContainerRegistry containerRegistry)
         {
+            containerRegistry.Register(typeof(IJsonUpdaterFactory<>), typeof(JsonUpdaterFactory<>));
+            containerRegistry.Register(typeof(IJsonUpdaterFactory<,>), typeof(CollectionJsonUpdaterFactory<,>));
             containerRegistry.Register<ISoundJsonUpdaterFactory, SoundJsonUpdaterFactory>();
 
             containerRegistry.Register<IFoldersFactory<SoundEvent, Sound>, SoundEventsFactory>();

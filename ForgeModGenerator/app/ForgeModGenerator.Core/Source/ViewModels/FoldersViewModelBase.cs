@@ -1,6 +1,5 @@
 ﻿using ForgeModGenerator.Serialization;
 using ForgeModGenerator.Services;
-using ForgeModGenerator.Validation;
 using Prism.Commands;
 using System.Collections.Generic;
 using System.IO;
@@ -12,7 +11,7 @@ namespace ForgeModGenerator.ViewModels
     /// <summary> Base ViewModel class with json updater </summary>
     public abstract class FoldersViewModelBase<TFolder, TFile> : FoldersWatcherViewModelBase<TFolder, TFile>
         where TFolder : class, IFolderObject<TFile>
-        where TFile : class, IFileObject, IValidable
+        where TFile : class, IFileObject
     {
         public FoldersViewModelBase(ISessionContextService sessionContext, IDialogService dialogService, IFoldersExplorerFactory<TFolder, TFile> factory) : base(sessionContext, factory) => DialogService = dialogService;
 
@@ -30,7 +29,19 @@ namespace ForgeModGenerator.ViewModels
         }
 
         private ICommand editFileCommand;
-        public ICommand EditFileCommand => editFileCommand ?? (editFileCommand = new DelegateCommand<TFile>(FileEditor.OpenItemEditor));
+        public ICommand EditFileCommand {
+            get {
+                if (editFileCommand != null)
+                {
+                    return editFileCommand;
+                }
+                else if (FileEditor != null)
+                {
+                    return (editFileCommand = new DelegateCommand<TFile>(FileEditor.OpenItemEditor));
+                }
+                return editFileCommand = new DelegateCommand<TFile>((file) => { });
+            }
+        }
 
         private ICommand resolveJsonFileCommand;
         public ICommand ResolveJsonFileCommand => resolveJsonFileCommand ?? (resolveJsonFileCommand = new DelegateCommand(ResolveJsonFile));

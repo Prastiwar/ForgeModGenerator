@@ -1,9 +1,43 @@
-﻿using Prism.Mvvm;
+﻿using System.IO;
 
 namespace ForgeModGenerator.CommandGenerator.Models
 {
-    public class Command : BindableBase
+    public class Command : FileObject
     {
+        protected Command() { }
+
+        public Command(string filePath) : base(filePath)
+        {
+            if (Info.Info.Exists)
+            {
+                string content = File.ReadAllText(Info.FullName);
+                InitializeProperty(ref usage, content, "public String getUsage(ICommandSender sender)");
+                InitializeProperty(ref name, content, "public String getName()");
+                InitializeProperty(ref permissionLevel, content, "public int getRequiredPermissionLevel()");
+            }
+        }
+
+        private void InitializeProperty<T>(ref T property, string content, string findString)
+        {
+            int indexOfUsage = content.IndexOf(findString);
+            if (indexOfUsage > -1)
+            {
+                string returnKeyword = "return ";
+                indexOfUsage = content.IndexOf("return ", indexOfUsage);
+                if (indexOfUsage > -1)
+                {
+                    int startIndex = indexOfUsage + returnKeyword.Length;
+                    int endIndex = content.IndexOf(';', indexOfUsage);
+                    string value = content.Substring(startIndex, endIndex - startIndex);
+                    if (value[0] == '"')
+                    {
+                        value = value.Substring(1, value.Length - 2);
+                    }
+                    property = (T)System.Convert.ChangeType(value, typeof(T));
+                }
+            }
+        }
+
         private string name;
         public string Name {
             get => name;
@@ -20,6 +54,41 @@ namespace ForgeModGenerator.CommandGenerator.Models
         public string Permission {
             get => permission;
             set => SetProperty(ref permission, value);
+        }
+
+        private int permissionLevel;
+        public int PermissionLevel {
+            get => permissionLevel;
+            set => SetProperty(ref permissionLevel, value);
+        }
+
+        public override object DeepClone()
+        {
+            Command command = new Command() {
+                Name = Name,
+                Usage = Usage,
+                Permission = Permission,
+                PermissionLevel = PermissionLevel
+            };
+            command.SetInfo(Info.FullName);
+            command.IsDirty = false;
+            return command;
+        }
+
+        public override bool CopyValues(object fromCopy)
+        {
+            if (fromCopy is Command command)
+            {
+                Name = command.Name;
+                Usage = command.Usage;
+                Permission = command.Permission;
+                PermissionLevel = command.PermissionLevel;
+
+                base.CopyValues(fromCopy);
+                IsDirty = false;
+                return true;
+            }
+            return false;
         }
     }
 }

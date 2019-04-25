@@ -1,26 +1,97 @@
 ﻿<Page x:Class="ForgeModGenerator.CommandGenerator.Views.CommandGeneratorPage"
-	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	  xmlns:local="clr-namespace:ForgeModGenerator.CommandGenerator.Views"
-      xmlns:vm="clr-namespace:ForgeModGenerator.ViewModels"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:prism="http://prismlibrary.com/"
+      xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
+      xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       prism:ViewModelLocator.AutoWireViewModel="True"
       mc:Ignorable="d"
-	  d:DesignHeight="450"
-	  d:DesignWidth="800">
-	<Grid Background="{StaticResource PageBackground}">
-        <StackPanel HorizontalAlignment="Center"
-                    VerticalAlignment="Center">
-            <Label Content="Command Generator"
-                   Foreground="DarkGray"
-                   HorizontalAlignment="Center"
-                   FontSize="50" />
-            <Label Content="In development"
-                   Foreground="DarkGray"
-                   HorizontalAlignment="Center"
-                   FontSize="50" />
-        </StackPanel>
-    </Grid>
+      d:DesignHeight="450"
+      d:DesignWidth="800">
+    <Page.Resources>
+        <DataTemplate x:Key="FolderTemplate">
+            <StackPanel>
+                <controls:FolderExpanderControl x:Name="CommandFolderExpanderControl"
+                                                HeaderText="{Binding Path=Info.Name}"
+                                                Folder="{Binding}"
+                                                AddFileCommand="{Binding Path=DataContext.AddFileCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
+                                                RemoveFileCommand="{Binding Path=DataContext.RemoveFileCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
+                                                RemoveFolderCommand="{Binding Path=DataContext.RemoveFolderCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
+                                                EditFileCommand="{Binding Path=DataContext.EditFileCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}">
+                    <controls:FolderExpanderControl.FileItemTemplate>
+                        <DataTemplate x:Name="FolderFileItemTemplate">
+                            <StackPanel Margin="5,5,5,10">
+                                <Button x:Name="FileButton"
+                                        Tag="{Binding RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
+                                        Width="32"
+                                        Height="32"
+                                        Padding="0"
+                                        Background="CornflowerBlue"
+                                        BorderBrush="Black"
+                                        ContextMenu="{StaticResource DefaultFileItemContext}"
+                                        Command="{Binding FileClickCommand, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
+                                        CommandParameter="{Binding}">
+                                    <materialDesign:PackIcon Kind="File" />
+                                </Button>
+                                <Label x:Name="FileRenameTextBox"
+                                       Content="{Binding Info.NameWithoutExtension, Mode=OneTime}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </controls:FolderExpanderControl.FileItemTemplate>
+                </controls:FolderExpanderControl>
+            </StackPanel>
+        </DataTemplate>
+    </Page.Resources>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding OnLoadedCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <materialDesign:DialogHost>
+        <Grid Background="{StaticResource PageBackground}">
+            <ProgressBar x:Name="LoadingProgressBar"
+                         Style="{StaticResource MaterialDesignCircularProgressBar}"
+                         Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"
+                         Width="150"
+                         Height="150"
+                         Foreground="White"
+                         Value="0"
+                         IsIndeterminate="True" />
+            <controls:FolderListBox x:Name="FoldersListBox"
+                                    Grid.Row="1"
+                                    Visibility="{Binding IsLoading, Converter={StaticResource InvertedBoolToVisibility}}"
+                                    FoldersSource="{Binding Explorer.Folders.Files, Mode=OneWay}"
+                                    AddFolderCommand="{Binding AddFolderCommand}"
+                                    ShowEmptyMessage="{Binding SessionContext.IsModSelected, Converter={StaticResource InvertBooleanConverter}}"
+                                    FolderTemplate="{StaticResource FolderTemplate}" />
+            <StackPanel VerticalAlignment="Bottom">
+                <materialDesign:Snackbar x:Name="JsonFileUpdateSnackbar"
+                                         IsActive="{Binding IsFileUpdateAvailable}"
+                                         Height="30"
+                                         Padding="15,5,35,5"
+                                         HorizontalAlignment="Stretch"
+                                         Background="#FFD65252">
+                    <materialDesign:SnackbarMessage Content="Found file that is not referenced by sounds.json, do you want to add it there?"
+                                                    ActionContent="UPDATE"
+                                                    ActionCommand="{Binding ResolveJsonFileCommand}" />
+                </materialDesign:Snackbar>
+                <controls:SnackbarExtended x:Name="EmptyFoldersSnackbar"
+                                           IsActive="{Binding HasEmptyFolders}"
+                                           Height="30"
+                                           Padding="15,5,35,5"
+                                           HorizontalAlignment="Stretch"
+                                           Background="#FFD65252">
+                    <materialDesign:SnackbarMessage Content="Found empty folders, do you want to remove them?"
+                                                    ActionContent="CLEAR"
+                                                    ActionCommand="{Binding RemoveEmptyFoldersCommand}" />
+                </controls:SnackbarExtended>
+            </StackPanel>
+            <materialDesign:Snackbar  x:Name="NotificationSnackbar"
+                                      Padding="5"
+                                      MessageQueue="{Binding NotificationMessageQueue}" />
+        </Grid>
+    </materialDesign:DialogHost>
 </Page>

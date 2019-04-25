@@ -11,9 +11,6 @@ namespace ForgeModGenerator.SoundGenerator.Models
 
         protected Sound() => PropertyChanged += OnSoundPropertyChanged;
 
-        /// <summary> IMPORTANT: Prefer to use ctor, this is used for serialization purposes </summary>
-        public static Sound CreateEmpty(string name = null, string modid = null) => new Sound() { Name = name, modid = modid };
-
         public Sound(string filePath) : this(McMod.GetModidFromPath(filePath), filePath) { }
 
         public Sound(string modid, string filePath) : this()
@@ -32,7 +29,8 @@ namespace ForgeModGenerator.SoundGenerator.Models
             IsDirty = false;
         }
 
-        private string modid;
+        private readonly string modid;
+
         private string name;
         public string Name {
             get => name;
@@ -115,9 +113,7 @@ namespace ForgeModGenerator.SoundGenerator.Models
 
         public override object DeepClone()
         {
-            Sound sound = new Sound() {
-                modid = modid,
-                Name = Name,
+            Sound sound = new Sound(modid, name) {
                 Volume = Volume,
                 Pitch = Pitch,
                 Weight = Weight,
@@ -127,6 +123,7 @@ namespace ForgeModGenerator.SoundGenerator.Models
                 Type = Type
             };
             sound.SetInfo(Info.FullName);
+            sound.IsDirty = false;
             return sound;
         }
 
@@ -134,7 +131,6 @@ namespace ForgeModGenerator.SoundGenerator.Models
         {
             if (fromCopy is Sound sound)
             {
-                modid = sound.modid;
                 Name = sound.Name;
                 Volume = sound.Volume;
                 Pitch = sound.Pitch;
