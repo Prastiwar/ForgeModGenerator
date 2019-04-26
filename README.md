@@ -34,9 +34,10 @@
   - [ ] Respect manual changes in files
   - [ ] Update source code
 
-- [x] Command Generator
+- [x] Command Generator - programming knowledge is required
 
   - [x] Create simple command template
+  - [x] Respect manual changes
   - [x] Update source code
 
 - [ ] GUI Generator

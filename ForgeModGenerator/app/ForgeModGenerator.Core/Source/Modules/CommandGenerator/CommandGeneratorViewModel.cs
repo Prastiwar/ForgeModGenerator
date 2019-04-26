@@ -76,6 +76,7 @@ namespace ForgeModGenerator.CommandGenerator.ViewModels
                 Permission = $"{SessionContext.SelectedMod.ModInfo.Name.ToLower()}.newcommand",
                 PermissionLevel = 4
             };
+            newCommand.IsDirty = false;
             newCommand.ValidateProperty += (sender, propertyName) => ValidateCommand(sender, folder.Files, propertyName);
             CommandValidator.SetDefaultRepository(folder.Files);
             EditorForm.OpenItemEditor(newCommand);
