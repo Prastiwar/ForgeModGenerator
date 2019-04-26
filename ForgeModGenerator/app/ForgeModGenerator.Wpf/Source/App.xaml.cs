@@ -5,6 +5,8 @@ using ForgeModGenerator.ApplicationModule.Views;
 using ForgeModGenerator.BlockGenerator.ViewModels;
 using ForgeModGenerator.BlockGenerator.Views;
 using ForgeModGenerator.CodeGeneration;
+using ForgeModGenerator.CommandGenerator;
+using ForgeModGenerator.CommandGenerator.Models;
 using ForgeModGenerator.CommandGenerator.ViewModels;
 using ForgeModGenerator.CommandGenerator.Views;
 using ForgeModGenerator.ItemGenerator.ViewModels;
@@ -151,6 +153,8 @@ namespace ForgeModGenerator
             containerRegistry.Register(typeof(IFoldersFinder<,>), typeof(DefaultFoldersFinder<,>));
 
             containerRegistry.Register(typeof(IEditorFormFactory<McMod>), typeof(ModEditorFormFactory));
+
+            containerRegistry.Register(typeof(IEditorFormFactory<Command>), typeof(CommandEditorFormFactory));
 
             containerRegistry.Register(typeof(IEditorFormFactory<>), typeof(EditorFormFactory<>));
         }

@@ -15,11 +15,11 @@
         <DataTemplate x:Key="FolderTemplate">
             <StackPanel>
                 <controls:FolderExpanderControl x:Name="CommandFolderExpanderControl"
+                                                Style="{StaticResource CommandFolderExpanderStyle}"
                                                 HeaderText="{Binding Path=Info.Name}"
                                                 Folder="{Binding}"
-                                                AddFileCommand="{Binding Path=DataContext.AddFileCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
+                                                AddFileCommand="{Binding Path=DataContext.OpenCommandEditor, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
                                                 RemoveFileCommand="{Binding Path=DataContext.RemoveFileCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
-                                                RemoveFolderCommand="{Binding Path=DataContext.RemoveFolderCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
                                                 EditFileCommand="{Binding Path=DataContext.EditFileCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}">
                     <controls:FolderExpanderControl.FileItemTemplate>
                         <DataTemplate x:Name="FolderFileItemTemplate">
@@ -62,36 +62,11 @@
                          IsIndeterminate="True" />
             <controls:FolderListBox x:Name="FoldersListBox"
                                     Grid.Row="1"
+                                    Style="{StaticResource CommandFolderListBoxStyle}"
                                     Visibility="{Binding IsLoading, Converter={StaticResource InvertedBoolToVisibility}}"
                                     FoldersSource="{Binding Explorer.Folders.Files, Mode=OneWay}"
-                                    AddFolderCommand="{Binding AddFolderCommand}"
                                     ShowEmptyMessage="{Binding SessionContext.IsModSelected, Converter={StaticResource InvertBooleanConverter}}"
                                     FolderTemplate="{StaticResource FolderTemplate}" />
-            <StackPanel VerticalAlignment="Bottom">
-                <materialDesign:Snackbar x:Name="JsonFileUpdateSnackbar"
-                                         IsActive="{Binding IsFileUpdateAvailable}"
-                                         Height="30"
-                                         Padding="15,5,35,5"
-                                         HorizontalAlignment="Stretch"
-                                         Background="#FFD65252">
-                    <materialDesign:SnackbarMessage Content="Found file that is not referenced by sounds.json, do you want to add it there?"
-                                                    ActionContent="UPDATE"
-                                                    ActionCommand="{Binding ResolveJsonFileCommand}" />
-                </materialDesign:Snackbar>
-                <controls:SnackbarExtended x:Name="EmptyFoldersSnackbar"
-                                           IsActive="{Binding HasEmptyFolders}"
-                                           Height="30"
-                                           Padding="15,5,35,5"
-                                           HorizontalAlignment="Stretch"
-                                           Background="#FFD65252">
-                    <materialDesign:SnackbarMessage Content="Found empty folders, do you want to remove them?"
-                                                    ActionContent="CLEAR"
-                                                    ActionCommand="{Binding RemoveEmptyFoldersCommand}" />
-                </controls:SnackbarExtended>
-            </StackPanel>
-            <materialDesign:Snackbar  x:Name="NotificationSnackbar"
-                                      Padding="5"
-                                      MessageQueue="{Binding NotificationMessageQueue}" />
         </Grid>
     </materialDesign:DialogHost>
 </Page>

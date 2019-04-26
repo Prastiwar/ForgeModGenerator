@@ -8,13 +8,10 @@ namespace ForgeModGenerator.CommandGenerator.Models
 
         public Command(string filePath) : base(filePath)
         {
-            if (Info.Info.Exists)
-            {
-                string content = File.ReadAllText(Info.FullName);
-                InitializeProperty(ref usage, content, "public String getUsage(ICommandSender sender)");
-                InitializeProperty(ref name, content, "public String getName()");
-                InitializeProperty(ref permissionLevel, content, "public int getRequiredPermissionLevel()");
-            }
+            string content = File.ReadAllText(Info.FullName);
+            InitializeProperty(ref usage, content, "public String getUsage(ICommandSender sender)");
+            InitializeProperty(ref name, content, "public String getName()");
+            InitializeProperty(ref permissionLevel, content, "public int getRequiredPermissionLevel()");
         }
 
         private void InitializeProperty<T>(ref T property, string content, string findString)

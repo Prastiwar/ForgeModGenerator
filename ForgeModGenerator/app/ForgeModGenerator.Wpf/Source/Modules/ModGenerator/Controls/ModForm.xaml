@@ -150,9 +150,11 @@
                      TextWrapping="Wrap"
                      AcceptsReturn="True" />
             <TextBox x:Name="VersionTextBox"
-                     Text="{Binding Path=ModInfo.Version, Mode=TwoWay}" />
+                     Text="{Binding Path=ModInfo.Version, Mode=TwoWay}"
+                     TextWrapping="Wrap" />
             <TextBox x:Name="McVersionTextBox"
-                     Text="{Binding Path=ModInfo.McVersion, Mode=TwoWay}" />
+                     Text="{Binding Path=ModInfo.McVersion, Mode=TwoWay}"
+                     TextWrapping="Wrap" />
             <TextBox x:Name="UrlTextBox"
                      Text="{Binding Path=ModInfo.Url, Mode=TwoWay}"
                      TextWrapping="Wrap"
@@ -166,7 +168,8 @@
                      TextWrapping="Wrap"
                      AcceptsReturn="True" />
             <TextBox x:Name="LogoFileTextBox"
-                     Text="{Binding Path=ModInfo.LogoFile, Mode=TwoWay}" />
+                     Text="{Binding Path=ModInfo.LogoFile, Mode=TwoWay}"
+                     TextWrapping="Wrap" />
             <controls:EditableStringList x:Name="AuthorListBox"
                                          ItemsSource="{Binding Path=ModInfo.AuthorList, Mode=TwoWay}" />
             <controls:EditableStringList x:Name="DependencyListBox"

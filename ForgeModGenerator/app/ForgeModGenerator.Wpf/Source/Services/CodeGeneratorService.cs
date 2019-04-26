@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
-using ForgeModGenerator.CodeGeneration;
+﻿using ForgeModGenerator.CodeGeneration;
 using ForgeModGenerator.Models;
 using ForgeModGenerator.Utility;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ForgeModGenerator.Services
 {
@@ -38,6 +39,15 @@ namespace ForgeModGenerator.Services
                     generator.RegenerateScript();
                     break;
                 }
+            }
+        }
+
+        public void CreateCustomScript<T>(McMod mcMod, T element)
+        {
+            CustomScriptGenerator<T> generator = ReflectionHelper.EnumerateSubclasses<CustomScriptGenerator<T>>(false, mcMod, element).FirstOrDefault();
+            if (generator != null)
+            {
+                generator.RegenerateScript();
             }
         }
     }

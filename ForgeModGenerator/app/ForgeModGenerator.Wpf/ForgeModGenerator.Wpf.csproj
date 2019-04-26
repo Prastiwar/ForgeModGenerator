@@ -238,8 +238,12 @@
     <Compile Include="Source\FileSystem\FileSystemWin.cs" />
     <Compile Include="Source\Modules\ApplicationModule\Controls\NavigationMenuControl.cs" />
     <Compile Include="Source\Modules\BlockGenerator\BlockCodeGenerator.cs" />
-    <Compile Include="Source\Modules\CommandGenerator\CommandCodeGenerator.cs" />
-    <Compile Include="Source\Modules\CommandGenerator\CustomCommandCodeGenerator.cs" />
+    <Compile Include="Source\Modules\CommandGenerator\CodeGeneration\CommandCodeGenerator.cs" />
+    <Compile Include="Source\Modules\CommandGenerator\CommandEditorFormFactory.cs" />
+    <Compile Include="Source\Modules\CommandGenerator\CodeGeneration\CustomCommandCodeGenerator.cs" />
+    <Compile Include="Source\Modules\CommandGenerator\Controls\CommandEditForm.xaml.cs">
+      <DependentUpon>CommandEditForm.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Source\Modules\ItemGenerator\ItemCodeGenerator.cs" />
     <Compile Include="Source\Modules\ModGenerator\ModEditorFormFactory.cs" />
     <Compile Include="Source\Modules\ModGenerator\ModInfoSerializer.cs" />
@@ -293,12 +297,12 @@
     <Compile Include="Source\Modules\ModGenerator\SourceCodeGeneration\ManagerCodeGenerator.cs" />
     <Compile Include="Source\Modules\ModGenerator\SourceCodeGeneration\ProxyCodeGenerator.cs" />
     <Compile Include="Source\Modules\ModGenerator\SourceCodeGeneration\RegistryHandlerCodeGenerator.cs" />
-    <Compile Include="Source\Modules\SoundGenerator\SoundCodeGenerator.cs" />
+    <Compile Include="Source\Modules\SoundGenerator\CodeGeneration\SoundCodeGenerator.cs" />
     <Compile Include="Source\Controls\FolderExpanderControl.cs" />
     <Compile Include="Source\Modules\ModGenerator\BuildConfiguration\ModBuildForm.xaml.cs">
       <DependentUpon>ModBuildForm.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Source\Modules\ModGenerator\ModForm.xaml.cs">
+    <Compile Include="Source\Modules\ModGenerator\Controls\ModForm.xaml.cs">
       <DependentUpon>ModForm.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Converters\PathToNameConverter.cs" />
@@ -353,6 +357,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Source\Modules\CommandGenerator\Controls\CommandEditForm.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Themes\FolderListBoxThemes.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -369,7 +377,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Source\Modules\ModGenerator\ModForm.xaml">
+    <Page Include="Source\Modules\ModGenerator\Controls\ModForm.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
