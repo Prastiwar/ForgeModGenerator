@@ -45,14 +45,14 @@ namespace ForgeModGenerator.CodeGeneration
             return cache.Set(key, new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), Prefix + "Commands")), cacheExpirationTime);
         }
 
-        public static ClassLocator CustomCommand(string modname, string organization, string commandName)
+        public static ClassLocator CustomCommand(string modname, string organization, string className)
         {
-            string key = GetKey(nameof(CustomCommand), modname, organization, commandName);
+            string key = GetKey(nameof(CustomCommand), modname, organization, className);
             if (cache.TryGetValue(key, out ClassLocator value))
             {
                 return value;
             }
-            return cache.Set(key, new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Command, commandName)), cacheExpirationTime);
+            return cache.Set(key, new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Command, className)), cacheExpirationTime);
         }
 
         #region Item locators

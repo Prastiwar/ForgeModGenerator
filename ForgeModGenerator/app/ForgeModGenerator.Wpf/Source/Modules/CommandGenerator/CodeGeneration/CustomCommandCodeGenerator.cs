@@ -8,13 +8,14 @@ namespace ForgeModGenerator.CommandGenerator.CodeGeneration
 {
     public class CustomCommandCodeGenerator : CustomScriptGenerator<Command>
     {
-        public CustomCommandCodeGenerator(McMod mcMod, Command command) : base(mcMod, command) => ScriptLocator = SourceCodeLocator.CustomCommand(mcMod.ModInfo.Name, mcMod.Organization, command.Name);
+        public CustomCommandCodeGenerator(McMod mcMod, Command command) : base(mcMod, command) => ScriptLocator = SourceCodeLocator.CustomCommand(mcMod.ModInfo.Name, mcMod.Organization, command.ClassName);
 
         public override ClassLocator ScriptLocator { get; }
 
         protected override CodeCompileUnit CreateTargetCodeUnit()
         {
             CodeCompileUnit unit = base.CreateTargetCodeUnit();
+            unit.Namespaces[0].Types[0].BaseTypes.Add("CommandBase");
 
             CodeMemberMethod getName = NewMethod("getName", typeof(string).FullName, MemberAttributes.Public);
             getName.Statements.Add(NewReturnPrimitive(Element.Name));
@@ -32,7 +33,7 @@ namespace ForgeModGenerator.CommandGenerator.CodeGeneration
             checkPermission.Statements.Add(NewReturnPrimitive(false));
 
             CodeMemberMethod getRequiredPermissionLevel = NewMethod("getRequiredPermissionLevel", typeof(int).FullName, MemberAttributes.Public);
-            getUsage.Statements.Add(NewReturnPrimitive(Element.PermissionLevel));
+            getRequiredPermissionLevel.Statements.Add(NewReturnPrimitive(Element.PermissionLevel));
 
             unit.Namespaces[0].Types[0].Members.Add(getName);
             unit.Namespaces[0].Types[0].Members.Add(getUsage);

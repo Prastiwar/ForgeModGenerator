@@ -11,8 +11,15 @@ namespace ForgeModGenerator.CommandGenerator.Models
         public Command(string filePath) : base(filePath)
         {
             string content = File.ReadAllText(Info.FullName);
-            InitializeProperty(ref usage, content, "public String getUsage(ICommandSender sender)");
+            int indexOfUsage = content.IndexOf(" class ");
+            if (indexOfUsage > -1)
+            {
+                int startIndex = indexOfUsage + 7;
+                int endIndex = content.IndexOf(' ', startIndex);
+                ClassName = content.Substring(startIndex, endIndex - startIndex);
+            }
             InitializeProperty(ref name, content, "public String getName()");
+            InitializeProperty(ref usage, content, "public String getUsage(ICommandSender sender)");
             InitializeProperty(ref permissionLevel, content, "public int getRequiredPermissionLevel()");
         }
 
@@ -35,6 +42,12 @@ namespace ForgeModGenerator.CommandGenerator.Models
                     property = (T)System.Convert.ChangeType(value, typeof(T));
                 }
             }
+        }
+
+        private string className;
+        public string ClassName {
+            get => className;
+            set => SetProperty(ref className, value);
         }
 
         private string name;
@@ -64,6 +77,7 @@ namespace ForgeModGenerator.CommandGenerator.Models
         public override object DeepClone()
         {
             Command command = new Command() {
+                ClassName = ClassName,
                 Name = Name,
                 Usage = Usage,
                 Permission = Permission,
@@ -78,6 +92,7 @@ namespace ForgeModGenerator.CommandGenerator.Models
         {
             if (fromCopy is Command command)
             {
+                ClassName = command.ClassName;
                 Name = command.Name;
                 Usage = command.Usage;
                 Permission = command.Permission;

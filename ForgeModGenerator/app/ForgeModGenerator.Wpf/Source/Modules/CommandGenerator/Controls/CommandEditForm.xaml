@@ -22,6 +22,12 @@
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0"
                                 Margin="7">
+                        <TextBlock Text="Class Name: "
+                                   FontSize="14"
+                                   FontWeight="Bold"
+                                   Margin="3,0,3,0"
+                                   Height="{Binding ActualHeight, ElementName=ClassNameTextBox, Mode=OneWay}"
+                                   VerticalAlignment="Center" />
                         <TextBlock Text="Name: "
                                    FontSize="14"
                                    FontWeight="Bold"
@@ -49,17 +55,25 @@
                     </StackPanel>
                     <StackPanel Grid.Column="1"
                                 Margin="7">
+                        <controls:SubmitTextBox x:Name="ClassNameTextBox"
+                                                Text="{Binding ClassName, ValidatesOnDataErrors=True}"
+                                                VerticalAlignment="Center"
+                                                IsTabStop="True"
+                                                TextWrapping="Wrap" />
                         <controls:SubmitTextBox x:Name="NameTextBox"
                                                 Text="{Binding Name, ValidatesOnDataErrors=True}"
                                                 VerticalAlignment="Center"
+                                                IsTabStop="True"
                                                 TextWrapping="Wrap" />
                         <controls:SubmitTextBox x:Name="UsageTextBox"
                                                 Text="{Binding Usage, ValidatesOnDataErrors=True}"
                                                 VerticalAlignment="Stretch"
+                                                IsTabStop="True"
                                                 TextWrapping="Wrap" />
                         <controls:SubmitTextBox x:Name="PermissionTextBox"
                                                 Text="{Binding Permission, ValidatesOnDataErrors=True}"
                                                 VerticalAlignment="Center"
+                                                IsTabStop="True"
                                                 TextWrapping="Wrap" />
                         <mahapp:NumericUpDown x:Name="PermissionLevelNumeric"
                                               Value="{Binding Path=PermissionLevel, ValidatesOnDataErrors=True}"

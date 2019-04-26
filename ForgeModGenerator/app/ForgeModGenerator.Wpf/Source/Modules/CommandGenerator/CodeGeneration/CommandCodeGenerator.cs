@@ -14,7 +14,7 @@ namespace ForgeModGenerator.CommandGenerator.CodeGeneration
 
         public override ClassLocator ScriptLocator { get; }
 
-        protected override string GetElementName(Command element) => element.Name;
+        protected override string GetElementName(Command element) => element.ClassName;
 
         protected override CodeCompileUnit CreateTargetCodeUnit()
         {
@@ -25,7 +25,7 @@ namespace ForgeModGenerator.CommandGenerator.CodeGeneration
             {
                 CodeMethodInvokeExpression register = NewMethodInvokeVar("event", "registerServerCommand", NewObject(GetElementName(element)));
                 registerAll.Statements.Add(register);
-                package.Imports.Add(NewImport(SourceCodeLocator.CustomCommand(Modname, Organization, element.Name).ImportFullName));
+                package.Imports.Add(NewImport(SourceCodeLocator.CustomCommand(Modname, Organization, element.ClassName).ImportFullName));
             }
             clas.Members.Add(registerAll);
             return NewCodeUnit(package);

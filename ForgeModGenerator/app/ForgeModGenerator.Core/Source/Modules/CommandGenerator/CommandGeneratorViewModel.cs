@@ -1,5 +1,6 @@
 ﻿using ForgeModGenerator.CodeGeneration;
 using ForgeModGenerator.CommandGenerator.Models;
+using ForgeModGenerator.Models;
 using ForgeModGenerator.Services;
 using ForgeModGenerator.Validation;
 using ForgeModGenerator.ViewModels;
@@ -48,31 +49,6 @@ namespace ForgeModGenerator.CommandGenerator.ViewModels
 
         private string tempFilePath;
 
-        private void CreateNewCommand(ObservableFolder<Command> folder)
-        {
-            tempFilePath = Path.GetTempFileName();
-            Command newCommand = new Command(tempFilePath) {
-                Name = "NewCommand",
-                Usage = "/newcommand",
-                Permission = $"{SessionContext.SelectedMod.ModInfo.Name.ToLower()}.newcommand",
-                PermissionLevel = 4
-            };
-            newCommand.ValidateProperty += (sender, propertyName) => ValidateCommand(sender, folder.Files, propertyName);
-            CommandValidator.SetDefaultRepository(folder.Files);
-            EditorForm.OpenItemEditor(newCommand);
-        }
-
-        private string ValidateCommand(Command sender, IEnumerable<Command> instances, string propertyName) => CommandValidator.Validate(sender, instances, propertyName).Error;
-
-        private void CreateCommand(object sender, ItemEditedEventArgs<Command> e)
-        {
-            if (e.Result)
-            {
-                CodeGenerationService.CreateCustomScript(SessionContext.SelectedMod, e.ActualItem);
-            }
-            new FileInfo(tempFilePath).Delete();
-        }
-
         public override async Task<bool> Refresh()
         {
             if (CanRefresh())
@@ -82,10 +58,65 @@ namespace ForgeModGenerator.CommandGenerator.ViewModels
                 await InitializeFoldersAsync(await Explorer.FileSynchronizer.Finder.FindFoldersAsync(FoldersRootPath, true).ConfigureAwait(true)).ConfigureAwait(false);
                 Explorer.FileSynchronizer.RootPath = FoldersRootPath;
                 Explorer.FileSynchronizer.SetEnableSynchronization(true);
+                SubscribeFolderEvents(Explorer.Folders, new FileChangedEventArgs<ObservableFolder<Command>>(Explorer.Folders.Files, FileChange.Add));
+                RegenerateCommands();
                 IsLoading = false;
                 return true;
             }
             return false;
         }
+
+        private void CreateNewCommand(ObservableFolder<Command> folder)
+        {
+            tempFilePath = Path.GetTempFileName();
+            Command newCommand = new Command(tempFilePath) {
+                ClassName = "NewCommand",
+                Name = "newcommand",
+                Usage = "/newcommand",
+                Permission = $"{SessionContext.SelectedMod.ModInfo.Name.ToLower()}.newcommand",
+                PermissionLevel = 4
+            };
+            newCommand.ValidateProperty += (sender, propertyName) => ValidateCommand(sender, folder.Files, propertyName);
+            CommandValidator.SetDefaultRepository(folder.Files);
+            EditorForm.OpenItemEditor(newCommand);
+        }
+
+        protected string ValidateCommand(Command sender, IEnumerable<Command> instances, string propertyName) => CommandValidator.Validate(sender, instances, propertyName).Error;
+
+        protected void CreateCommand(object sender, ItemEditedEventArgs<Command> e)
+        {
+            if (e.Result)
+            {
+                McMod mod = SessionContext.SelectedMod;
+                CodeGenerationService.CreateCustomScript(mod, e.ActualItem);
+            }
+            new FileInfo(tempFilePath).Delete();
+        }
+
+        protected void SubscribeFolderEvents(object sender, FileChangedEventArgs<ObservableFolder<Command>> e)
+        {
+            if (e.Change == FileChange.Add)
+            {
+                foreach (ObservableFolder<Command> folder in e.Files)
+                {
+                    folder.FilesChanged += OnFilesChanged;
+                }
+            }
+            else if (e.Change == FileChange.Remove)
+            {
+                foreach (ObservableFolder<Command> folder in e.Files)
+                {
+                    folder.FilesChanged -= OnFilesChanged;
+                }
+            }
+        }
+
+        protected void RegenerateCommands()
+        {
+            McMod mod = SessionContext.SelectedMod;
+            CodeGenerationService.RegenerateInitScript(SourceCodeLocator.Commands(mod.ModInfo.Name, mod.Organization).ClassName, mod, Explorer.Folders.Files[0].Files);
+        }
+
+        protected virtual void OnFilesChanged(object sender, FileChangedEventArgs<Command> e) => RegenerateCommands();
     }
 }

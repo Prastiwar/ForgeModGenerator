@@ -34,11 +34,10 @@
   - [ ] Respect manual changes in files
   - [ ] Update source code
 
-- [ ] Command Generator
+- [x] Command Generator
 
-  - [ ] Create simple command
-  - [ ] Create complex command
-  - [ ] Update source code
+  - [x] Create simple command template
+  - [x] Update source code
 
 - [ ] GUI Generator
 
