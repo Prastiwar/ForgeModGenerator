@@ -30,13 +30,13 @@ namespace ForgeModGenerator
         public TItem ActualItem { get; }
     }
 
-    public class ItemEditorClosingDialogEventArgs<TItem> : DialogClosingArgs
+    public class ItemEditorClosingDialogEventArgs<TItem> : DialogClosingEventArgs
     {
         public ItemEditorClosingDialogEventArgs(object result, TItem item) : base(result) => Item = item;
         public TItem Item { get; }
     }
 
-    public class ItemEditorOpeningDialogEventArgs<TItem> : DialogOpenedArgs
+    public class ItemEditorOpeningDialogEventArgs<TItem> : DialogOpenedEventArgs
     {
         public ItemEditorOpeningDialogEventArgs(TItem item) => Item = item;
         public TItem Item { get; }

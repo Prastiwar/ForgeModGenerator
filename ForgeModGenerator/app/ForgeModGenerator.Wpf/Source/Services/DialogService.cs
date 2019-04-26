@@ -52,10 +52,10 @@ namespace ForgeModGenerator.Services
         }
 
         public Task<object> Show(object content) => DialogHost.Show(content);
-        public Task<object> Show(object content, EventHandler<DialogOpenedArgs> openedArgs, EventHandler<DialogClosingArgs> closingArgs) =>
+        public Task<object> Show(object content, EventHandler<DialogOpenedEventArgs> openedArgs, EventHandler<DialogClosingEventArgs> closingArgs) =>
             DialogHost.Show(content,
                 new DialogOpenedEventHandler((s, args) => {
-                    DialogOpenedArgs extArgs = new DialogOpenedArgs();
+                    DialogOpenedEventArgs extArgs = new DialogOpenedEventArgs();
                     openedArgs(s, extArgs);
                     if (extArgs.ShouldClose)
                     {
@@ -63,7 +63,7 @@ namespace ForgeModGenerator.Services
                     }
                 }),
                 new DialogClosingEventHandler((s, args) => {
-                    DialogClosingArgs extArgs = new DialogClosingArgs(args.Parameter);
+                    DialogClosingEventArgs extArgs = new DialogClosingEventArgs(args.Parameter);
                     closingArgs(s, extArgs);
                     if (extArgs.IsCancelled)
                     {

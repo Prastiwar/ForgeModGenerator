@@ -17,7 +17,7 @@
 
 ## Development Status
 
-- [ ] Achievement Generator 
+- [ ] Achievement Generator
 
   - [ ] Create achievement
   - [ ] Update source code
@@ -34,11 +34,11 @@
   - [ ] Respect manual changes in files
   - [ ] Update source code
 
-- [ ] Command Generator
-  
-  - [ ] Create simple command
-  - [ ] Create complex command
-  - [ ] Update source code
+- [x] Command Generator - programming knowledge is required
+
+  - [x] Create simple command template
+  - [x] Respect manual changes
+  - [x] Update source code
 
 - [ ] GUI Generator
 
@@ -51,6 +51,7 @@
   - [x] Generate mod structure
   - [x] Generate important source code
   - [x] Edit mod info
+  - [x] Create workspace for manual changes: eclipse, IntelliJ IDEA, VSCode
   - [ ] Respect manual changes in mcmod.info
 
 - [ ] Recipe Generator
@@ -59,7 +60,7 @@
   - [ ] Respect manual changes in json
   - [ ] Update source code
 
-- [ ] Sound Generator *- sounds file explorer*
+- [x] Sound Generator *- sounds file explorer*
 
   - [x] Add Sound Event
   - [x] Remove Sound Event
@@ -68,7 +69,7 @@
   - [x] Add Sound (multiple sounds in single Sound Event are allowed)
   - [x] Remove Sound
   - [x] Update sounds.json
-  - [ ] Update source code
+  - [x] Update source code
 
 - [x] Texture Generator *- simple textures file explorer*
   - [x] Add textures

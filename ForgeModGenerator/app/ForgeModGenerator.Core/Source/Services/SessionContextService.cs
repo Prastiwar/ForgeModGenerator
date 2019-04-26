@@ -23,20 +23,20 @@ namespace ForgeModGenerator.Services
             set => SetProperty(ref askBeforeClose, value);
         }
 
-        private ObservableCollection<Mod> mods;
-        public ObservableCollection<Mod> Mods {
+        private ObservableCollection<McMod> mods;
+        public ObservableCollection<McMod> Mods {
             get => mods;
             set => SetProperty(ref mods, value);
         }
 
-        private ObservableCollection<Mod> selectedMods;
-        public ObservableCollection<Mod> SelectedMods {
+        private ObservableCollection<McMod> selectedMods;
+        public ObservableCollection<McMod> SelectedMods {
             get => selectedMods;
             set => SetProperty(ref selectedMods, value);
         }
 
-        private Mod selectedMod;
-        public Mod SelectedMod {
+        private McMod selectedMod;
+        public McMod SelectedMod {
             get => selectedMod;
             set {
                 SetProperty(ref selectedMod, value);
@@ -61,7 +61,7 @@ namespace ForgeModGenerator.Services
             }
             if (SelectedMods == null)
             {
-                SelectedMods = new ObservableCollection<Mod>();
+                SelectedMods = new ObservableCollection<McMod>();
                 if (SelectedMod != null)
                 {
                     SelectedMods.Add(SelectedMod);
@@ -75,19 +75,19 @@ namespace ForgeModGenerator.Services
             Process.Start(AppPaths.ForgeVersions); // paste zip there
         }
 
-        protected ObservableCollection<Mod> FindMods()
+        protected ObservableCollection<McMod> FindMods()
         {
             string[] paths = Directory.GetDirectories(AppPaths.Mods);
-            List<Mod> found = new List<Mod>(paths.Length);
+            List<McMod> found = new List<McMod>(paths.Length);
             foreach (string path in paths)
             {
-                if (TryGetModFromPath(path, out Mod imported))
+                if (TryGetModFromPath(path, out McMod imported))
                 {
                     found.Add(imported);
                     Log.Info($"Mod {imported.ModInfo.Name} detected");
                 }
             }
-            return new ObservableCollection<Mod>(found);
+            return new ObservableCollection<McMod>(found);
         }
 
         protected ObservableCollection<ForgeVersion> FindForgeVersions()
@@ -104,7 +104,7 @@ namespace ForgeModGenerator.Services
             return new ObservableCollection<ForgeVersion>(found);
         }
 
-        protected abstract bool TryGetModFromPath(string path, out Mod mod);
+        protected abstract bool TryGetModFromPath(string path, out McMod mcMod);
 
         public event PropertyChangedEventHandler PropertyChanged;
 

@@ -34,7 +34,6 @@ namespace ForgeModGenerator.Utility
 
         public static string GetRenamedDirectoryFullName(string oldFullPath, string newName)
         {
-            DirectoryInfo info = new DirectoryInfo(oldFullPath);
             string folder = Path.GetDirectoryName(oldFullPath);
             return Path.Combine(folder, newName);
         }
@@ -284,7 +283,7 @@ namespace ForgeModGenerator.Utility
                 {
                     using (FileStream DestinationStream = File.Create(destFilePath))
                     {
-                        await SourceStream.CopyToAsync(DestinationStream);
+                        await SourceStream.CopyToAsync(DestinationStream).ConfigureAwait(false);
                     }
                 }
             }
@@ -294,7 +293,7 @@ namespace ForgeModGenerator.Utility
                 foreach (DirectoryInfo subDir in dir.EnumerateDirectories())
                 {
                     string destSubDirPath = Path.Combine(destDirPath, subDir.Name);
-                    await DirectoryCopyAsync(subDir.FullName, destSubDirPath, fileSearchPatterns, copySubDirs);
+                    await DirectoryCopyAsync(subDir.FullName, destSubDirPath, fileSearchPatterns, copySubDirs).ConfigureAwait(false);
                 }
             }
         }
@@ -304,7 +303,7 @@ namespace ForgeModGenerator.Utility
             byte[] encodedText = Encoding.Unicode.GetBytes(text);
             using (FileStream sourceStream = new FileStream(filePath, FileMode.Append, FileAccess.Write, FileShare.None, 4096, true))
             {
-                await sourceStream.WriteAsync(encodedText, 0, encodedText.Length);
+                await sourceStream.WriteAsync(encodedText, 0, encodedText.Length).ConfigureAwait(false);
             }
         }
 
@@ -313,7 +312,7 @@ namespace ForgeModGenerator.Utility
             byte[] encodedText = Encoding.Unicode.GetBytes(text);
             using (FileStream sourceStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None, 4096, true))
             {
-                await sourceStream.WriteAsync(encodedText, 0, encodedText.Length);
+                await sourceStream.WriteAsync(encodedText, 0, encodedText.Length).ConfigureAwait(false);
             }
         }
 
@@ -325,7 +324,7 @@ namespace ForgeModGenerator.Utility
 
                 byte[] buffer = new byte[0x1000];
                 int numRead;
-                while ((numRead = await sourceStream.ReadAsync(buffer, 0, buffer.Length)) != 0)
+                while ((numRead = await sourceStream.ReadAsync(buffer, 0, buffer.Length).ConfigureAwait(false)) != 0)
                 {
                     string text = Encoding.Unicode.GetString(buffer, 0, numRead);
                     sb.Append(text);

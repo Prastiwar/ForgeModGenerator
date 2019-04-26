@@ -14,8 +14,19 @@ namespace ForgeModGenerator.Models
         Server
     }
 
-    public class Mod : ObservableDirtyObject, ICopiable<Mod>, IDataErrorInfo, IValidable<Mod>
+    public sealed class McMod : ObservableDirtyObject, ICopiable<McMod>, IDataErrorInfo, IValidable<McMod>
     {
+        public McMod(McModInfo modInfo, string organization, ForgeVersion forgeVersion, ModSide side = ModSide.ClientServer, LaunchSetup launchSetup = LaunchSetup.Client, WorkspaceSetup workspaceSetup = null)
+        {
+            ModInfo = modInfo;
+            Organization = organization;
+            ForgeVersion = forgeVersion;
+            Side = side;
+            LaunchSetup = launchSetup;
+            WorkspaceSetup = workspaceSetup ?? WorkspaceSetup.NONE;
+            CachedName = ModInfo.Name;
+        }
+
         private string organization;
         public string Organization {
             get => organization;
@@ -54,23 +65,6 @@ namespace ForgeModGenerator.Models
 
         public string CachedName { get; private set; }
 
-        public Mod(McModInfo modInfo, string organization, ForgeVersion forgeVersion, ModSide side = ModSide.ClientServer, LaunchSetup launchSetup = null, WorkspaceSetup workspaceSetup = null)
-        {
-            ModInfo = modInfo;
-            Organization = organization;
-            ForgeVersion = forgeVersion;
-            Side = side;
-            LaunchSetup = launchSetup ?? (
-                Side == ModSide.Client
-                    ? new LaunchSetup()
-                    : Side == ModSide.Server
-                        ? new LaunchSetup(false, true)
-                        : new LaunchSetup(true, true)
-            );
-            WorkspaceSetup = workspaceSetup ?? WorkspaceSetup.NONE;
-            CachedName = ModInfo.Name;
-        }
-
         /// <summary> Shorthand for ModInfo.Name (used also for WPF validation) </summary>
         public string Name { get => ModInfo.Name; set => ModInfo.Name = value; }
 
@@ -97,7 +91,7 @@ namespace ForgeModGenerator.Models
             return ValidateResult.Valid;
         }
 
-        public event PropertyValidationEventHandler<Mod> ValidateProperty;
+        public event PropertyValidationEventHandler<McMod> ValidateProperty;
         string IDataErrorInfo.Error => null;
         string IDataErrorInfo.this[string propertyName] => OnValidate(propertyName);
         private string OnValidate(string propertyName) => ValidateHelper.OnValidateError(ValidateProperty, this, propertyName);
@@ -163,7 +157,7 @@ namespace ForgeModGenerator.Models
             }
         }
 
-        public bool CopyValues(Mod fromCopy)
+        public bool CopyValues(McMod fromCopy)
         {
             Side = fromCopy.Side;
             ModInfo = fromCopy.ModInfo;
@@ -174,20 +168,20 @@ namespace ForgeModGenerator.Models
             return true;
         }
 
-        public Mod DeepCopy()
+        public McMod DeepCopy()
         {
-            Mod clone = new Mod(ModInfo.DeepCopy(),
+            McMod clone = new McMod(ModInfo.DeepCopy(),
                                 Organization,
                                 new ForgeVersion(ForgeVersion.ZipPath),
                                 Side,
-                                new LaunchSetup(LaunchSetup.RunClient, LaunchSetup.RunServer),
+                                launchSetup,
                                 WorkspaceSetup);
             return clone;
         }
 
-        public Mod ShallowCopy() => (Mod)((ICloneable)this).Clone();
+        public McMod ShallowCopy() => (McMod)((ICloneable)this).Clone();
 
-        bool ICopiable.CopyValues(object fromCopy) => fromCopy is Mod copyMod ? CopyValues(copyMod) : false;
+        bool ICopiable.CopyValues(object fromCopy) => fromCopy is McMod copyMod ? CopyValues(copyMod) : false;
         object ICopiable.DeepClone() => DeepCopy();
         object ICloneable.Clone() => MemberwiseClone();
     }

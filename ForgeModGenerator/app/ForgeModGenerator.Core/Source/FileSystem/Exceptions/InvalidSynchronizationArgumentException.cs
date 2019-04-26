@@ -8,6 +8,8 @@ namespace ForgeModGenerator.Exceptions
     {
         protected static string GetDefaultMessage(string rootSyncronizationPath, string actualPath) => $"You cannot synchronize folder outside root path: {rootSyncronizationPath}. The actual folder path: {actualPath}";
 
+        public InvalidSynchronizationArgumentException() { }
+
         public InvalidSynchronizationArgumentException(string rootSyncronizationPath, string actualPath) : base(GetDefaultMessage(rootSyncronizationPath, actualPath)) { }
 
         public InvalidSynchronizationArgumentException(string message) : base(message) { }

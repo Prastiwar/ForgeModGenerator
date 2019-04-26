@@ -11,18 +11,38 @@ namespace ForgeModGenerator.Utility
 
         public static T CreateInstance<T>(bool nonPublic) => (T)Activator.CreateInstance(typeof(T), nonPublic);
         public static T CreateInstance<T>(params object[] args) => (T)Activator.CreateInstance(typeof(T), args);
-        public static T CreateInstance<T>(bool nonPublic, params object[] args) => (T)Activator.CreateInstance(typeof(T), NonPublicFlags, null, args, null);
+        public static T CreateInstance<T>(bool nonPublic, params object[] args) => (T)Activator.CreateInstance(typeof(T), nonPublic ? NonPublicFlags : PublicFlags, null, args, null);
 
         public static IEnumerable<Type> GetSubclassTypes<T>() where T : class => GetSubclassTypes(typeof(T));
 
         public static IEnumerable<Type> GetSubclassTypes(Type baseType) => Assembly.GetAssembly(baseType).GetSubclassTypes(baseType);
 
         /// <summary> Enumerates over lazily created instance of sub classes of <typeparamref name="T"/> </summary>
-        public static IEnumerable<T> EnumerateSubclasses<T>(params object[] constructorArgs) where T : class
+        public static IEnumerable<T> EnumerateSubclasses<T>(bool throwOnCtorFail, params object[] constructorArgs) where T : class
         {
-            foreach (Type type in GetSubclassTypes<T>())
+            if (throwOnCtorFail)
             {
-                yield return (T)Activator.CreateInstance(type, constructorArgs);
+                foreach (Type type in GetSubclassTypes<T>())
+                {
+                    yield return (T)Activator.CreateInstance(type, constructorArgs);
+                }
+            }
+            else
+            {
+                foreach (Type type in GetSubclassTypes<T>())
+                {
+                    T instance = null;
+                    try
+                    {
+                        instance = (T)Activator.CreateInstance(type, constructorArgs);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex);
+                        continue;
+                    }
+                    yield return instance;
+                }
             }
         }
     }

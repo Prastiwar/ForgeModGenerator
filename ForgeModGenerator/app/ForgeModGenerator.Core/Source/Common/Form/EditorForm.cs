@@ -57,7 +57,7 @@ namespace ForgeModGenerator
                         {
                             args.Cancel();
                         }
-                    });
+                    }).ConfigureAwait(true);
             }
             catch (Exception)
             {

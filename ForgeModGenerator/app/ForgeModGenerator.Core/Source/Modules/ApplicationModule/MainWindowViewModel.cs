@@ -59,20 +59,20 @@ namespace ForgeModGenerator.ApplicationModule.ViewModels
         public ICommand RefreshCommand => refreshCommand ?? (refreshCommand = new DelegateCommand(ForceRefresh));
 
         private ICommand runModCommand;
-        public ICommand RunModCommand => runModCommand ?? (runModCommand = new DelegateCommand<Mod>(RunSelectedMod));
+        public ICommand RunModCommand => runModCommand ?? (runModCommand = new DelegateCommand<McMod>(RunSelectedMod));
 
         private ICommand runModsCommand;
-        public ICommand RunModsCommand => runModsCommand ?? (runModsCommand = new DelegateCommand<ObservableCollection<Mod>>(RunSelectedMods));
+        public ICommand RunModsCommand => runModsCommand ?? (runModsCommand = new DelegateCommand<ObservableCollection<McMod>>(RunSelectedMods));
 
-        private void RunSelectedMods(ObservableCollection<Mod> mods)
+        private void RunSelectedMods(ObservableCollection<McMod> mods)
         {
-            foreach (Mod mod in mods)
+            foreach (McMod mcMod in mods)
             {
-                modBuilder.Run(mod);
+                modBuilder.Run(mcMod);
             }
         }
 
-        private void RunSelectedMod(Mod mod) => modBuilder.Run(mod);
+        private void RunSelectedMod(McMod mcMod) => modBuilder.Run(mcMod);
 
         private void ForceRefresh() => SessionContext.Refresh();
 

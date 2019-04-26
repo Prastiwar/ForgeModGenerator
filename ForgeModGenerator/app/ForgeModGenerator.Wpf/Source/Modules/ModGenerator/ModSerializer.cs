@@ -6,7 +6,7 @@ using System;
 
 namespace ForgeModGenerator.ModGenerator.Serialization
 {
-    public class ModSerializer : ISerializer<Mod>
+    public sealed class ModSerializer : ISerializer<McMod>
     {
         private static readonly JsonSerializerSettings settings = GetSettings();
 
@@ -19,16 +19,16 @@ namespace ForgeModGenerator.ModGenerator.Serialization
             return settings;
         }
 
-        public Mod Deserialize(string value) => JsonConvert.DeserializeObject<Mod>(value, settings);
-        public string Serialize(Mod value, bool prettyPrint) => JsonConvert.SerializeObject(value, prettyPrint ? Formatting.Indented : Formatting.None, settings);
-        public string Serialize(Mod value) => JsonConvert.SerializeObject(value, settings);
+        public McMod Deserialize(string value) => JsonConvert.DeserializeObject<McMod>(value, settings);
+        public string Serialize(McMod value, bool prettyPrint) => JsonConvert.SerializeObject(value, prettyPrint ? Formatting.Indented : Formatting.None, settings);
+        public string Serialize(McMod value) => JsonConvert.SerializeObject(value, settings);
 
         T ISerializer.DeserializeObject<T>(string value) => JsonConvert.DeserializeObject<T>(value, settings);
         object ISerializer.DeserializeObject(string value) => Deserialize(value);
         object ISerializer.DeserializeObject(string value, Type type) => Deserialize(value);
-        string ISerializer.SerializeObject(object value, Type type, bool prettyPrint) => Serialize((Mod)value, prettyPrint);
-        string ISerializer.SerializeObject(object value, Type type) => Serialize((Mod)value);
-        string ISerializer.SerializeObject(object value, bool prettyPrint) => Serialize((Mod)value, prettyPrint);
-        string ISerializer.SerializeObject(object value) => Serialize((Mod)value);
+        string ISerializer.SerializeObject(object value, Type type, bool prettyPrint) => Serialize((McMod)value, prettyPrint);
+        string ISerializer.SerializeObject(object value, Type type) => Serialize((McMod)value);
+        string ISerializer.SerializeObject(object value, bool prettyPrint) => Serialize((McMod)value, prettyPrint);
+        string ISerializer.SerializeObject(object value) => Serialize((McMod)value);
     }
 }

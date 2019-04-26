@@ -12,7 +12,7 @@ namespace ForgeModGenerator.SoundGenerator.Converters
             JObject item = JObject.Load(reader);
             string name = item.GetValue("name").ToObject<string>();
             string modid = Sound.GetModidFromSoundName(name);
-            Sound sound = Sound.CreateEmpty(name, modid);
+            Sound sound = new Sound(modid, name);
             if (item.TryGetValue("volume", out JToken volume))
             {
                 sound.Volume = volume.ToObject<float>();
@@ -39,7 +39,7 @@ namespace ForgeModGenerator.SoundGenerator.Converters
             }
             if (item.TryGetValue("type", out JToken type))
             {
-                sound.Type = preload.ToObject<Sound.SoundType>();
+                sound.Type = type.ToObject<Sound.SoundType>();
             }
             sound.IsDirty = false;
             return sound; // NOTE: This is not properly initialized Sound, Info is not initialized

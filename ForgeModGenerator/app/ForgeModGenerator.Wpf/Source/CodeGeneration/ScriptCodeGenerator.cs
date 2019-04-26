@@ -10,25 +10,33 @@ namespace ForgeModGenerator.CodeGeneration
 {
     public abstract class ScriptCodeGenerator : IScriptCodeGenerator
     {
-        public ScriptCodeGenerator(Mod mod)
+        public ScriptCodeGenerator(McMod mcMod)
         {
-            Mod = mod;
-            Modname = mod.ModInfo.Name;
+            McMod = mcMod;
+            Modname = mcMod.ModInfo.Name;
             ModnameLower = Modname.ToLower();
-            Organization = mod.Organization;
-            PackageName = $"com.{Organization}.{ModnameLower}";
+            Organization = mcMod.Organization;
+            SourceRootPackageName = $"com.{Organization}.{ModnameLower}";
         }
 
-        public Mod Mod { get; }
+        public McMod McMod { get; }
 
+        /// <summary> Mod.ModInfo.Name </summary>
         protected string Modname { get; }
+
+        /// <summary> Mod.ModInfo.Name.ToLower() </summary>
         protected string ModnameLower { get; }
+
+        /// <summary> Mod.Organization </summary>
         protected string Organization { get; }
-        protected string PackageName { get; }
+
+        /// <summary> com.Organization.ModnameLower </summary>
+        protected string SourceRootPackageName { get; }
+
         protected CodeGeneratorOptions GeneratorOptions { get; } = new CodeGeneratorOptions() { BracingStyle = "Block" };
-        
+
         public abstract ClassLocator ScriptLocator { get; }
-        
+
         public virtual void RegenerateScript() => RegenerateScript(ScriptLocator.FullPath, CreateTargetCodeUnit(), GeneratorOptions);
 
         protected void RegenerateScript(string scriptPath, CodeCompileUnit targetCodeUnit, CodeGeneratorOptions options)
@@ -37,11 +45,19 @@ namespace ForgeModGenerator.CodeGeneration
             {
                 try
                 {
-                    new FileInfo(scriptPath).Directory.Create();
-                    using (StreamWriter sourceWriter = new StreamWriter(scriptPath))
+                    FileInfo scriptFileInfo = new FileInfo(scriptPath);
+                    if (scriptFileInfo.Exists)
+                    {
+                        scriptFileInfo.IsReadOnly = false;
+                    }
+                    scriptFileInfo.Directory.Create();
+                    using (StreamWriter sourceWriter = scriptFileInfo.CreateText())
                     {
                         javaProvider.GenerateCodeFromCompileUnit(targetCodeUnit, sourceWriter, options);
                     }
+                    scriptFileInfo = new FileInfo(scriptPath) { // create new instance to prevent file deletion
+                        IsReadOnly = true
+                    };
                 }
                 catch (Exception ex)
                 {
@@ -93,9 +109,9 @@ namespace ForgeModGenerator.CodeGeneration
         protected CodeMethodInvokeExpression NewMethodInvokeType(string typeName, string methodName, params CodeExpression[] arguments) => NewMethodInvoke(NewTypeReferenceExpression(typeName), methodName, arguments);
         protected CodeMethodInvokeExpression NewMethodInvokeVar(string variableName, string methodName, params CodeExpression[] arguments) => NewMethodInvoke(NewVarReference(variableName), methodName, arguments);
 
-        protected CodeMemberMethod NewMethod(string name, string returnType, MemberAttributes attributes, params Parameter[] parameters)
+        protected JavaCodeMemberMethod NewMethod(string name, string returnType, MemberAttributes attributes, params Parameter[] parameters)
         {
-            CodeMemberMethod method = new CodeMemberMethod() {
+            JavaCodeMemberMethod method = new JavaCodeMemberMethod() {
                 Name = name,
                 ReturnType = NewTypeReference(returnType),
                 Attributes = attributes
@@ -176,16 +192,16 @@ namespace ForgeModGenerator.CodeGeneration
             return newInterface;
         }
 
-        protected CodeNamespace NewPackage(CodeTypeDeclaration defaultType, params string[] imports)
+        protected CodeNamespace NewPackage(string packageName, CodeTypeDeclaration defaultType, params string[] imports)
         {
-            CodeNamespace package = NewPackage(imports);
+            CodeNamespace package = NewPackage(packageName, imports);
             package.Types.Add(defaultType);
             return package;
         }
 
-        protected CodeNamespace NewPackage(params string[] imports)
+        protected CodeNamespace NewPackage(string packageName, params string[] imports)
         {
-            CodeNamespace package = new CodeNamespace(PackageName);
+            CodeNamespace package = new CodeNamespace(packageName);
             if (imports != null)
             {
                 foreach (string import in imports)
@@ -197,7 +213,7 @@ namespace ForgeModGenerator.CodeGeneration
         }
 
         protected CodeNamespaceImport NewImport(string import) => new CodeNamespaceImport(import);
-        protected CodeCompileUnit NewCodeUnit(CodeTypeDeclaration defaultType, params string[] imports) => NewCodeUnit(NewPackage(defaultType, imports));
+        protected CodeCompileUnit NewCodeUnit(string packageName, CodeTypeDeclaration defaultType, params string[] imports) => NewCodeUnit(NewPackage(packageName, defaultType, imports));
 
         protected CodeCompileUnit NewCodeUnit(CodeNamespace package)
         {

@@ -89,33 +89,49 @@
                     <Border Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
-                        <Button x:Name="NavButton"
-                                Background="#FF673AB7"
-                                BorderBrush="Black"
-                                Padding="0"
-                                Margin="5"
-                                Height="40"
-                                Command="{Binding Command, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:NavButton}}}">
-                            <Grid Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Button}}"
-                                  Height="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Button}}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="40" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <materialDesign:PackIcon x:Name="NavIcon"
-                                                         Kind="{Binding Kind, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:NavButton}}}"
-                                                         Width="25"
-                                                         Height="25"
-                                                         HorizontalAlignment="Center"
-                                                         VerticalAlignment="Center" />
-                                <Label x:Name="NavLabel"
-                                       Grid.Column="1"
-                                       Foreground="White"
-                                       Height="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Button}}"
-                                       VerticalContentAlignment="Center"
-                                       Content="{Binding Desc, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:NavButton}}}" />
-                            </Grid>
-                        </Button>
+                        <Grid>
+                            <Button x:Name="NavButton"
+                                    Background="#FF673AB7"
+                                    BorderBrush="Black"
+                                    Padding="0"
+                                    Margin="5"
+                                    Height="40"
+                                    Command="{Binding Command, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:NavButton}}}">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="Click">
+                                        <i:InvokeCommandAction Command="{Binding ., Converter={StaticResource MethodToCommandConverter}, ConverterParameter=ClickNavButton, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:NavButton}}}" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                                <Grid Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Button}}"
+                                      Height="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Button}}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="40" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <materialDesign:PackIcon x:Name="NavIcon"
+                                                             Kind="{Binding Kind, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:NavButton}}}"
+                                                             Width="25"
+                                                             Height="25"
+                                                             HorizontalAlignment="Center"
+                                                             VerticalAlignment="Center" />
+                                    <Label x:Name="NavLabel"
+                                           Grid.Column="1"
+                                           Foreground="White"
+                                           Height="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Button}}"
+                                           VerticalContentAlignment="Center"
+                                           Content="{Binding Desc, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:NavButton}}}" />
+                                </Grid>
+                            </Button>
+                            <Rectangle x:Name="SelectRectangle"
+                                       Visibility="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:NavButton}}, Converter={StaticResource BoolToVisibilityConverter}}"
+                                       Fill="WhiteSmoke"
+                                       Width="8"
+                                       Height="{Binding ActualHeight, ElementName=NavButton}"
+                                       HorizontalAlignment="Left"
+                                       Margin="0"
+                                       RadiusX="10"
+                                       RadiusY="5" />
+                        </Grid>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>

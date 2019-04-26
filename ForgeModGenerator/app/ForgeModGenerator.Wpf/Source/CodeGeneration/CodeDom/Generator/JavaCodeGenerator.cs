@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace ForgeModGenerator.CodeGeneration.CodeDom
@@ -13,9 +14,6 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
     public sealed partial class JavaCodeGenerator : ICodeGenerator, IDisposable
     {
         public JavaCodeGenerator() { }
-        public JavaCodeGenerator(IDictionary<string, string> providerOptions) => provOptions = providerOptions;
-
-        private readonly IDictionary<string, string> provOptions;
 
         private const int ParameterMultilineThreshold = 15;
         private const int MaxLineLength = 80;
@@ -25,8 +23,6 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
 
         private bool inNestedBinary = false;
         private bool generatingForLoop = false;
-
-        private string FileExtension => ".java";
 
         private CodeTypeDeclaration currentClass;
         private CodeTypeMember currentMember;
@@ -101,19 +97,15 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
             { CodeBinaryOperatorType.GreaterThanOrEqual, ">=" }
         };
 
+        private static bool IsKeyword(string value) => keywords.Contains(value);
+
         private string InvalidIndentifier(string value) => $"Indentifier is not valid: {value}";
         private string InvalidElementType(Type type) => $"InvalidElementType {type.FullName}";
 
         private bool GetUserData(CodeObject e, string property, bool defaultValue) => e.UserData[property] != null && e.UserData[property] is bool boolVal ? boolVal : defaultValue;
-        private bool IsKeyword(string value) => keywords.Contains(value);
         private bool IsPrefixTwoUnderscore(string value) => value.Length < 3 ? false : (value[0] == '_') && (value[1] == '_') && (value[2] != '_');
 
-        public bool Supports(GeneratorSupport support) => ((support & LanguageSupport) == support);
-
-        // Any identifier started with two consecutive underscores are reserved
-        public string CreateEscapedIdentifier(string name) => IsKeyword(name) || IsPrefixTwoUnderscore(name) ? "$" + name : name;
-
-        public bool IsValidIdentifier(string value)
+        public static bool IsValidJavaIdentifier(string value)
         {
             // identifiers must be 1 char or longer
             if (value == null || value.Length == 0 || value.Length > 512)
@@ -135,6 +127,13 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
             }
             return CodeGenerator.IsValidLanguageIndependentIdentifier(value);
         }
+
+        public bool Supports(GeneratorSupport support) => ((support & LanguageSupport) == support);
+
+        // Any identifier started with two consecutive underscores are reserved
+        public string CreateEscapedIdentifier(string name) => IsKeyword(name) || IsPrefixTwoUnderscore(name) ? "$" + name : name;
+
+        public bool IsValidIdentifier(string value) => IsValidJavaIdentifier(value);
 
         public void ValidateIdentifier(string value)
         {
@@ -163,7 +162,7 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
         private void GenerateSnippetMember(CodeSnippetTypeMember e) => output.Write(e.Text);
         private void GenerateSnippetCompileUnit(CodeSnippetCompileUnit e) => output.WriteLine(e.Value);
 
-        private void GenerateConstructor(CodeConstructor e, CodeTypeDeclaration c)
+        private void GenerateConstructor(CodeConstructor e)
         {
             if (!IsCurrentClass)
             {
@@ -200,7 +199,7 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
             IEnumerator en = e.Members.GetEnumerator();
             while (en.MoveNext())
             {
-                if (en.Current is CodeConstructor)
+                if (en.Current is CodeConstructor codeConstructor)
                 {
                     currentMember = (CodeTypeMember)en.Current;
 
@@ -209,8 +208,7 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                         output.WriteLine();
                     }
                     GenerateCommentStatements(currentMember.Comments);
-                    CodeConstructor imp = (CodeConstructor)en.Current;
-                    GenerateConstructor(imp, e);
+                    GenerateConstructor(codeConstructor);
                 }
             }
         }
@@ -340,45 +338,45 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                 output.WriteLine();
             }
 
-            if (member is CodeTypeDeclaration)
+            if (member is CodeTypeDeclaration typeDeclaration)
             {
-                ((ICodeGenerator)this).GenerateCodeFromType((CodeTypeDeclaration)member, output.InnerWriter, options);
+                ((ICodeGenerator)this).GenerateCodeFromType(typeDeclaration, output.InnerWriter, options);
                 currentClass = declaredType; // Nested types clobber the current class, so reset it.
                 return;
             }
 
             GenerateCommentStatements(member.Comments);
 
-            if (member is CodeMemberField)
+            if (member is CodeMemberField fieldMember)
             {
-                GenerateField((CodeMemberField)member);
+                GenerateField(fieldMember);
             }
-            else if (member is CodeMemberMethod)
+            else if (member is CodeMemberMethod methodMember)
             {
                 switch (member)
                 {
                     case CodeConstructor val:
-                        GenerateConstructor(val, declaredType);
+                        GenerateConstructor(val);
                         break;
                     case CodeTypeConstructor val:
                         GenerateTypeConstructor(val);
                         break;
                     case CodeEntryPointMethod val:
-                        GenerateEntryPointMethod(val, declaredType);
+                        GenerateEntryPointMethod(val);
                         break;
                     default:
-                        GenerateMethod((CodeMemberMethod)member, declaredType);
+                        GenerateMethod(methodMember);
                         break;
                 }
             }
-            else if (member is CodeSnippetTypeMember)
+            else if (member is CodeSnippetTypeMember snippetMember)
             {
                 // Don't indent snippets, in order to preserve the column
                 // information from the original code.  This improves the debugging
                 // experience.
                 int savedIndent = Indent;
                 Indent = 0;
-                GenerateSnippetMember((CodeSnippetTypeMember)member);
+                GenerateSnippetMember(snippetMember);
                 Indent = savedIndent; // Restore the indent
 
                 // Generate an extra new line at the end of the snippet.
@@ -393,7 +391,7 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
             IEnumerator en = e.Members.GetEnumerator();
             while (en.MoveNext())
             {
-                if (en.Current is CodeTypeConstructor)
+                if (en.Current is CodeTypeConstructor typeConstructor)
                 {
                     currentMember = (CodeTypeMember)en.Current;
 
@@ -402,8 +400,7 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                         output.WriteLine();
                     }
                     GenerateCommentStatements(currentMember.Comments);
-                    CodeTypeConstructor imp = (CodeTypeConstructor)en.Current;
-                    GenerateTypeConstructor(imp);
+                    GenerateTypeConstructor(typeConstructor);
                 }
             }
         }
@@ -414,7 +411,7 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
             bool hasSnippet = false;
             while (en.MoveNext())
             {
-                if (en.Current is CodeSnippetTypeMember)
+                if (en.Current is CodeSnippetTypeMember snippetMember)
                 {
                     hasSnippet = true;
                     currentMember = (CodeTypeMember)en.Current;
@@ -424,14 +421,13 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                         output.WriteLine();
                     }
                     GenerateCommentStatements(currentMember.Comments);
-                    CodeSnippetTypeMember imp = (CodeSnippetTypeMember)en.Current;
 
                     // Don't indent snippets, in order to preserve the column
                     // information from the original code.  This improves the debugging
                     // experience.
                     int savedIndent = Indent;
                     Indent = 0;
-                    GenerateSnippetMember(imp);
+                    GenerateSnippetMember(snippetMember);
                     Indent = savedIndent; // Restore the indent
                 }
             }
@@ -449,14 +445,13 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
             IEnumerator en = e.Members.GetEnumerator();
             while (en.MoveNext())
             {
-                if (en.Current is CodeTypeDeclaration)
+                if (en.Current is CodeTypeDeclaration typeDeclaration)
                 {
                     if (options.BlankLinesBetweenMembers)
                     {
                         output.WriteLine();
                     }
-                    CodeTypeDeclaration currentClass = (CodeTypeDeclaration)en.Current;
-                    ((ICodeGenerator)this).GenerateCodeFromType(currentClass, output.InnerWriter, options);
+                    ((ICodeGenerator)this).GenerateCodeFromType(typeDeclaration, output.InnerWriter, options);
                 }
             }
         }
@@ -506,7 +501,7 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
             }
         }
 
-        private void GenerateEntryPointMethod(CodeEntryPointMethod e, CodeTypeDeclaration c)
+        private void GenerateEntryPointMethod(CodeEntryPointMethod e)
         {
             if (e.CustomAttributes.Count > 0)
             {
@@ -542,19 +537,19 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                     }
                     GenerateCommentStatements(currentMember.Comments);
                     CodeMemberMethod imp = (CodeMemberMethod)en.Current;
-                    if (en.Current is CodeEntryPointMethod)
+                    if (en.Current is CodeEntryPointMethod entryPointMethod)
                     {
-                        GenerateEntryPointMethod((CodeEntryPointMethod)en.Current, e);
+                        GenerateEntryPointMethod(entryPointMethod);
                     }
                     else
                     {
-                        GenerateMethod(imp, e);
+                        GenerateMethod(imp);
                     }
                 }
             }
         }
 
-        private void GenerateMethod(CodeMemberMethod e, CodeTypeDeclaration c)
+        private void GenerateMethod(CodeMemberMethod e)
         {
             if (!(IsCurrentClass || IsCurrentInterface))
             {
@@ -596,6 +591,23 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
             OutputParameters(e.Parameters);
             output.Write(")");
 
+            if (e is JavaCodeMemberMethod je)
+            {
+                if (je.ThrowsExceptions.Any())
+                {
+                    output.Write(" throws ");
+                    int lastIndex = je.ThrowsExceptions.Count - 1;
+                    for (int i = 0; i < je.ThrowsExceptions.Count; i++)
+                    {
+                        output.Write(je.ThrowsExceptions[i]);
+                        if (i < lastIndex)
+                        {
+                            output.Write(", ");
+                        }
+                    }
+                }
+            }
+
             if (!IsCurrentInterface && (e.Attributes & MemberAttributes.ScopeMask) != MemberAttributes.Abstract)
             {
                 OutputStartingBrace();
@@ -615,7 +627,7 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
             IEnumerator en = e.Members.GetEnumerator();
             while (en.MoveNext())
             {
-                if (en.Current is CodeMemberField)
+                if (en.Current is CodeMemberField memberField)
                 {
                     currentMember = (CodeTypeMember)en.Current;
 
@@ -624,8 +636,7 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                         output.WriteLine();
                     }
                     GenerateCommentStatements(currentMember.Comments);
-                    CodeMemberField imp = (CodeMemberField)en.Current;
-                    GenerateField(imp);
+                    GenerateField(memberField);
                 }
             }
         }
@@ -904,7 +915,10 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
 
         private void GenerateCompileUnitStart(CodeCompileUnit e)
         {
-            OutputGenerationMessage();
+            if (GetUserData(e, SharedUserData.GenerateWarningMessage, true))
+            {
+                OutputGenerationMessage();
+            }
 
             SortedList importList = new SortedList(StringComparer.Ordinal);
             foreach (CodeNamespace nspace in e.Namespaces)
@@ -1003,7 +1017,7 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                 this.options = null;
             }
         }
-        
-        public void Dispose() => output.Dispose();
+
+        public void Dispose() => output?.Dispose();
     }
 }

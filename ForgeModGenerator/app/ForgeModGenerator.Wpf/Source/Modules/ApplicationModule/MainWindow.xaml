@@ -5,9 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
         xmlns:aControls="clr-namespace:ForgeModGenerator.ApplicationModule.Controls"
-        xmlns:views="clr-namespace:ForgeModGenerator.ApplicationModule.Views"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:vm="clr-namespace:ForgeModGenerator.ViewModels"
         xmlns:prism="http://prismlibrary.com/"
         prism:ViewModelLocator.AutoWireViewModel="True"
         mc:Ignorable="d"
@@ -134,11 +132,21 @@
                                              OpenSettingsCommandCommand="{Binding OpenSettingsCommandCommand}"
                                              OpenSoundGeneratorCommand="{Binding OpenSoundGeneratorCommand}"
                                              OpenTextureGeneratorCommand="{Binding OpenTextureGeneratorCommand}" />
-            <Frame x:Name="PageFrame"
-                   Grid.Column="1"
-                   NavigationUIVisibility="Hidden"
-                   prism:RegionManager.RegionName="PageRegion"
-                   Source="{Binding SessionContext.StartPage}" />
+            <materialDesign:Transitioner x:Name="FrameTransitioner"
+                                         Grid.Column="1"
+                                         SelectedIndex="0"
+                                         AutoApplyTransitionOrigins="True">
+                <materialDesign:TransitionerSlide x:Name="FrameTransitionSlider"
+                                                  OpeningEffect="{materialDesign:TransitionEffect Kind=FadeIn}">
+                    <Frame x:Name="PageFrame"
+                           Grid.Column="1"
+                           NavigationUIVisibility="Hidden"
+                           prism:RegionManager.RegionName="PageRegion"
+                           Source="{Binding SessionContext.StartPage}"
+                           Navigating="PageFrame_Navigating"
+                           Navigated="PageFrame_Navigated" />
+                </materialDesign:TransitionerSlide>
+            </materialDesign:Transitioner>
         </Grid>
     </Grid>
 </Window>

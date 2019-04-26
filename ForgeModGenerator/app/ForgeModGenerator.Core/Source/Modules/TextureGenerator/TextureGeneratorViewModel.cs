@@ -14,7 +14,7 @@ namespace ForgeModGenerator.TextureGenerator.ViewModels
             Explorer.OpenFileDialog.CheckFileExists = true;
             Explorer.OpenFileDialog.ValidateNames = true;
             Explorer.OpenFolderDialog.ShowNewFolderButton = true;
-            Explorer.AllowedFileExtensions.Add(".png");
+            Explorer.AllowFileExtensions(".png");
         }
 
         public override string FoldersRootPath => SessionContext.SelectedMod != null ? ModPaths.TexturesFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid) : null;
@@ -25,7 +25,7 @@ namespace ForgeModGenerator.TextureGenerator.ViewModels
             {
                 IsLoading = true;
                 Explorer.Folders.Clear();
-                Explorer.Folders.AddRange(await Explorer.FileSynchronizer.Finder.FindFoldersAsync(FoldersRootPath, true));
+                await InitializeFoldersAsync(await Explorer.FileSynchronizer.Finder.FindFoldersAsync(FoldersRootPath, true).ConfigureAwait(true)).ConfigureAwait(false);
                 Explorer.FileSynchronizer.RootPath = FoldersRootPath;
                 Explorer.FileSynchronizer.SetEnableSynchronization(true);
                 IsLoading = false;

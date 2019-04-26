@@ -7,6 +7,8 @@
 
         public const string Block = "block";
 
+        public const string Command = "command";
+
         public const string Item = "item";
         public const string Armor = "armor";
         public const string Bow = "bow";

@@ -151,7 +151,7 @@ namespace ForgeModGenerator.Tests
         [TestMethod]
         public void GenerateMethod()
         {
-            CodeMemberMethod method = new CodeMemberMethod() { Name = "someMethod" };
+            JavaCodeMemberMethod method = new JavaCodeMemberMethod() { Name = "someMethod" };
             string code = GenerateMember(TestContext, method);
             Assert.IsTrue(code.Contains("private final void someMethod() {"), code);
 
@@ -194,6 +194,16 @@ namespace ForgeModGenerator.Tests
             method.Attributes = MemberAttributes.Abstract | MemberAttributes.Assembly;
             code = GenerateMember(TestContext, method);
             Assert.IsTrue(code.Contains("abstract void someYetOtherMethod();"), code);
+
+            method.Name = "method";
+            method.Attributes = MemberAttributes.Public;
+            method.ThrowsExceptions.Add("IOException");
+            code = GenerateMember(TestContext, method);
+            Assert.IsTrue(code.Contains("public void method() throws IOException {"), code);
+
+            method.ThrowsExceptions.Add("Exception");
+            code = GenerateMember(TestContext, method);
+            Assert.IsTrue(code.Contains("public void method() throws IOException, Exception {"), code);
         }
 
         [TestMethod]

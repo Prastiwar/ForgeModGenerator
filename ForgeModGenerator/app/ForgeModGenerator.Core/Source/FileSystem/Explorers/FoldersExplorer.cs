@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ForgeModGenerator
 {
-    public class FoldersExplorer<TFolder, TFile> : BindableBase, IFoldersExplorer<TFolder, TFile>, IDisposable
+    public class FoldersExplorer<TFolder, TFile> : BindableBase, IFoldersExplorer<TFolder, TFile>
         where TFolder : class, IFolderObject<TFile>
         where TFile : class, IFileObject
     {
@@ -28,11 +28,11 @@ namespace ForgeModGenerator
 
         protected IFileSystem FileSystem { get; }
 
+        protected HashSet<string> AllowedFileExtensions { get; set; }
+
         public IFileBrowser OpenFileDialog { get; }
 
         public IFolderBrowser OpenFolderDialog { get; }
-
-        public HashSet<string> AllowedFileExtensions { get; protected set; }
 
         public bool HasEmptyFolders => Folders.Files.Any(x => x.Count == 0);
 
@@ -71,6 +71,12 @@ namespace ForgeModGenerator
             }
         }
 
+        public void AllowFileExtensions(params string[] extensions)
+        {
+            AllowedFileExtensions = new HashSet<string>(extensions);
+            FileSynchronizer.Filters = AllowedFileExtensionsPatterns;
+        }
+
         public void RemoveEmptyFolders()
         {
             for (int i = Folders.Files.Count - 1; i >= 0; i--)
@@ -91,7 +97,7 @@ namespace ForgeModGenerator
                 for (int i = folder.Files.Count - 1; i >= 0; i--)
                 {
                     string filePath = folder.Files[i].Info.FullName;
-                    if (FileSystemInfoReference.GetReferenceCount(filePath) <= 1 && File.Exists(filePath))
+                    if (FileSystemInfoReference.FindReferenceCount(filePath) <= 1 && File.Exists(filePath))
                     {
                         FileSystem.DeleteFile(filePath, true);
                     }
@@ -126,7 +132,7 @@ namespace ForgeModGenerator
         {
             path = IOHelper.GetDirectoryPath(path);
             string newFolderPath = IOHelper.GetUniqueName(Path.Combine(rootPath, new DirectoryInfo(path).Name), (name) => !Directory.Exists(name));
-            await IOHelper.DirectoryCopyAsync(path, newFolderPath, AllowedFileExtensionsPatterns);
+            await IOHelper.DirectoryCopyAsync(path, newFolderPath, AllowedFileExtensionsPatterns).ConfigureAwait(false);
         }
 
         /// <summary> Copies directory to root path, if directory with given name exists, add (n) number to its name </summary>
@@ -138,7 +144,7 @@ namespace ForgeModGenerator
         }
 
         /// <summary> Copies files to folder path, if file with given name exists, prompt for overwriting </summary>
-        public Task CopyFilesToFolderAsync(TFolder folder, params string[] fileNames) => Task.Run(() => { CopyFilesToFolder(folder, fileNames); });
+        public Task CopyFilesToFolderAsync(TFolder folder, params string[] fileNames) => Task.Run(() => CopyFilesToFolder(folder, fileNames));
 
         /// <summary> Copies files to folder path, if file with given name exists, prompt for overwriting </summary>
         public void CopyFilesToFolder(TFolder folder, params string[] fileNames)
@@ -201,6 +207,26 @@ namespace ForgeModGenerator
 
         public TFolder CreateFolder(string path) => FileSynchronizer.Finder.Factory.Create(path, null);
 
-        public void Dispose() => fileSynchronizer.Dispose();
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    FileSynchronizer.Dispose();
+                    Folders.Clear();
+                    AllowedFileExtensions.Clear();
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
     }
 }

@@ -1,10 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:ForgeModGenerator"
                     xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
                     xmlns:soundControls="clr-namespace:ForgeModGenerator.SoundGenerator.Controls"
-                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-                    xmlns:misc="clr-namespace:ForgeModGenerator.Utility">
+                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
     <Style TargetType="{x:Type controls:FolderListBox}">
         <Setter Property="Template">
             <Setter.Value>
@@ -103,6 +101,52 @@
                                             <ListBox x:Name="FoldersListBox"
                                                      ItemsSource="{Binding Path=FoldersSource, RelativeSource={RelativeSource AncestorType=soundControls:SoundFolderListBox}}"
                                                      ItemTemplate="{Binding Path=FolderTemplate, RelativeSource={RelativeSource AncestorType=soundControls:SoundFolderListBox}}"
+                                                     HorizontalContentAlignment="Stretch"
+                                                     VerticalContentAlignment="Stretch"
+                                                     ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                                     VirtualizingPanel.IsVirtualizing="True"
+                                                     VirtualizingPanel.VirtualizationMode="Recycling">
+                                                <ListBox.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <VirtualizingStackPanel></VirtualizingStackPanel>
+                                                    </ItemsPanelTemplate>
+                                                </ListBox.ItemsPanel>
+                                            </ListBox>
+                                        </StackPanel>
+                                    </materialDesign:Card>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="CommandFolderListBoxStyle"
+           TargetType="{x:Type controls:FolderListBox}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:FolderListBox}">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                        <Grid>
+                            <Label x:Name="EmptyFolderLabel"
+                                   Content="{Binding Path=EmptyMessage, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
+                                   Foreground="DarkGray"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   FontSize="50"
+                                   Visibility="{Binding Path=ShowEmptyMessage, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}" />
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <StackPanel>
+                                    <materialDesign:Card Background="#FF535353"
+                                                         Margin="10">
+                                        <StackPanel>
+                                            <ListBox x:Name="FoldersListBox"
+                                                     ItemsSource="{Binding Path=FoldersSource, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
+                                                     ItemTemplate="{Binding Path=FolderTemplate, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
                                                      HorizontalContentAlignment="Stretch"
                                                      VerticalContentAlignment="Stretch"
                                                      ScrollViewer.VerticalScrollBarVisibility="Disabled"

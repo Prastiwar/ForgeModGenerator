@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace ForgeModGenerator.Converters
 {
-    public class ValidateResultAssemblyConverter
+    public static class ValidateResultAssemblyConverter
     {
         public static ValidateResult Convert(ValidationResult result)
         {

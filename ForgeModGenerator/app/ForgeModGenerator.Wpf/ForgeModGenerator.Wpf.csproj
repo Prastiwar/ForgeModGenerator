@@ -1,5 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.2.9.2\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props" Condition="Exists('..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.2.9.2\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props')" />
+  <Import Project="..\packages\Microsoft.NetFramework.Analyzers.2.9.2\build\Microsoft.NetFramework.Analyzers.props" Condition="Exists('..\packages\Microsoft.NetFramework.Analyzers.2.9.2\build\Microsoft.NetFramework.Analyzers.props')" />
+  <Import Project="..\packages\Microsoft.NetCore.Analyzers.2.9.2\build\Microsoft.NetCore.Analyzers.props" Condition="Exists('..\packages\Microsoft.NetCore.Analyzers.2.9.2\build\Microsoft.NetCore.Analyzers.props')" />
+  <Import Project="..\packages\Microsoft.CodeQuality.Analyzers.2.9.2\build\Microsoft.CodeQuality.Analyzers.props" Condition="Exists('..\packages\Microsoft.CodeQuality.Analyzers.2.9.2\build\Microsoft.CodeQuality.Analyzers.props')" />
+  <Import Project="..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.2.9.2\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props" Condition="Exists('..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.2.9.2\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -30,6 +35,8 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -41,6 +48,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <LangVersion>7.1</LangVersion>
+    <CodeAnalysisRuleSet>ForgeModGenerator.Wpf.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -51,6 +59,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <LangVersion>7.1</LangVersion>
+    <CodeAnalysisRuleSet>ForgeModGenerator.Wpf.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>fmg_icon_6o5_icon.ico</ApplicationIcon>
@@ -195,19 +204,23 @@
     <Compile Include="Source\CodeGeneration\CodeDom\Generator\JavaCodeGeneratorStatements.cs" />
     <Compile Include="Source\CodeGeneration\CodeDom\Indentation.cs" />
     <Compile Include="Source\CodeGeneration\CodeDom\JavaCodeExtensions.cs" />
+    <Compile Include="Source\CodeGeneration\CodeDom\JavaCodeMemberMethod.cs" />
     <Compile Include="Source\CodeGeneration\CodeDom\JavaCodeProvider.cs" />
     <Compile Include="Source\CodeGeneration\CodeDom\JavaMemberAttributeConverter.cs" />
     <Compile Include="Source\CodeGeneration\CodeDom\JavaMemberAttributes.cs" />
     <Compile Include="Source\CodeGeneration\CodeDom\JavaModifierAttributeConverter.cs" />
     <Compile Include="Source\CodeGeneration\CodeDom\JavaTypeAttributeConverter.cs" />
+    <Compile Include="Source\CodeGeneration\CodeDom\SharedUserData.cs" />
     <Compile Include="Source\CodeGeneration\CodeDom\Statements\CodeBreakLabelStatement.cs" />
     <Compile Include="Source\CodeGeneration\CodeDom\Statements\CodeContinueLabelStatement.cs" />
     <Compile Include="Source\CodeGeneration\CodeDom\Statements\CodeForeachStatement.cs" />
     <Compile Include="Source\CodeGeneration\CodeDom\Statements\CodeSimpleForLoopStatement.cs" />
     <Compile Include="Source\CodeGeneration\CodeDom\Statements\CodeWhileLoopStatement.cs" />
+    <Compile Include="Source\CodeGeneration\CustomScriptGenerator.cs" />
     <Compile Include="Source\CodeGeneration\InitVariablesCodeGenerator.cs" />
     <Compile Include="Source\CodeGeneration\MultiScriptsCodeGenerator.cs" />
     <Compile Include="Source\CodeGeneration\ScriptCodeGenerator.cs" />
+    <Compile Include="Source\Components\GridLengthVector.cs" />
     <Compile Include="Source\Controls\Proxy\SelectorDecorator.cs" />
     <Compile Include="Source\Common\SyncInvokeObject.cs" />
     <Compile Include="Source\Controls\PathNameSubmitTextBox.cs" />
@@ -216,15 +229,27 @@
     <Compile Include="Source\Converters\Json\ForgeVersionJsonConverter.cs" />
     <Compile Include="Source\Converters\Json\McModInfoJsonConverter.cs" />
     <Compile Include="Source\Converters\Json\ModJsonConverter.cs" />
+    <Compile Include="Source\Converters\Json\LowercasePropertyResolver.cs" />
     <Compile Include="Source\Converters\MethodToCommandConverter.cs" />
     <Compile Include="Source\Converters\ValidateResultAssemblyConverter.cs" />
+    <Compile Include="Source\Common\DisposeClosedViewsBehavior.cs" />
     <Compile Include="Source\FileSystem\Dialog\FileBrowserDialog.cs" />
     <Compile Include="Source\FileSystem\Dialog\FolderBrowserDialog.cs" />
     <Compile Include="Source\FileSystem\FileSystemWin.cs" />
     <Compile Include="Source\Modules\ApplicationModule\Controls\NavigationMenuControl.cs" />
+    <Compile Include="Source\Modules\BlockGenerator\BlockCodeGenerator.cs" />
+    <Compile Include="Source\Modules\CommandGenerator\CodeGeneration\CommandCodeGenerator.cs" />
+    <Compile Include="Source\Modules\CommandGenerator\CommandEditorFormFactory.cs" />
+    <Compile Include="Source\Modules\CommandGenerator\CodeGeneration\CustomCommandCodeGenerator.cs" />
+    <Compile Include="Source\Modules\CommandGenerator\Controls\CommandEditForm.xaml.cs">
+      <DependentUpon>CommandEditForm.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Modules\CommandGenerator\Validation\CommandValidator.cs" />
+    <Compile Include="Source\Modules\ItemGenerator\ItemCodeGenerator.cs" />
     <Compile Include="Source\Modules\ModGenerator\ModEditorFormFactory.cs" />
     <Compile Include="Source\Modules\ModGenerator\ModInfoSerializer.cs" />
     <Compile Include="Source\Modules\ModGenerator\ModSerializer.cs" />
+    <Compile Include="Source\Modules\RecipeGenerator\RecipeCodeGenerator.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundEditorFormFactory.cs" />
     <Compile Include="Source\Serialization\PreferenceDataSerializer.cs" />
     <Compile Include="Source\Serialization\JsonSerializer.cs" />
@@ -273,13 +298,12 @@
     <Compile Include="Source\Modules\ModGenerator\SourceCodeGeneration\ManagerCodeGenerator.cs" />
     <Compile Include="Source\Modules\ModGenerator\SourceCodeGeneration\ProxyCodeGenerator.cs" />
     <Compile Include="Source\Modules\ModGenerator\SourceCodeGeneration\RegistryHandlerCodeGenerator.cs" />
-    <Compile Include="Source\Modules\SoundGenerator\SoundCodeGenerator.cs" />
-    <Compile Include="Source\Services\CommandTracker.cs" />
+    <Compile Include="Source\Modules\SoundGenerator\CodeGeneration\SoundCodeGenerator.cs" />
     <Compile Include="Source\Controls\FolderExpanderControl.cs" />
     <Compile Include="Source\Modules\ModGenerator\BuildConfiguration\ModBuildForm.xaml.cs">
       <DependentUpon>ModBuildForm.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Source\Modules\ModGenerator\ModForm.xaml.cs">
+    <Compile Include="Source\Modules\ModGenerator\Controls\ModForm.xaml.cs">
       <DependentUpon>ModForm.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Converters\PathToNameConverter.cs" />
@@ -329,9 +353,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Source\Serialization\VSCLaunchSerializer.cs" />
     <Page Include="Source\Modules\ApplicationModule\BugReporter.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Source\Modules\CommandGenerator\Controls\CommandEditForm.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Themes\FolderListBoxThemes.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -349,7 +378,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Source\Modules\ModGenerator\ModForm.xaml">
+    <Page Include="Source\Modules\ModGenerator\Controls\ModForm.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -454,6 +483,7 @@
     </Content>
     <None Include="app.config" />
     <None Include="Config\app.manifest" />
+    <None Include="ForgeModGenerator.Wpf.ruleset" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -489,5 +519,25 @@
       <Name>ForgeModGenerator.Core</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.2.9.2\analyzers\dotnet\Microsoft.CodeAnalysis.VersionCheckAnalyzer.dll" />
+    <Analyzer Include="..\packages\Microsoft.CodeQuality.Analyzers.2.9.2\analyzers\dotnet\cs\Humanizer.dll" />
+    <Analyzer Include="..\packages\Microsoft.CodeQuality.Analyzers.2.9.2\analyzers\dotnet\cs\Microsoft.CodeQuality.Analyzers.dll" />
+    <Analyzer Include="..\packages\Microsoft.CodeQuality.Analyzers.2.9.2\analyzers\dotnet\cs\Microsoft.CodeQuality.CSharp.Analyzers.dll" />
+    <Analyzer Include="..\packages\Microsoft.NetCore.Analyzers.2.9.2\analyzers\dotnet\cs\Microsoft.NetCore.Analyzers.dll" />
+    <Analyzer Include="..\packages\Microsoft.NetCore.Analyzers.2.9.2\analyzers\dotnet\cs\Microsoft.NetCore.CSharp.Analyzers.dll" />
+    <Analyzer Include="..\packages\Microsoft.NetFramework.Analyzers.2.9.2\analyzers\dotnet\cs\Microsoft.NetFramework.Analyzers.dll" />
+    <Analyzer Include="..\packages\Microsoft.NetFramework.Analyzers.2.9.2\analyzers\dotnet\cs\Microsoft.NetFramework.CSharp.Analyzers.dll" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.2.9.2\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.2.9.2\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.CodeQuality.Analyzers.2.9.2\build\Microsoft.CodeQuality.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeQuality.Analyzers.2.9.2\build\Microsoft.CodeQuality.Analyzers.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.NetCore.Analyzers.2.9.2\build\Microsoft.NetCore.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.NetCore.Analyzers.2.9.2\build\Microsoft.NetCore.Analyzers.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.NetFramework.Analyzers.2.9.2\build\Microsoft.NetFramework.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.NetFramework.Analyzers.2.9.2\build\Microsoft.NetFramework.Analyzers.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.2.9.2\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.2.9.2\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props'))" />
+  </Target>
 </Project>

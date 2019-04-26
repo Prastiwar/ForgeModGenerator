@@ -1,4 +1,5 @@
-﻿using ForgeModGenerator.Models;
+﻿using ForgeModGenerator.CodeGeneration.CodeDom;
+using ForgeModGenerator.Models;
 using System.CodeDom;
 using System.Collections.Generic;
 
@@ -6,18 +7,21 @@ namespace ForgeModGenerator.CodeGeneration
 {
     public abstract class InitVariablesCodeGenerator<T> : ScriptCodeGenerator
     {
-        public InitVariablesCodeGenerator(Mod mod, IEnumerable<T> elements = null) : base(mod) => Elements = elements ?? GetElementsForMod(mod);
+        public InitVariablesCodeGenerator(McMod mcMod, IEnumerable<T> elements = null) : base(mcMod) => Elements = elements;
 
         protected IEnumerable<T> Elements { get; }
 
         protected abstract string GetElementName(T element);
 
-        protected virtual IEnumerable<T> GetElementsForMod(Mod mod) => null;
+        protected static readonly char[] InvalidVariableNameChars = new char[] {
+            '.', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '+', '=', '/', '\\', '|', '[', ']', '{', '}', ';', ':', '\'', '"', ',', '<', '>', '?', ' '
+        };
 
         protected virtual CodeMemberField CreateElementField(T element)
         {
             string typeName = element.GetType().Name;
-            CodeMemberField field = new CodeMemberField(typeName, GetElementName(element).Replace(' ', '_').ToUpper()) {
+            string elementName = MakeVariableNameValid(GetElementName(element));
+            CodeMemberField field = new CodeMemberField(typeName, elementName.ToUpper()) {
                 Attributes = MemberAttributes.Public | MemberAttributes.Static | MemberAttributes.Final,
                 InitExpression = new CodeObjectCreateExpression(typeName + "Base", new CodePrimitiveExpression(GetElementName(element)))
             };
@@ -28,7 +32,16 @@ namespace ForgeModGenerator.CodeGeneration
         {
             CodeTypeDeclaration clas = NewClassWithMembers(className);
 
-            CodeMemberField listField = new CodeMemberField($"List<{elementType}>", elementType.ToUpper() + "S") {
+            string listVarName = null;
+            if (ScriptLocator is InitClassLocator initLocator)
+            {
+                listVarName = initLocator.InitFieldName;
+            }
+            else
+            {
+                listVarName = elementType.ToUpper() + "S";
+            }
+            CodeMemberField listField = new CodeMemberField($"List<{elementType}>", listVarName) {
                 Attributes = MemberAttributes.Public | MemberAttributes.Static | MemberAttributes.Final,
                 InitExpression = new CodeObjectCreateExpression($"ArrayList<{elementType}>")
             };
@@ -42,10 +55,36 @@ namespace ForgeModGenerator.CodeGeneration
                 }
             }
 
-            CodeNamespace package = NewPackage(clas, "java.util.ArrayList",
-                                                     "java.util.List",
-                                                     $"net.minecraft.util.{elementType}");
+            CodeNamespace package = NewPackage(SourceCodeLocator.Manager(Modname, Organization).PackageName, clas,
+                                                     "java.util.ArrayList",
+                                                     "java.util.List");
             return NewCodeUnit(package);
+        }
+
+        protected string MakeVariableNameValid(string varName)
+        {
+            char validChar = '_';
+            if (char.IsDigit(varName[0]))
+            {
+                varName = validChar + varName;
+            }
+            foreach (char invalidChar in InvalidVariableNameChars)
+            {
+                varName = varName.Replace(invalidChar, validChar);
+            }
+            if (!JavaCodeGenerator.IsValidJavaIdentifier(varName))
+            {
+                string newElementName = varName;
+                foreach (char varChar in varName)
+                {
+                    if (!System.CodeDom.Compiler.CodeGenerator.IsValidLanguageIndependentIdentifier("" + validChar + varChar))
+                    {
+                        newElementName = varName.Replace(varChar, validChar);
+                    }
+                }
+                varName = newElementName;
+            }
+            return varName;
         }
     }
 }

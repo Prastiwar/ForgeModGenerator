@@ -1,28 +1,17 @@
-﻿using System.Windows;
+﻿using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace ForgeModGenerator.Components
 {
-    public struct GridLengthVector
+    public struct MenuSettings : System.IEquatable<MenuSettings>
     {
-        public GridLength X;
-        public GridLength Y;
-
-        public GridLengthVector(GridLength x, GridLength y)
-        {
-            X = x;
-            Y = y;
-        }
-    }
-
-    public struct MenuSettings
-    {
-        public Grid Grid;
-        public int Column;
-        public int Row;
-        public GridLengthVector InitialPosition;
-        public GridLengthVector TargetPosition;
-        public Duration Duration;
+        public Grid Grid { get; set; }
+        public int Column { get; set; }
+        public int Row { get; set; }
+        public GridLengthVector InitialPosition { get; set; }
+        public GridLengthVector TargetPosition { get; set; }
+        public Duration Duration { get; set; }
 
         public MenuSettings(Grid grid, int column, int row, Vector offsetPosition, double secondsDuration = 1.0)
         {
@@ -47,5 +36,41 @@ namespace ForgeModGenerator.Components
                 new GridLength(InitialPosition.Y.Value + offsetPosition.Y, InitialPosition.Y.GridUnitType)
             );
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is MenuSettings s)
+            {
+                return s.Column == Column &&
+                    s.Duration == Duration &&
+                    s.Grid == Grid &&
+                    s.InitialPosition == InitialPosition &&
+                    s.Row == Row &&
+                    s.TargetPosition == TargetPosition;
+            }
+            return false;
+        }
+
+        public bool Equals(MenuSettings other) => other.Column == Column &&
+                                                 other.Duration == Duration &&
+                                                 other.Grid == Grid &&
+                                                 other.InitialPosition == InitialPosition &&
+                                                 other.Row == Row &&
+                                                 other.TargetPosition == TargetPosition;
+
+        public override int GetHashCode()
+        {
+            int hashCode = 1154872691;
+            hashCode = hashCode * -1521134295 + EqualityComparer<Grid>.Default.GetHashCode(Grid);
+            hashCode = hashCode * -1521134295 + Column.GetHashCode();
+            hashCode = hashCode * -1521134295 + Row.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<GridLengthVector>.Default.GetHashCode(InitialPosition);
+            hashCode = hashCode * -1521134295 + EqualityComparer<GridLengthVector>.Default.GetHashCode(TargetPosition);
+            hashCode = hashCode * -1521134295 + EqualityComparer<Duration>.Default.GetHashCode(Duration);
+            return hashCode;
+        }
+
+        public static bool operator ==(MenuSettings left, MenuSettings right) => left.Equals(right);
+        public static bool operator !=(MenuSettings left, MenuSettings right) => !(left == right);
     }
 }

@@ -3,6 +3,8 @@ using ForgeModGenerator.Utility;
 using Prism.Commands;
 using Prism.Mvvm;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -10,7 +12,7 @@ using System.Windows.Input;
 namespace ForgeModGenerator.ViewModels
 {
     /// <summary> Base ViewModel class to explore folders </summary>
-    public abstract class FoldersWatcherViewModelBase<TFolder, TFile> : BindableBase
+    public abstract class FoldersWatcherViewModelBase<TFolder, TFile> : BindableBase, IDisposable
         where TFolder : class, IFolderObject<TFile>
         where TFile : class, IFileObject
     {
@@ -21,11 +23,11 @@ namespace ForgeModGenerator.ViewModels
             SessionContext.PropertyChanged += OnSessionContexPropertyChanged;
         }
 
-        public IFoldersExplorer<TFolder, TFile> Explorer { get; }
-
         public abstract string FoldersRootPath { get; }
 
-        protected ISessionContextService SessionContext { get; }
+        public IFoldersExplorer<TFolder, TFile> Explorer { get; }
+
+        public ISessionContextService SessionContext { get; }
 
         private bool isLoading;
         /// <summary> Determines when folders are loading - used to show loading circle </summary>
@@ -57,7 +59,7 @@ namespace ForgeModGenerator.ViewModels
         private ICommand removeEmptyFoldersCommand;
         public ICommand RemoveEmptyFoldersCommand => removeEmptyFoldersCommand ?? (removeEmptyFoldersCommand = new DelegateCommand(Explorer.RemoveEmptyFolders));
 
-        protected virtual async void OnLoaded() => await Refresh();
+        protected virtual void OnLoaded() => Refresh();
 
         protected virtual bool CanRefresh() => SessionContext.SelectedMod != null && Directory.Exists(FoldersRootPath);
 
@@ -65,12 +67,27 @@ namespace ForgeModGenerator.ViewModels
 
         protected void RemoveFileFromFolder(Tuple<TFolder, TFile> param) => Explorer.RemoveFileFromFolder(param.Item1, param.Item2);
 
+        protected async Task InitializeFoldersAsync(IEnumerable<TFolder> folders)
+        {
+            foreach (TFolder folder in folders)
+            {
+                ObservableRangeCollection<TFile> temp = folder.Files.DeepClone<ObservableRangeCollection<TFile>, TFile>();
+                folder.Clear();
+                Explorer.Folders.Add(folder);
+                foreach (TFile file in temp)
+                {
+                    folder.Add(file);
+                    await Task.Delay(1).ConfigureAwait(true);
+                }
+            }
+        }
+
         protected async void ShowFolderDialogAndCopyToRoot()
         {
             DialogResult dialogResult = Explorer.ShowFolderDialog(out IFolderBrowser browser);
             if (dialogResult == DialogResult.OK)
             {
-                await Explorer.CopyFolderToRootAsync(FoldersRootPath, browser.SelectedPath);
+                await Explorer.CopyFolderToRootAsync(FoldersRootPath, browser.SelectedPath).ConfigureAwait(false);
             }
         }
 
@@ -100,8 +117,28 @@ namespace ForgeModGenerator.ViewModels
         {
             if (e.PropertyName == nameof(SessionContext.SelectedMod))
             {
-                await Refresh();
+                await Refresh().ConfigureAwait(false);
             }
+        }
+
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    Explorer.Dispose();
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }

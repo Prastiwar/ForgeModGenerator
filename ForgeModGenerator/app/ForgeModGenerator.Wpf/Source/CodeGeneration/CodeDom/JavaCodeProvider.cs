@@ -35,5 +35,13 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
 
         public override void GenerateCodeFromMember(CodeTypeMember member, TextWriter writer, CodeGeneratorOptions options) => generator.GenerateCodeFromMember(member, writer, options);
 
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            if (disposing)
+            {
+                generator.Dispose();
+            }
+        }
     }
 }

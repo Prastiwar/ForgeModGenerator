@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace ForgeModGenerator.Serialization
 {
-    public class PreferenceDataSerializer : ISerializer<PreferenceData>
+    public sealed class PreferenceDataSerializer : ISerializer<PreferenceData>
     {
         private static readonly JsonSerializerSettings settings = new JsonSerializerSettings() {
             TypeNameHandling = TypeNameHandling.All,

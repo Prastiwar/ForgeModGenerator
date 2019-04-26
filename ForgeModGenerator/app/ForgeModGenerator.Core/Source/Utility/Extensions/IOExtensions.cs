@@ -196,11 +196,11 @@ namespace ForgeModGenerator.Utility
         {
             if (value == null)
             {
-                throw new ArgumentNullException("value");
+                throw new ArgumentNullException(nameof(value));
             }
             if (length < 0)
             {
-                throw new ArgumentOutOfRangeException("length", length, "Length is less than zero");
+                throw new ArgumentOutOfRangeException(nameof(length), length, "Length is less than zero");
             }
             return (length < value.Length) ? value.Substring(value.Length - length) : value;
         }

@@ -1,28 +1,71 @@
 ﻿using ForgeModGenerator.Models;
+using System;
+using System.Diagnostics;
+using System.IO;
 
 namespace ForgeModGenerator.Services
 {
     public class ModBuildService : IModBuildService
     {
-        public void Compile(Mod mod) => throw new System.NotImplementedException();
+        public void Compile(McMod mcMod)
+        {
+            string modPath = ModPaths.ModRootFolder(mcMod.ModInfo.Name);
+            ProcessStartInfo psi = new ProcessStartInfo {
+                FileName = "CMD.EXE",
+                Arguments = $"/K cd \"{modPath}\" & gradlew build"
+            };
+            Process.Start(psi);
+        }
 
         /// <summary> Run mod depends on mod.LanuchSetup </summary>
-        public void Run(Mod mod)
+        public void Run(McMod mcMod)
         {
-            if (mod.LaunchSetup.RunClient)
+            switch (mcMod.LaunchSetup)
             {
-                RunClient(mod);
-            }
-            if (mod.LaunchSetup.RunServer)
-            {
-                RunServer(mod);
+                case LaunchSetup.Client:
+                    RunClient(mcMod);
+                    break;
+                case LaunchSetup.Server:
+                    RunServer(mcMod);
+                    break;
+                default:
+                    RunClient(mcMod);
+                    break;
             }
         }
 
         /// <summary> Ignore LanuchSetup and run client for this mod </summary>
-        public void RunClient(Mod mod) => throw new System.NotImplementedException();
+        public void RunClient(McMod mcMod)
+        {
+            string modPath = ModPaths.ModRootFolder(mcMod.ModInfo.Name);
+            ProcessStartInfo psi = new ProcessStartInfo {
+                FileName = "CMD.EXE",
+                Arguments = $"/K cd \"{modPath}\" & gradlew runClient"
+            };
+            Process.Start(psi);
+        }
 
         /// <summary> Ignore LanuchSetup and run server for this mod </summary>
-        public void RunServer(Mod mod) => throw new System.NotImplementedException();
+        public void RunServer(McMod mcMod)
+        {
+            string modPath = ModPaths.ModRootFolder(mcMod.ModInfo.Name);
+            string eulaPath = Path.Combine(modPath, "run", "eula.txt");
+            FileInfo eulaFile = new FileInfo(eulaPath);
+            if (!eulaFile.Exists)
+            {
+                eulaFile.Directory.Create();
+                string eulaMessage =
+$@"#By changing the setting below to TRUE you are indicating your agreement to our EULA (https://account.mojang.com/documents/minecraft_eula).
+#{DateTime.UtcNow}
+eula = true";
+                File.WriteAllText(eulaPath, eulaMessage);
+            }
+
+            ProcessStartInfo psi = new ProcessStartInfo {
+                FileName = "CMD.EXE",
+                Arguments = $"/K cd \"{modPath}\" & gradlew runServer"
+            };
+            Process.Start(psi);
+        }
     }
 }

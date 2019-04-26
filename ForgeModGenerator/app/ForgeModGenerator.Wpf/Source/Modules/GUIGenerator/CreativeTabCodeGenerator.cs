@@ -6,7 +6,7 @@ namespace ForgeModGenerator.GUIGenerator
 {
     public class CreativeTabCodeGenerator : ScriptCodeGenerator
     {
-        public CreativeTabCodeGenerator(Mod mod) : base(mod) => ScriptLocator = SourceCodeLocator.CreativeTab(Modname, Organization);
+        public CreativeTabCodeGenerator(McMod mcMod) : base(mcMod) => ScriptLocator = SourceCodeLocator.CreativeTab(Modname, Organization);
 
         public override ClassLocator ScriptLocator { get; }
 
@@ -14,7 +14,8 @@ namespace ForgeModGenerator.GUIGenerator
         {
             CodeTypeDeclaration clas = NewClassWithMembers(ScriptLocator.ClassName);
             clas.Members.Add(GetCreativeTab());
-            CodeNamespace package = NewPackage(clas, $"{PackageName}.{SourceCodeLocator.Items(Modname, Organization).ImportRelativeName}",
+            CodeNamespace package = NewPackage(SourceCodeLocator.CreativeTab(Modname, Organization).PackageName, clas,
+                                                      $"{SourceRootPackageName}.{SourceCodeLocator.Items(Modname, Organization).ImportRelativeName}",
                                                       "net.minecraft.creativetab.CreativeTabs",
                                                       "net.minecraft.item.ItemStack",
                                                       "net.minecraftforge.fml.relauncher.Side",

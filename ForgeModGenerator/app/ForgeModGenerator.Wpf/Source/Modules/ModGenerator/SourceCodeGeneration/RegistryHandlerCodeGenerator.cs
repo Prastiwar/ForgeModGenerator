@@ -7,7 +7,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 {
     public class RegistryHandlerCodeGenerator : ScriptCodeGenerator
     {
-        public RegistryHandlerCodeGenerator(Mod mod) : base(mod) => ScriptLocator = SourceCodeLocator.RegistryHandler(Modname, Organization);
+        public RegistryHandlerCodeGenerator(McMod mcMod) : base(mcMod) => ScriptLocator = SourceCodeLocator.RegistryHandler(Modname, Organization);
 
         public override ClassLocator ScriptLocator { get; }
 
@@ -47,10 +47,11 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             modelRegister.Statements.Add(CreateRegisterModelForeach(SourceCodeLocator.Blocks(Modname, Organization).ClassName, "Block"));
             clas.Members.Add(modelRegister);
 
-            return NewCodeUnit(clas, $"{PackageName}.{SourceCodeLocator.Blocks(Modname, Organization).ImportRelativeName}",
-                                     $"{PackageName}.{SourceCodeLocator.Items(Modname, Organization).ImportRelativeName}",
-                                     $"{PackageName}.{SourceCodeLocator.SoundEvents(Modname, Organization).ImportRelativeName}",
-                                     $"{PackageName}.{SourceCodeLocator.ModelInterface(Modname, Organization).ImportRelativeName}",
+            return NewCodeUnit(SourceCodeLocator.RegistryHandler(Modname, Organization).PackageName, clas, 
+                                     $"{SourceRootPackageName}.{SourceCodeLocator.Blocks(Modname, Organization).ImportRelativeName}",
+                                     $"{SourceRootPackageName}.{SourceCodeLocator.Items(Modname, Organization).ImportRelativeName}",
+                                     $"{SourceRootPackageName}.{SourceCodeLocator.SoundEvents(Modname, Organization).ImportRelativeName}",
+                                     $"{SourceRootPackageName}.{SourceCodeLocator.ModelInterface(Modname, Organization).ImportRelativeName}",
                                      "net.minecraft.block.Block",
                                      "net.minecraft.item.Item",
                                      "net.minecraft.util.SoundEvent",

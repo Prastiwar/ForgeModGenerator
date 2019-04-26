@@ -8,8 +8,8 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
     public sealed partial class JavaCodeGenerator : ICodeGenerator
     {
         private void GenerateSnippetExpression(CodeSnippetExpression e) => output.Write(e.Value);
-        private void GenerateBaseReferenceExpression(CodeBaseReferenceExpression e) => output.Write("super");
-        private void GenerateThisReferenceExpression(CodeThisReferenceExpression e) => output.Write("this");
+        private void GenerateBaseReferenceExpression() => output.Write("super");
+        private void GenerateThisReferenceExpression() => output.Write("this");
         private void GenerateArgumentReferenceExpression(CodeArgumentReferenceExpression e) => OutputIdentifier(e.ParameterName);
         private void GenerateVariableReferenceExpression(CodeVariableReferenceExpression e) => OutputIdentifier(e.VariableName);
         private void GenerateTypeReferenceExpression(CodeTypeReferenceExpression e) => OutputType(e.Type);
@@ -22,7 +22,7 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                     GenerateArrayCreateExpression(val);
                     break;
                 case CodeBaseReferenceExpression val:
-                    GenerateBaseReferenceExpression(val);
+                    GenerateBaseReferenceExpression();
                     break;
                 case CodeBinaryOperatorExpression val:
                     GenerateBinaryOperatorExpression(val);
@@ -64,7 +64,7 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                     GeneratePrimitiveExpression(val);
                     break;
                 case CodeThisReferenceExpression val:
-                    GenerateThisReferenceExpression(val);
+                    GenerateThisReferenceExpression();
                     break;
                 case CodeTypeReferenceExpression val:
                     GenerateTypeReferenceExpression(val);

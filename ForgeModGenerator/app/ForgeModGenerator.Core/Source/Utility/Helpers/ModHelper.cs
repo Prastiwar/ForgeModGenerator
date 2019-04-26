@@ -7,9 +7,9 @@ namespace ForgeModGenerator
     public static class ModHelper
     {
         // Writes to FmgModInfo file
-        public static void ExportMod(ISerializer<Mod> serializer, Mod mod) => File.WriteAllText(ModPaths.FmgModInfoFile(mod.ModInfo.Name), serializer.Serialize(mod));
+        public static void ExportMod(ISerializer<McMod> serializer, McMod mcMod) => File.WriteAllText(ModPaths.FmgModInfoFile(mcMod.ModInfo.Name), serializer.Serialize(mcMod));
 
-        public static Mod ImportMod(ISerializer<Mod> serializer, string modPath)
+        public static McMod ImportMod(ISerializer<McMod> serializer, string modPath)
         {
             string fmgModInfoPath = ModPaths.FmgModInfoFile(new DirectoryInfo(modPath).Name);
             try

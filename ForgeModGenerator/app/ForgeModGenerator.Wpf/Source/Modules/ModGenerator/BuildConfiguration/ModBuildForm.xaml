@@ -24,23 +24,22 @@
                                   ToolTip="Include in Run shortcut"
                                   Command="{Binding Path=ToggleSelectCommand, RelativeSource={RelativeSource AncestorType=local:ModBuildForm}}"
                                   CommandParameter="{Binding}" />
-                    <StackPanel Margin="0,5,0,0">
-                        <ToggleButton x:Name="RunClientToggleButton"
-                                      Height="13"
-                                      Padding="5"
-                                      Margin="3"
-                                      Style="{StaticResource MaterialDesignSwitchLightToggleButton}"
-                                      ToolTip="Run Client"
-                                      IsChecked="{Binding LaunchSetup.RunClient, Mode=TwoWay}"
-                                      Visibility="{Binding Path=IsChecked, ElementName=Includer, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                        <ToggleButton x:Name="RunServerToggleButton"
-                                      Height="13"
-                                      Padding="5"
-                                      Margin="3"
-                                      Style="{StaticResource MaterialDesignSwitchLightToggleButton}"
-                                      ToolTip="Run Server"
-                                      IsChecked="{Binding LaunchSetup.RunServer, Mode=TwoWay}"
-                                      Visibility="{Binding Path=IsChecked, ElementName=Includer, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <Separator Width="3"
+                               Margin="0"
+                               Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
+                    <StackPanel Orientation="Horizontal">
+                        <RadioButton x:Name="RunClientRadioButton"
+                                     Style="{StaticResource MaterialDesignTabRadioButton}"
+                                     Margin="4"
+                                     IsChecked="{Binding LaunchSetup, Mode=TwoWay, Converter={StaticResource BoolToLaunchSetupConverter}}"
+                                     Content="RUN CLIENT"
+                                     Visibility="{Binding Path=IsChecked, ElementName=Includer, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        <RadioButton x:Name="RunServerRadioButton"
+                                     Style="{StaticResource MaterialDesignTabRadioButton}"
+                                     Margin="4"
+                                     IsChecked="{Binding Path=IsChecked, ElementName=RunClientRadioButton, Converter={StaticResource InvertBooleanConverter}}"
+                                     Content="RUN SERVER"
+                                     Visibility="{Binding Path=IsChecked, ElementName=Includer, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     </StackPanel>
                     <Button x:Name="CompileButton"
                             Padding="5"
@@ -59,12 +58,6 @@
                             Margin="7"
                             Content="Run Server"
                             Command="{Binding Path=RunServerCommand, RelativeSource={RelativeSource AncestorType=local:ModBuildForm}}"
-                            CommandParameter="{Binding}" />
-                    <Button x:Name="RunBothButton"
-                            Padding="5"
-                            Margin="7"
-                            Content="Run Both"
-                            Command="{Binding Path=RunBothCommand, RelativeSource={RelativeSource AncestorType=local:ModBuildForm}}"
                             CommandParameter="{Binding}" />
                 </StackPanel>
             </Grid>

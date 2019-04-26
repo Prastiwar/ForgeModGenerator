@@ -74,7 +74,7 @@ namespace ForgeModGenerator
         {
             foreach (T item in items)
             {
-                item.PropertyChanged -= File_PropertyChanged;
+                item.PropertyChanged -= OnFilePropertyChanged;
             }
             Files.RemoveRange(items);
         }
@@ -126,7 +126,7 @@ namespace ForgeModGenerator
             if (index >= 0 && index < Files.Count)
             {
                 T file = Files[index];
-                file.PropertyChanged -= File_PropertyChanged;
+                file.PropertyChanged -= OnFilePropertyChanged;
                 file.Info.Dispose();
                 Files.RemoveAt(index);
                 return true;
@@ -138,7 +138,7 @@ namespace ForgeModGenerator
         {
             if (Files.Remove(item))
             {
-                item.PropertyChanged -= File_PropertyChanged;
+                item.PropertyChanged -= OnFilePropertyChanged;
                 item.Info.Dispose();
                 return true;
             }
@@ -149,7 +149,7 @@ namespace ForgeModGenerator
         {
             foreach (T file in Files)
             {
-                file.PropertyChanged -= File_PropertyChanged;
+                file.PropertyChanged -= OnFilePropertyChanged;
                 file.Info.Dispose();
             }
             Files.Clear();
@@ -168,7 +168,7 @@ namespace ForgeModGenerator
             else
             {
                 Info = new FileSystemInfoReference(path);
-                Info.PropertyChanged += Info_PropertyChanged;
+                Info.PropertyChanged += OnInfoPropertyChanged;
             }
         }
 
@@ -179,7 +179,7 @@ namespace ForgeModGenerator
         protected void AddFile(T item)
         {
             Files.Add(item);
-            item.PropertyChanged += File_PropertyChanged;
+            item.PropertyChanged += OnFilePropertyChanged;
         }
 
         /// <summary> Forces Add files without CanAdd() check </summary>
@@ -187,7 +187,7 @@ namespace ForgeModGenerator
         {
             foreach (T item in items)
             {
-                item.PropertyChanged += File_PropertyChanged;
+                item.PropertyChanged += OnFilePropertyChanged;
             }
             Files.AddRange(items);
         }
@@ -212,25 +212,25 @@ namespace ForgeModGenerator
             {
                 if (Files != null)
                 {
-                    Files.CollectionChanged -= Files_CollectionChanged;
-                    Files.CollectionChanged += Files_CollectionChanged;
+                    Files.CollectionChanged -= OnFilesCollectionChanged;
+                    Files.CollectionChanged += OnFilesCollectionChanged;
                     if (Files.Count > 0)
                     {
                         foreach (T file in Files)
                         {
-                            file.PropertyChanged -= File_PropertyChanged;
-                            file.PropertyChanged += File_PropertyChanged;
+                            file.PropertyChanged -= OnFilePropertyChanged;
+                            file.PropertyChanged += OnFilePropertyChanged;
                         }
                     }
                 }
             }
         }
 
-        protected virtual void File_PropertyChanged(object sender, PropertyChangedEventArgs e) => FilePropertyChanged?.Invoke((T)sender, e);
+        protected virtual void OnFilePropertyChanged(object sender, PropertyChangedEventArgs e) => FilePropertyChanged?.Invoke((T)sender, e);
 
-        protected virtual void Info_PropertyChanged(object sender, PropertyChangedEventArgs e) { }
+        protected virtual void OnInfoPropertyChanged(object sender, PropertyChangedEventArgs e) { }
 
-        protected virtual void Files_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        protected virtual void OnFilesCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             IsDirty = true;
             RaisePropertyChanged(nameof(Count));

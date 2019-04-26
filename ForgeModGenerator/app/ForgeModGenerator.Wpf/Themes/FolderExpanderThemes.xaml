@@ -1,11 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:ForgeModGenerator"
                     xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
                     xmlns:soundControls="clr-namespace:ForgeModGenerator.SoundGenerator.Controls"
-                    xmlns:vm="clr-namespace:ForgeModGenerator.ViewModels"
-                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-                    xmlns:misc="clr-namespace:ForgeModGenerator.Utility">
+                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
     <Style TargetType="{x:Type controls:FolderExpanderControl}">
         <Setter Property="Template">
             <Setter.Value>
@@ -141,6 +138,69 @@
                                      ItemsSource="{Binding Path=Folder.Files, RelativeSource={RelativeSource AncestorType=soundControls:SoundFolderExpanderControl}}"
                                      ItemTemplate="{Binding Path=FileItemTemplate, RelativeSource={RelativeSource AncestorType=soundControls:SoundFolderExpanderControl}}"
                                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                     VirtualizingPanel.IsVirtualizing="True"
+                                     VirtualizingPanel.VirtualizationMode="Recycling">
+                                <ListBox.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel IsItemsHost="True" />
+                                    </ItemsPanelTemplate>
+                                </ListBox.ItemsPanel>
+                            </ListBox>
+                        </Expander>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="CommandFolderExpanderStyle"
+           TargetType="{x:Type controls:FolderExpanderControl}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:FolderExpanderControl}">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                        <Expander Foreground="Wheat"
+                                  Background="#FF424242"
+                                  HorizontalAlignment="Stretch"
+                                  IsExpanded="{Binding Path=IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}">
+                            <Expander.HeaderTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button x:Name="AddFileButton"
+                                                Width="20"
+                                                Height="20"
+                                                Padding="0"
+                                                Command="{Binding Path=AddFileCommand, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
+                                                CommandParameter="{Binding Path=Folder, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}">
+                                            <materialDesign:PackIcon Kind="Plus" />
+                                        </Button>
+                                        <Button x:Name="ShowContainerButton"
+                                                Width="20"
+                                                Height="20"
+                                                Padding="0"
+                                                Margin="8,0"
+                                                Command="{Binding Path=ShowContainerCommand, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}">
+                                            <materialDesign:PackIcon Kind="FolderOpen" />
+                                        </Button>
+                                        <TextBlock x:Name="HeaderTextBlock"
+                                                   Margin="12,0">
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="({0}) {1}">
+                                                    <Binding Path="Folder.Count"
+                                                             RelativeSource="{RelativeSource AncestorType=controls:FolderExpanderControl}" />
+                                                    <Binding Path="HeaderText"
+                                                             RelativeSource="{RelativeSource AncestorType=controls:FolderExpanderControl}" />
+                                                </MultiBinding>
+                                            </TextBlock.Text></TextBlock>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </Expander.HeaderTemplate>
+                            <ListBox x:Name="FilesListBox"
+                                     ItemsSource="{Binding Path=Folder.Files, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
+                                     ItemTemplate="{Binding Path=FileItemTemplate, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                     ScrollViewer.VerticalScrollBarVisibility="Disabled"
                                      VirtualizingPanel.IsVirtualizing="True"
                                      VirtualizingPanel.VirtualizationMode="Recycling">
                                 <ListBox.ItemsPanel>

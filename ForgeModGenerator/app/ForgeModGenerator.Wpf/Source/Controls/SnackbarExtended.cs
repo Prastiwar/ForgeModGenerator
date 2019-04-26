@@ -8,14 +8,14 @@ namespace ForgeModGenerator.Controls
     {
         public SnackbarExtended() : base()
         {
-            IsActiveChanged += SnackbarExtended_IsActiveChanged;
+            IsActiveChanged += OnIsActiveChanged;
             if (!IsActive)
             {
                 Visibility = Visibility.Collapsed;
             }
         }
 
-        private async void SnackbarExtended_IsActiveChanged(object sender, RoutedPropertyChangedEventArgs<bool> e)
+        private async void OnIsActiveChanged(object sender, RoutedPropertyChangedEventArgs<bool> e)
         {
             if (e.NewValue)
             {
@@ -24,7 +24,7 @@ namespace ForgeModGenerator.Controls
             else
             {
                 Snackbar s = (Snackbar)sender;
-                await Task.Delay(s.DeactivateStoryboardDuration);
+                await Task.Delay(s.DeactivateStoryboardDuration).ConfigureAwait(true);
                 ((FrameworkElement)sender).Visibility = Visibility.Collapsed;
             }
         }

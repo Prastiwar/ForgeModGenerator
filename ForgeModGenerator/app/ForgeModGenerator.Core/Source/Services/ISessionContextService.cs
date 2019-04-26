@@ -9,9 +9,9 @@ namespace ForgeModGenerator.Services
     {
         ObservableCollection<ForgeVersion> ForgeVersions { get; }
 
-        ObservableCollection<Mod> Mods { get; }
-        ObservableCollection<Mod> SelectedMods { get; }
-        Mod SelectedMod { get; set; }
+        ObservableCollection<McMod> Mods { get; }
+        ObservableCollection<McMod> SelectedMods { get; }
+        McMod SelectedMod { get; set; }
 
         Uri StartPage { get; }
         bool IsModSelected { get; }

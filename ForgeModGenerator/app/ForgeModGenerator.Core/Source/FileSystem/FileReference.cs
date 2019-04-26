@@ -57,7 +57,7 @@ namespace ForgeModGenerator
         public string Name => Info?.Name;
         public string FullName => Info?.FullName;
         public string Extension => Info?.Extension;
-        public int ReferenceCount => GetReferenceCount(FullName);
+        public int ReferenceCount => FindReferenceCount(FullName);
         public bool IsValidReference => Info != null;
 
         private bool isDisposed = false;
@@ -112,7 +112,7 @@ namespace ForgeModGenerator
             }
             return false;
         }
-        public static bool IsReferenced(string filePath) => GetReferenceCount(filePath) > 0;
-        public static int GetReferenceCount(string filePath) => references.TryGetValue(filePath.NormalizeFullPath(), out RefCounter refCounter) ? refCounter.ReferenceCount : 0;
+        public static bool IsReferenced(string filePath) => FindReferenceCount(filePath) > 0;
+        public static int FindReferenceCount(string filePath) => references.TryGetValue(filePath.NormalizeFullPath(), out RefCounter refCounter) ? refCounter.ReferenceCount : 0;
     }
 }

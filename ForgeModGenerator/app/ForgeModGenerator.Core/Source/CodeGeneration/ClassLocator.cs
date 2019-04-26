@@ -19,11 +19,14 @@ namespace ForgeModGenerator.CodeGeneration
             RelativePath = ImportRelativeName.Replace('.', '/') + ".java";
             FullPath = Path.Combine(ModPaths.SourceCodeRootFolder(modname, organization), RelativePath);
 
-            int lastDotIndex = ImportRelativeName.LastIndexOf('.');
-            ClassName = lastDotIndex != -1
-                ? ImportRelativeName.Substring(lastDotIndex + 1, ImportRelativeName.Length - lastDotIndex - 1)
-                : ImportRelativeName;
+            int lastRelativeDotIndex = ImportRelativeName.LastIndexOf('.');
+            ClassName = ImportRelativeName.Substring(lastRelativeDotIndex + 1, ImportRelativeName.Length - lastRelativeDotIndex - 1);
+            int lastDotIndex = ImportFullName.LastIndexOf('.');
+            PackageName = ImportFullName.Substring(0, lastDotIndex).ToLower();
         }
+
+        /// <summary> Package name = com.organization.modname.RelativePath </summary>
+        public string PackageName { get; }
 
         /// <summary> Class and file Name </summary>
         public string ClassName { get; }

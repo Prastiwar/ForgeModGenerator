@@ -20,9 +20,9 @@ namespace ForgeModGenerator
         public string Filters { get; set; } = "*";
 
         public abstract IEnumerable<TFolder> FindFolders(string path, bool createRootIfEmpty = false);
-        public Task<IEnumerable<TFolder>> FindFoldersAsync(string path, bool createRootIfEmpty = false) => Task.Run(() => { return FindFolders(path, createRootIfEmpty); });
+        public Task<IEnumerable<TFolder>> FindFoldersAsync(string path, bool createRootIfEmpty = false) => Task.Run(() => FindFolders(path, createRootIfEmpty));
 
-        public Task<IEnumerable<TFolder>> FindFoldersFromDirectoryAsync(string path) => Task.Run(() => { return FindFoldersFromDirectory(path); });
+        public Task<IEnumerable<TFolder>> FindFoldersFromDirectoryAsync(string path) => Task.Run(() => FindFoldersFromDirectory(path));
 
         /// <summary> Creates TFolder with found TFile's for each subdirectory </summary>
         public IEnumerable<TFolder> FindFoldersFromDirectory(string path)
@@ -73,7 +73,7 @@ namespace ForgeModGenerator
             {
                 return new Collection<TFolder>();
             }
-            string content = await IOHelper.ReadAllTextAsync(path);
+            string content = await IOHelper.ReadAllTextAsync(path).ConfigureAwait(false);
             List<TFolder> deserializedFolders = null;
             try
             {

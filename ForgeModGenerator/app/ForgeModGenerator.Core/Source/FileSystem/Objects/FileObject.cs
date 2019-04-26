@@ -25,7 +25,7 @@ namespace ForgeModGenerator
             else
             {
                 Info = new FileSystemInfoReference(path);
-                Info.PropertyChanged += Info_PropertyChanged;
+                Info.PropertyChanged += OnInfoPropertyChanged;
             }
         }
 
@@ -35,7 +35,7 @@ namespace ForgeModGenerator
             RaisePropertyChanged(nameof(Info));
         }
 
-        protected virtual void Info_PropertyChanged(object sender, PropertyChangedEventArgs e) { }
+        protected virtual void OnInfoPropertyChanged(object sender, PropertyChangedEventArgs e) { }
 
         public virtual object Clone() => MemberwiseClone();
         public virtual object DeepClone() => new FileObject(Info.FullName);

@@ -3,13 +3,14 @@ using ForgeModGenerator.Models;
 using ForgeModGenerator.SoundGenerator.Models;
 using System.CodeDom;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ForgeModGenerator.SoundGenerator.CodeGeneration
 {
     public class SoundCodeGenerator : InitVariablesCodeGenerator<SoundEvent>
     {
-        public SoundCodeGenerator(Mod mod) : this(mod, null) { }
-        public SoundCodeGenerator(Mod mod, IEnumerable<SoundEvent> soundEvents) : base(mod, soundEvents) => ScriptLocator = SourceCodeLocator.SoundEvents(Modname, Organization);
+        public SoundCodeGenerator(McMod mcMod) : this(mcMod, Enumerable.Empty<SoundEvent>()) { }
+        public SoundCodeGenerator(McMod mcMod, IEnumerable<SoundEvent> elements) : base(mcMod, elements) => ScriptLocator = SourceCodeLocator.SoundEvents(Modname, Organization);
 
         public override ClassLocator ScriptLocator { get; }
 
@@ -18,11 +19,10 @@ namespace ForgeModGenerator.SoundGenerator.CodeGeneration
         protected override CodeCompileUnit CreateTargetCodeUnit()
         {
             CodeCompileUnit unit = CreateDefaultTargetCodeUnit(ScriptLocator.ClassName, "SoundEvent");
-            unit.Namespaces[0].Imports.Add(NewImport($"{PackageName}.{SourceCodeLocator.SoundEventBase(Modname, Organization).ImportRelativeName}"));
+            unit.Namespaces[0].Imports.Add(NewImport($"{SourceRootPackageName}.{SourceCodeLocator.SoundEventBase(Modname, Organization).ImportRelativeName}"));
+            unit.Namespaces[0].Imports.Add(NewImport($"net.minecraft.util.SoundEvent"));
             return unit;
         }
-
-        protected override IEnumerable<SoundEvent> GetElementsForMod(Mod mod) => base.GetElementsForMod(mod); // TODO: Get SoundEvents for mod
 
     }
 }

@@ -29,7 +29,7 @@ namespace ForgeModGenerator.Serialization
 
         protected string GetJsonFromFile() => File.ReadAllText(Path);
 
-        protected async Task OverwriteJsonAsync(string json) => await IOHelper.WriteAllTextAsync(Path, json);
+        protected async Task OverwriteJsonAsync(string json) => await IOHelper.WriteAllTextAsync(Path, json).ConfigureAwait(false);
 
         protected void OverwriteJson(string json) => File.WriteAllText(Path, json);
 
@@ -42,7 +42,7 @@ namespace ForgeModGenerator.Serialization
             if (IsValidToSerialize())
             {
                 string serializedContent = Serialize(PrettyPrint);
-                await OverwriteJsonAsync(serializedContent);
+                await OverwriteJsonAsync(serializedContent).ConfigureAwait(false);
             }
         }
 

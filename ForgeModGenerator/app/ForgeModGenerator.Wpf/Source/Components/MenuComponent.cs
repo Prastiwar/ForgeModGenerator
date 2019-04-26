@@ -9,7 +9,7 @@ namespace ForgeModGenerator.Components
         public MenuComponent(Grid grid, MenuSettings settings)
         {
             this.grid = grid;
-            this.settings = settings;
+            Settings = settings;
             shouldChangeColumn = settings.Column > -1;
             shouldChangeRow = settings.Row > -1;
 
@@ -33,9 +33,9 @@ namespace ForgeModGenerator.Components
         private readonly GridLengthAnimation columnAnimBack;
         private readonly GridLengthAnimation rowAnimBack;
 
-        private Grid grid;
+        private readonly Grid grid;
 
-        protected MenuSettings settings;
+        protected MenuSettings Settings { get; set; }
 
         private bool isActive;
         public bool IsActive {
@@ -65,11 +65,11 @@ namespace ForgeModGenerator.Components
         {
             if (shouldChangeColumn)
             {
-                grid.ColumnDefinitions[settings.Column].BeginAnimation(ColumnDefinition.WidthProperty, columnAnim);
+                grid.ColumnDefinitions[Settings.Column].BeginAnimation(ColumnDefinition.WidthProperty, columnAnim);
             }
             if (shouldChangeRow)
             {
-                grid.RowDefinitions[settings.Row].BeginAnimation(RowDefinition.HeightProperty, rowAnim);
+                grid.RowDefinitions[Settings.Row].BeginAnimation(RowDefinition.HeightProperty, rowAnim);
             }
         }
 
@@ -77,11 +77,11 @@ namespace ForgeModGenerator.Components
         {
             if (shouldChangeColumn)
             {
-                grid.ColumnDefinitions[settings.Column].BeginAnimation(ColumnDefinition.WidthProperty, columnAnimBack);
+                grid.ColumnDefinitions[Settings.Column].BeginAnimation(ColumnDefinition.WidthProperty, columnAnimBack);
             }
             if (shouldChangeRow)
             {
-                grid.RowDefinitions[settings.Row].BeginAnimation(RowDefinition.HeightProperty, rowAnimBack);
+                grid.RowDefinitions[Settings.Row].BeginAnimation(RowDefinition.HeightProperty, rowAnimBack);
             }
         }
     }
