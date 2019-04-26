@@ -244,6 +244,7 @@
     <Compile Include="Source\Modules\CommandGenerator\Controls\CommandEditForm.xaml.cs">
       <DependentUpon>CommandEditForm.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Source\Modules\CommandGenerator\Validation\CommandValidator.cs" />
     <Compile Include="Source\Modules\ItemGenerator\ItemCodeGenerator.cs" />
     <Compile Include="Source\Modules\ModGenerator\ModEditorFormFactory.cs" />
     <Compile Include="Source\Modules\ModGenerator\ModInfoSerializer.cs" />

@@ -13,5 +13,7 @@
 
         public bool IsValid { get; }
         public string Error { get; }
+
+        public override string ToString() => Error;
     }
 }

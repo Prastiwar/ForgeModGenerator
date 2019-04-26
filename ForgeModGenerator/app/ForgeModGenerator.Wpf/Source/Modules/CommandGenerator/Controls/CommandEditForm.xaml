@@ -6,6 +6,7 @@
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:wpf="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:mahapp="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
              mc:Ignorable="d"
              d:DesignHeight="450"
              d:DesignWidth="500"
@@ -48,20 +49,20 @@
                     </StackPanel>
                     <StackPanel Grid.Column="1"
                                 Margin="7">
-                        <TextBox x:Name="NameTextBox"
-                                 Text="{Binding Name}"
-                                 VerticalAlignment="Center"
-                                 TextWrapping="Wrap" />
-                        <TextBox x:Name="UsageTextBox"
-                                 Text="{Binding Usage}"
-                                 VerticalAlignment="Stretch"
-                                 TextWrapping="Wrap" />
-                        <TextBox x:Name="PermissionTextBox"
-                                 Text="{Binding Permission}"
-                                 VerticalAlignment="Center"
-                                 TextWrapping="Wrap" />
+                        <controls:SubmitTextBox x:Name="NameTextBox"
+                                                Text="{Binding Name, ValidatesOnDataErrors=True}"
+                                                VerticalAlignment="Center"
+                                                TextWrapping="Wrap" />
+                        <controls:SubmitTextBox x:Name="UsageTextBox"
+                                                Text="{Binding Usage, ValidatesOnDataErrors=True}"
+                                                VerticalAlignment="Stretch"
+                                                TextWrapping="Wrap" />
+                        <controls:SubmitTextBox x:Name="PermissionTextBox"
+                                                Text="{Binding Permission, ValidatesOnDataErrors=True}"
+                                                VerticalAlignment="Center"
+                                                TextWrapping="Wrap" />
                         <mahapp:NumericUpDown x:Name="PermissionLevelNumeric"
-                                              Value="{Binding Path=PermissionLevel}"
+                                              Value="{Binding Path=PermissionLevel, ValidatesOnDataErrors=True}"
                                               HideUpDownButtons="True"
                                               NumericInputMode="Numbers"
                                               FontSize="15" />

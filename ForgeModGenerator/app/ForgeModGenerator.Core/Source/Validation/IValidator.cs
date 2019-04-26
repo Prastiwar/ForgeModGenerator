@@ -10,6 +10,8 @@ namespace ForgeModGenerator.Validation
 
     public interface IUniqueValidator<T> : IValidator<T>
     {
+        void SetDefaultRepository(IEnumerable<T> instances);
+
         ValidateResult Validate(T instance, IEnumerable<T> instances);
         ValidateResult Validate(T instance, IEnumerable<T> instances, string propertyName);
     }

@@ -1,10 +1,12 @@
-﻿using System.IO;
+﻿using ForgeModGenerator.Validation;
+using System.ComponentModel;
+using System.IO;
 
 namespace ForgeModGenerator.CommandGenerator.Models
 {
-    public class Command : FileObject
+    public sealed class Command : FileObject, IDataErrorInfo, IValidable<Command>
     {
-        protected Command() { }
+        private Command() { }
 
         public Command(string filePath) : base(filePath)
         {
@@ -87,5 +89,35 @@ namespace ForgeModGenerator.CommandGenerator.Models
             }
             return false;
         }
+
+        public ValidateResult Validate()
+        {
+            string errorString = OnValidate(nameof(Name));
+            if (!string.IsNullOrEmpty(errorString))
+            {
+                return new ValidateResult(false, errorString);
+            }
+            errorString = OnValidate(nameof(Usage));
+            if (!string.IsNullOrEmpty(errorString))
+            {
+                return new ValidateResult(false, errorString);
+            }
+            errorString = OnValidate(nameof(Permission));
+            if (!string.IsNullOrEmpty(errorString))
+            {
+                return new ValidateResult(false, errorString);
+            }
+            errorString = OnValidate(nameof(PermissionLevel));
+            if (!string.IsNullOrEmpty(errorString))
+            {
+                return new ValidateResult(false, errorString);
+            }
+            return ValidateResult.Valid;
+        }
+
+        public event PropertyValidationEventHandler<Command> ValidateProperty;
+        string IDataErrorInfo.Error => null;
+        string IDataErrorInfo.this[string propertyName] => OnValidate(propertyName);
+        private string OnValidate(string propertyName) => ValidateHelper.OnValidateError(ValidateProperty, this, propertyName);
     }
 }

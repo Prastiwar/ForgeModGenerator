@@ -1,8 +1,10 @@
 ﻿using ForgeModGenerator.CodeGeneration;
 using ForgeModGenerator.CommandGenerator.Models;
 using ForgeModGenerator.Services;
+using ForgeModGenerator.Validation;
 using ForgeModGenerator.ViewModels;
 using Prism.Commands;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -15,18 +17,22 @@ namespace ForgeModGenerator.CommandGenerator.ViewModels
         public CommandGeneratorViewModel(ISessionContextService sessionContext,
                                         IFoldersExplorerFactory<ObservableFolder<Command>, Command> factory,
                                         IEditorFormFactory<Command> editorFormFactory,
+                                        IUniqueValidator<Command> commandValidator,
                                         ICodeGenerationService codeGenerationService)
             : base(sessionContext, factory)
         {
+            CommandValidator = commandValidator;
+            CodeGenerationService = codeGenerationService;
+            EditorForm = editorFormFactory.Create();
+            EditorForm.ItemEdited += CreateCommand;
+            EditorForm.Validator = commandValidator;
+
             Explorer.OpenFileDialog.Filter = "Java file (*.java) | *.java";
             Explorer.OpenFileDialog.Multiselect = true;
             Explorer.OpenFileDialog.CheckFileExists = true;
             Explorer.OpenFileDialog.ValidateNames = true;
             Explorer.OpenFolderDialog.ShowNewFolderButton = true;
             Explorer.AllowedFileExtensions.Add(".java");
-            EditorForm = editorFormFactory.Create();
-            EditorForm.ItemEdited += CreateCommand;
-            CodeGenerationService = codeGenerationService;
         }
 
         public override string FoldersRootPath => SessionContext.SelectedMod != null
@@ -35,6 +41,7 @@ namespace ForgeModGenerator.CommandGenerator.ViewModels
 
         protected ICodeGenerationService CodeGenerationService { get; }
         protected IEditorForm<Command> EditorForm { get; }
+        protected IUniqueValidator<Command> CommandValidator { get; }
 
         private ICommand openCommandEditor;
         public ICommand OpenCommandEditor => openCommandEditor ?? (openCommandEditor = new DelegateCommand<ObservableFolder<Command>>(CreateNewCommand));
@@ -50,8 +57,12 @@ namespace ForgeModGenerator.CommandGenerator.ViewModels
                 Permission = $"{SessionContext.SelectedMod.ModInfo.Name.ToLower()}.newcommand",
                 PermissionLevel = 4
             };
+            newCommand.ValidateProperty += (sender, propertyName) => ValidateCommand(sender, folder.Files, propertyName);
+            CommandValidator.SetDefaultRepository(folder.Files);
             EditorForm.OpenItemEditor(newCommand);
         }
+
+        private string ValidateCommand(Command sender, IEnumerable<Command> instances, string propertyName) => CommandValidator.Validate(sender, instances, propertyName).Error;
 
         private void CreateCommand(object sender, ItemEditedEventArgs<Command> e)
         {

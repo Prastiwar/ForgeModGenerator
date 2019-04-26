@@ -7,6 +7,7 @@ using ForgeModGenerator.BlockGenerator.Views;
 using ForgeModGenerator.CodeGeneration;
 using ForgeModGenerator.CommandGenerator;
 using ForgeModGenerator.CommandGenerator.Models;
+using ForgeModGenerator.CommandGenerator.Validation;
 using ForgeModGenerator.CommandGenerator.ViewModels;
 using ForgeModGenerator.CommandGenerator.Views;
 using ForgeModGenerator.ItemGenerator.ViewModels;
@@ -120,6 +121,7 @@ namespace ForgeModGenerator
         {
             containerRegistry.Register<IUniqueValidator<SoundEvent>, SoundEventValidator>();
             containerRegistry.Register<IValidator<McMod>, ModValidator>();
+            containerRegistry.Register<IUniqueValidator<Command>, CommandValidator>();
         }
 
         private void RegisterSerializers(IContainerRegistry containerRegistry)

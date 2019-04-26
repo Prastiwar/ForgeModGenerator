@@ -13,10 +13,11 @@ namespace ForgeModGenerator.SoundGenerator.Validation
 
         public SoundEventValidator(IEnumerable<SoundEvent> soundEventRepository)
         {
-            SoundEventRepository = soundEventRepository;
+            SetDefaultRepository(soundEventRepository);
             RuleFor(x => x.EventName).NotEmpty().WithMessage("Event Name cannot be empty")
                                      .Must(IsUnique).WithMessage("This name already exists");
         }
+        public void SetDefaultRepository(IEnumerable<SoundEvent> instances) => SoundEventRepository = instances;
 
         private bool IsUnique(string name) => SoundEventRepository.HasOnlyOne(x => x.EventName == name);
 
@@ -25,14 +26,20 @@ namespace ForgeModGenerator.SoundGenerator.Validation
 
         ValidateResult IUniqueValidator<SoundEvent>.Validate(SoundEvent instance, IEnumerable<SoundEvent> instances)
         {
-            SoundEventRepository = instances;
-            return ValidateResultAssemblyConverter.Convert(Validate(instance));
+            IEnumerable<SoundEvent> oldRepository = SoundEventRepository;
+            SetDefaultRepository(instances);
+            ValidateResult results = ValidateResultAssemblyConverter.Convert(Validate(instance));
+            SetDefaultRepository(oldRepository);
+            return results;
         }
 
         ValidateResult IUniqueValidator<SoundEvent>.Validate(SoundEvent instance, IEnumerable<SoundEvent> instances, string propertyName)
         {
-            SoundEventRepository = instances;
-            return ValidateResultAssemblyConverter.Convert(this.Validate(instance, propertyName));
+            IEnumerable<SoundEvent> oldRepository = SoundEventRepository;
+            SetDefaultRepository(instances);
+            ValidateResult results = ValidateResultAssemblyConverter.Convert(this.Validate(instance, propertyName));
+            SetDefaultRepository(oldRepository);
+            return results;
         }
     }
 }
