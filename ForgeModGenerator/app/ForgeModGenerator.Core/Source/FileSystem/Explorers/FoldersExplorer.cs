@@ -28,11 +28,11 @@ namespace ForgeModGenerator
 
         protected IFileSystem FileSystem { get; }
 
+        protected HashSet<string> AllowedFileExtensions { get; set; }
+
         public IFileBrowser OpenFileDialog { get; }
 
         public IFolderBrowser OpenFolderDialog { get; }
-
-        public HashSet<string> AllowedFileExtensions { get; protected set; }
 
         public bool HasEmptyFolders => Folders.Files.Any(x => x.Count == 0);
 
@@ -69,6 +69,12 @@ namespace ForgeModGenerator
                     fileSynchronizer = value;
                 }
             }
+        }
+
+        public void AllowFileExtensions(params string[] extensions)
+        {
+            AllowedFileExtensions = new HashSet<string>(extensions);
+            FileSynchronizer.Filters = AllowedFileExtensionsPatterns;
         }
 
         public void RemoveEmptyFolders()

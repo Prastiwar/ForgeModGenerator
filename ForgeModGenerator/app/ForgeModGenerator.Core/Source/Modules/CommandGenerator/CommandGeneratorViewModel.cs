@@ -33,7 +33,7 @@ namespace ForgeModGenerator.CommandGenerator.ViewModels
             Explorer.OpenFileDialog.CheckFileExists = true;
             Explorer.OpenFileDialog.ValidateNames = true;
             Explorer.OpenFolderDialog.ShowNewFolderButton = true;
-            Explorer.AllowedFileExtensions.Add(".java");
+            Explorer.AllowFileExtensions(".java");
         }
 
         public override string FoldersRootPath => SessionContext.SelectedMod != null

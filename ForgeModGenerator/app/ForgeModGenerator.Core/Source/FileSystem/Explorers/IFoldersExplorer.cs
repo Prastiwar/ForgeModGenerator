@@ -12,7 +12,9 @@ namespace ForgeModGenerator
         IFolderSynchronizer<TFolder, TFile> FileSynchronizer { get; }
         IFileBrowser OpenFileDialog { get; }
         IFolderBrowser OpenFolderDialog { get; }
-        HashSet<string> AllowedFileExtensions { get; }
+
+        void AllowFileExtensions(params string[] extensions);
+
         bool HasEmptyFolders { get; }
 
         void RemoveEmptyFolders();

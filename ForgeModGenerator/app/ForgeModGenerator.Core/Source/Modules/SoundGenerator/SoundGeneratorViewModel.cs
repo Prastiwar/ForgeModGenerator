@@ -32,7 +32,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             SoundEventValidator = soundEventValidator;
             CodeGenerationService = codeGenerationService;
 
-            Explorer.AllowedFileExtensions.Add(".ogg");
+            Explorer.AllowFileExtensions(".ogg");
             Explorer.OpenFileDialog.Filter = "Sound file (*.ogg) | *.ogg";
             Explorer.OpenFileDialog.Multiselect = true;
             Explorer.OpenFileDialog.CheckFileExists = true;

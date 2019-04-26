@@ -10,13 +10,13 @@ namespace ForgeModGenerator
         {
             this.dialogService = dialogService;
             this.fileSystem = fileSystem;
-            this.synchronizer = synchronizer;
+            this.synchronizerFactory = synchronizer;
         }
 
         private readonly IDialogService dialogService;
         private readonly IFileSystem fileSystem;
-        private readonly IFolderSynchronizerFactory<TFolder, TFile> synchronizer;
+        private readonly IFolderSynchronizerFactory<TFolder, TFile> synchronizerFactory;
 
-        public IFoldersExplorer<TFolder, TFile> Create() => new FoldersExplorer<TFolder, TFile>(dialogService, fileSystem, synchronizer.Create());
+        public IFoldersExplorer<TFolder, TFile> Create() => new FoldersExplorer<TFolder, TFile>(dialogService, fileSystem, synchronizerFactory.Create());
     }
 }
