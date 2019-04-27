@@ -18,6 +18,8 @@ using ForgeModGenerator.ModGenerator.Serialization;
 using ForgeModGenerator.ModGenerator.Validation;
 using ForgeModGenerator.ModGenerator.ViewModels;
 using ForgeModGenerator.ModGenerator.Views;
+using ForgeModGenerator.RecipeGenerator.Models;
+using ForgeModGenerator.RecipeGenerator.Validation;
 using ForgeModGenerator.RecipeGenerator.ViewModels;
 using ForgeModGenerator.RecipeGenerator.Views;
 using ForgeModGenerator.Serialization;
@@ -120,8 +122,9 @@ namespace ForgeModGenerator
         private void RegisterValidators(IContainerRegistry containerRegistry)
         {
             containerRegistry.Register<IUniqueValidator<SoundEvent>, SoundEventValidator>();
-            containerRegistry.Register<IValidator<McMod>, ModValidator>();
+            containerRegistry.Register<IUniqueValidator<Recipe>, RecipeValidator>();
             containerRegistry.Register<IUniqueValidator<Command>, CommandValidator>();
+            containerRegistry.Register<IValidator<McMod>, ModValidator>();
         }
 
         private void RegisterSerializers(IContainerRegistry containerRegistry)
