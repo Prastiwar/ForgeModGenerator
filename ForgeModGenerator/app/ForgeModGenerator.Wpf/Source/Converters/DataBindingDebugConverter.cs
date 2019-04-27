@@ -5,7 +5,7 @@ using System.Windows.Data;
 
 namespace ForgeModGenerator.Converters
 {
-    internal class DataBindingDebugConverter : IValueConverter
+    public class DataBindingDebugConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

@@ -4,7 +4,8 @@ namespace ForgeModGenerator.RecipeGenerator.Models
 {
     public enum RecipeType
     {
-        crafting_shaped
+        NoShape,
+        Shaped
     }
 
     public class Recipe : BindableBase

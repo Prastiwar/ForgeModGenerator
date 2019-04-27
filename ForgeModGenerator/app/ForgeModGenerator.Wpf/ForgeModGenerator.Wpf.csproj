@@ -38,6 +38,9 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
+  <PropertyGroup>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
@@ -247,8 +250,8 @@
     <Compile Include="Source\Modules\CommandGenerator\Validation\CommandValidator.cs" />
     <Compile Include="Source\Modules\ItemGenerator\ItemCodeGenerator.cs" />
     <Compile Include="Source\Modules\ModGenerator\ModEditorFormFactory.cs" />
-    <Compile Include="Source\Modules\ModGenerator\ModInfoSerializer.cs" />
-    <Compile Include="Source\Modules\ModGenerator\ModSerializer.cs" />
+    <Compile Include="Source\Modules\ModGenerator\Serialization\ModInfoSerializer.cs" />
+    <Compile Include="Source\Modules\ModGenerator\Serialization\ModSerializer.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\RecipeCodeGenerator.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundEditorFormFactory.cs" />
     <Compile Include="Source\Serialization\PreferenceDataSerializer.cs" />
