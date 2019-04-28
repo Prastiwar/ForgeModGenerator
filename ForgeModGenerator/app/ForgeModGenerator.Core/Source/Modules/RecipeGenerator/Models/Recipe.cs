@@ -1,22 +1,12 @@
 ﻿using ForgeModGenerator.Validation;
-using System;
 using System.ComponentModel;
 
 namespace ForgeModGenerator.RecipeGenerator.Models
 {
-    public enum RecipeType
+    public class Recipe : FileObject, IDataErrorInfo, IValidable<Recipe>
     {
-        NoShape,
-        Shaped
-    }
-
-    public sealed class Recipe : FileObject, IDataErrorInfo, IValidable<Recipe>
-    {
-        private Recipe() { }
-
-        public Recipe(string filePath) : base(filePath)
-        {
-        }
+        protected Recipe() { }
+        public Recipe(string filePath) : base(filePath) { }
 
         private string name;
         public string Name {
@@ -24,44 +14,18 @@ namespace ForgeModGenerator.RecipeGenerator.Models
             set => SetProperty(ref name, value);
         }
 
-        private RecipeType type;
-        public RecipeType Type {
-            get => type;
-            set => SetProperty(ref type, value);
-        }
-
-        private char[] pattern;
-        public char[] Pattern {
-            get => pattern;
-            set => SetProperty(ref pattern, value);
-        }
-
-        private RecipeKey[] keys;
-        public RecipeKey[] Keys {
-            get => keys;
-            set => SetProperty(ref keys, value);
-        }
-
-        private RecipeResult result;
-        public RecipeResult Result {
-            get => result;
-            set => SetProperty(ref result, value);
+        private string group;
+        public string Group {
+            get => group;
+            set => SetProperty(ref group, value);
         }
 
         public override object DeepClone()
         {
             Recipe recipe = new Recipe() {
-                Type = Type,
-                Keys = new RecipeKey[Keys.Length],
-                Pattern = new char[Pattern.Length],
-                Result = new RecipeResult {
-                    Count = Result.Count,
-                    Data = Result.Data,
-                    Item = Result.Item
-                }
+                Name = Name,
+                Group = Group
             };
-            Array.Copy(Keys, recipe.Keys, Keys.Length);
-            Array.Copy(Pattern, recipe.Pattern, Pattern.Length);
             recipe.SetInfo(Info.FullName);
             recipe.IsDirty = false;
             return recipe;
@@ -71,10 +35,8 @@ namespace ForgeModGenerator.RecipeGenerator.Models
         {
             if (fromCopy is Recipe recipe)
             {
-                Type = recipe.Type;
-                Pattern = recipe.Pattern;
-                Keys = recipe.Keys;
-                Result = recipe.Result;
+                Name = recipe.Name;
+                Group = recipe.Group;
 
                 base.CopyValues(fromCopy);
                 IsDirty = false;
@@ -83,7 +45,7 @@ namespace ForgeModGenerator.RecipeGenerator.Models
             return false;
         }
 
-        public ValidateResult Validate() => ValidateResult.Valid;
+        public virtual ValidateResult Validate() => ValidateResult.Valid;
 
         public event PropertyValidationEventHandler<Recipe> ValidateProperty;
         string IDataErrorInfo.Error => null;

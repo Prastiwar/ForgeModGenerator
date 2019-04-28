@@ -71,7 +71,7 @@ namespace ForgeModGenerator.ViewModels
         {
             foreach (TFolder folder in folders)
             {
-                ObservableRangeCollection<TFile> temp = folder.Files.DeepClone<ObservableRangeCollection<TFile>, TFile>();
+                ObservableRangeCollection<TFile> temp = folder.Files.DeepCollectionClone<ObservableRangeCollection<TFile>, TFile>();
                 folder.Clear();
                 Explorer.Folders.Add(folder);
                 foreach (TFile file in temp)

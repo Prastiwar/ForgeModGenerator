@@ -42,7 +42,9 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
         }
 
         private readonly string[] assetsFolerToGenerate = new string[] {
-            "blockstates", "lang", "recipes", "sounds", "models/item", "textures/blocks", "textures/entity", "textures/items", "textures/models/armor"
+            "blockstates", "lang", "sounds", "models/item",
+            "recipes/shapeless", "recipe/shaped", "recipe/smelting",
+            "textures/blocks", "textures/entity", "textures/items", "textures/models/armor"
         };
 
         protected IValidator<McMod> ModValidator { get; set; }
@@ -88,7 +90,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
 
         private async void RemoveMod(McMod mcMod)
         {
-            bool shouldRemove = await DialogService.ShowMessage("Are you sure you want to delete this mod? Folder will be moved to trash bin", 
+            bool shouldRemove = await DialogService.ShowMessage("Are you sure you want to delete this mod? Folder will be moved to trash bin",
                                                                 "Confirm deletion", "Yes", "No", null).ConfigureAwait(true);
             if (shouldRemove)
             {
