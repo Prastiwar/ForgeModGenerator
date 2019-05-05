@@ -14,8 +14,8 @@ namespace ForgeModGenerator.RecipeGenerator.Models
             set => SetProperty(ref ingredient, value);
         }
 
-        private string result;
-        public string Result {
+        private RecipeResult result;
+        public RecipeResult Result {
             get => result;
             set => SetProperty(ref result, value);
         }
@@ -35,10 +35,13 @@ namespace ForgeModGenerator.RecipeGenerator.Models
         public override object DeepClone()
         {
             SmeltingRecipe recipe = new SmeltingRecipe() {
-                Ingredient = Ingredient.DeepCollectionClone<ObservableCollection<Ingredient>, Ingredient>(),
-                Result = Result,
                 CookingTime = CookingTime,
-                Experience = Experience
+                Experience = Experience,
+                Ingredient = Ingredient.DeepCollectionClone<ObservableCollection<Ingredient>, Ingredient>(),
+                Result = new RecipeResult {
+                    Count = Result.Count,
+                    Item = Result.Item
+                }
             };
             recipe.SetInfo(Info.FullName);
             recipe.IsDirty = false;

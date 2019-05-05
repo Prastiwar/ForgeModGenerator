@@ -253,6 +253,10 @@
     <Compile Include="Source\Modules\ModGenerator\Serialization\ModInfoSerializer.cs" />
     <Compile Include="Source\Modules\ModGenerator\Serialization\ModSerializer.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\CodeGeneration\RecipeCodeGenerator.cs" />
+    <Compile Include="Source\Modules\RecipeGenerator\Controls\RecipeEditForm.xaml.cs">
+      <DependentUpon>RecipeEditForm.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Modules\RecipeGenerator\RecipeEditorFormFactory.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\Validation\RecipeValidator.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundEditorFormFactory.cs" />
     <Compile Include="Source\Serialization\PreferenceDataSerializer.cs" />
@@ -363,6 +367,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Source\Modules\CommandGenerator\Controls\CommandEditForm.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Modules\RecipeGenerator\Controls\RecipeEditForm.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -533,9 +541,7 @@
     <Analyzer Include="..\packages\Microsoft.NetFramework.Analyzers.2.9.2\analyzers\dotnet\cs\Microsoft.NetFramework.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.NetFramework.Analyzers.2.9.2\analyzers\dotnet\cs\Microsoft.NetFramework.CSharp.Analyzers.dll" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Source\Modules\RecipeGenerator\Controls\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

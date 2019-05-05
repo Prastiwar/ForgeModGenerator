@@ -18,6 +18,7 @@ using ForgeModGenerator.ModGenerator.Serialization;
 using ForgeModGenerator.ModGenerator.Validation;
 using ForgeModGenerator.ModGenerator.ViewModels;
 using ForgeModGenerator.ModGenerator.Views;
+using ForgeModGenerator.RecipeGenerator;
 using ForgeModGenerator.RecipeGenerator.Models;
 using ForgeModGenerator.RecipeGenerator.Validation;
 using ForgeModGenerator.RecipeGenerator.ViewModels;
@@ -158,9 +159,8 @@ namespace ForgeModGenerator
             containerRegistry.Register(typeof(IFoldersFinder<,>), typeof(DefaultFoldersFinder<,>));
 
             containerRegistry.Register(typeof(IEditorFormFactory<McMod>), typeof(ModEditorFormFactory));
-
             containerRegistry.Register(typeof(IEditorFormFactory<Command>), typeof(CommandEditorFormFactory));
-
+            containerRegistry.Register(typeof(IEditorFormFactory<Recipe>), typeof(RecipeEditorFormFactory));
             containerRegistry.Register(typeof(IEditorFormFactory<>), typeof(EditorFormFactory<>));
         }
 

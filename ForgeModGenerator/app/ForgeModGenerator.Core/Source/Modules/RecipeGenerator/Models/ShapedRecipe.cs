@@ -7,11 +7,7 @@ namespace ForgeModGenerator.RecipeGenerator.Models
         protected ShapedRecipe() { }
         public ShapedRecipe(string filePath) : base(filePath) { }
 
-        private char[] pattern;
-        public char[] Pattern {
-            get => pattern;
-            set => SetProperty(ref pattern, value);
-        }
+        public char[] Pattern { get; } = new char[9];
 
         private RecipeKey[] keys;
         public RecipeKey[] Keys {
@@ -29,7 +25,6 @@ namespace ForgeModGenerator.RecipeGenerator.Models
         {
             ShapedRecipe recipe = new ShapedRecipe() {
                 Keys = new RecipeKey[Keys.Length],
-                Pattern = new char[Pattern.Length],
                 Result = new RecipeResult {
                     Count = Result.Count,
                     Item = Result.Item
@@ -46,7 +41,7 @@ namespace ForgeModGenerator.RecipeGenerator.Models
         {
             if (fromCopy is ShapedRecipe recipe)
             {
-                Pattern = recipe.Pattern;
+                Array.Copy(recipe.Pattern, Pattern, Pattern.Length);
                 Keys = recipe.Keys;
                 Result = recipe.Result;
                 return base.CopyValues(fromCopy);
