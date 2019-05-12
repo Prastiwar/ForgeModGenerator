@@ -160,7 +160,7 @@ namespace ForgeModGenerator
 
             containerRegistry.Register(typeof(IEditorFormFactory<McMod>), typeof(ModEditorFormFactory));
             containerRegistry.Register(typeof(IEditorFormFactory<Command>), typeof(CommandEditorFormFactory));
-            containerRegistry.Register(typeof(IEditorFormFactory<Recipe>), typeof(RecipeEditorFormFactory));
+            containerRegistry.Register(typeof(IEditorFormFactory<RecipeCreator>), typeof(RecipeEditorFormFactory));
             containerRegistry.Register(typeof(IEditorFormFactory<>), typeof(EditorFormFactory<>));
         }
 

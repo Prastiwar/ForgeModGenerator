@@ -253,6 +253,7 @@
     <Compile Include="Source\Modules\ModGenerator\Serialization\ModInfoSerializer.cs" />
     <Compile Include="Source\Modules\ModGenerator\Serialization\ModSerializer.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\CodeGeneration\RecipeCodeGenerator.cs" />
+    <Compile Include="Source\Modules\RecipeGenerator\Controls\EditableRecipeLists.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\Controls\RecipeEditForm.xaml.cs">
       <DependentUpon>RecipeEditForm.xaml</DependentUpon>
     </Compile>

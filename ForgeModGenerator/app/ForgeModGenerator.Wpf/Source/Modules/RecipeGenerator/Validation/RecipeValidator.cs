@@ -16,6 +16,7 @@ namespace ForgeModGenerator.RecipeGenerator.Validation
             SetDefaultRepository(RecipeRepository);
             RuleFor(x => x.Name).NotEmpty().WithMessage("Name cannot be empty")
                                 .Must(IsUnique).WithMessage("This name already exists");
+            RuleFor(x => ((ShapelessRecipe)x).Ingredients).NotEmpty().WithMessage("Ingredients cannot be empty");
         }
 
         public void SetDefaultRepository(IEnumerable<Recipe> instances) => Repository = instances;

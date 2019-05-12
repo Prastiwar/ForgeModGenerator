@@ -8,16 +8,16 @@ namespace ForgeModGenerator.RecipeGenerator.Models
         protected SmeltingRecipe() { }
         public SmeltingRecipe(string filePath) : base(filePath) { }
 
-        private ObservableCollection<Ingredient> ingredient;
-        public ObservableCollection<Ingredient> Ingredient {
-            get => ingredient;
-            set => SetProperty(ref ingredient, value);
-        }
-
         private RecipeResult result;
         public RecipeResult Result {
             get => result;
             set => SetProperty(ref result, value);
+        }
+
+        private ObservableCollection<Ingredient> ingredients;
+        public ObservableCollection<Ingredient> Ingredients {
+            get => ingredients;
+            set => SetProperty(ref ingredients, value);
         }
 
         private int cookingTime;
@@ -37,7 +37,7 @@ namespace ForgeModGenerator.RecipeGenerator.Models
             SmeltingRecipe recipe = new SmeltingRecipe() {
                 CookingTime = CookingTime,
                 Experience = Experience,
-                Ingredient = Ingredient.DeepCollectionClone<ObservableCollection<Ingredient>, Ingredient>(),
+                Ingredients = Ingredients.DeepCollectionClone<ObservableCollection<Ingredient>, Ingredient>(),
                 Result = new RecipeResult {
                     Count = Result.Count,
                     Item = Result.Item
@@ -52,7 +52,7 @@ namespace ForgeModGenerator.RecipeGenerator.Models
         {
             if (fromCopy is SmeltingRecipe recipe)
             {
-                Ingredient = recipe.Ingredient;
+                Ingredients = recipe.Ingredients;
                 Result = recipe.Result;
                 return base.CopyValues(fromCopy);
             }

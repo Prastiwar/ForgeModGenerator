@@ -17,7 +17,7 @@ namespace ForgeModGenerator.RecipeGenerator.ViewModels
     {
         public RecipeGeneratorViewModel(ISessionContextService sessionContext,
                                         IFoldersExplorerFactory<ObservableFolder<Recipe>, Recipe> factory,
-                                        IEditorFormFactory<Recipe> editorFormFactory,
+                                        IEditorFormFactory<RecipeCreator> editorFormFactory,
                                         IUniqueValidator<Recipe> recipeValidator,
                                         ICodeGenerationService codeGenerationService)
             : base(sessionContext, factory)
@@ -26,7 +26,7 @@ namespace ForgeModGenerator.RecipeGenerator.ViewModels
             CodeGenerationService = codeGenerationService;
             EditorForm = editorFormFactory.Create();
             EditorForm.ItemEdited += CreateRecipe;
-            EditorForm.Validator = recipeValidator;
+            //EditorForm.Validator = recipeValidator;
 
             Explorer.OpenFileDialog.Filter = "Json file (*.json) | *.json";
             Explorer.OpenFileDialog.Multiselect = true;
@@ -41,7 +41,7 @@ namespace ForgeModGenerator.RecipeGenerator.ViewModels
             : null;
 
         protected ICodeGenerationService CodeGenerationService { get; }
-        protected IEditorForm<Recipe> EditorForm { get; }
+        protected IEditorForm<RecipeCreator> EditorForm { get; }
         protected IUniqueValidator<Recipe> RecipeValidator { get; }
 
         private ICommand openRecipeEditor;
@@ -69,8 +69,8 @@ namespace ForgeModGenerator.RecipeGenerator.ViewModels
         private void CreateNewRecipe(ObservableFolder<Recipe> folder)
         {
             tempFilePath = Path.GetTempFileName();
-            Recipe newRecipe = new Recipe(tempFilePath) {
-                // TODO: Set default values
+            RecipeCreator newRecipe = new RecipeCreator(tempFilePath) {
+                Name = "NewRecipe",
             };
             newRecipe.IsDirty = false;
             newRecipe.ValidateProperty += (sender, propertyName) => ValidateRecipe(sender, folder.Files, propertyName);
@@ -80,10 +80,11 @@ namespace ForgeModGenerator.RecipeGenerator.ViewModels
 
         protected string ValidateRecipe(Recipe sender, IEnumerable<Recipe> instances, string propertyName) => RecipeValidator.Validate(sender, instances, propertyName).Error;
 
-        protected void CreateRecipe(object sender, ItemEditedEventArgs<Recipe> e)
+        protected void CreateRecipe(object sender, ItemEditedEventArgs<RecipeCreator> e)
         {
             if (e.Result)
             {
+                Recipe recipe = e.ActualItem.Create();
                 // TODO: Generate Json file
             }
             new FileInfo(tempFilePath).Delete();

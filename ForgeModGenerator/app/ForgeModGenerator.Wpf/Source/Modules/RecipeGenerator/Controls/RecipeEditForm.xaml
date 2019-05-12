@@ -7,181 +7,241 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:mahapp="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:local="clr-namespace:ForgeModGenerator.RecipeGenerator.Controls"
              mc:Ignorable="d"
              MinWidth="500"
              d:DesignHeight="450"
              d:DesignWidth="500">
     <Grid Margin="16"
           Background="WhiteSmoke">
-        <StackPanel>
-            <ComboBox x:Name="RecipeTypeComboBox"
-                      SelectedItem="{Binding Path=Type}"
-                      controls:SelectorDecorator.ItemsSource="{Binding Path=Types}"
-                      Background="#FF404040"
-                      Foreground="#FFE8E8E8"
-                      BorderBrush="Wheat"
-                      HorizontalAlignment="Left"
-                      VerticalAlignment="Center"
-                      HorizontalContentAlignment="Center"
-                      Width="220"
-                      FontSize="11"
-                      materialDesign:HintAssist.Hint="Select Recipe Type">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate x:Name="RecipeTypeComboBoxItemTemplate">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Path=Type}" />
-                        </StackPanel>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
-            <Border BorderThickness="0.7"
-                    BorderBrush="Black">
-                <Grid Background="GhostWhite">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="145" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Grid.Column="0"
-                                Margin="7">
-                        <TextBlock Text="Name: "
-                                   FontSize="14"
-                                   FontWeight="Bold"
-                                   Margin="3,0,3,0"
-                                   Height="{Binding ActualHeight, ElementName=NameTextBox, Mode=OneWay}"
-                                   VerticalAlignment="Center" />
-                        <TextBlock Text="Group: "
-                                   FontSize="14"
-                                   FontWeight="Bold"
-                                   Margin="3,0,3,0"
-                                   Height="{Binding ActualHeight, ElementName=GroupTextBox, Mode=OneWay}"
-                                   VerticalAlignment="Center" />
-                        <StackPanel x:Name="SmeltingPanel">
-                            <TextBlock Text="Cooking Time: "
+        <ScrollViewer>
+            <StackPanel>
+                <ComboBox x:Name="RecipeTypeComboBox"
+                          SelectedItem="{Binding Path=RecipeType}"
+                          ItemsSource="{Binding Path=RecipeTypes, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:RecipeEditForm}}"
+                          DisplayMemberPath="Name"
+                          Background="#FF404040"
+                          Foreground="#FFE8E8E8"
+                          BorderBrush="Wheat"
+                          HorizontalAlignment="Left"
+                          VerticalAlignment="Center"
+                          HorizontalContentAlignment="Center"
+                          Width="220"
+                          FontSize="11"
+                          materialDesign:HintAssist.Hint="Select Recipe Type"></ComboBox>
+                <Border BorderThickness="0.7"
+                        BorderBrush="Black">
+                    <Grid Background="GhostWhite">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="145" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0"
+                                    Margin="7">
+                            <TextBlock x:Name="NameTextBlock"
+                                       Text="Name: "
+                                       FontSize="14"
+                                       FontWeight="Bold"
+                                       Margin="3,0,3,0"
+                                       Height="{Binding ActualHeight, ElementName=NameTextBox, Mode=OneWay}"
+                                       VerticalAlignment="Center" />
+                            <TextBlock x:Name="GroupTextBlock"
+                                       Text="Group: "
+                                       FontSize="14"
+                                       FontWeight="Bold"
+                                       Margin="3,0,3,0"
+                                       Height="{Binding ActualHeight, ElementName=GroupTextBox, Mode=OneWay}"
+                                       VerticalAlignment="Center" />
+                            <TextBlock x:Name="CookingTimeTextBlock"
+                                       Text="Cooking Time: "
                                        FontSize="14"
                                        FontWeight="Bold"
                                        Margin="3,0,3,0"
                                        Height="{Binding ActualHeight, ElementName=CookingTimeNumeric, Mode=OneWay}"
                                        VerticalAlignment="Center" />
-                            <TextBlock Text="Experience: "
+                            <TextBlock x:Name="ExperienceTextBlock"
+                                       Text="Experience: "
                                        FontSize="14"
                                        FontWeight="Bold"
                                        Margin="3,0,3,0"
                                        Height="{Binding ActualHeight, ElementName=ExperienceNumeric, Mode=OneWay}"
                                        VerticalAlignment="Center" />
+                            <Separator />
+                            <TextBlock x:Name="ResultTextBlock"
+                                       Text="Result: "
+                                       FontSize="14"
+                                       FontWeight="Bold"
+                                       Margin="3,0,3,0"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                            <TextBlock Text="Count: "
+                                       FontSize="14"
+                                       FontWeight="Bold"
+                                       Margin="3,0,3,0"
+                                       Height="{Binding ActualHeight, ElementName=ResultCountNumeric, Mode=OneWay}"
+                                       VerticalAlignment="Center" />
+                            <TextBlock Text="Item: "
+                                       FontSize="14"
+                                       FontWeight="Bold"
+                                       Margin="3,0,3,0"
+                                       Height="{Binding ActualHeight, ElementName=ResultItemTextBox, Mode=OneWay}"
+                                       VerticalAlignment="Center" />
+                            <Separator />
+                            <TextBlock x:Name="PatternTextBlock"
+                                       Text="Pattern: "
+                                       FontSize="14"
+                                       FontWeight="Bold"
+                                       Margin="3,0,3,0"
+                                       Height="{Binding ActualHeight, ElementName=PatternGrid, Mode=OneWay}"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
                         </StackPanel>
-                        <Separator />
-                        <TextBlock x:Name="ResultTextBlock"
-                                   Text="Result: "
-                                   FontSize="14"
-                                   FontWeight="Bold"
-                                   Margin="3,0,3,0"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center" />
-                        <TextBlock Text="Count: "
-                                   FontSize="14"
-                                   FontWeight="Bold"
-                                   Margin="3,0,3,0"
-                                   Height="{Binding ActualHeight, ElementName=ResultCountNumeric, Mode=OneWay}"
-                                   VerticalAlignment="Center" />
-                        <TextBlock Text="Item: "
-                                   FontSize="14"
-                                   FontWeight="Bold"
-                                   Margin="3,0,3,0"
-                                   Height="{Binding ActualHeight, ElementName=ResultItemTextBox, Mode=OneWay}"
-                                   VerticalAlignment="Center" />
-                        <Separator />
-                        <TextBlock x:Name="PatternTextBlock"
-                                   Text="Pattern: "
-                                   FontSize="14"
-                                   FontWeight="Bold"
-                                   Margin="3,0,3,0"
-                                   Height="{Binding ActualHeight, ElementName=PatternGrid, Mode=OneWay}"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center" />
-                    </StackPanel>
-                    <StackPanel Grid.Column="1"
-                                Margin="7">
-                        <controls:SubmitTextBox x:Name="NameTextBox"
-                                                Text="{Binding Name, ValidatesOnDataErrors=True}"
-                                                VerticalAlignment="Center"
-                                                IsTabStop="True"
-                                                TextWrapping="Wrap" />
-                        <controls:SubmitTextBox x:Name="GroupTextBox"
-                                                Text="{Binding Group, ValidatesOnDataErrors=True}"
-                                                VerticalAlignment="Center"
-                                                IsTabStop="True"
-                                                TextWrapping="Wrap" />
-                        <mahapp:NumericUpDown x:Name="CookingTimeNumeric"
-                                              Value="{Binding Path=CookingTime, ValidatesOnDataErrors=True}"
-                                              HideUpDownButtons="True"
-                                              NumericInputMode="Numbers"
-                                              FontSize="15" />
-                        <mahapp:NumericUpDown x:Name="ExperienceNumeric"
-                                              Value="{Binding Path=Experience, ValidatesOnDataErrors=True}"
-                                              HideUpDownButtons="True"
-                                              NumericInputMode="Decimal"
-                                              FontSize="15" />
-                        <Separator />
-                        <Separator Height="{Binding ActualHeight, ElementName=ResultTextBlock, Mode=OneWay}"
-                                   Background="Transparent" />
-                        <mahapp:NumericUpDown x:Name="ResultCountNumeric"
-                                              Value="{Binding Path=Result.Count, ValidatesOnDataErrors=True}"
-                                              HideUpDownButtons="True"
-                                              NumericInputMode="Decimal"
-                                              FontSize="15" />
-                        <controls:SubmitTextBox x:Name="ResultItemTextBox"
-                                                Text="{Binding Result.Item, ValidatesOnDataErrors=True}"
-                                                VerticalAlignment="Center"
-                                                IsTabStop="True"
-                                                TextWrapping="Wrap" />
-                        <Separator />
-                        <Grid x:Name="PatternGrid"
-                              Height="150"
-                              Width="200">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <!--TODO: Add combo boxes to choose from Keys collection -->
-                        </Grid>
-                    </StackPanel>
-                </Grid>
-            </Border>
-            <Separator />
-            <ListBox ItemsSource="{Binding Keys}">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <controls:SubmitTextBox Text="{Binding Item, ValidatesOnDataErrors=True}"
-                                                VerticalAlignment="Center"
-                                                IsTabStop="True"
-                                                TextWrapping="Wrap" />
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-            <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Center"
-                        Margin="0,16,0,0">
-                <Button Style="{DynamicResource MaterialDesignFlatButton}"
-                        Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
-                    <Button.CommandParameter>
-                        <system:Boolean>True</system:Boolean>
-                    </Button.CommandParameter> SAVE
-                </Button>
-                <Button IsCancel="True"
-                        Style="{DynamicResource MaterialDesignFlatButton}"
-                        Margin="8,0,0,0"
-                        Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
-                    <Button.CommandParameter>
-                        <system:Boolean>False</system:Boolean>
-                    </Button.CommandParameter> CANCEL
-                </Button>
+                        <StackPanel Grid.Column="1"
+                                    Margin="7">
+                            <controls:SubmitTextBox x:Name="NameTextBox"
+                                                    Text="{Binding Name, ValidatesOnDataErrors=True}"
+                                                    VerticalAlignment="Center"
+                                                    IsTabStop="True"
+                                                    TextWrapping="Wrap" />
+                            <controls:SubmitTextBox x:Name="GroupTextBox"
+                                                    Text="{Binding Group, ValidatesOnDataErrors=True}"
+                                                    VerticalAlignment="Center"
+                                                    IsTabStop="True"
+                                                    TextWrapping="Wrap" />
+                            <mahapp:NumericUpDown x:Name="CookingTimeNumeric"
+                                                  Value="{Binding Path=CookingTime, ValidatesOnDataErrors=True}"
+                                                  HideUpDownButtons="True"
+                                                  NumericInputMode="Numbers"
+                                                  FontSize="15" />
+                            <mahapp:NumericUpDown x:Name="ExperienceNumeric"
+                                                  Value="{Binding Path=Experience, ValidatesOnDataErrors=True}"
+                                                  HideUpDownButtons="True"
+                                                  NumericInputMode="Decimal"
+                                                  FontSize="15" />
+                            <Separator />
+                            <Separator Height="{Binding ActualHeight, ElementName=ResultTextBlock, Mode=OneWay}"
+                                       Background="Transparent" />
+                            <mahapp:NumericUpDown x:Name="ResultCountNumeric"
+                                                  Value="{Binding Path=Result.Count, ValidatesOnDataErrors=True}"
+                                                  HideUpDownButtons="True"
+                                                  NumericInputMode="Decimal"
+                                                  FontSize="15" />
+                            <controls:SubmitTextBox x:Name="ResultItemTextBox"
+                                                    Text="{Binding Result.Item, ValidatesOnDataErrors=True}"
+                                                    VerticalAlignment="Center"
+                                                    IsTabStop="True"
+                                                    TextWrapping="Wrap" />
+                            <Separator />
+                            <Grid x:Name="PatternGrid"
+                                  Height="150"
+                                  Width="200">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <!--TODO: Add combo boxes to choose from Keys collection -->
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+                <Separator />
+                <StackPanel>
+                    <TextBlock x:Name="KeysTextBlock"
+                               Text="Keys"
+                               FontSize="14"
+                               FontWeight="Bold"
+                               Margin="3,0,3,0"
+                               VerticalAlignment="Center" />
+                    <ListBox x:Name="KeysListBox"
+                             ItemsSource="{Binding Keys}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Item: "
+                                               FontSize="14"
+                                               FontWeight="Bold"
+                                               Margin="3,0,3,0"
+                                               Height="{Binding ActualHeight, ElementName=KeyTemplateItemTextBox, Mode=OneWay}"
+                                               VerticalAlignment="Center" />
+                                    <controls:SubmitTextBox x:Name="KeyTemplateItemTextBox"
+                                                            Text="{Binding Item, ValidatesOnDataErrors=True}"
+                                                            VerticalAlignment="Center"
+                                                            IsTabStop="True"
+                                                            TextWrapping="Wrap" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </StackPanel>
+                <Separator />
+                <StackPanel>
+                    <TextBlock x:Name="IngredientsTextBlock"
+                               Text="Ingredients"
+                               FontSize="14"
+                               FontWeight="Bold"
+                               Margin="3,0,3,0"
+                               VerticalAlignment="Center" />
+                    <ListBox x:Name="IngredientsListBox"
+                             ItemsSource="{Binding Ingredients}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Item: "
+                                                   FontSize="14"
+                                                   FontWeight="Bold"
+                                                   Margin="3,0,3,0"
+                                                   Height="{Binding ActualHeight, ElementName=KeyTemplateItemTextBox, Mode=OneWay}"
+                                                   VerticalAlignment="Center" />
+                                        <controls:SubmitTextBox x:Name="IngredientTemplateItemTextBox"
+                                                                Text="{Binding Item, ValidatesOnDataErrors=True}"
+                                                                VerticalAlignment="Center"
+                                                                IsTabStop="True"
+                                                                TextWrapping="Wrap" />
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Tag: "
+                                                   FontSize="14"
+                                                   FontWeight="Bold"
+                                                   Margin="3,0,3,0"
+                                                   Height="{Binding ActualHeight, ElementName=IngredientTemplateTagTextBox, Mode=OneWay}"
+                                                   VerticalAlignment="Center" />
+                                        <controls:SubmitTextBox x:Name="IngredientTemplateTagTextBox"
+                                                                Text="{Binding Tag, ValidatesOnDataErrors=True}"
+                                                                VerticalAlignment="Center"
+                                                                IsTabStop="True"
+                                                                TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            Margin="0,16,0,0">
+                    <Button Style="{DynamicResource MaterialDesignFlatButton}"
+                            Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
+                        <Button.CommandParameter>
+                            <system:Boolean>True</system:Boolean>
+                        </Button.CommandParameter> SAVE
+                    </Button>
+                    <Button IsCancel="True"
+                            Style="{DynamicResource MaterialDesignFlatButton}"
+                            Margin="8,0,0,0"
+                            Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
+                        <Button.CommandParameter>
+                            <system:Boolean>False</system:Boolean>
+                        </Button.CommandParameter> CANCEL
+                    </Button>
+                </StackPanel>
             </StackPanel>
-        </StackPanel>
+        </ScrollViewer>
     </Grid>
 </UserControl>

@@ -18,7 +18,7 @@
                                                 Style="{StaticResource CommandFolderExpanderStyle}"
                                                 HeaderText="{Binding Path=Info.Name}"
                                                 Folder="{Binding}"
-                                                AddFileCommand="{Binding Path=DataContext.OpenCommandEditor, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
+                                                AddFileCommand="{Binding Path=DataContext.OpenRecipeEditor, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
                                                 RemoveFileCommand="{Binding Path=DataContext.RemoveFileCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
                                                 EditFileCommand="{Binding Path=DataContext.EditFileCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}">
                     <controls:FolderExpanderControl.FileItemTemplate>

@@ -1,9 +1,10 @@
 ﻿using ForgeModGenerator.Validation;
+using System;
 using System.ComponentModel;
 
 namespace ForgeModGenerator.RecipeGenerator.Models
 {
-    public class Recipe : FileObject, IDataErrorInfo, IValidable<Recipe>
+    public abstract class Recipe : FileObject, IDataErrorInfo, IValidable<Recipe>
     {
         protected Recipe() { }
         public Recipe(string filePath) : base(filePath) { }
@@ -22,10 +23,9 @@ namespace ForgeModGenerator.RecipeGenerator.Models
 
         public override object DeepClone()
         {
-            Recipe recipe = new Recipe() {
-                Name = Name,
-                Group = Group
-            };
+            Recipe recipe = (Recipe)Activator.CreateInstance(GetType(), true);
+            recipe.Name = Name;
+            recipe.Group = Group;
             recipe.SetInfo(Info.FullName);
             recipe.IsDirty = false;
             return recipe;

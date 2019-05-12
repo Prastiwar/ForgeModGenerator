@@ -20,15 +20,11 @@ namespace ForgeModGenerator
         public event EventHandler<ItemEditedEventArgs<TItem>> ItemEdited;
 
         public IUIElement Form { get; set; }
-
         public IValidator<TItem> Validator { get; set; }
-
         public TItem EditingItem { get; protected set; }
 
         protected IDialogService DialogService { get; set; }
-
         protected IMemoryCache Cache { get; private set; }
-
         protected string EdiTItemCacheKey { get; }
 
         public virtual async void OpenItemEditor(TItem item)
