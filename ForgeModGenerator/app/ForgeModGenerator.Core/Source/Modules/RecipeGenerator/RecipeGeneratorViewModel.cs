@@ -72,6 +72,8 @@ namespace ForgeModGenerator.RecipeGenerator.ViewModels
             RecipeCreator newRecipe = new RecipeCreator(tempFilePath) {
                 Name = "NewRecipe",
             };
+            newRecipe.Ingredients.Add(new Ingredient("minecraft:", ""));
+            newRecipe.Keys.Add(new RecipeKey('a', "minecraft:"));
             newRecipe.IsDirty = false;
             newRecipe.ValidateProperty += (sender, propertyName) => ValidateRecipe(sender, folder.Files, propertyName);
             RecipeValidator.SetDefaultRepository(folder.Files);

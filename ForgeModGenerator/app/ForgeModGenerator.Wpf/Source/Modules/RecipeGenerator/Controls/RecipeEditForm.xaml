@@ -158,26 +158,10 @@
                                FontWeight="Bold"
                                Margin="3,0,3,0"
                                VerticalAlignment="Center" />
-                    <ListBox x:Name="KeysListBox"
-                             ItemsSource="{Binding Keys}">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Item: "
-                                               FontSize="14"
-                                               FontWeight="Bold"
-                                               Margin="3,0,3,0"
-                                               Height="{Binding ActualHeight, ElementName=KeyTemplateItemTextBox, Mode=OneWay}"
-                                               VerticalAlignment="Center" />
-                                    <controls:SubmitTextBox x:Name="KeyTemplateItemTextBox"
-                                                            Text="{Binding Item, ValidatesOnDataErrors=True}"
-                                                            VerticalAlignment="Center"
-                                                            IsTabStop="True"
-                                                            TextWrapping="Wrap" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                    <local:EditableRecipeKeyList x:Name="KeysListBox"
+                                                 HorizontalAlignment="Stretch"
+                                                 HorizontalContentAlignment="Stretch"
+                                                 ItemsSource="{Binding Keys}" />
                 </StackPanel>
                 <Separator />
                 <StackPanel>
@@ -187,41 +171,10 @@
                                FontWeight="Bold"
                                Margin="3,0,3,0"
                                VerticalAlignment="Center" />
-                    <ListBox x:Name="IngredientsListBox"
-                             ItemsSource="{Binding Ingredients}">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel>
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="Item: "
-                                                   FontSize="14"
-                                                   FontWeight="Bold"
-                                                   Margin="3,0,3,0"
-                                                   Height="{Binding ActualHeight, ElementName=KeyTemplateItemTextBox, Mode=OneWay}"
-                                                   VerticalAlignment="Center" />
-                                        <controls:SubmitTextBox x:Name="IngredientTemplateItemTextBox"
-                                                                Text="{Binding Item, ValidatesOnDataErrors=True}"
-                                                                VerticalAlignment="Center"
-                                                                IsTabStop="True"
-                                                                TextWrapping="Wrap" />
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="Tag: "
-                                                   FontSize="14"
-                                                   FontWeight="Bold"
-                                                   Margin="3,0,3,0"
-                                                   Height="{Binding ActualHeight, ElementName=IngredientTemplateTagTextBox, Mode=OneWay}"
-                                                   VerticalAlignment="Center" />
-                                        <controls:SubmitTextBox x:Name="IngredientTemplateTagTextBox"
-                                                                Text="{Binding Tag, ValidatesOnDataErrors=True}"
-                                                                VerticalAlignment="Center"
-                                                                IsTabStop="True"
-                                                                TextWrapping="Wrap" />
-                                    </StackPanel>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                    <local:EditableIngredientList x:Name="IngredientsListBox"
+                                                  HorizontalAlignment="Stretch"
+                                                  HorizontalContentAlignment="Stretch"
+                                                  ItemsSource="{Binding Ingredients}" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal"
                             HorizontalAlignment="Center"

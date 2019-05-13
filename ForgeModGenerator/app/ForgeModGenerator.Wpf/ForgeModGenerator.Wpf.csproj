@@ -258,6 +258,7 @@
       <DependentUpon>RecipeEditForm.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Modules\RecipeGenerator\RecipeEditorFormFactory.cs" />
+    <Compile Include="Source\Modules\RecipeGenerator\RecipeListConverters.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\Validation\RecipeValidator.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundEditorFormFactory.cs" />
     <Compile Include="Source\Serialization\PreferenceDataSerializer.cs" />
@@ -372,6 +373,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Source\Modules\RecipeGenerator\Controls\RecipeEditForm.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\EditableListThemes.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
