@@ -30,29 +30,84 @@ namespace ForgeModGenerator.RecipeGenerator.Controls
             set => SetValue(SelectTypeChangedProperty, value);
         }
 
+        public static readonly DependencyProperty IngredientsLengthLimitProperty =
+            DependencyProperty.Register("IngredientsLengthLimit", typeof(int), typeof(RecipeEditForm), new PropertyMetadata(int.MaxValue));
+        public int IngredientsLengthLimit {
+            get => (int)GetValue(IngredientsLengthLimitProperty);
+            set => SetValue(IngredientsLengthLimitProperty, value);
+        }
+
+        private readonly List<Ingredient> cachedIngredients = new List<Ingredient>();
+
         public void SetDataContext(object context) => DataContext = context;
 
         private void RecipeTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Type newType = (Type)e.AddedItems[0];
             bool shouldCollapseSmelting = newType != typeof(SmeltingRecipe);
-            Visibility smeltingVisibility = shouldCollapseSmelting ? Visibility.Collapsed : Visibility.Visible;
-            ExperienceTextBlock.Visibility = smeltingVisibility;
-            ExperienceNumeric.Visibility = smeltingVisibility;
-            CookingTimeTextBlock.Visibility = smeltingVisibility;
-            CookingTimeNumeric.Visibility = smeltingVisibility;
+            SetSmeltingVisibility(shouldCollapseSmelting);
 
             bool shouldCollapseShaped = newType != typeof(ShapedRecipe);
-            Visibility shapedVisibility = shouldCollapseShaped ? Visibility.Collapsed : Visibility.Visible;
-            KeysTextBlock.Visibility = shapedVisibility;
-            KeysListBox.Visibility = shapedVisibility;
-            PatternTextBlock.Visibility = shapedVisibility;
-            PatternGrid.Visibility = shapedVisibility;
+            SetShapedVisibility(shouldCollapseShaped);
 
             bool shouldCollapseShapeless = newType != typeof(ShapelessRecipe);
 
             IngredientsTextBlock.Visibility = shouldCollapseSmelting && shouldCollapseShapeless ? Visibility.Collapsed : Visibility.Visible;
             IngredientsListBox.Visibility = shouldCollapseSmelting && shouldCollapseShapeless ? Visibility.Collapsed : Visibility.Visible;
+
+            int lastIngredientsLengthLimit = IngredientsLengthLimit;
+            IngredientsLengthLimit = !shouldCollapseSmelting ? int.MaxValue : 9;
+            if (lastIngredientsLengthLimit != IngredientsLengthLimit)
+            {
+                if (IngredientsListBox.ItemsSource == null)
+                {
+                    return;
+                }
+                HandleIngredientLimitChanged(shouldCollapseSmelting);
+            }
+        }
+
+        private void HandleIngredientLimitChanged(bool isSmeltingCollapsed)
+        {
+            if (isSmeltingCollapsed)
+            {
+                if (IngredientsListBox.ItemsSource.Count > IngredientsLengthLimit)
+                {
+                    // Fit ItemsSource to length limit. Cache removed items
+                    for (int i = IngredientsListBox.ItemsSource.Count - 1; i >= IngredientsLengthLimit; i--)
+                    {
+                        cachedIngredients.Add(IngredientsListBox.ItemsSource[i]);
+                        IngredientsListBox.ItemsSource.RemoveAt(i);
+                    }
+                }
+            }
+            else
+            {
+                // Add cached ingredients back to ItemsSource
+                for (int i = cachedIngredients.Count - 1; i >= 0; i--)
+                {
+                    IngredientsListBox.ItemsSource.Add(cachedIngredients[i]);
+                    cachedIngredients.RemoveAt(i);
+                }
+            }
+        }
+
+        private void SetShapedVisibility(bool collapse)
+        {
+            Visibility visibility = collapse ? Visibility.Collapsed : Visibility.Visible;
+            KeysTextBlock.Visibility = visibility;
+            KeysListBox.Visibility = visibility;
+            PatternTextBlock.Visibility = visibility;
+            PatternGrid.Visibility = visibility;
+        }
+
+        private void SetSmeltingVisibility(bool collapse)
+        {
+            Visibility visibility = collapse ? Visibility.Collapsed : Visibility.Visible;
+            ExperienceTextBlock.Visibility = visibility;
+            ExperienceNumeric.Visibility = visibility;
+            CookingTimeTextBlock.Visibility = visibility;
+            CookingTimeNumeric.Visibility = visibility;
         }
     }
 }

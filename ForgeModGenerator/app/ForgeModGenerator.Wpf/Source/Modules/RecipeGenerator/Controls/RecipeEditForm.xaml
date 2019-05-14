@@ -159,6 +159,7 @@
                                Margin="3,0,3,0"
                                VerticalAlignment="Center" />
                     <local:EditableRecipeKeyList x:Name="KeysListBox"
+                                                 LengthLimit="9"
                                                  HorizontalAlignment="Stretch"
                                                  HorizontalContentAlignment="Stretch"
                                                  ItemsSource="{Binding Keys}" />
@@ -172,6 +173,7 @@
                                Margin="3,0,3,0"
                                VerticalAlignment="Center" />
                     <local:EditableIngredientList x:Name="IngredientsListBox"
+                                                  LengthLimit="{Binding IngredientsLengthLimit, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:RecipeEditForm}}"
                                                   HorizontalAlignment="Stretch"
                                                   HorizontalContentAlignment="Stretch"
                                                   ItemsSource="{Binding Ingredients}" />
