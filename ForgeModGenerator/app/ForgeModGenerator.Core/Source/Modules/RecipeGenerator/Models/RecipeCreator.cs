@@ -77,7 +77,7 @@ namespace ForgeModGenerator.RecipeGenerator.Models
                     },
                     IsDirty = false
                 };
-                Array.Copy(recipe.Pattern, Pattern, Pattern.Length);
+                Array.Copy(Pattern, recipe.Pattern, Pattern.Length);
                 return recipe;
             }
             else if (type.IsAssignableFrom(typeof(ShapelessRecipe)))

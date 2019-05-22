@@ -109,5 +109,14 @@ namespace ForgeModGenerator.RecipeGenerator.Controls
             CookingTimeTextBlock.Visibility = visibility;
             CookingTimeNumeric.Visibility = visibility;
         }
+
+        private void FirstComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ComboBox box = (ComboBox)sender;
+            RecipeKey selectedItem = (RecipeKey)e.AddedItems[0];
+            RecipeCreator recipe = (RecipeCreator)box.DataContext;
+            int patternIndex = int.Parse((string)box.Tag);
+            recipe.Pattern[patternIndex] = selectedItem.Key;
+        }
     }
 }

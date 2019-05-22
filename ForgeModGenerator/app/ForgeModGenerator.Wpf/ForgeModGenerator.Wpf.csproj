@@ -258,7 +258,7 @@
       <DependentUpon>RecipeEditForm.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Modules\RecipeGenerator\RecipeEditorFormFactory.cs" />
-    <Compile Include="Source\Modules\RecipeGenerator\RecipeListConverters.cs" />
+    <Compile Include="Source\Modules\RecipeGenerator\Converters\RecipeListConverters.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\Validation\RecipeValidator.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundEditorFormFactory.cs" />
     <Compile Include="Source\Serialization\PreferenceDataSerializer.cs" />
