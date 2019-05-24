@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace ForgeModGenerator.SoundGenerator.ViewModels
 {
     /// <summary> SoundGenerator Business ViewModel </summary>
-    public class SoundGeneratorViewModel : FoldersViewModelBase<SoundEvent, Sound>
+    public class SoundGeneratorViewModel : FoldersJsonViewModelBase<SoundEvent, Sound>
     {
         // TODO: Refactor dependency mess
         public SoundGeneratorViewModel(ISessionContextService sessionContext,

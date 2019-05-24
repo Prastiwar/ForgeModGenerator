@@ -28,13 +28,30 @@ namespace ForgeModGenerator
                 FileWatcher = new FileSystemWatcherExtended(RootPath, Filters);
             }
             FileWatcher.IncludeSubdirectories = true;
-            FileWatcher.MonitorDirectoryChanges = true;
+            FileWatcher.AlwaysMonitorDirectoryChanges = true;
             FileWatcher.SynchronizingObject = synchronizingObject;
-            FileWatcher.NotifyFilter = NotifyFilters.DirectoryName | NotifyFilters.FileName;
+            SyncFilter = NotifyFilter.Directory | NotifyFilter.File;
             FileWatcher.FileCreated += OnFileWatcherCreated;
             FileWatcher.FileDeleted += OnFileWatcherDeleted;
             FileWatcher.FileRenamed += OnFileWatcherRenamed;
             FileWatcher.FileSubPathRenamed += OnFileWatcherSubPathRenamed;
+        }
+
+        private NotifyFilter syncFilter;
+        public NotifyFilter SyncFilter {
+            get => syncFilter;
+            set {
+                syncFilter = value;
+                FileWatcher.AlwaysMonitorDirectoryChanges = SyncFilter.HasFlag(NotifyFilter.Directory);
+                if (SyncFilter.HasFlag(NotifyFilter.File))
+                {
+                    FileWatcher.NotifyFilter |= NotifyFilters.FileName;
+                }
+                else
+                {
+                    FileWatcher.NotifyFilter &= ~NotifyFilters.FileName;
+                }
+            }
         }
 
         private IFoldersFinder<TFolder, TFile> finder;

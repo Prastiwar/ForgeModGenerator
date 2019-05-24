@@ -52,11 +52,22 @@ namespace ForgeModGenerator
         /// <summary> Occurs when a directory with files in it in the specified Path that matches Filters is renamed. </summary>
         public event EventHandler<FileSubPathEventArgs> FileSubPathRenamed;
 
-        /// <summary> 
-        /// Defines if should monitor folders despite of "filters" construction
-        /// NOTE: NotifyFilters must have NotifyFilters.DirectoryName flag
-        /// </summary>
-        public bool MonitorDirectoryChanges { get; set; }
+        private bool alwaysMonitorDirectoryChanges;
+        /// <summary> Defines if should monitor folders despite of "filters" construction </summary>
+        public bool AlwaysMonitorDirectoryChanges {
+            get => alwaysMonitorDirectoryChanges;
+            set {
+                alwaysMonitorDirectoryChanges = value;
+                if (AlwaysMonitorDirectoryChanges)
+                {
+                    NotifyFilter |= NotifyFilters.DirectoryName;
+                }
+                else
+                {
+                    NotifyFilter &= ~NotifyFilters.DirectoryName;
+                }
+            }
+        }
 
         private string filters;
         /// <summary> 
@@ -89,7 +100,7 @@ namespace ForgeModGenerator
 
         protected void NotifyEvent(object sender, FileSystemEventArgs e)
         {
-            bool monitorDirectory = MonitorDirectoryChanges && Utility.IOHelper.IsDirectoryPath(e.FullPath);
+            bool monitorDirectory = AlwaysMonitorDirectoryChanges && Utility.IOHelper.IsDirectoryPath(e.FullPath);
 
             if (e.ChangeType == WatcherChangeTypes.Renamed)
             {

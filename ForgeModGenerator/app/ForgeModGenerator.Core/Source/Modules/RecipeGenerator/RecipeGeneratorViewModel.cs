@@ -1,6 +1,7 @@
 ﻿using ForgeModGenerator.CodeGeneration;
 using ForgeModGenerator.Models;
 using ForgeModGenerator.RecipeGenerator.Models;
+using ForgeModGenerator.Serialization;
 using ForgeModGenerator.Services;
 using ForgeModGenerator.Validation;
 using ForgeModGenerator.ViewModels;
@@ -19,10 +20,12 @@ namespace ForgeModGenerator.RecipeGenerator.ViewModels
                                         IFoldersExplorerFactory<ObservableFolder<Recipe>, Recipe> factory,
                                         IEditorFormFactory<RecipeCreator> editorFormFactory,
                                         IUniqueValidator<Recipe> recipeValidator,
+                                        ISerializer<Recipe> recipeSerializer,
                                         ICodeGenerationService codeGenerationService)
             : base(sessionContext, factory)
         {
             RecipeValidator = recipeValidator;
+            RecipeSerializer = recipeSerializer;
             CodeGenerationService = codeGenerationService;
             EditorForm = editorFormFactory.Create();
             EditorForm.ItemEdited += CreateRecipe;
@@ -34,6 +37,8 @@ namespace ForgeModGenerator.RecipeGenerator.ViewModels
             Explorer.OpenFileDialog.ValidateNames = true;
             Explorer.OpenFolderDialog.ShowNewFolderButton = true;
             Explorer.AllowFileExtensions(".json");
+
+            Explorer.FileSynchronizer.SyncFilter = NotifyFilter.File;
         }
 
         public override string FoldersRootPath => SessionContext.SelectedMod != null
@@ -43,6 +48,7 @@ namespace ForgeModGenerator.RecipeGenerator.ViewModels
         protected ICodeGenerationService CodeGenerationService { get; }
         protected IEditorForm<RecipeCreator> EditorForm { get; }
         protected IUniqueValidator<Recipe> RecipeValidator { get; }
+        protected ISerializer<Recipe> RecipeSerializer { get; }
 
         private ICommand openRecipeEditor;
         public ICommand OpenRecipeEditor => openRecipeEditor ?? (openRecipeEditor = new DelegateCommand<ObservableFolder<Recipe>>(CreateNewRecipe));
