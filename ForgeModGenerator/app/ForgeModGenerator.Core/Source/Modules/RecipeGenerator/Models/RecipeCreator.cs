@@ -23,7 +23,7 @@ namespace ForgeModGenerator.RecipeGenerator.Models
             set => SetProperty(ref recipeType, value);
         }
 
-        public char[] Pattern { get; } = new char[9];
+        public string[] Pattern { get; } = new string[3] { "   ", "   ", "   " };
 
         private ObservableCollection<RecipeKey> keys;
         public ObservableCollection<RecipeKey> Keys {

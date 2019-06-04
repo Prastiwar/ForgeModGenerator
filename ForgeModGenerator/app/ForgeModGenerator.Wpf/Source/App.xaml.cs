@@ -20,6 +20,7 @@ using ForgeModGenerator.ModGenerator.ViewModels;
 using ForgeModGenerator.ModGenerator.Views;
 using ForgeModGenerator.RecipeGenerator;
 using ForgeModGenerator.RecipeGenerator.Models;
+using ForgeModGenerator.RecipeGenerator.Serialization;
 using ForgeModGenerator.RecipeGenerator.Validation;
 using ForgeModGenerator.RecipeGenerator.ViewModels;
 using ForgeModGenerator.RecipeGenerator.Views;
@@ -140,6 +141,8 @@ namespace ForgeModGenerator
 
             containerRegistry.Register<ISerializer<McMod>, ModSerializer>();
             containerRegistry.Register<ISerializer<McModInfo>, ModInfoSerializer>();
+
+            containerRegistry.Register<ISerializer<Recipe>, RecipeSerializer>();
         }
 
         private void RegisterFactories(IContainerRegistry containerRegistry)

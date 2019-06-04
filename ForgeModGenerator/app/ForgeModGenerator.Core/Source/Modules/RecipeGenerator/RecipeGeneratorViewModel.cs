@@ -93,7 +93,12 @@ namespace ForgeModGenerator.RecipeGenerator.ViewModels
             if (e.Result)
             {
                 Recipe recipe = e.ActualItem.Create();
-                // TODO: Generate Json file
+                if (recipe.Validate().IsValid)
+                {
+                    string json = RecipeSerializer.Serialize(recipe, true);
+                    string path = Path.Combine(ModPaths.RecipesFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.Modid), recipe.Name + ".json");
+                    File.AppendAllText(path, json);
+                }
             }
             new FileInfo(tempFilePath).Delete();
         }

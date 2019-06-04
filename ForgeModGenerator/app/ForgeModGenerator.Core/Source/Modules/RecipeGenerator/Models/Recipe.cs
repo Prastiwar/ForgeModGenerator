@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace ForgeModGenerator.RecipeGenerator.Models
 {
-    public abstract class Recipe : FileObject, IDataErrorInfo, IValidable<Recipe>
+    public class Recipe : FileObject, IDataErrorInfo, IValidable<Recipe>
     {
         protected Recipe() { }
         public Recipe(string filePath) : base(filePath) { }

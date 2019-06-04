@@ -232,7 +232,9 @@
     <Compile Include="Source\Converters\Json\ForgeVersionJsonConverter.cs" />
     <Compile Include="Source\Converters\Json\McModInfoJsonConverter.cs" />
     <Compile Include="Source\Converters\Json\ModJsonConverter.cs" />
-    <Compile Include="Source\Converters\Json\LowercasePropertyResolver.cs" />
+    <Compile Include="Source\Converters\Json\Resolver\LowercasePropertyResolver.cs" />
+    <Compile Include="Source\Converters\Json\Resolver\NullToEmptyStringResolver.cs" />
+    <Compile Include="Source\Converters\Json\Resolver\NullToEmptyStringValueProvider.cs" />
     <Compile Include="Source\Converters\MethodToCommandConverter.cs" />
     <Compile Include="Source\Converters\ValidateResultAssemblyConverter.cs" />
     <Compile Include="Source\Common\DisposeClosedViewsBehavior.cs" />
@@ -259,6 +261,7 @@
     </Compile>
     <Compile Include="Source\Modules\RecipeGenerator\RecipeEditorFormFactory.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\Converters\RecipeListConverters.cs" />
+    <Compile Include="Source\Modules\RecipeGenerator\RecipeSerializer.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\Validation\RecipeValidator.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundEditorFormFactory.cs" />
     <Compile Include="Source\Serialization\PreferenceDataSerializer.cs" />
@@ -292,7 +295,7 @@
     <Compile Include="Source\Modules\SoundGenerator\Converters\SoundCollectionConverter.cs" />
     <Compile Include="Source\Modules\SoundGenerator\Converters\SoundConverter.cs" />
     <Compile Include="Source\Modules\SoundGenerator\Converters\SoundEventConverter.cs" />
-    <Compile Include="Source\Converters\Json\PropertyRenameIgnoreResolver.cs" />
+    <Compile Include="Source\Converters\Json\Resolver\PropertyRenameIgnoreResolver.cs" />
     <Compile Include="Source\Converters\ModidPathToPathConverter.cs" />
     <Compile Include="Source\Converters\MultiValues\BindMultiValueConverter.cs" />
     <Compile Include="Source\Converters\MultiValues\GenericMultiValueConverter.cs" />

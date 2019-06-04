@@ -9,7 +9,7 @@ namespace ForgeModGenerator.RecipeGenerator.Models
         protected ShapedRecipe() { }
         public ShapedRecipe(string filePath) : base(filePath) { }
 
-        public char[] Pattern { get; } = new char[9];
+        public string[] Pattern { get; } = new string[3] { "   ", "   ", "   " };
 
         private ObservableCollection<RecipeKey> keys;
         public ObservableCollection<RecipeKey> Keys {

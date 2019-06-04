@@ -115,8 +115,11 @@ namespace ForgeModGenerator.RecipeGenerator.Controls
             ComboBox box = (ComboBox)sender;
             RecipeKey selectedItem = (RecipeKey)e.AddedItems[0];
             RecipeCreator recipe = (RecipeCreator)box.DataContext;
-            int patternIndex = int.Parse((string)box.Tag);
-            recipe.Pattern[patternIndex] = selectedItem.Key;
+            int patternIndex = (int)char.GetNumericValue((string)box.Tag, 0);
+            int charIndex = (int)char.GetNumericValue((string)box.Tag, 1);
+            char[] chars = recipe.Pattern[patternIndex].ToCharArray();
+            chars[charIndex] = selectedItem.Key;
+            recipe.Pattern[patternIndex] = new string(chars);
         }
     }
 }
