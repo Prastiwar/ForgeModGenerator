@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualBasic.FileIO;
+﻿using ForgeModGenerator.Utility;
+using Microsoft.VisualBasic.FileIO;
 using System;
 using System.IO;
 
@@ -191,11 +192,12 @@ namespace ForgeModGenerator
             return true;
         }
 
-        public bool RenameFile(string name, string newName)
+        public bool RenameFile(string fullName, string newName)
         {
             try
             {
-                FileSystem.RenameFile(name, newName);
+                return false;
+                IOHelper.RenameFile(fullName, newName);
             }
             catch (Exception)
             {

@@ -144,7 +144,7 @@ namespace ForgeModGenerator.Tests
         [TestMethod]
         public void ImportMod()
         {
-            string json = "{\"Organization\":\"testorg\",\"ForgeVersion\":{\"Name\":\"forge - 1.12.2 - 14.23.5.2772\",\"ZipPath\":\"C:/Dev/ForgeModGenerator/ForgeModGenerator/forgeversions/forge - 1.12.2 - 14.23.5.2772 - mdk.zip\"},\"LaunchSetup\":0,\"Side\":0,\"WorkspaceSetup\":{\"$type\":\"ForgeModGenerator.Models.EmptyWorkspace, ForgeModGenerator.Core\",\"Name\":\"Empty\"},\"CachedName\":\"TestMod\"}";
+            string json = "{\"Organization\":\"testorg\",\"ForgeVersion\":{\"Name\":\"forge - 1.12.2 - 14.23.5.2772\",\"ZipPath\":\"C:/Dev/ForgeModGenerator/ForgeModGenerator/forgeversions/forge - 1.12.2 - 14.23.5.2772 - mdk.zip\"},\"LaunchSetup\":0,\"Side\":0,\"WorkspaceSetup\":{\"$type\":\"ForgeModGenerator.Models.EmptyWorkspace, ForgeModGenerator.Core\",\"Name\":\"Empty\"},\"Name\":\"TestMod\"}";
             JsonSerializerSettings settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All };
             settings.Converters.Add(new ModJsonConverter());
             settings.Converters.Add(new McModInfoJsonConverter());

@@ -1,5 +1,6 @@
 ﻿using ForgeModGenerator.SoundGenerator.Models;
 using ForgeModGenerator.Utility;
+using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -11,9 +12,12 @@ namespace ForgeModGenerator.SoundGenerator
         public SoundEventsSynchronizer(ISynchronizeInvoke synchronizeObject,
                                        IFolderObject<SoundEvent> foldersToSync,
                                        IFoldersFinder<SoundEvent, Sound> finder,
+                                       IFileSystem fileSystem,
                                        string rootPath = null,
                                        string filters = null)
-            : base(synchronizeObject, foldersToSync, finder, rootPath, filters) { }
+            : base(synchronizeObject, foldersToSync, finder, rootPath, filters) => FileSystem = fileSystem;
+
+        protected IFileSystem FileSystem { get; }
 
         /// <inheritdoc/>
         public override void AddNotReferencedFiles()
@@ -38,7 +42,7 @@ namespace ForgeModGenerator.SoundGenerator
                 bool wasEnabled = IsEnabled;
                 SetEnableSynchronization(false); // prevent unecessary synchronization calls
                 path = path.ToLower();
-                fileInfo.MoveTo(path);
+                FileSystem.RenameFile(fileInfo.FullName, Path.GetFileNameWithoutExtension(path));
                 SetEnableSynchronization(wasEnabled); // roll back synchronization active status
             }
             SoundEvent soundEvent = Finder.Factory.Create(path, new string[] { path });
