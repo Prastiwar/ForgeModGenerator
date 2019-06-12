@@ -295,7 +295,7 @@
     <Compile Include="Source\Modules\SoundGenerator\Converters\SoundCollectionConverter.cs" />
     <Compile Include="Source\Modules\SoundGenerator\Converters\SoundConverter.cs" />
     <Compile Include="Source\Modules\SoundGenerator\Converters\SoundEventConverter.cs" />
-    <Compile Include="Source\Converters\Json\Resolver\PropertyRenameIgnoreResolver.cs" />
+    <Compile Include="Source\Converters\Json\Resolver\PropertyContractResolver.cs" />
     <Compile Include="Source\Converters\ModidPathToPathConverter.cs" />
     <Compile Include="Source\Converters\MultiValues\BindMultiValueConverter.cs" />
     <Compile Include="Source\Converters\MultiValues\GenericMultiValueConverter.cs" />

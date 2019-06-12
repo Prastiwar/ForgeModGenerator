@@ -8,7 +8,11 @@ namespace ForgeModGenerator.SoundGenerator
 {
     public class SoundEventsSynchronizer : FolderSynchronizer<SoundEvent, Sound>
     {
-        public SoundEventsSynchronizer(ISynchronizeInvoke synchronizeObject, IFolderObject<SoundEvent> foldersToSync, IFoldersFinder<SoundEvent, Sound> finder, string rootPath = null, string filters = null)
+        public SoundEventsSynchronizer(ISynchronizeInvoke synchronizeObject,
+                                       IFolderObject<SoundEvent> foldersToSync,
+                                       IFoldersFinder<SoundEvent, Sound> finder,
+                                       string rootPath = null,
+                                       string filters = null)
             : base(synchronizeObject, foldersToSync, finder, rootPath, filters) { }
 
         /// <inheritdoc/>
@@ -28,6 +32,15 @@ namespace ForgeModGenerator.SoundGenerator
         protected override bool SyncCreateFile(string path)
         {
             SynchronizationCheck(path);
+            FileInfo fileInfo = new FileInfo(path);
+            if (fileInfo.Name.Any(x => char.IsUpper(x)))
+            {
+                bool wasEnabled = IsEnabled;
+                SetEnableSynchronization(false); // prevent unecessary synchronization calls
+                path = path.ToLower();
+                fileInfo.MoveTo(path);
+                SetEnableSynchronization(wasEnabled); // roll back synchronization active status
+            }
             SoundEvent soundEvent = Finder.Factory.Create(path, new string[] { path });
             return SyncedFolders.Add(soundEvent);
         }

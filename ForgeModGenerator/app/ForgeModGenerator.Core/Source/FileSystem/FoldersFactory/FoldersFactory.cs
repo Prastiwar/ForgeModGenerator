@@ -15,15 +15,7 @@ namespace ForgeModGenerator
         public virtual TFolder Create(string path, IEnumerable<string> filePaths)
         {
             TFolder folder = null;
-            if (path == null)
-            {
-                folder = ReflectionHelper.CreateInstance<TFolder>(true);
-                if (filePaths != null)
-                {
-                    folder.AddRange(filePaths);
-                }
-            }
-            else
+            if (path != null)
             {
                 try
                 {
@@ -36,6 +28,14 @@ namespace ForgeModGenerator
                     {
                         folder.AddRange(filePaths);
                     }
+                }
+            }
+            else
+            {
+                folder = ReflectionHelper.CreateInstance<TFolder>(true);
+                if (filePaths != null)
+                {
+                    folder.AddRange(filePaths);
                 }
             }
             return folder;

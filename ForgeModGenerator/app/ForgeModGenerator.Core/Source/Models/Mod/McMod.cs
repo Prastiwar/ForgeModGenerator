@@ -141,7 +141,7 @@ namespace ForgeModGenerator.Models
             path = path.NormalizePath();
             string modsPath = AppPaths.Mods.NormalizePath();
             int length = modsPath.Length;
-            if (!path.StartsWith(modsPath))
+            if (!IOHelper.IsSubPathOf(path, modsPath))
             {
                 return null;
             }
