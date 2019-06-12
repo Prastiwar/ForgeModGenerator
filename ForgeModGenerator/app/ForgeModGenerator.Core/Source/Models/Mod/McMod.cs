@@ -24,7 +24,6 @@ namespace ForgeModGenerator.Models
             Side = side;
             LaunchSetup = launchSetup;
             WorkspaceSetup = workspaceSetup ?? WorkspaceSetup.NONE;
-            CachedName = ModInfo.Name;
         }
 
         private string organization;
@@ -62,8 +61,6 @@ namespace ForgeModGenerator.Models
             get => launchSetup;
             set => SetProperty(ref launchSetup, value);
         }
-
-        public string CachedName { get; private set; }
 
         /// <summary> Shorthand for ModInfo.Name (used also for WPF validation) </summary>
         public string Name { get => ModInfo.Name; set => ModInfo.Name = value; }

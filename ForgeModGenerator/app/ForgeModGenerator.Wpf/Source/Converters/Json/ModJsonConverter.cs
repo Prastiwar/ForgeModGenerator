@@ -16,7 +16,7 @@ namespace ForgeModGenerator.Converters
                 return null;
             }
             string organization = item.GetValue(nameof(McMod.Organization), StringComparison.OrdinalIgnoreCase).ToObject<string>();
-            string modname = item.GetValue(nameof(McMod.CachedName), StringComparison.OrdinalIgnoreCase).ToObject<string>();
+            string modname = item.GetValue(nameof(McMod.Name), StringComparison.OrdinalIgnoreCase).ToObject<string>();
             string modInfoPath = ModPaths.McModInfoFile(modname);
             string modInfoContent = File.ReadAllText(modInfoPath);
             McModInfo modInfo = JsonConvert.DeserializeObject<McModInfo>(modInfoContent, new JsonSerializerSettings {
@@ -53,7 +53,7 @@ namespace ForgeModGenerator.Converters
                 { nameof(McMod.LaunchSetup), JToken.FromObject(value.LaunchSetup, serializer) },
                 { nameof(McMod.Side), JToken.FromObject(value.Side, serializer) },
                 { nameof(McMod.WorkspaceSetup), JToken.FromObject(value.WorkspaceSetup, serializer) },
-                { nameof(McMod.CachedName), value.CachedName }
+                { nameof(McMod.Name), value.Name }
             };
             jo.WriteTo(writer);
         }
