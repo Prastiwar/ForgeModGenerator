@@ -42,8 +42,15 @@ namespace ForgeModGenerator.SoundGenerator
                 bool wasEnabled = IsEnabled;
                 SetEnableSynchronization(false); // prevent unecessary synchronization calls
                 path = path.ToLower();
-                FileSystem.RenameFile(fileInfo.FullName, Path.GetFileNameWithoutExtension(path));
+                TimeSpan timeout = TimeSpan.FromMilliseconds(2000);
+                TimeSpan wait = TimeSpan.FromMilliseconds(500);
+                bool smth = IOHelper.WaitUntilTrue(() => FileSystem.RenameFile(fileInfo.FullName, Path.GetFileNameWithoutExtension(path)),
+                                                    timeout, wait).Result;
                 SetEnableSynchronization(wasEnabled); // roll back synchronization active status
+                if (!smth)
+                {
+                    return false;
+                }
             }
             SoundEvent soundEvent = Finder.Factory.Create(path, new string[] { path });
             return SyncedFolders.Add(soundEvent);

@@ -196,7 +196,6 @@ namespace ForgeModGenerator
         {
             try
             {
-                return false;
                 IOHelper.RenameFile(fullName, newName);
             }
             catch (Exception)
