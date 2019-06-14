@@ -20,6 +20,7 @@
 - [ ] Achievement Generator
 
   - [ ] Create achievement
+  - [ ] Respect manual changes in json
   - [ ] Update source code
 
 - [ ] Block Generator
@@ -54,7 +55,7 @@
   - [x] Create workspace for manual changes: eclipse, IntelliJ IDEA, VSCode
   - [x] Respect manual changes in mcmod.info (but it's not recommended)
 
-- [] Recipe Generator
+- [ ] Recipe Generator
 
   - [x] Create recipe json
   - [x] Respect manual changes in json
