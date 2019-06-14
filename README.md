@@ -46,19 +46,19 @@
   - [ ] Visualize GUI
   - [ ] Update source code
 
-- [ ] Mod Generator *- mod manager*
+- [x] Mod Generator *- mod manager*
 
   - [x] Generate mod structure
   - [x] Generate important source code
   - [x] Edit mod info
   - [x] Create workspace for manual changes: eclipse, IntelliJ IDEA, VSCode
-  - [ ] Respect manual changes in mcmod.info
+  - [x] Respect manual changes in mcmod.info (but it's not recommended)
 
-- [ ] Recipe Generator
+- [] Recipe Generator
 
-  - [ ] Create recipe json
-  - [ ] Respect manual changes in json
-  - [ ] Update source code
+  - [x] Create recipe json
+  - [x] Respect manual changes in json
+  - [ ] Update source code (for smelting)
 
 - [x] Sound Generator *- sounds file explorer*
 

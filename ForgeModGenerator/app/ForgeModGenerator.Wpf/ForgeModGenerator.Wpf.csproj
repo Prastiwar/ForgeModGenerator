@@ -38,6 +38,9 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
+  <PropertyGroup>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
@@ -229,7 +232,9 @@
     <Compile Include="Source\Converters\Json\ForgeVersionJsonConverter.cs" />
     <Compile Include="Source\Converters\Json\McModInfoJsonConverter.cs" />
     <Compile Include="Source\Converters\Json\ModJsonConverter.cs" />
-    <Compile Include="Source\Converters\Json\LowercasePropertyResolver.cs" />
+    <Compile Include="Source\Converters\Json\Resolver\LowercasePropertyResolver.cs" />
+    <Compile Include="Source\Converters\Json\Resolver\NullToEmptyStringResolver.cs" />
+    <Compile Include="Source\Converters\Json\Resolver\NullToEmptyStringValueProvider.cs" />
     <Compile Include="Source\Converters\MethodToCommandConverter.cs" />
     <Compile Include="Source\Converters\ValidateResultAssemblyConverter.cs" />
     <Compile Include="Source\Common\DisposeClosedViewsBehavior.cs" />
@@ -247,9 +252,17 @@
     <Compile Include="Source\Modules\CommandGenerator\Validation\CommandValidator.cs" />
     <Compile Include="Source\Modules\ItemGenerator\ItemCodeGenerator.cs" />
     <Compile Include="Source\Modules\ModGenerator\ModEditorFormFactory.cs" />
-    <Compile Include="Source\Modules\ModGenerator\ModInfoSerializer.cs" />
-    <Compile Include="Source\Modules\ModGenerator\ModSerializer.cs" />
-    <Compile Include="Source\Modules\RecipeGenerator\RecipeCodeGenerator.cs" />
+    <Compile Include="Source\Modules\ModGenerator\Serialization\ModInfoSerializer.cs" />
+    <Compile Include="Source\Modules\ModGenerator\Serialization\ModSerializer.cs" />
+    <Compile Include="Source\Modules\RecipeGenerator\CodeGeneration\RecipeCodeGenerator.cs" />
+    <Compile Include="Source\Modules\RecipeGenerator\Controls\EditableRecipeLists.cs" />
+    <Compile Include="Source\Modules\RecipeGenerator\Controls\RecipeEditForm.xaml.cs">
+      <DependentUpon>RecipeEditForm.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Modules\RecipeGenerator\RecipeEditorFormFactory.cs" />
+    <Compile Include="Source\Modules\RecipeGenerator\Converters\RecipeListConverters.cs" />
+    <Compile Include="Source\Modules\RecipeGenerator\RecipeSerializer.cs" />
+    <Compile Include="Source\Modules\RecipeGenerator\Validation\RecipeValidator.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundEditorFormFactory.cs" />
     <Compile Include="Source\Serialization\PreferenceDataSerializer.cs" />
     <Compile Include="Source\Serialization\JsonSerializer.cs" />
@@ -282,7 +295,7 @@
     <Compile Include="Source\Modules\SoundGenerator\Converters\SoundCollectionConverter.cs" />
     <Compile Include="Source\Modules\SoundGenerator\Converters\SoundConverter.cs" />
     <Compile Include="Source\Modules\SoundGenerator\Converters\SoundEventConverter.cs" />
-    <Compile Include="Source\Converters\Json\PropertyRenameIgnoreResolver.cs" />
+    <Compile Include="Source\Converters\Json\Resolver\PropertyContractResolver.cs" />
     <Compile Include="Source\Converters\ModidPathToPathConverter.cs" />
     <Compile Include="Source\Converters\MultiValues\BindMultiValueConverter.cs" />
     <Compile Include="Source\Converters\MultiValues\GenericMultiValueConverter.cs" />
@@ -359,6 +372,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Source\Modules\CommandGenerator\Controls\CommandEditForm.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Modules\RecipeGenerator\Controls\RecipeEditForm.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\EditableListThemes.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -529,6 +550,7 @@
     <Analyzer Include="..\packages\Microsoft.NetFramework.Analyzers.2.9.2\analyzers\dotnet\cs\Microsoft.NetFramework.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.NetFramework.Analyzers.2.9.2\analyzers\dotnet\cs\Microsoft.NetFramework.CSharp.Analyzers.dll" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

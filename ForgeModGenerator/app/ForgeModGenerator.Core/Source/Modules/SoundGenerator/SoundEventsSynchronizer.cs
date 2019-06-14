@@ -1,5 +1,6 @@
 ﻿using ForgeModGenerator.SoundGenerator.Models;
 using ForgeModGenerator.Utility;
+using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -8,8 +9,15 @@ namespace ForgeModGenerator.SoundGenerator
 {
     public class SoundEventsSynchronizer : FolderSynchronizer<SoundEvent, Sound>
     {
-        public SoundEventsSynchronizer(ISynchronizeInvoke synchronizeObject, IFolderObject<SoundEvent> foldersToSync, IFoldersFinder<SoundEvent, Sound> finder, string rootPath = null, string filters = null)
-            : base(synchronizeObject, foldersToSync, finder, rootPath, filters) { }
+        public SoundEventsSynchronizer(ISynchronizeInvoke synchronizeObject,
+                                       IFolderObject<SoundEvent> foldersToSync,
+                                       IFoldersFinder<SoundEvent, Sound> finder,
+                                       IFileSystem fileSystem,
+                                       string rootPath = null,
+                                       string filters = null)
+            : base(synchronizeObject, foldersToSync, finder, rootPath, filters) => FileSystem = fileSystem;
+
+        protected IFileSystem FileSystem { get; }
 
         /// <inheritdoc/>
         public override void AddNotReferencedFiles()
@@ -28,6 +36,22 @@ namespace ForgeModGenerator.SoundGenerator
         protected override bool SyncCreateFile(string path)
         {
             SynchronizationCheck(path);
+            FileInfo fileInfo = new FileInfo(path);
+            if (fileInfo.Name.Any(x => char.IsUpper(x)))
+            {
+                bool wasEnabled = IsEnabled;
+                SetEnableSynchronization(false); // prevent unecessary synchronization calls
+                path = path.ToLower();
+                TimeSpan timeout = TimeSpan.FromMilliseconds(2000);
+                TimeSpan wait = TimeSpan.FromMilliseconds(500);
+                bool smth = IOHelper.WaitUntilTrue(() => FileSystem.RenameFile(fileInfo.FullName, Path.GetFileNameWithoutExtension(path)),
+                                                    timeout, wait).Result;
+                SetEnableSynchronization(wasEnabled); // roll back synchronization active status
+                if (!smth)
+                {
+                    return false;
+                }
+            }
             SoundEvent soundEvent = Finder.Factory.Create(path, new string[] { path });
             return SyncedFolders.Add(soundEvent);
         }

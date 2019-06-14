@@ -9,11 +9,11 @@ using System.Windows.Input;
 namespace ForgeModGenerator.ViewModels
 {
     /// <summary> Base ViewModel class with json updater </summary>
-    public abstract class FoldersViewModelBase<TFolder, TFile> : FoldersWatcherViewModelBase<TFolder, TFile>
+    public abstract class FoldersJsonViewModelBase<TFolder, TFile> : FoldersWatcherViewModelBase<TFolder, TFile>
         where TFolder : class, IFolderObject<TFile>
         where TFile : class, IFileObject
     {
-        public FoldersViewModelBase(ISessionContextService sessionContext, IDialogService dialogService, IFoldersExplorerFactory<TFolder, TFile> factory) : base(sessionContext, factory) => DialogService = dialogService;
+        public FoldersJsonViewModelBase(ISessionContextService sessionContext, IDialogService dialogService, IFoldersExplorerFactory<TFolder, TFile> factory) : base(sessionContext, factory) => DialogService = dialogService;
 
         /// <summary> Path to json file that can be deserialized to folders </summary>
         public abstract string FoldersJsonFilePath { get; }

@@ -34,6 +34,8 @@ namespace ForgeModGenerator.CommandGenerator.ViewModels
             Explorer.OpenFileDialog.ValidateNames = true;
             Explorer.OpenFolderDialog.ShowNewFolderButton = true;
             Explorer.AllowFileExtensions(".java");
+
+            Explorer.FileSynchronizer.SyncFilter = NotifyFilter.File;
         }
 
         public override string FoldersRootPath => SessionContext.SelectedMod != null

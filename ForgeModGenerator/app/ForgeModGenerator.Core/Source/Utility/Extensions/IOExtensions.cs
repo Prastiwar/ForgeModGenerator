@@ -95,10 +95,10 @@ namespace ForgeModGenerator.Utility
 
         /// <summary> Rename file name </summary>
         /// <param name="newName"> New file name </param>
-        /// <param name="changeExtension"> Defines if <paramref name="newName"/> should change file extension </param>
+        /// <param name="changingExtension"> Defines if <paramref name="newName"/> should change file extension </param>
         /// <exception cref="IOException"> Thrown when one of parameters are null </exception>
         /// <exception cref="ArgumentNullException"> Thrown when file with <paramref name="newName"/> already exists </exception>
-        public static void Rename(this FileInfo fileInfo, string newName, bool changeExtension = false)
+        public static void Rename(this FileInfo fileInfo, string newName, bool changingExtension = false)
         {
             if (!fileInfo.Exists)
             {
@@ -108,11 +108,12 @@ namespace ForgeModGenerator.Utility
             {
                 throw new ArgumentNullException(nameof(newName));
             }
-            string oldExactNAme = fileInfo.Directory.EnumerateFiles(fileInfo.Name).First().Name;
+            FileInfo exactInfo = fileInfo.Directory.EnumerateFiles(fileInfo.Name).First();
+            string oldExactNAme = changingExtension ? exactInfo.Name : Path.GetFileNameWithoutExtension(exactInfo.FullName);
             if (!string.Equals(oldExactNAme, newName, StringComparison.CurrentCulture))
             {
                 string folder = Path.GetDirectoryName(fileInfo.FullName);
-                string newPath = !changeExtension ? Path.Combine(folder, newName + fileInfo.Extension) : Path.Combine(folder, newName);
+                string newPath = !changingExtension ? Path.Combine(folder, newName + fileInfo.Extension) : Path.Combine(folder, newName);
                 bool changeCase = string.Equals(oldExactNAme, newName, StringComparison.CurrentCultureIgnoreCase);
 
                 if (File.Exists(newPath) && !changeCase)

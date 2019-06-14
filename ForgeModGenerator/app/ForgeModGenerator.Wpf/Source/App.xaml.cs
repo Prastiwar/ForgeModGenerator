@@ -18,6 +18,10 @@ using ForgeModGenerator.ModGenerator.Serialization;
 using ForgeModGenerator.ModGenerator.Validation;
 using ForgeModGenerator.ModGenerator.ViewModels;
 using ForgeModGenerator.ModGenerator.Views;
+using ForgeModGenerator.RecipeGenerator;
+using ForgeModGenerator.RecipeGenerator.Models;
+using ForgeModGenerator.RecipeGenerator.Serialization;
+using ForgeModGenerator.RecipeGenerator.Validation;
 using ForgeModGenerator.RecipeGenerator.ViewModels;
 using ForgeModGenerator.RecipeGenerator.Views;
 using ForgeModGenerator.Serialization;
@@ -120,8 +124,9 @@ namespace ForgeModGenerator
         private void RegisterValidators(IContainerRegistry containerRegistry)
         {
             containerRegistry.Register<IUniqueValidator<SoundEvent>, SoundEventValidator>();
-            containerRegistry.Register<IValidator<McMod>, ModValidator>();
+            containerRegistry.Register<IUniqueValidator<Recipe>, RecipeValidator>();
             containerRegistry.Register<IUniqueValidator<Command>, CommandValidator>();
+            containerRegistry.Register<IValidator<McMod>, ModValidator>();
         }
 
         private void RegisterSerializers(IContainerRegistry containerRegistry)
@@ -136,6 +141,8 @@ namespace ForgeModGenerator
 
             containerRegistry.Register<ISerializer<McMod>, ModSerializer>();
             containerRegistry.Register<ISerializer<McModInfo>, ModInfoSerializer>();
+
+            containerRegistry.Register<ISerializer<Recipe>, RecipeSerializer>();
         }
 
         private void RegisterFactories(IContainerRegistry containerRegistry)
@@ -155,9 +162,8 @@ namespace ForgeModGenerator
             containerRegistry.Register(typeof(IFoldersFinder<,>), typeof(DefaultFoldersFinder<,>));
 
             containerRegistry.Register(typeof(IEditorFormFactory<McMod>), typeof(ModEditorFormFactory));
-
             containerRegistry.Register(typeof(IEditorFormFactory<Command>), typeof(CommandEditorFormFactory));
-
+            containerRegistry.Register(typeof(IEditorFormFactory<RecipeCreator>), typeof(RecipeEditorFormFactory));
             containerRegistry.Register(typeof(IEditorFormFactory<>), typeof(EditorFormFactory<>));
         }
 

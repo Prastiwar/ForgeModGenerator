@@ -9,6 +9,25 @@ namespace ForgeModGenerator.Utility
 {
     public static class IOHelper
     {
+        private static readonly TimeSpan timeout = TimeSpan.FromMilliseconds(2000);
+        private static readonly TimeSpan wait = TimeSpan.FromMilliseconds(500);
+
+        public static Task<bool> WaitUntilTrue(Func<bool> func) => WaitUntilTrue(func, timeout, wait);
+        public static async Task<bool> WaitUntilTrue(Func<bool> func, TimeSpan timeout, TimeSpan wait)
+        {
+            TimeSpan zeroTime = TimeSpan.FromMilliseconds(0);
+            while (!func())
+            {
+                timeout = timeout.Subtract(wait);
+                await Task.Delay(wait).ConfigureAwait(false);
+                if (timeout > zeroTime)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         /// <summary> Returns DirectoryInfo or FileInfo as FileSystemInfo when paths exists </summary>
         public static FileSystemInfo GetFileSystemInfo(string path)
         {

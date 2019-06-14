@@ -71,7 +71,7 @@ namespace ForgeModGenerator
 
         private FileSystemInfo GetOrCreateInfo(string path)
         {
-            path = path.NormalizeFullPath();
+            path = NormalizePath(path);
             if (references.TryGetValue(path, out RefCounter newReference))
             {
                 newReference.ReferenceCount++;
@@ -104,7 +104,7 @@ namespace ForgeModGenerator
             {
                 return false;
             }
-            filePath = filePath.NormalizeFullPath();
+            filePath = NormalizePath(filePath);
             if (references.ContainsKey(filePath))
             {
                 references[filePath].ReferenceCount--;
@@ -113,6 +113,8 @@ namespace ForgeModGenerator
             return false;
         }
         public static bool IsReferenced(string filePath) => FindReferenceCount(filePath) > 0;
-        public static int FindReferenceCount(string filePath) => references.TryGetValue(filePath.NormalizeFullPath(), out RefCounter refCounter) ? refCounter.ReferenceCount : 0;
+        public static int FindReferenceCount(string filePath) => references.TryGetValue(NormalizePath(filePath), out RefCounter refCounter) ? refCounter.ReferenceCount : 0;
+
+        private static string NormalizePath(string path) => path.NormalizeFullPath().ToLower();
     }
 }

@@ -71,7 +71,7 @@ namespace ForgeModGenerator.ViewModels
         {
             foreach (TFolder folder in folders)
             {
-                ObservableRangeCollection<TFile> temp = folder.Files.DeepClone<ObservableRangeCollection<TFile>, TFile>();
+                ObservableRangeCollection<TFile> temp = folder.Files.DeepCollectionClone<ObservableRangeCollection<TFile>, TFile>();
                 folder.Clear();
                 Explorer.Folders.Add(folder);
                 foreach (TFile file in temp)
@@ -96,9 +96,10 @@ namespace ForgeModGenerator.ViewModels
             DialogResult dialogResult = Explorer.ShowFileDialog(out IFileBrowser browser);
             if (dialogResult == DialogResult.OK)
             {
-                string newFolderPath = null;
-                string newFolderName = IOHelper.GetUniqueName(Path.GetFileNameWithoutExtension(browser.FileName),
-                                                                name => !Directory.Exists((newFolderPath = Path.Combine(FoldersRootPath, name))));
+                string fileName = Path.GetFileNameWithoutExtension(browser.FileName);
+                string newFolderPath = Path.Combine(FoldersRootPath, fileName);
+                string newFolderName = IOHelper.GetUniqueName(fileName, name => !Directory.Exists((newFolderPath = Path.Combine(FoldersRootPath, name))));
+                Directory.CreateDirectory(newFolderPath);
                 TFolder folder = Explorer.CreateFolder(newFolderPath);
                 Explorer.CopyFilesToFolder(folder, browser.FileNames);
             }

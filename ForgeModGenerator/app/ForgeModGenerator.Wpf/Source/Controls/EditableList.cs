@@ -70,7 +70,7 @@ namespace ForgeModGenerator.Controls
 
         protected virtual T DefaultItem => default;
 
-        protected void DefaultAdd(ObservableCollection<T> collection) => collection.Add(DefaultItem);
-        protected void DefaultRemove(Tuple<ObservableCollection<T>, T> param) => param.Item1.Remove(param.Item2);
+        protected virtual void DefaultAdd(ObservableCollection<T> collection) => collection.Add(DefaultItem);
+        protected virtual void DefaultRemove(Tuple<ObservableCollection<T>, T> param) => param.Item1.Remove(param.Item2);
     }
 }

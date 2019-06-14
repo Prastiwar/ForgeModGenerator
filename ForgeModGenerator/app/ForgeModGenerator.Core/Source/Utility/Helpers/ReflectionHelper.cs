@@ -38,7 +38,7 @@ namespace ForgeModGenerator.Utility
                     }
                     catch (Exception ex)
                     {
-                        Log.Error(ex);
+                        Log.Error(ex: ex, moreInformation: "Forced to ignore this exception");
                         continue;
                     }
                     yield return instance;

@@ -12,9 +12,9 @@ namespace ForgeModGenerator.Serialization
             ContractResolver = GetResolver()
         };
 
-        private static PropertyRenameIgnoreResolver GetResolver()
+        private static PropertyContractResolver GetResolver()
         {
-            PropertyRenameIgnoreResolver resolver = new PropertyRenameIgnoreResolver();
+            PropertyContractResolver resolver = new PropertyContractResolver();
             resolver.IgnoreProperty(typeof(PreferenceData), nameof(PreferenceData.PreferenceLocation));
             resolver.IgnoreProperty(typeof(ObservableDirtyObject), nameof(PreferenceData.IsDirty));
             return resolver;

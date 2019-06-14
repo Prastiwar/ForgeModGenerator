@@ -6,10 +6,14 @@ using System.Reflection;
 
 namespace ForgeModGenerator.Converters
 {
-    public class PropertyRenameIgnoreResolver : DefaultContractResolver
+    public enum Lettercase { Lowercase, Uppercase }
+
+    public class PropertyContractResolver : DefaultContractResolver
     {
         private readonly Dictionary<Type, HashSet<string>> ignored = new Dictionary<Type, HashSet<string>>();
         private readonly Dictionary<Type, Dictionary<string, string>> renamed = new Dictionary<Type, Dictionary<string, string>>();
+        private Lettercase lettercase;
+        private bool stringifyNull;
 
         public void IgnoreProperty(Type fromClass, params string[] jsonPropertyNames)
         {
@@ -33,6 +37,10 @@ namespace ForgeModGenerator.Converters
             renamed[fromClass][propertyName] = newJsonPropertyName;
         }
 
+        public void SetAllLetterCase(Lettercase lettercase) => this.lettercase = lettercase;
+
+        public void SetNullStringEmpty(bool shouldMakeNullStringEmpty) => stringifyNull = shouldMakeNullStringEmpty;
+
         protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
         {
             JsonProperty property = base.CreateProperty(member, memberSerialization);
@@ -45,6 +53,21 @@ namespace ForgeModGenerator.Converters
             else if (IsRenamed(property.DeclaringType, property.PropertyName, out string newJsonPropertyName))
             {
                 property.PropertyName = newJsonPropertyName;
+            }
+            switch (lettercase)
+            {
+                case Lettercase.Lowercase:
+                    property.PropertyName = property.PropertyName.ToLower();
+                    break;
+                case Lettercase.Uppercase:
+                    property.PropertyName = property.PropertyName.ToUpper();
+                    break;
+                default:
+                    break;
+            }
+            if (stringifyNull && property.PropertyType == typeof(string))
+            {
+                property.ValueProvider = new NullToEmptyStringValueProvider(property.ValueProvider);
             }
             return property;
         }

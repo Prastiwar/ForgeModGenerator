@@ -42,7 +42,9 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
         }
 
         private readonly string[] assetsFolerToGenerate = new string[] {
-            "blockstates", "lang", "recipes", "sounds", "models/item", "textures/blocks", "textures/entity", "textures/items", "textures/models/armor"
+            "blockstates", "lang", "sounds", "models/item",
+            "recipes/shapeless", "recipe/shaped", "recipe/smelting",
+            "textures/blocks", "textures/entity", "textures/items", "textures/models/armor"
         };
 
         protected IValidator<McMod> ModValidator { get; set; }
@@ -88,7 +90,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
 
         private async void RemoveMod(McMod mcMod)
         {
-            bool shouldRemove = await DialogService.ShowMessage("Are you sure you want to delete this mod? Folder will be moved to trash bin", 
+            bool shouldRemove = await DialogService.ShowMessage("Are you sure you want to delete this mod? Folder will be moved to trash bin",
                                                                 "Confirm deletion", "Yes", "No", null).ConfigureAwait(true);
             if (shouldRemove)
             {
@@ -147,7 +149,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
             {
                 if (e.ActualItem.Validate().IsValid)
                 {
-                    SaveModChanges(e.ActualItem);
+                    SaveModChanges(e.CachedItem, e.ActualItem);
                 }
             }
             else
@@ -195,7 +197,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
             }
         }
 
-        private void SaveModChanges(McMod mcMod)
+        private void SaveModChanges(McMod oldModValues, McMod mcMod)
         {
             ValidateResult validation = ModValidator.Validate(mcMod);
             if (!validation.IsValid)
@@ -203,59 +205,58 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
                 Log.Warning($"Selected mod is not valid. Reason: {validation}", true);
                 return;
             }
-            McMod oldValues = ModHelper.ImportMod(ModSerializer, ModPaths.ModRootFolder(mcMod.CachedName));
             try
             {
-                bool organizationChanged = mcMod.Organization != oldValues.Organization;
-                bool nameChanged = mcMod.ModInfo.Name != oldValues.ModInfo.Name;
-                bool modidChanged = mcMod.ModInfo.Modid != oldValues.ModInfo.Modid;
+                bool organizationChanged = mcMod.Organization != oldModValues.Organization;
+                bool nameChanged = mcMod.ModInfo.Name != oldModValues.ModInfo.Name;
+                bool modidChanged = mcMod.ModInfo.Modid != oldModValues.ModInfo.Modid;
 
                 if (organizationChanged)
                 {
-                    string oldOrganizationPath = ModPaths.OrganizationRootFolder(oldValues.ModInfo.Name, oldValues.Organization);
+                    string oldOrganizationPath = ModPaths.OrganizationRootFolder(oldModValues.ModInfo.Name, oldModValues.Organization);
                     if (!FileSystem.RenameDirectory(oldOrganizationPath, mcMod.Organization))
                     {
                         DialogService.ShowMessage(StaticMessage.GetOperationFailedMessage(oldOrganizationPath), "Rename failed");
-                        mcMod.Organization = oldValues.Organization;
+                        mcMod.Organization = oldModValues.Organization;
                     }
                 }
                 if (modidChanged)
                 {
-                    string oldAssetPath = ModPaths.AssetsFolder(oldValues.ModInfo.Name, oldValues.ModInfo.Modid);
+                    string oldAssetPath = ModPaths.AssetsFolder(oldModValues.ModInfo.Name, oldModValues.ModInfo.Modid);
                     if (!FileSystem.RenameDirectory(oldAssetPath, mcMod.ModInfo.Modid))
                     {
                         DialogService.ShowMessage(StaticMessage.GetOperationFailedMessage(oldAssetPath), "Rename failed");
-                        mcMod.ModInfo.Modid = oldValues.ModInfo.Modid;
+                        mcMod.ModInfo.Modid = oldModValues.ModInfo.Modid;
                     }
                 }
                 if (nameChanged)
                 {
                     bool canChangeName = true;
-                    string oldSourceCodePath = ModPaths.SourceCodeRootFolder(oldValues.ModInfo.Name, mcMod.Organization);
+                    string oldSourceCodePath = ModPaths.SourceCodeRootFolder(oldModValues.ModInfo.Name, mcMod.Organization);
                     if (!FileSystem.RenameDirectory(oldSourceCodePath, mcMod.ModInfo.Name.ToLower()))
                     {
                         DialogService.ShowMessage(StaticMessage.GetOperationFailedMessage(oldSourceCodePath), "Rename failed");
-                        mcMod.Name = oldValues.Name;
+                        mcMod.Name = oldModValues.Name;
                     }
 
-                    string oldNamePath = ModPaths.ModRootFolder(oldValues.ModInfo.Name);
+                    string oldNamePath = ModPaths.ModRootFolder(oldModValues.ModInfo.Name);
                     if (canChangeName && !FileSystem.RenameDirectory(oldNamePath, mcMod.ModInfo.Name))
                     {
                         DialogService.ShowMessage(StaticMessage.GetOperationFailedMessage(oldNamePath), "Rename failed");
                         string sourceCodeParentPath = new DirectoryInfo(oldSourceCodePath).Parent.FullName;
                         string newSourceCodePath = Path.Combine(sourceCodeParentPath, mcMod.ModInfo.Name.ToLower());
-                        FileSystem.RenameDirectory(newSourceCodePath, oldValues.Name.ToLower());
-                        mcMod.Name = oldValues.Name;
+                        FileSystem.RenameDirectory(newSourceCodePath, oldModValues.Name.ToLower());
+                        mcMod.Name = oldModValues.Name;
                     }
                 }
 
-                bool forgeVersionChanged = mcMod.ForgeVersion.Name != oldValues.ForgeVersion.Name;
+                bool forgeVersionChanged = mcMod.ForgeVersion.Name != oldModValues.ForgeVersion.Name;
                 if (forgeVersionChanged)
                 {
                     ChangeForgeVersion(mcMod);
                 }
 
-                bool workspaceChanged = mcMod.WorkspaceSetup.Name != oldValues.WorkspaceSetup.Name;
+                bool workspaceChanged = mcMod.WorkspaceSetup.Name != oldModValues.WorkspaceSetup.Name;
                 if (workspaceChanged)
                 {
                     mcMod.WorkspaceSetup.Setup(mcMod);
@@ -267,8 +268,8 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
                 }
                 else
                 {
-                    bool versionChanged = mcMod.ModInfo.Version != oldValues.ModInfo.Version;
-                    bool mcVersionChanged = mcMod.ModInfo.McVersion != oldValues.ModInfo.McVersion;
+                    bool versionChanged = mcMod.ModInfo.Version != oldModValues.ModInfo.Version;
+                    bool mcVersionChanged = mcMod.ModInfo.McVersion != oldModValues.ModInfo.McVersion;
                     if (versionChanged || mcVersionChanged)
                     {
                         CodeGenerationService.RegenerateScript(CodeGeneration.SourceCodeLocator.Hook(mcMod.ModInfo.Name, mcMod.Organization).ClassName, mcMod);
@@ -314,10 +315,11 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
             Directory.CreateDirectory(tempDirPath);
             mcMod.ForgeVersion.UnZip(tempDirPath);
 
+            // structure root path properly
             FileSystem.DeleteDirectory(Path.Combine(tempDirPath, "src"), false);
             FileSystem.MoveDirectoriesAndFiles(tempDirPath, modRoot);
             FileSystem.DeleteDirectory(tempDirPath, false);
-            Log.Info($"Changed forge version for {mcMod.CachedName} to {mcMod.ForgeVersion.Name}");
+            Log.Info($"Changed forge version for {mcMod.Name} to {mcMod.ForgeVersion.Name}");
         }
     }
 }

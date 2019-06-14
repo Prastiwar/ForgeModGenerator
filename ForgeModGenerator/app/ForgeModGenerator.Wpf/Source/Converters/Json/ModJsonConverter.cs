@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.IO;
 
 namespace ForgeModGenerator.Converters
 {
@@ -15,7 +16,12 @@ namespace ForgeModGenerator.Converters
                 return null;
             }
             string organization = item.GetValue(nameof(McMod.Organization), StringComparison.OrdinalIgnoreCase).ToObject<string>();
-            McModInfo modInfo = item.GetValue(nameof(McMod.ModInfo), StringComparison.OrdinalIgnoreCase).ToObject<McModInfo>(serializer);            
+            string modname = item.GetValue(nameof(McMod.Name), StringComparison.OrdinalIgnoreCase).ToObject<string>();
+            string modInfoPath = ModPaths.McModInfoFile(modname);
+            string modInfoContent = File.ReadAllText(modInfoPath);
+            McModInfo modInfo = JsonConvert.DeserializeObject<McModInfo>(modInfoContent, new JsonSerializerSettings {
+                Converters = serializer.Converters
+            });
             ForgeVersion forgeVersion = item.GetValue(nameof(McMod.ForgeVersion), StringComparison.OrdinalIgnoreCase).ToObject<ForgeVersion>(serializer);
 
             ModSide side = ModSide.ClientServer;
@@ -29,7 +35,7 @@ namespace ForgeModGenerator.Converters
             {
                 launchSetup = launchValue.ToObject<LaunchSetup>();
             }
-            
+
             WorkspaceSetup workspaceSetup = null;
             if (item.TryGetValue(nameof(McMod.WorkspaceSetup), StringComparison.OrdinalIgnoreCase, out JToken workspaceValue))
             {
@@ -47,7 +53,7 @@ namespace ForgeModGenerator.Converters
                 { nameof(McMod.LaunchSetup), JToken.FromObject(value.LaunchSetup, serializer) },
                 { nameof(McMod.Side), JToken.FromObject(value.Side, serializer) },
                 { nameof(McMod.WorkspaceSetup), JToken.FromObject(value.WorkspaceSetup, serializer) },
-                { nameof(McMod.CachedName), value.CachedName }
+                { nameof(McMod.Name), value.Name }
             };
             jo.WriteTo(writer);
         }

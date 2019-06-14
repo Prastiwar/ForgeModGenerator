@@ -1,4 +1,5 @@
 ﻿using ForgeModGenerator.CodeGeneration;
+using ForgeModGenerator.CodeGeneration.CodeDom;
 using ForgeModGenerator.Models;
 using ForgeModGenerator.RecipeGenerator.Models;
 using System.CodeDom;
@@ -18,8 +19,18 @@ namespace ForgeModGenerator.RecipeGenerator.CodeGeneration
 
         protected override CodeCompileUnit CreateTargetCodeUnit()
         {
-            CodeMemberMethod initMethod = NewMethod("init", typeof(void).FullName, MemberAttributes.Public | MemberAttributes.Static);
+            CodeMemberMethod initMethod = NewMethod("init", typeof(void).FullName, JavaAttributes.StaticOnly);
             CodeCompileUnit unit = NewCodeUnit(ScriptLocator.PackageName, NewClassWithMembers(ScriptLocator.ClassName, initMethod));
+            foreach (Recipe recipe in Elements)
+            {
+                if (recipe is SmeltingRecipe smeltingRecipe)
+                {
+                    // TODO: REVIEW: json factory (mc 1.13 change)
+                    // TODO: Add arguments (smeltingRecipe.Ingredient, smeltingRecipe.Result, amount, NewPrimitive(smeltingRecipe.CookingTime));
+                    CodeMethodInvokeExpression addSmelting = NewMethodInvokeType("GameRegistry", "addSmelting");
+                    initMethod.Statements.Add(addSmelting);
+                }
+            }
             return unit;
         }
     }

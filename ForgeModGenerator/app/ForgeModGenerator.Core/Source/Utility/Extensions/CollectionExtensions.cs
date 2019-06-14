@@ -11,7 +11,7 @@ namespace ForgeModGenerator.Utility
 
         public static bool Exists<TItem>(this Collection<TItem> items, Predicate<TItem> match) => items.FindIndex(match) != -1;
 
-        public static TCollection DeepClone<TCollection, TItem>(this TCollection collection)
+        public static TCollection DeepCollectionClone<TCollection, TItem>(this TCollection collection)
             where TCollection : ICollection<TItem>
             where TItem : ICopiable
         {

@@ -66,6 +66,7 @@
                 <ResourceDictionary Source="../Themes/Generic.xaml" />
                 <ResourceDictionary Source="../Themes/FolderExpanderThemes.xaml" />
                 <ResourceDictionary Source="../Themes/FolderListBoxThemes.xaml" />
+                <ResourceDictionary Source="../Themes/EditableListThemes.xaml" />
                 <ResourceDictionary>
                     <ControlTemplate x:Key="ErrorContentTemplate">
                         <StackPanel>
