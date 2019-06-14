@@ -54,11 +54,11 @@
   - [x] Create workspace for manual changes: eclipse, IntelliJ IDEA, VSCode
   - [x] Respect manual changes in mcmod.info (but it's not recommended)
 
-- [ ] Recipe Generator
+- [] Recipe Generator
 
-  - [ ] Create recipe json
-  - [ ] Respect manual changes in json
-  - [ ] Update source code
+  - [x] Create recipe json
+  - [x] Respect manual changes in json
+  - [ ] Update source code (for smelting)
 
 - [x] Sound Generator *- sounds file explorer*
 
