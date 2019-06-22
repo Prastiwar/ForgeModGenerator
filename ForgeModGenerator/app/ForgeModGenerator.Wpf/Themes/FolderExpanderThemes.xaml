@@ -21,6 +21,7 @@
                                                 Width="20"
                                                 Height="20"
                                                 Padding="0"
+                                                ToolTip="Add File"
                                                 Command="{Binding Path=AddFileCommand, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
                                                 CommandParameter="{Binding Path=Folder, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}">
                                             <materialDesign:PackIcon Kind="Plus" />
@@ -30,6 +31,7 @@
                                                 Height="20"
                                                 Padding="0"
                                                 Margin="8,0"
+                                                ToolTip="Remove folder"
                                                 Command="{Binding Path=RemoveFolderCommand, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
                                                 CommandParameter="{Binding Path=Folder, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}">
                                             <materialDesign:PackIcon Kind="Trash" />
@@ -39,6 +41,7 @@
                                                 Height="20"
                                                 Padding="0"
                                                 Margin="8,0"
+                                                ToolTip="Show Container"
                                                 Command="{Binding Path=ShowContainerCommand, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}">
                                             <materialDesign:PackIcon Kind="FolderOpen" />
                                         </Button>
@@ -92,6 +95,7 @@
                                                 Width="20"
                                                 Height="20"
                                                 Padding="0"
+                                                ToolTip="Add File"
                                                 Command="{Binding Path=AddFileCommand, RelativeSource={RelativeSource AncestorType=soundControls:SoundFolderExpanderControl}}"
                                                 CommandParameter="{Binding Path=Folder, RelativeSource={RelativeSource AncestorType=soundControls:SoundFolderExpanderControl}}">
                                             <materialDesign:PackIcon Kind="Plus" />
@@ -101,6 +105,7 @@
                                                 Height="20"
                                                 Padding="0"
                                                 Margin="8,0"
+                                                ToolTip="Remove Sound Event"
                                                 Command="{Binding Path=RemoveFolderCommand, RelativeSource={RelativeSource AncestorType=soundControls:SoundFolderExpanderControl}}"
                                                 CommandParameter="{Binding Path=Folder, RelativeSource={RelativeSource AncestorType=soundControls:SoundFolderExpanderControl}}">
                                             <materialDesign:PackIcon Kind="Trash" />
@@ -170,6 +175,7 @@
                                         <Button x:Name="AddFileButton"
                                                 Width="20"
                                                 Height="20"
+                                                ToolTip="Add File"
                                                 Padding="0"
                                                 Command="{Binding Path=AddFileCommand, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
                                                 CommandParameter="{Binding Path=Folder, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}">
@@ -180,6 +186,7 @@
                                                 Height="20"
                                                 Padding="0"
                                                 Margin="8,0"
+                                                ToolTip="Show Container"
                                                 Command="{Binding Path=ShowContainerCommand, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}">
                                             <materialDesign:PackIcon Kind="FolderOpen" />
                                         </Button>

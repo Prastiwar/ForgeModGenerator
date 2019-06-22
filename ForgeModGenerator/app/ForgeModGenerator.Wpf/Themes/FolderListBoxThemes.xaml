@@ -28,6 +28,7 @@
                                                     Height="25"
                                                     Margin="5"
                                                     Padding="0"
+                                                    ToolTip="Add Folder"
                                                     Content="{materialDesign:PackIcon Kind=FolderPlus}"
                                                     HorizontalAlignment="Left"
                                                     Command="{Binding Path=AddFolderCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
@@ -94,7 +95,7 @@
                                                         Margin="5"
                                                         Padding="0"
                                                         HorizontalAlignment="Left"
-                                                        ToolTip="Add File as Folder"
+                                                        ToolTip="Add Sound as Sound Event"
                                                         Content="{materialDesign:PackIcon Kind=FilePlus}"
                                                         Command="{Binding Path=AddFileAsFolderCommand, RelativeSource={RelativeSource AncestorType=soundControls:SoundFolderListBox}}" />
                                             </StackPanel>

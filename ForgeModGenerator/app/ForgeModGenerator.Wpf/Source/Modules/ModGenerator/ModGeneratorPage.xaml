@@ -22,9 +22,10 @@
                                 <Button x:Name="CreateModButton"
                                         Content="{materialDesign:PackIcon Kind=Plus}"
                                         Margin="10,1"
+                                        FontSize="20"
                                         HorizontalAlignment="Left"
                                         VerticalAlignment="Center"
-                                        FontSize="20"
+                                        ToolTip="Generate new mod"
                                         Command="{Binding CreateModCommand}" />
                                 <TextBlock x:Name="CreateModTextBlock"
                                            Text="Generate New Mod"
@@ -45,16 +46,19 @@
                                                 <Button x:Name="EditModButton"
                                                         Content="{materialDesign:PackIcon Kind=Edit}"
                                                         Margin="5"
+                                                        ToolTip="Edit mod info"
                                                         Command="{Binding DataContext.EditModCommand, ElementName=ThisWindow}"
                                                         CommandParameter="{Binding}" />
                                                 <Button x:Name="ShowModContainerButton"
                                                         Content="{materialDesign:PackIcon Kind=Folder}"
                                                         Margin="5"
+                                                        ToolTip="Show Container"
                                                         Command="{Binding DataContext.ShowModContainerCommand, ElementName=ThisWindow}"
                                                         CommandParameter="{Binding}" />
                                                 <Button x:Name="RemoveModButton"
                                                         Content="{materialDesign:PackIcon Kind=Trash}"
                                                         Margin="5"
+                                                        ToolTip="Remove Mod"
                                                         Command="{Binding DataContext.RemoveModCommand, ElementName=ThisWindow}"
                                                         CommandParameter="{Binding}" />
                                                 <TextBlock Text="{Binding ModInfo.Name}"

@@ -1,5 +1,7 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using ForgeModGenerator.Utility;
+using Microsoft.Extensions.Caching.Memory;
 using System;
+using System.IO;
 using System.Text;
 
 namespace ForgeModGenerator.CodeGeneration
@@ -22,7 +24,9 @@ namespace ForgeModGenerator.CodeGeneration
             {
                 return value;
             }
-            return cache.Set(key, new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), Prefix + "Manager")), cacheExpirationTime);
+            ClassLocator locator = new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), Prefix + "Manager"));
+            CreateIfNotExist(locator.FullPath);
+            return cache.Set(key, locator, cacheExpirationTime);
         }
 
         public static ClassLocator Hook(string modname, string organization)
@@ -32,7 +36,9 @@ namespace ForgeModGenerator.CodeGeneration
             {
                 return value;
             }
-            return cache.Set(key, new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), Prefix + "Hook")), cacheExpirationTime);
+            ClassLocator locator = new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), Prefix + "Hook"));
+            CreateIfNotExist(locator.FullPath);
+            return cache.Set(key, locator, cacheExpirationTime);
         }
 
         public static ClassLocator Commands(string modname, string organization)
@@ -42,7 +48,9 @@ namespace ForgeModGenerator.CodeGeneration
             {
                 return value;
             }
-            return cache.Set(key, new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), Prefix + "Commands")), cacheExpirationTime);
+            ClassLocator locator = new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), Prefix + "Commands"));
+            CreateIfNotExist(locator.FullPath);
+            return cache.Set(key, locator, cacheExpirationTime);
         }
 
         public static ClassLocator CustomCommand(string modname, string organization, string className)
@@ -52,7 +60,9 @@ namespace ForgeModGenerator.CodeGeneration
             {
                 return value;
             }
-            return cache.Set(key, new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Command, className)), cacheExpirationTime);
+            ClassLocator locator = new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Command, className));
+            CreateIfNotExist(locator.FullPath);
+            return cache.Set(key, locator, cacheExpirationTime);
         }
 
         #region Item locators
@@ -63,7 +73,9 @@ namespace ForgeModGenerator.CodeGeneration
             {
                 return value;
             }
-            return cache.Set(key, new InitClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), Prefix + "Items"), "ITEMS"), cacheExpirationTime);
+            InitClassLocator locator = new InitClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), Prefix + "Items"), "ITEMS");
+            CreateIfNotExist(locator.FullPath);
+            return cache.Set(key, locator, cacheExpirationTime);
         }
 
         public static ClassLocator ItemBase(string modname, string organization)
@@ -73,7 +85,9 @@ namespace ForgeModGenerator.CodeGeneration
             {
                 return value;
             }
-            return cache.Set(key, new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Item, "ItemBase")), cacheExpirationTime);
+            ClassLocator locator = new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Item, "ItemBase"));
+            CreateIfNotExist(locator.FullPath);
+            return cache.Set(key, locator, cacheExpirationTime);
         }
 
         public static ClassLocator BowBase(string modname, string organization)
@@ -83,7 +97,9 @@ namespace ForgeModGenerator.CodeGeneration
             {
                 return value;
             }
-            return cache.Set(key, new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Item, SourceCodeFolders.Bow, "BowBase")), cacheExpirationTime);
+            ClassLocator locator = new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Item, SourceCodeFolders.Bow, "BowBase"));
+            CreateIfNotExist(locator.FullPath);
+            return cache.Set(key, locator, cacheExpirationTime);
         }
 
         public static ClassLocator FoodBase(string modname, string organization)
@@ -93,7 +109,9 @@ namespace ForgeModGenerator.CodeGeneration
             {
                 return value;
             }
-            return cache.Set(key, new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Item, SourceCodeFolders.Food, "FoodBase")), cacheExpirationTime);
+            ClassLocator locator = new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Item, SourceCodeFolders.Food, "FoodBase"));
+            CreateIfNotExist(locator.FullPath);
+            return cache.Set(key, locator, cacheExpirationTime);
         }
 
         public static ClassLocator FoodEffectBase(string modname, string organization)
@@ -103,7 +121,9 @@ namespace ForgeModGenerator.CodeGeneration
             {
                 return value;
             }
-            return cache.Set(key, new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Item, SourceCodeFolders.Food, "FoodEffectBase")), cacheExpirationTime);
+            ClassLocator locator = new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Item, SourceCodeFolders.Food, "FoodEffectBase"));
+            CreateIfNotExist(locator.FullPath);
+            return cache.Set(key, locator, cacheExpirationTime);
         }
 
         public static ClassLocator ArmorBase(string modname, string organization)
@@ -113,7 +133,9 @@ namespace ForgeModGenerator.CodeGeneration
             {
                 return value;
             }
-            return cache.Set(key, new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Item, SourceCodeFolders.Armor, "ArmorBase")), cacheExpirationTime);
+            ClassLocator locator = new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Item, SourceCodeFolders.Armor, "ArmorBase"));
+            CreateIfNotExist(locator.FullPath);
+            return cache.Set(key, locator, cacheExpirationTime);
         }
 
         public static ClassLocator SwordBase(string modname, string organization)
@@ -123,7 +145,9 @@ namespace ForgeModGenerator.CodeGeneration
             {
                 return value;
             }
-            return cache.Set(key, new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Item, SourceCodeFolders.Tool, "SwordBase")), cacheExpirationTime);
+            ClassLocator locator = new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Item, SourceCodeFolders.Tool, "SwordBase"));
+            CreateIfNotExist(locator.FullPath);
+            return cache.Set(key, locator, cacheExpirationTime);
         }
 
         public static ClassLocator SpadeBase(string modname, string organization)
@@ -133,7 +157,9 @@ namespace ForgeModGenerator.CodeGeneration
             {
                 return value;
             }
-            return cache.Set(key, new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Item, SourceCodeFolders.Tool, "SpadeBase")), cacheExpirationTime);
+            ClassLocator locator = new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Item, SourceCodeFolders.Tool, "SpadeBase"));
+            CreateIfNotExist(locator.FullPath);
+            return cache.Set(key, locator, cacheExpirationTime);
         }
 
         public static ClassLocator PickaxeBase(string modname, string organization)
@@ -143,7 +169,9 @@ namespace ForgeModGenerator.CodeGeneration
             {
                 return value;
             }
-            return cache.Set(key, new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Item, SourceCodeFolders.Tool, "PickaxeBase")), cacheExpirationTime);
+            ClassLocator locator = new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Item, SourceCodeFolders.Tool, "PickaxeBase"));
+            CreateIfNotExist(locator.FullPath);
+            return cache.Set(key, locator, cacheExpirationTime);
         }
 
         public static ClassLocator HoeBase(string modname, string organization)
@@ -153,7 +181,9 @@ namespace ForgeModGenerator.CodeGeneration
             {
                 return value;
             }
-            return cache.Set(key, new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Item, SourceCodeFolders.Tool, "HoeBase")), cacheExpirationTime);
+            ClassLocator locator = new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Item, SourceCodeFolders.Tool, "HoeBase"));
+            CreateIfNotExist(locator.FullPath);
+            return cache.Set(key, locator, cacheExpirationTime);
         }
 
         public static ClassLocator AxeBase(string modname, string organization)
@@ -163,7 +193,9 @@ namespace ForgeModGenerator.CodeGeneration
             {
                 return value;
             }
-            return cache.Set(key, new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Item, SourceCodeFolders.Tool, "AxeBase")), cacheExpirationTime);
+            ClassLocator locator = new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Item, SourceCodeFolders.Tool, "AxeBase"));
+            CreateIfNotExist(locator.FullPath);
+            return cache.Set(key, locator, cacheExpirationTime);
         }
         #endregion
 
@@ -175,7 +207,9 @@ namespace ForgeModGenerator.CodeGeneration
             {
                 return value;
             }
-            return cache.Set(key, new InitClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), Prefix + "Blocks"), "BLOCKS"), cacheExpirationTime);
+            InitClassLocator locator = new InitClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), Prefix + "Blocks"), "BLOCKS");
+            CreateIfNotExist(locator.FullPath);
+            return cache.Set(key, locator, cacheExpirationTime);
         }
 
         public static ClassLocator BlockBase(string modname, string organization)
@@ -185,7 +219,9 @@ namespace ForgeModGenerator.CodeGeneration
             {
                 return value;
             }
-            return cache.Set(key, new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Block, "BlockBase")), cacheExpirationTime);
+            ClassLocator locator = new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Block, "BlockBase"));
+            CreateIfNotExist(locator.FullPath);
+            return cache.Set(key, locator, cacheExpirationTime);
         }
 
         public static ClassLocator OreBase(string modname, string organization)
@@ -195,7 +231,9 @@ namespace ForgeModGenerator.CodeGeneration
             {
                 return value;
             }
-            return cache.Set(key, new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Block, "OreBase")), cacheExpirationTime);
+            ClassLocator locator = new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Block, "OreBase"));
+            CreateIfNotExist(locator.FullPath);
+            return cache.Set(key, locator, cacheExpirationTime);
         }
         #endregion
 
@@ -206,7 +244,9 @@ namespace ForgeModGenerator.CodeGeneration
             {
                 return value;
             }
-            return cache.Set(key, new InitClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), Prefix + "SoundEvents"), "SOUNDEVENTS"), cacheExpirationTime);
+            InitClassLocator locator = new InitClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), Prefix + "SoundEvents"), "SOUNDEVENTS");
+            CreateIfNotExist(locator.FullPath);
+            return cache.Set(key, locator, cacheExpirationTime);
         }
 
         public static ClassLocator SoundEventBase(string modname, string organization)
@@ -216,7 +256,9 @@ namespace ForgeModGenerator.CodeGeneration
             {
                 return value;
             }
-            return cache.Set(key, new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Sound, "SoundEventBase")), cacheExpirationTime);
+            ClassLocator locator = new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Sound, "SoundEventBase"));
+            CreateIfNotExist(locator.FullPath);
+            return cache.Set(key, locator, cacheExpirationTime);
         }
 
         public static InitClassLocator Recipes(string modname, string organization)
@@ -226,7 +268,9 @@ namespace ForgeModGenerator.CodeGeneration
             {
                 return value;
             }
-            return cache.Set(key, new InitClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), Prefix + "Recipes"), "RECIPES"), cacheExpirationTime);
+            InitClassLocator locator = new InitClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), Prefix + "Recipes"), "RECIPES");
+            CreateIfNotExist(locator.FullPath);
+            return cache.Set(key, locator, cacheExpirationTime);
         }
 
         public static ClassLocator CreativeTab(string modname, string organization)
@@ -236,7 +280,9 @@ namespace ForgeModGenerator.CodeGeneration
             {
                 return value;
             }
-            return cache.Set(key, new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Gui, Prefix + "CreativeTab")), cacheExpirationTime);
+            ClassLocator locator = new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Gui, Prefix + "CreativeTab"));
+            CreateIfNotExist(locator.FullPath);
+            return cache.Set(key, locator, cacheExpirationTime);
         }
 
         public static ClassLocator CommonProxyInterface(string modname, string organization)
@@ -246,7 +292,9 @@ namespace ForgeModGenerator.CodeGeneration
             {
                 return value;
             }
-            return cache.Set(key, new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Proxy, "ICommonProxy")), cacheExpirationTime);
+            ClassLocator locator = new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Proxy, "ICommonProxy"));
+            CreateIfNotExist(locator.FullPath);
+            return cache.Set(key, locator, cacheExpirationTime);
         }
 
         public static ClassLocator ServerProxy(string modname, string organization)
@@ -256,7 +304,9 @@ namespace ForgeModGenerator.CodeGeneration
             {
                 return value;
             }
-            return cache.Set(key, new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Proxy, "ServerProxy")), cacheExpirationTime);
+            ClassLocator locator = new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Proxy, "ServerProxy"));
+            CreateIfNotExist(locator.FullPath);
+            return cache.Set(key, locator, cacheExpirationTime);
         }
 
         public static ClassLocator ClientProxy(string modname, string organization)
@@ -266,7 +316,9 @@ namespace ForgeModGenerator.CodeGeneration
             {
                 return value;
             }
-            return cache.Set(key, new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Proxy, "ClientProxy")), cacheExpirationTime);
+            ClassLocator locator = new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Proxy, "ClientProxy"));
+            CreateIfNotExist(locator.FullPath);
+            return cache.Set(key, locator, cacheExpirationTime);
         }
 
         public static ClassLocator ModelInterface(string modname, string organization)
@@ -276,7 +328,9 @@ namespace ForgeModGenerator.CodeGeneration
             {
                 return value;
             }
-            return cache.Set(key, new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Handler, "IHasModel")), cacheExpirationTime);
+            ClassLocator locator = new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Handler, "IHasModel"));
+            CreateIfNotExist(locator.FullPath);
+            return cache.Set(key, locator, cacheExpirationTime);
         }
 
         public static ClassLocator RegistryHandler(string modname, string organization)
@@ -286,7 +340,9 @@ namespace ForgeModGenerator.CodeGeneration
             {
                 return value;
             }
-            return cache.Set(key, new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Handler, "RegistryHandler")), cacheExpirationTime);
+            ClassLocator locator = new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Handler, "RegistryHandler"));
+            CreateIfNotExist(locator.FullPath);
+            return cache.Set(key, locator, cacheExpirationTime);
         }
 
         public static void Initialize(IMemoryCache cache)
@@ -320,6 +376,15 @@ namespace ForgeModGenerator.CodeGeneration
             if (!isInitialized)
             {
                 throw new ClassNotInitializedException(typeof(SourceCodeLocator).FullName);
+            }
+        }
+
+        private static void CreateIfNotExist(string path)
+        {
+            string dirPath = IOHelper.GetDirectoryPath(path);
+            if (!Directory.Exists(dirPath))
+            {
+                Directory.CreateDirectory(dirPath);
             }
         }
     }
