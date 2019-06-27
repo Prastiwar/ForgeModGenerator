@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -35,6 +36,22 @@ namespace ForgeModGenerator.Controls
         public bool IsSelected {
             get => (bool)GetValue(IsSelectedProperty);
             set => SetValue(IsSelectedProperty, value);
+        }
+
+        public static readonly DependencyProperty IsFirstSelectedProperty =
+            DependencyProperty.Register("IsFirstSelected", typeof(bool), typeof(NavButton), new PropertyMetadata(false));
+        public bool IsFirstSelected {
+            get => (bool)GetValue(IsFirstSelectedProperty);
+            set => SetValue(IsFirstSelectedProperty, value);
+        }
+
+        protected override void OnInitialized(EventArgs e)
+        {
+            if (IsFirstSelected)
+            {
+                ClickNavButton();
+            }
+            base.OnInitialized(e);
         }
 
         protected void ClickNavButton()

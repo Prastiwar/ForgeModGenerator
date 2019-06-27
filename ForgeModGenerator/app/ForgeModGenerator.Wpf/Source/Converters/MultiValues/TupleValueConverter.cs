@@ -27,7 +27,7 @@ namespace ForgeModGenerator.Converters
             return methodInfo.Invoke(null, values);
         }
 
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) => throw new NotImplementedException();
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) => throw new NotImplementedException(nameof(GenericTupleConverter) + " works only one way");
     }
 
     public class TupleValueConverter<T1, T2> : GenericMultiValueConverter<Tuple<T1, T2>, object>
