@@ -68,6 +68,7 @@
                                           FoldersSource="{Binding Explorer.Folders.Files, Mode=OneWay}"
                                           AddFolderCommand="{Binding AddFolderCommand}"
                                           AddFileAsFolderCommand="{Binding AddFileAsFolderCommand}"
+                                          RootPath="{Binding FoldersRootPath}"
                                           ShowEmptyMessage="{Binding SessionContext.IsModSelected, Converter={StaticResource InvertBooleanConverter}}"
                                           FolderTemplate="{StaticResource FolderTemplate}" />
             <StackPanel VerticalAlignment="Bottom">

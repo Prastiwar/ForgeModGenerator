@@ -63,6 +63,7 @@
                                     Visibility="{Binding IsLoading, Converter={StaticResource InvertedBoolToVisibility}}"
                                     FoldersSource="{Binding Explorer.Folders.Files, Mode=OneWay}"
                                     AddFolderCommand="{Binding AddFolderCommand}"
+                                    RootPath="{Binding FoldersRootPath}"
                                     ShowEmptyMessage="{Binding SessionContext.IsModSelected, Converter={StaticResource InvertBooleanConverter}}"
                                     FolderTemplate="{StaticResource FolderTemplate}" />
         </Grid>

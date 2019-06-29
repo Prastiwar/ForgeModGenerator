@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using ForgeModGenerator.Utility;
+using Prism.Commands;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -8,11 +10,26 @@ namespace ForgeModGenerator.Controls
     {
         static FolderListBox() => DefaultStyleKeyProperty.OverrideMetadata(typeof(FolderListBox), new FrameworkPropertyMetadata(typeof(FolderListBox)));
 
+        public FolderListBox()
+        {
+            if (ShowRootContainerCommand == null)
+            {
+                ShowRootContainerCommand = new DelegateCommand(ShowContainer);
+            }
+        }
+
         public static readonly DependencyProperty FolderTemplateProperty =
             DependencyProperty.Register("FolderTemplate", typeof(DataTemplate), typeof(FolderListBox), new PropertyMetadata(null));
         public DataTemplate FolderTemplate {
             get => (DataTemplate)GetValue(FolderTemplateProperty);
             set => SetValue(FolderTemplateProperty, value);
+        }
+
+        public static readonly DependencyProperty RootPathProperty =
+            DependencyProperty.Register("RootPath", typeof(string), typeof(FolderListBox), new PropertyMetadata(null));
+        public string RootPath {
+            get => (string)GetValue(RootPathProperty);
+            set => SetValue(RootPathProperty, value);
         }
 
         public static readonly DependencyProperty FoldersSourceProperty =
@@ -42,5 +59,21 @@ namespace ForgeModGenerator.Controls
             get => (ICommand)GetValue(AddFolderCommandProperty);
             set => SetValue(AddFolderCommandProperty, value);
         }
+
+        public static readonly DependencyProperty ShowRootContainerCommandProperty =
+            DependencyProperty.Register("ShowRootContainerCommand", typeof(ICommand), typeof(FolderListBox), new PropertyMetadata(null));
+        public ICommand ShowRootContainerCommand {
+            get => (ICommand)GetValue(ShowRootContainerCommandProperty);
+            set => SetValue(ShowRootContainerCommandProperty, value);
+        }
+
+        protected void ShowContainer()
+        {
+            if (IOHelper.IsPathValid(RootPath))
+            {
+                System.Diagnostics.Process.Start(RootPath);
+            }
+        }
+
     }
 }

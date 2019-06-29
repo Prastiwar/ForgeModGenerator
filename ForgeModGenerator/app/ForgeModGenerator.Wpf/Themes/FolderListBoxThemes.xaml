@@ -23,16 +23,27 @@
                                     <materialDesign:Card Background="#FF535353"
                                                          Margin="10">
                                         <StackPanel>
-                                            <Button x:Name="AddFolderButton"
-                                                    Width="25"
-                                                    Height="25"
-                                                    Margin="5"
-                                                    Padding="0"
-                                                    ToolTip="Add Folder"
-                                                    Content="{materialDesign:PackIcon Kind=FolderPlus}"
-                                                    HorizontalAlignment="Left"
-                                                    Command="{Binding Path=AddFolderCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
-                                                    Visibility="{Binding Path=ShowEmptyMessage, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}, Converter={StaticResource InvertedBoolToVisibility}}" />
+                                            <StackPanel Orientation="Horizontal"
+                                                        Visibility="{Binding Path=ShowEmptyMessage, RelativeSource={RelativeSource AncestorType=soundControls:SoundFolderListBox}, Converter={StaticResource InvertedBoolToVisibility}}">
+                                                <Button x:Name="AddFolderButton"
+                                                        Width="25"
+                                                        Height="25"
+                                                        Margin="5"
+                                                        Padding="0"
+                                                        ToolTip="Add Folder"
+                                                        Content="{materialDesign:PackIcon Kind=FolderPlus}"
+                                                        Command="{Binding Path=AddFolderCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
+                                                        Visibility="{Binding Path=ShowEmptyMessage, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}, Converter={StaticResource InvertedBoolToVisibility}}" />
+                                                <Button x:Name="ShowContainerButton"
+                                                        Width="25"
+                                                        Height="25"
+                                                        Padding="0"
+                                                        Margin="5"
+                                                        ToolTip="Show Container"
+                                                        Command="{Binding Path=ShowRootContainerCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}">
+                                                    <materialDesign:PackIcon Kind="FolderOpen" />
+                                                </Button>
+                                            </StackPanel>
                                             <ListBox x:Name="FoldersListBox"
                                                      ItemsSource="{Binding Path=FoldersSource, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
                                                      ItemTemplate="{Binding Path=FolderTemplate, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
@@ -98,6 +109,15 @@
                                                         ToolTip="Add Sound as Sound Event"
                                                         Content="{materialDesign:PackIcon Kind=FilePlus}"
                                                         Command="{Binding Path=AddFileAsFolderCommand, RelativeSource={RelativeSource AncestorType=soundControls:SoundFolderListBox}}" />
+                                                <Button x:Name="ShowContainerButton"
+                                                        Width="25"
+                                                        Height="25"
+                                                        Padding="0"
+                                                        Margin="5"
+                                                        ToolTip="Show Container"
+                                                        Command="{Binding Path=ShowRootContainerCommand, RelativeSource={RelativeSource AncestorType=soundControls:SoundFolderListBox}}">
+                                                    <materialDesign:PackIcon Kind="FolderOpen" />
+                                                </Button>
                                             </StackPanel>
                                             <ListBox x:Name="FoldersListBox"
                                                      ItemsSource="{Binding Path=FoldersSource, RelativeSource={RelativeSource AncestorType=soundControls:SoundFolderListBox}}"
