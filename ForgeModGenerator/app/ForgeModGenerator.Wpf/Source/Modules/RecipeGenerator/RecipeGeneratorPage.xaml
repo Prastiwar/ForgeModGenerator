@@ -14,7 +14,7 @@
     <Page.Resources>
         <DataTemplate x:Key="FolderTemplate">
             <StackPanel>
-                <controls:FolderExpanderControl x:Name="CommandFolderExpanderControl"
+                <controls:FolderExpanderControl x:Name="RecipeFolderExpanderControl"
                                                 Style="{StaticResource CommandFolderExpanderStyle}"
                                                 HeaderText="{Binding Path=Info.Name}"
                                                 Folder="{Binding}"
@@ -62,7 +62,7 @@
                          IsIndeterminate="True" />
             <controls:FolderListBox x:Name="FoldersListBox"
                                     Grid.Row="1"
-                                    Style="{StaticResource CommandFolderListBoxStyle}"
+                                    Style="{StaticResource RecipeFolderListBoxStyle}"
                                     Visibility="{Binding IsLoading, Converter={StaticResource InvertedBoolToVisibility}}"
                                     FoldersSource="{Binding Explorer.Folders.Files, Mode=OneWay}"
                                     ShowEmptyMessage="{Binding SessionContext.IsModSelected, Converter={StaticResource InvertBooleanConverter}}"

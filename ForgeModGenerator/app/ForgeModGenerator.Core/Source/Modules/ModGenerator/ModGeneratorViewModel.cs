@@ -83,7 +83,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
 
         private ICommand showModContainerCommand;
         public ICommand ShowModContainerCommand => showModContainerCommand ?? (showModContainerCommand = new DelegateCommand<McMod>(ShowContainer));
-
+        
         private void ShowContainer(McMod mcMod) => Process.Start(ModPaths.ModRootFolder(mcMod.ModInfo.Name));
 
         private string OnModValidate(McMod sender, string propertyName) => ModValidator.Validate(sender, propertyName).Error;
