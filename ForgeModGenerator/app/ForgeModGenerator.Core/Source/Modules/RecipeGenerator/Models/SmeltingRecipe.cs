@@ -7,6 +7,7 @@ namespace ForgeModGenerator.RecipeGenerator.Models
     {
         protected SmeltingRecipe() { }
         public SmeltingRecipe(string filePath) : base(filePath) { }
+        public override string Type => "smelting";
 
         private RecipeResult result;
         public RecipeResult Result {

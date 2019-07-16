@@ -8,6 +8,8 @@ namespace ForgeModGenerator.RecipeGenerator.Models
         protected ShapelessRecipe() { }
         public ShapelessRecipe(string filePath) : base(filePath) { }
 
+        public override string Type => "crafting_shapeless";
+
         private ObservableCollection<Ingredient> ingredients;
         public ObservableCollection<Ingredient> Ingredients {
             get => ingredients;

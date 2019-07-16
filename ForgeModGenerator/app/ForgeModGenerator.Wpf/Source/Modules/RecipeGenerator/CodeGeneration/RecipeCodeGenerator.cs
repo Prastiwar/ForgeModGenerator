@@ -26,8 +26,11 @@ namespace ForgeModGenerator.RecipeGenerator.CodeGeneration
                 if (recipe is SmeltingRecipe smeltingRecipe)
                 {
                     // TODO: REVIEW: json factory (mc 1.13 change)
-                    // TODO: Add arguments (smeltingRecipe.Ingredient, smeltingRecipe.Result, amount, NewPrimitive(smeltingRecipe.CookingTime));
                     CodeMethodInvokeExpression addSmelting = NewMethodInvokeType("GameRegistry", "addSmelting");
+                    //addSmelting.Parameters.Add(NewPrimitive(smeltingRecipe.Ingredients[0].Item));
+                    //addSmelting.Parameters.Add(NewPrimitive(smeltingRecipe.Result.Item));
+                    //addSmelting.Parameters.Add(NewPrimitive(smeltingRecipe.Result.Count));
+                    //addSmelting.Parameters.Add(NewPrimitive(smeltingRecipe.CookingTime));
                     initMethod.Statements.Add(addSmelting);
                 }
             }

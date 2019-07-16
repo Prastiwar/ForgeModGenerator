@@ -260,6 +260,7 @@
     <Compile Include="Source\Modules\RecipeGenerator\Controls\RecipeEditForm.xaml.cs">
       <DependentUpon>RecipeEditForm.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Source\Modules\RecipeGenerator\Converters\SmeltingRecipeJsonConverter.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\RecipeEditorFormFactory.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\Converters\RecipeListConverters.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\RecipeSerializer.cs" />

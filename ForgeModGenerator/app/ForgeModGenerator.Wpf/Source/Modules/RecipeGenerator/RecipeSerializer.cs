@@ -1,5 +1,6 @@
 ﻿using ForgeModGenerator.Converters;
 using ForgeModGenerator.Models;
+using ForgeModGenerator.RecipeGenerator.Converters;
 using ForgeModGenerator.RecipeGenerator.Models;
 using ForgeModGenerator.Serialization;
 using Newtonsoft.Json;
@@ -20,6 +21,7 @@ namespace ForgeModGenerator.RecipeGenerator.Serialization
             resolver.SetAllLetterCase(Lettercase.Lowercase);
             resolver.SetNullStringEmpty(true);
             settings.ContractResolver = resolver;
+            settings.Converters.Add(new SmeltingRecipeJsonConverter());
             return settings;
         }
 

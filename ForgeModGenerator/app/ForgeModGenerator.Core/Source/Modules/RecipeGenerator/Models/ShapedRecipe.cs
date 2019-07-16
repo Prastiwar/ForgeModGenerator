@@ -8,6 +8,7 @@ namespace ForgeModGenerator.RecipeGenerator.Models
     {
         protected ShapedRecipe() { }
         public ShapedRecipe(string filePath) : base(filePath) { }
+        public override string Type => "crafting_shaped";
 
         public string[] Pattern { get; } = new string[3] { "   ", "   ", "   " };
 

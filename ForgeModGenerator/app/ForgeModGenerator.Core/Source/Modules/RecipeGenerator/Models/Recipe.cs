@@ -9,6 +9,8 @@ namespace ForgeModGenerator.RecipeGenerator.Models
         protected Recipe() { }
         public Recipe(string filePath) : base(filePath) { }
 
+        public virtual string Type { get; } = "";
+
         private string name;
         public string Name {
             get => name;
@@ -45,7 +47,25 @@ namespace ForgeModGenerator.RecipeGenerator.Models
             return false;
         }
 
-        public virtual ValidateResult Validate() => ValidateResult.Valid;
+        public virtual ValidateResult Validate()
+        {
+            string error = OnValidate(nameof(Type));
+            if (!string.IsNullOrEmpty(error))
+            {
+                return new ValidateResult(false, error);
+            }
+            error = OnValidate(nameof(Name));
+            if (!string.IsNullOrEmpty(error))
+            {
+                return new ValidateResult(false, error);
+            }
+            error = OnValidate(nameof(Group));
+            if (!string.IsNullOrEmpty(error))
+            {
+                return new ValidateResult(false, error);
+            }
+            return ValidateResult.Valid;
+        }
 
         public event PropertyValidationEventHandler<Recipe> ValidateProperty;
         string IDataErrorInfo.Error => null;
