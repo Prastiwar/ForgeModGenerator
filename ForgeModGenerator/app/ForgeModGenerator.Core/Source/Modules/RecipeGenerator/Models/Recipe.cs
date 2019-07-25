@@ -26,10 +26,7 @@ namespace ForgeModGenerator.RecipeGenerator.Models
         public override object DeepClone()
         {
             Recipe recipe = (Recipe)Activator.CreateInstance(GetType(), true);
-            recipe.Name = Name;
-            recipe.Group = Group;
-            recipe.SetInfo(Info.FullName);
-            recipe.IsDirty = false;
+            recipe.CopyValues(this);
             return recipe;
         }
 
@@ -39,7 +36,7 @@ namespace ForgeModGenerator.RecipeGenerator.Models
             {
                 Name = recipe.Name;
                 Group = recipe.Group;
-
+                ValidateProperty = recipe.ValidateProperty;
                 base.CopyValues(fromCopy);
                 IsDirty = false;
                 return true;

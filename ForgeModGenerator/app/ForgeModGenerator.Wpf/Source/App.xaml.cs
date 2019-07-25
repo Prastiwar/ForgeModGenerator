@@ -161,6 +161,8 @@ namespace ForgeModGenerator
             containerRegistry.Register(typeof(IFoldersExplorerFactory<,>), typeof(FoldersExplorerFactory<,>));
             containerRegistry.Register(typeof(IFoldersFinder<,>), typeof(DefaultFoldersFinder<,>));
 
+            containerRegistry.Register(typeof(IFoldersFactory<ObservableFolder<Recipe>, Recipe>), typeof(RecipesFactory));
+
             containerRegistry.Register(typeof(IEditorFormFactory<McMod>), typeof(ModEditorFormFactory));
             containerRegistry.Register(typeof(IEditorFormFactory<Command>), typeof(CommandEditorFormFactory));
             containerRegistry.Register(typeof(IEditorFormFactory<RecipeCreator>), typeof(RecipeEditorFormFactory));

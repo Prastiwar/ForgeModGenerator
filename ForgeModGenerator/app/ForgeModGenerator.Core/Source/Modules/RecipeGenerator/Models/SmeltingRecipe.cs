@@ -6,7 +6,12 @@ namespace ForgeModGenerator.RecipeGenerator.Models
     public class SmeltingRecipe : Recipe
     {
         protected SmeltingRecipe() { }
-        public SmeltingRecipe(string filePath) : base(filePath) { }
+        public SmeltingRecipe(string filePath) : base(filePath)
+        {
+            Ingredients = new ObservableCollection<Ingredient>();
+            Result = new RecipeResult();
+        }
+
         public override string Type => "smelting";
 
         private RecipeResult result;
@@ -36,6 +41,8 @@ namespace ForgeModGenerator.RecipeGenerator.Models
         public override object DeepClone()
         {
             SmeltingRecipe recipe = new SmeltingRecipe() {
+                Name = Name,
+                Group = Group,
                 CookingTime = CookingTime,
                 Experience = Experience,
                 Ingredients = Ingredients.DeepCollectionClone<ObservableCollection<Ingredient>, Ingredient>(),

@@ -6,7 +6,11 @@ namespace ForgeModGenerator.RecipeGenerator.Models
     public class ShapelessRecipe : Recipe
     {
         protected ShapelessRecipe() { }
-        public ShapelessRecipe(string filePath) : base(filePath) { }
+        public ShapelessRecipe(string filePath) : base(filePath)
+        {
+            Ingredients = new ObservableCollection<Ingredient>();
+            Result = new RecipeResult();
+        }
 
         public override string Type => "crafting_shapeless";
 
@@ -25,6 +29,8 @@ namespace ForgeModGenerator.RecipeGenerator.Models
         public override object DeepClone()
         {
             ShapelessRecipe recipe = new ShapelessRecipe() {
+                Name = Name,
+                Group = Group,
                 Ingredients =  Ingredients.DeepCollectionClone<ObservableCollection<Ingredient>, Ingredient>(),
                 Result = new RecipeResult {
                     Count = Result.Count,

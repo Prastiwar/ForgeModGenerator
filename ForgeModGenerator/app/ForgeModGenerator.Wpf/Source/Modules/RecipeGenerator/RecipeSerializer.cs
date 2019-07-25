@@ -21,7 +21,7 @@ namespace ForgeModGenerator.RecipeGenerator.Serialization
             resolver.SetAllLetterCase(Lettercase.Lowercase);
             resolver.SetNullStringEmpty(true);
             settings.ContractResolver = resolver;
-            settings.Converters.Add(new SmeltingRecipeJsonConverter());
+            settings.Converters.Add(new RecipeJsonConverter());
             return settings;
         }
 

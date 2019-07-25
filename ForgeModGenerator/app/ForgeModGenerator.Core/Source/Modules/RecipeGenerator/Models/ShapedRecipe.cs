@@ -7,7 +7,12 @@ namespace ForgeModGenerator.RecipeGenerator.Models
     public class ShapedRecipe : Recipe
     {
         protected ShapedRecipe() { }
-        public ShapedRecipe(string filePath) : base(filePath) { }
+        public ShapedRecipe(string filePath) : base(filePath)
+        {
+            Keys = new ObservableCollection<RecipeKey>();
+            Result = new RecipeResult();
+        }
+
         public override string Type => "crafting_shaped";
 
         public string[] Pattern { get; } = new string[3] { "   ", "   ", "   " };
@@ -27,6 +32,8 @@ namespace ForgeModGenerator.RecipeGenerator.Models
         public override object DeepClone()
         {
             ShapedRecipe recipe = new ShapedRecipe() {
+                Name = Name,
+                Group = Group,
                 Keys = Keys.DeepCollectionClone<ObservableCollection<RecipeKey>, RecipeKey>(),
                 Result = new RecipeResult {
                     Count = Result.Count,

@@ -29,7 +29,6 @@ namespace ForgeModGenerator.RecipeGenerator.ViewModels
             CodeGenerationService = codeGenerationService;
             EditorForm = editorFormFactory.Create();
             EditorForm.ItemEdited += CreateRecipe;
-            //EditorForm.Validator = recipeValidator;
 
             Explorer.OpenFileDialog.Filter = "Json file (*.json) | *.json";
             Explorer.OpenFileDialog.Multiselect = true;
@@ -92,11 +91,15 @@ namespace ForgeModGenerator.RecipeGenerator.ViewModels
         {
             if (e.Result)
             {
-                Recipe recipe = e.ActualItem.Create();
-                if (recipe.Validate().IsValid)
+                if (e.ActualItem.Validate().IsValid)
                 {
+                    Recipe recipe = e.ActualItem.Create();
                     string json = RecipeSerializer.Serialize(recipe, true);
                     string path = Path.Combine(ModPaths.RecipesFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.Modid), recipe.Name + ".json");
+                    if (File.Exists(path))
+                    {
+                        throw new IOException($"File {path} already exists");
+                    }
                     File.AppendAllText(path, json);
                 }
             }

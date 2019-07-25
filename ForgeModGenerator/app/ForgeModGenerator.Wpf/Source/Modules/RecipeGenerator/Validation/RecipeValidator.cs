@@ -21,7 +21,7 @@ namespace ForgeModGenerator.RecipeGenerator.Validation
 
         public void SetDefaultRepository(IEnumerable<Recipe> instances) => Repository = instances;
 
-        private bool IsUnique(string name) => Repository.Where(x => x.Name == name).Take(2).Count() <= 1;
+        private bool IsUnique(string name) => Repository.Where(x => x.Name == name).Take(2).Count() <= 0;
 
         ValidateResult ForgeModGenerator.Validation.IValidator<Recipe>.Validate(Recipe instance) => ValidateResultAssemblyConverter.Convert(Validate(instance));
         ValidateResult ForgeModGenerator.Validation.IValidator<Recipe>.Validate(Recipe instance, string propertyName) => ValidateResultAssemblyConverter.Convert(this.Validate(instance, propertyName));
@@ -29,8 +29,8 @@ namespace ForgeModGenerator.RecipeGenerator.Validation
         ValidateResult IUniqueValidator<Recipe>.Validate(Recipe instance, IEnumerable<Recipe> instances)
         {
             Repository = instances;
-            IEnumerable<Recipe> oldRepository = Repository;
-            SetDefaultRepository(instances);
+            IEnumerable<Recipe> oldRepository = Repository; // save actual repository to roll it back later
+            SetDefaultRepository(instances); // temporary change repository for validation
             ValidateResult results = ValidateResultAssemblyConverter.Convert(Validate(instance));
             SetDefaultRepository(oldRepository);
             return results;
@@ -38,8 +38,8 @@ namespace ForgeModGenerator.RecipeGenerator.Validation
 
         ValidateResult IUniqueValidator<Recipe>.Validate(Recipe instance, IEnumerable<Recipe> instances, string propertyName)
         {
-            IEnumerable<Recipe> oldRepository = Repository;
-            SetDefaultRepository(instances);
+            IEnumerable<Recipe> oldRepository = Repository; // save actual repository to roll it back later
+            SetDefaultRepository(instances); // temporary change repository for validation
             ValidateResult results = ValidateResultAssemblyConverter.Convert(this.Validate(instance, propertyName));
             SetDefaultRepository(oldRepository);
             return results;
