@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.IO.Compression;
 
 namespace ForgeModGenerator
 {
@@ -10,6 +11,39 @@ namespace ForgeModGenerator
 
         public static string Binary => Path.Combine(Environment.CurrentDirectory + "bin");
 
+        public static string Assets {
+            get {
+                string path = Path.Combine(AppRootPath, "assets");
+                CreateIfNotExist(path);
+                return path;
+            }
+        }
+
+        public static string GetMCItemIconsPath(bool extractDefaults = false)
+        {
+            string path = Path.Combine(Assets, "mcitemicons");
+            CreateIfNotExist(path);
+            if (extractDefaults)
+            {
+                ExtractMCItemIcons(path);
+            }
+            return path;
+        }
+
+        private static void ExtractMCItemIcons(string iconsPath)
+        {
+            string tempZipPath = Path.Combine(Assets, Guid.NewGuid().ToString() + ".zip");
+            File.WriteAllBytes(tempZipPath, Core.Properties.Resources.MCItemIcons);
+            ZipArchive zipArchive = ZipFile.OpenRead(tempZipPath);
+            foreach (ZipArchiveEntry entry in zipArchive.Entries)
+            {
+                string filePath = Path.Combine(iconsPath, entry.Name);
+                entry.ExtractToFile(filePath, true);
+            }
+            zipArchive.Dispose();
+            File.Delete(tempZipPath);
+        }
+
         public static string ForgeVersions {
             get {
                 string path = Path.Combine(AppRootPath, "forgeversions");
@@ -17,6 +51,7 @@ namespace ForgeModGenerator
                 return path;
             }
         }
+
         public static string Mods {
             get {
                 string path = Path.Combine(AppRootPath, "mods");

@@ -64,7 +64,6 @@ namespace ForgeModGenerator
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
             base.RegisterRequiredTypes(containerRegistry);
-
             SetProvider(containerRegistry);
 
             DialogService dialogService = new DialogService();

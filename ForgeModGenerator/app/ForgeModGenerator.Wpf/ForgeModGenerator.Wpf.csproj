@@ -50,7 +50,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <LangVersion>7.1</LangVersion>
+    <LangVersion>7.2</LangVersion>
     <CodeAnalysisRuleSet>ForgeModGenerator.Wpf.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -61,7 +61,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <LangVersion>7.1</LangVersion>
+    <LangVersion>7.2</LangVersion>
     <CodeAnalysisRuleSet>ForgeModGenerator.Wpf.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup>
@@ -257,6 +257,9 @@
     <Compile Include="Source\Modules\ModGenerator\Serialization\ModSerializer.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\CodeGeneration\RecipeCodeGenerator.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\Controls\EditableRecipeLists.cs" />
+    <Compile Include="Source\Modules\RecipeGenerator\Controls\ItemListForm.xaml.cs">
+      <DependentUpon>ItemListForm.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Source\Modules\RecipeGenerator\Controls\RecipeEditForm.xaml.cs">
       <DependentUpon>RecipeEditForm.xaml</DependentUpon>
     </Compile>
@@ -380,6 +383,10 @@
     <Page Include="Source\Modules\CommandGenerator\Controls\CommandEditForm.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Modules\RecipeGenerator\Controls\ItemListForm.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Source\Modules\RecipeGenerator\Controls\RecipeEditForm.xaml">
       <Generator>MSBuild:Compile</Generator>

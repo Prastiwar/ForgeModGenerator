@@ -50,7 +50,7 @@ namespace ForgeModGenerator.RecipeGenerator.ViewModels
         protected ISerializer<Recipe> RecipeSerializer { get; }
 
         private ICommand openRecipeEditor;
-        public ICommand OpenRecipeEditor => openRecipeEditor ?? (openRecipeEditor = new DelegateCommand<ObservableFolder<Recipe>>(CreateNewRecipe));
+        public ICommand OpenRecipeEditor => openRecipeEditor ?? (openRecipeEditor = new DelegateCommand<ObservableFolder<Recipe>>(EditAndGenerateNewRecipe));
 
         private string tempFilePath;
 
@@ -71,7 +71,7 @@ namespace ForgeModGenerator.RecipeGenerator.ViewModels
             return false;
         }
 
-        private void CreateNewRecipe(ObservableFolder<Recipe> folder)
+        private void EditAndGenerateNewRecipe(ObservableFolder<Recipe> folder)
         {
             tempFilePath = Path.GetTempFileName();
             RecipeCreator newRecipe = new RecipeCreator(tempFilePath) {

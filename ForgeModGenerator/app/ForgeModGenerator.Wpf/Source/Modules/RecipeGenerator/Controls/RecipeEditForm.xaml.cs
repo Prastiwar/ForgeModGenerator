@@ -1,10 +1,13 @@
-﻿using ForgeModGenerator.RecipeGenerator.Models;
+﻿using ForgeModGenerator.Core;
+using ForgeModGenerator.RecipeGenerator.Models;
+using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 
 namespace ForgeModGenerator.RecipeGenerator.Controls
 {
@@ -120,6 +123,27 @@ namespace ForgeModGenerator.RecipeGenerator.Controls
             char[] chars = recipe.Pattern[patternIndex].ToCharArray();
             chars[charIndex] = selectedItem.Key;
             recipe.Pattern[patternIndex] = new string(chars);
+        }
+
+        private async void Slot_Click(object sender, RoutedEventArgs e)
+        {
+            ItemListForm form = new ItemListForm();
+            bool changed = (bool)await DialogHost.Show(form, "RecipeHost").ConfigureAwait(true);
+            if (changed)
+            {
+                MCItemLocator locator = form.SelectedLocator;
+                Button senderBtn = (Button)sender;
+                Image content = (Image)senderBtn.Content;
+                Uri uriSource = new Uri(locator.ImageFilePath);
+                if (!(content.Source is BitmapImage bitmap))
+                {
+                    bitmap = new BitmapImage(uriSource) {
+                        CacheOption = BitmapCacheOption.OnLoad
+                    };
+                    content.Source = bitmap;
+                }
+                bitmap.UriSource = uriSource;
+            }
         }
     }
 }

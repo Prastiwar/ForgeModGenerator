@@ -17,12 +17,6 @@
 
 ## Development Status
 
-- [ ] Achievement Generator
-
-  - [ ] Create achievement
-  - [ ] Respect manual changes in json
-  - [ ] Update source code
-
 - [ ] Block Generator
 
   - [ ] Create block json files
@@ -41,12 +35,6 @@
   - [x] Respect manual changes
   - [x] Update source code
 
-- [ ] GUI Generator
-
-  - [ ] Create GUI code
-  - [ ] Visualize GUI
-  - [ ] Update source code
-
 - [x] Mod Generator *- mod manager*
 
   - [x] Generate mod structure
@@ -59,7 +47,7 @@
 
   - [x] Create recipe json
   - [x] Respect manual changes in json
-  - [ ] Update source code (for smelting)
+  - [ ] Update source code (smelting before 1.13 json factory feature)
 
 - [x] Sound Generator *- sounds file explorer*
 
@@ -77,6 +65,28 @@
   - [x] Remove textures
   - [x] Change the name of textures
   - [x] Respect changes in native file explorer
+  - [x] Update source code
+
+- [ ] Localization Generator
+  - [ ] Update localization file
+
+- [ ] Achievement Generator
+
+  - [ ] Create achievement
+  - [ ] Respect manual changes in json
+  - [ ] Update source code
+
+- [ ] World Generator
+  - [ ] Update source code
+
+- [ ] Structure Generator
+  - [ ] Update source code
+
+- [ ] GUI Generator
+
+  - [ ] Create GUI code
+  - [ ] Visualize GUI
+  - [ ] Update source code
 
 
 ## Installing
