@@ -1,9 +1,10 @@
 ﻿using ForgeModGenerator.Converters;
+using ForgeModGenerator.Core.RecipeGenerator;
 using ForgeModGenerator.RecipeGenerator.Models;
 using System.Collections.ObjectModel;
 
 namespace ForgeModGenerator.RecipeGenerator.Converters
 {
-    public class RecipeKeyListRecipeKeyConverter : TupleValueConverter<ObservableCollection<RecipeKey>, RecipeKey> { }
+    public class RecipeKeyListRecipeKeyConverter : TupleValueConverter<RecipeKeyCollection, RecipeKey> { }
     public class IngredientListIngredientConverter : TupleValueConverter<ObservableCollection<Ingredient>, Ingredient> { }
 }

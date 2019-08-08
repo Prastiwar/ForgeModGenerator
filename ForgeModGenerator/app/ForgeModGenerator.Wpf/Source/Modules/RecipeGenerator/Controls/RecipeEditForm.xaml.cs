@@ -98,8 +98,6 @@ namespace ForgeModGenerator.RecipeGenerator.Controls
         private void SetShapedVisibility(bool collapse)
         {
             Visibility visibility = collapse ? Visibility.Collapsed : Visibility.Visible;
-            KeysTextBlock.Visibility = visibility;
-            KeysListBox.Visibility = visibility;
             PatternTextBlock.Visibility = visibility;
             PatternGrid.Visibility = visibility;
         }
@@ -132,8 +130,8 @@ namespace ForgeModGenerator.RecipeGenerator.Controls
             if (changed)
             {
                 MCItemLocator locator = form.SelectedLocator;
-                Button senderBtn = (Button)sender;
-                Image content = (Image)senderBtn.Content;
+                Button button = (Button)sender;
+                Image content = (Image)button.Content;
                 Uri uriSource = new Uri(locator.ImageFilePath);
                 if (!(content.Source is BitmapImage bitmap))
                 {
@@ -143,7 +141,26 @@ namespace ForgeModGenerator.RecipeGenerator.Controls
                     content.Source = bitmap;
                 }
                 bitmap.UriSource = uriSource;
+
+                RecipeCreator recipe = (RecipeCreator)button.DataContext;
+                int patternIndex = (int)char.GetNumericValue((string)button.Tag, 0);
+                int charIndex = (int)char.GetNumericValue((string)button.Tag, 1);
+                char[] chars = recipe.Pattern[patternIndex].ToCharArray();
+                chars[charIndex] = FindOrCreateKey(recipe, locator.Name);
+                recipe.Pattern[patternIndex] = new string(chars);
             }
+        }
+
+        private char FindOrCreateKey(RecipeCreator recipe, string name)
+        {
+            foreach (RecipeKey key in recipe.Keys)
+            {
+                if (key.Item == name)
+                {
+                    return key.Key;
+                }
+            }
+            return recipe.Keys.AddNew(name).Key;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using ForgeModGenerator.Utility;
+﻿using ForgeModGenerator.Core.RecipeGenerator;
+using ForgeModGenerator.Utility;
 using System;
 using System.Collections.ObjectModel;
 
@@ -9,7 +10,7 @@ namespace ForgeModGenerator.RecipeGenerator.Models
         protected ShapedRecipe() { }
         public ShapedRecipe(string filePath) : base(filePath)
         {
-            Keys = new ObservableCollection<RecipeKey>();
+            Keys = new RecipeKeyCollection();
             Result = new RecipeResult();
         }
 
@@ -17,8 +18,8 @@ namespace ForgeModGenerator.RecipeGenerator.Models
 
         public string[] Pattern { get; } = new string[3] { "   ", "   ", "   " };
 
-        private ObservableCollection<RecipeKey> keys;
-        public ObservableCollection<RecipeKey> Keys {
+        private RecipeKeyCollection keys;
+        public RecipeKeyCollection Keys {
             get => keys;
             set => SetProperty(ref keys, value);
         }
@@ -34,7 +35,7 @@ namespace ForgeModGenerator.RecipeGenerator.Models
             ShapedRecipe recipe = new ShapedRecipe() {
                 Name = Name,
                 Group = Group,
-                Keys = Keys.DeepCollectionClone<ObservableCollection<RecipeKey>, RecipeKey>(),
+                Keys = Keys.DeepCollectionClone<RecipeKeyCollection, RecipeKey>(),
                 Result = new RecipeResult {
                     Count = Result.Count,
                     Item = Result.Item

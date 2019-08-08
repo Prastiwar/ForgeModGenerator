@@ -287,20 +287,6 @@
                     </Border>
                     <Separator />
                     <StackPanel>
-                        <TextBlock x:Name="KeysTextBlock"
-                                   Text="Keys"
-                                   FontSize="14"
-                                   FontWeight="Bold"
-                                   Margin="3,0,3,0"
-                                   VerticalAlignment="Center" />
-                        <local:EditableRecipeKeyList x:Name="KeysListBox"
-                                                     LengthLimit="9"
-                                                     HorizontalAlignment="Stretch"
-                                                     ItemsSource="{Binding Keys}"
-                                                     HorizontalContentAlignment="Stretch" />
-                    </StackPanel>
-                    <Separator />
-                    <StackPanel>
                         <TextBlock x:Name="IngredientsTextBlock"
                                    Text="Ingredients"
                                    FontSize="14"

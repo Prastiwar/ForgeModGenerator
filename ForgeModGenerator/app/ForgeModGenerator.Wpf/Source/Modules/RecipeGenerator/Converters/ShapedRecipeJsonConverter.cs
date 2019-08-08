@@ -1,9 +1,9 @@
-﻿using ForgeModGenerator.RecipeGenerator.Models;
+﻿using ForgeModGenerator.Core.RecipeGenerator;
+using ForgeModGenerator.RecipeGenerator.Models;
 using ForgeModGenerator.Utility;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.ObjectModel;
 
 namespace ForgeModGenerator.RecipeGenerator.Converters
 {
@@ -28,7 +28,7 @@ namespace ForgeModGenerator.RecipeGenerator.Converters
             }
             if (item.TryGetValue("keys", out JToken keys))
             {
-                recipe.Keys = keys.ToObject<ObservableCollection<RecipeKey>>();
+                recipe.Keys = keys.ToObject<RecipeKeyCollection>();
             }
             if (item.TryGetValue("result", out JToken result))
             {
@@ -49,6 +49,7 @@ namespace ForgeModGenerator.RecipeGenerator.Converters
                 { nameof(ShapedRecipe.Name).ToLower(), value.Name },
                 { nameof(ShapedRecipe.Group).ToLower(), value.Group ?? "" },
                 { nameof(ShapedRecipe.Pattern).ToLower(), JArray.FromObject(value.Pattern, serializer) },
+                { nameof(ShapedRecipe.Keys).ToLower(), JArray.FromObject(value.Keys, serializer) },
                 { nameof(ShapedRecipe.Result).ToLower(), JObject.FromObject(value.Result, serializer) },
             };
             jo.WriteTo(writer);
