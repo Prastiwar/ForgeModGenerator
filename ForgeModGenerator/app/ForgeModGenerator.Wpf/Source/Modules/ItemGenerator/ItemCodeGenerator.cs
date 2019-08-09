@@ -22,6 +22,10 @@ namespace ForgeModGenerator.ItemGenerator.CodeGeneration
             unit.Namespaces[0].Imports.Add(NewImport($"{SourceRootPackageName}.{SourceCodeLocator.ItemBase(Modname, Organization).ImportRelativeName}"));
             unit.Namespaces[0].Imports.Add(NewImport($"net.minecraft.item.Item"));
             unit.Namespaces[0].Types[0].Members.Add(NewFieldGlobal("Item", "MODLOGO", NewObject("ItemBase", NewPrimitive("modlogo"))));
+            foreach (Item item in Elements)
+            {
+                unit.Namespaces[0].Types[0].Members.Add(NewFieldGlobal("Item", "MODLOGO", NewObject("ItemBase", NewPrimitive("modlogo"))));
+            }
             return unit;
         }
     }

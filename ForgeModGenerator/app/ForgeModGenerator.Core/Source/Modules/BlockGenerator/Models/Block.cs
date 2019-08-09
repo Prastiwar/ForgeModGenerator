@@ -18,10 +18,22 @@ namespace ForgeModGenerator.BlockGenerator.Models
             set => SetProperty(ref type, value);
         }
 
+        private MaterialType materialType;
+        public MaterialType MaterialType {
+            get => materialType;
+            set => SetProperty(ref materialType, value);
+        }
+
         private string texturePath;
         public string TexturePath {
             get => texturePath;
             set => SetProperty(ref texturePath, value);
+        }
+
+        private string inventoryTexturePath;
+        public string InventoryTexturePath {
+            get => inventoryTexturePath;
+            set => SetProperty(ref inventoryTexturePath, value);
         }
 
         private int lightLevel;
