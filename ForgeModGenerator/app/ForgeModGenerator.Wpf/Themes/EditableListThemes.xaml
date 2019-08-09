@@ -4,6 +4,7 @@
                     xmlns:recipeControls="clr-namespace:ForgeModGenerator.RecipeGenerator.Controls"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:converters="clr-namespace:ForgeModGenerator.Converters"
+                    xmlns:util="clr-namespace:ForgeModGenerator.Utility"
                     xmlns:recipeConverters="clr-namespace:ForgeModGenerator.RecipeGenerator.Converters">
     <Style TargetType="{x:Type controls:EditableStringList}">
         <Setter Property="Template">
@@ -221,17 +222,30 @@
                                                 </Grid.ColumnDefinitions>
                                                 <StackPanel Margin="5"
                                                             Grid.Column="0">
-                                                    <TextBlock Text="Item: "
-                                                               FontSize="14"
-                                                               FontWeight="Bold"
-                                                               Margin="3,0,3,0"
-                                                               Height="{Binding ActualHeight, ElementName=KeyTemplateItemTextBox, Mode=OneWay}"
-                                                               VerticalAlignment="Center" />
-                                                    <controls:SubmitTextBox x:Name="KeyTemplateItemTextBox"
-                                                                            Text="{Binding Item, ValidatesOnDataErrors=True}"
-                                                                            VerticalAlignment="Center"
-                                                                            IsTabStop="True"
-                                                                            TextWrapping="Wrap" />
+                                                    <Button x:Name="ItemButton"
+                                                            Padding="5"
+                                                            Margin="3,0,3,0"
+                                                            Height="48"
+                                                            Width="48"
+                                                            Background="{x:Null}"
+                                                            Foreground="{x:Null}"
+                                                            BorderBrush="Black"
+                                                            Command="{x:Static util:StaticCommands.ShowMCItemListCommand}">
+                                                        <Button.Resources>
+                                                            <converters:MCItemListCommandConverter x:Key="ItemListArgsConverter" />
+                                                        </Button.Resources>
+                                                        <Button.CommandParameter>
+                                                            <MultiBinding Converter="{StaticResource ItemListArgsConverter}">
+                                                                <Binding Path="."
+                                                                         ElementName="ItemButton" />
+                                                                <Binding Source="RecipeHost" />
+                                                                <Binding Source="{x:Null}" />
+                                                            </MultiBinding>
+                                                        </Button.CommandParameter>
+                                                        <Button.Content>
+                                                            <Image />
+                                                        </Button.Content>
+                                                    </Button>
                                                 </StackPanel>
                                                 <StackPanel Margin="5"
                                                             Grid.Column="1">

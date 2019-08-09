@@ -237,6 +237,7 @@
     <Compile Include="Source\Converters\Json\Resolver\NullToEmptyStringResolver.cs" />
     <Compile Include="Source\Converters\Json\Resolver\NullToEmptyStringValueProvider.cs" />
     <Compile Include="Source\Converters\MethodToCommandConverter.cs" />
+    <Compile Include="Source\Converters\MultiValues\GenericTupleConverter.cs" />
     <Compile Include="Source\Converters\ValidateResultAssemblyConverter.cs" />
     <Compile Include="Source\Common\DisposeClosedViewsBehavior.cs" />
     <Compile Include="Source\FileSystem\Dialog\FileBrowserDialog.cs" />
@@ -257,7 +258,7 @@
     <Compile Include="Source\Modules\ModGenerator\Serialization\ModSerializer.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\CodeGeneration\RecipeCodeGenerator.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\Controls\EditableRecipeLists.cs" />
-    <Compile Include="Source\Modules\RecipeGenerator\Controls\ItemListForm.xaml.cs">
+    <Compile Include="Source\Controls\ItemListForm.xaml.cs">
       <DependentUpon>ItemListForm.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Modules\RecipeGenerator\Controls\RecipeEditForm.xaml.cs">
@@ -330,6 +331,7 @@
     </Compile>
     <Compile Include="Source\Converters\PathToNameConverter.cs" />
     <Compile Include="Source\Utility\Extensions\JsonExtensions.cs" />
+    <Compile Include="Source\Utility\Helpers\StaticCommands.cs" />
     <Compile Include="Source\Utility\Helpers\WPFHelper.cs" />
     <Compile Include="Source\Services\WpfSessionContextService.cs" />
     <Compile Include="Source\Modules\SoundGenerator\Controls\SoundEditForm.xaml.cs">
@@ -384,7 +386,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Source\Modules\RecipeGenerator\Controls\ItemListForm.xaml">
+    <Page Include="Source\Controls\ItemListForm.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

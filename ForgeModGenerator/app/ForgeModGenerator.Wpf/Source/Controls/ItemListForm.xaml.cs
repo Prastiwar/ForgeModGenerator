@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 
-namespace ForgeModGenerator.RecipeGenerator.Controls
+namespace ForgeModGenerator.Controls
 {
     public partial class ItemListForm : UserControl, IUIElement
     {

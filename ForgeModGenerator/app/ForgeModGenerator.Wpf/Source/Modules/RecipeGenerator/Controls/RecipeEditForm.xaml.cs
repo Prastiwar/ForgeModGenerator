@@ -1,13 +1,12 @@
-﻿using ForgeModGenerator.Core;
+﻿using ForgeModGenerator.Controls;
 using ForgeModGenerator.RecipeGenerator.Models;
-using MaterialDesignThemes.Wpf;
+using ForgeModGenerator.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
 
 namespace ForgeModGenerator.RecipeGenerator.Controls
 {
@@ -125,30 +124,22 @@ namespace ForgeModGenerator.RecipeGenerator.Controls
 
         private async void Slot_Click(object sender, RoutedEventArgs e)
         {
+            Button button = (Button)sender;
             ItemListForm form = new ItemListForm();
-            bool changed = (bool)await DialogHost.Show(form, "RecipeHost").ConfigureAwait(true);
+            bool changed = await StaticCommands.ShowMCItemList(button, "RecipeHost", form).ConfigureAwait(true);
             if (changed)
             {
-                MCItemLocator locator = form.SelectedLocator;
-                Button button = (Button)sender;
-                Image content = (Image)button.Content;
-                Uri uriSource = new Uri(locator.ImageFilePath);
-                if (!(content.Source is BitmapImage bitmap))
-                {
-                    bitmap = new BitmapImage(uriSource) {
-                        CacheOption = BitmapCacheOption.OnLoad
-                    };
-                    content.Source = bitmap;
-                }
-                bitmap.UriSource = uriSource;
-
-                RecipeCreator recipe = (RecipeCreator)button.DataContext;
-                int patternIndex = (int)char.GetNumericValue((string)button.Tag, 0);
-                int charIndex = (int)char.GetNumericValue((string)button.Tag, 1);
-                char[] chars = recipe.Pattern[patternIndex].ToCharArray();
-                chars[charIndex] = FindOrCreateKey(recipe, locator.Name);
-                recipe.Pattern[patternIndex] = new string(chars);
+                UpdatePattern((RecipeCreator)button.DataContext, (string)button.Tag, form.SelectedLocator.Name);
             }
+        }
+
+        private void UpdatePattern(RecipeCreator recipe, string tag, string locatorName)
+        {
+            int patternIndex = (int)char.GetNumericValue(tag, 0);
+            int charIndex = (int)char.GetNumericValue(tag, 1);
+            char[] chars = recipe.Pattern[patternIndex].ToCharArray();
+            chars[charIndex] = FindOrCreateKey(recipe, locatorName);
+            recipe.Pattern[patternIndex] = new string(chars);
         }
 
         private char FindOrCreateKey(RecipeCreator recipe, string name)
