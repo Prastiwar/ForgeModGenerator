@@ -47,6 +47,9 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
 using System.Windows;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 
 namespace ForgeModGenerator
 {
@@ -57,6 +60,12 @@ namespace ForgeModGenerator
 #if !DEBUG
             DispatcherUnhandledException += App_DispatcherUnhandledException;
 #endif
+        }
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+            AppCenter.Start("7f5f53af-bce9-4a02-a037-b676b4ee97c0", typeof(Analytics), typeof(Crashes));
         }
 
         protected override Window CreateShell() => (Window)Container.Resolve(typeof(MainWindow));
@@ -203,6 +212,8 @@ namespace ForgeModGenerator
             new ApplicationModule.BugReporter(e.Exception).Show();
             MainWindow.Close();
             e.Handled = true;
+            Crashes.TrackError(e.Exception);
+            Crashes.NotifyUserConfirmation(UserConfirmation.AlwaysSend);
         }
     }
 }

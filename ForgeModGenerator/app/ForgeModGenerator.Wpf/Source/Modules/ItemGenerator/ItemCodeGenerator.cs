@@ -25,7 +25,7 @@ namespace ForgeModGenerator.ItemGenerator.CodeGeneration
             unit.Namespaces[0].Types[0].Members.Add(NewFieldGlobal("Item", "MODLOGO", NewObject("ItemBase", NewPrimitive("modlogo"))));
             foreach (Item item in Elements)
             {
-                // TODO: Consider material,
+                // TODO: Consider material
                 string newObjectType = $"{item.Type.ToString()}Base";
                 string baseObjectType = null;
                 List<CodeExpression> arguments = new List<CodeExpression>() { NewPrimitive(item.Name.ToLower()) };
