@@ -139,8 +139,8 @@ namespace ForgeModGenerator.ApplicationModule.Controls
         {
             if (CanQuit())
             {
-                await Task.Delay(150).ConfigureAwait(false); // to show click effect
-                Environment.Exit(0);
+                await Task.Delay(150).ConfigureAwait(true); // to show click effect
+                Application.Current.Shutdown();
             }
         }
 

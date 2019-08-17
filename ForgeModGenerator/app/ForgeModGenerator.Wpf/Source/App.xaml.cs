@@ -35,6 +35,9 @@ using ForgeModGenerator.SoundGenerator.Views;
 using ForgeModGenerator.TextureGenerator.ViewModels;
 using ForgeModGenerator.TextureGenerator.Views;
 using ForgeModGenerator.Validation;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.Caching.Memory;
 using NLog.Extensions.Logging;
 using Prism.Ioc;
@@ -47,9 +50,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
 using System.Windows;
-using Microsoft.AppCenter;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
+using Unity;
 
 namespace ForgeModGenerator
 {
@@ -60,7 +61,12 @@ namespace ForgeModGenerator
 #if !DEBUG
             DispatcherUnhandledException += App_DispatcherUnhandledException;
 #endif
+            AppDomain.CurrentDomain.ProcessExit += OnExit;
         }
+
+        private readonly MemoryCache globalCache = new MemoryCache(new MemoryCacheOptions());
+
+        private void OnExit(object sender, EventArgs e) => globalCache.Dispose();
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -78,10 +84,9 @@ namespace ForgeModGenerator
             DialogService dialogService = new DialogService();
             NLogLoggerFactory fac = new NLogLoggerFactory();
             Log.Initialize(dialogService, fac.CreateLogger("ErrorLog"), fac.CreateLogger("InfoLog"));
-
-            MemoryCache cache = new MemoryCache(new MemoryCacheOptions());
-            containerRegistry.RegisterInstance<IMemoryCache>(cache);
-            SourceCodeLocator.Initialize(cache);
+            fac.Dispose();
+            containerRegistry.RegisterInstance<IMemoryCache>(globalCache);
+            SourceCodeLocator.Initialize(globalCache);
 
             containerRegistry.RegisterInstance<IDialogService>(dialogService);
             RegisterServices(containerRegistry);
@@ -95,7 +100,7 @@ namespace ForgeModGenerator
             RegisterValidators(containerRegistry);
 
             ObservableCollection<WorkspaceSetup> workspaceSetups = new ObservableCollection<WorkspaceSetup>();
-            foreach (Unity.Registration.IContainerRegistration registry in containerRegistry.GetContainer().Registrations)
+            foreach (IContainerRegistration registry in containerRegistry.GetContainer().Registrations)
             {
                 if (registry.RegisteredType == typeof(WorkspaceSetup))
                 {

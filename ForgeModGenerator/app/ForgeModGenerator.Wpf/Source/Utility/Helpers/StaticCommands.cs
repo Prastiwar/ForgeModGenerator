@@ -14,7 +14,7 @@ namespace ForgeModGenerator.Utility
 
         private static ICommand showMCItemListCommand;
         public static ICommand ShowMCItemListCommand => showMCItemListCommand ?? (showMCItemListCommand =
-            new DelegateCommand<Tuple<ContentControl, string, ItemListForm>>(async (args) => await ShowMCItemList(args.Item1, args.Item2, args.Item3)));
+            new DelegateCommand<Tuple<ContentControl, string, ItemListForm>>(async (args) => await ShowMCItemList(args.Item1, args.Item2, args.Item3).ConfigureAwait(true)));
 
         public static async System.Threading.Tasks.Task<bool> ShowMCItemList(ContentControl control, string dialogIdentifier = "", ItemListForm form = null)
         {

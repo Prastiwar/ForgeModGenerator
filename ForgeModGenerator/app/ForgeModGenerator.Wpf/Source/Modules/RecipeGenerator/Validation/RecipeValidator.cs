@@ -21,7 +21,7 @@ namespace ForgeModGenerator.RecipeGenerator.Validation
 
         public void SetDefaultRepository(IEnumerable<Recipe> instances) => Repository = instances;
 
-        private bool IsUnique(string name) => Repository.Where(x => x.Name == name).Take(2).Count() <= 0;
+        private bool IsUnique(string name) => !Repository.Where(x => x.Name == name).Take(2).Any();
 
         ValidateResult ForgeModGenerator.Validation.IValidator<Recipe>.Validate(Recipe instance) => ValidateResultAssemblyConverter.Convert(Validate(instance));
         ValidateResult ForgeModGenerator.Validation.IValidator<Recipe>.Validate(Recipe instance, string propertyName) => ValidateResultAssemblyConverter.Convert(this.Validate(instance, propertyName));

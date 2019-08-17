@@ -32,8 +32,8 @@ namespace ForgeModGenerator.ApplicationModule
 
         private async void Quit()
         {
-            await System.Threading.Tasks.Task.Delay(150).ConfigureAwait(false); // to show click effect
-            Environment.Exit(0);
+            await System.Threading.Tasks.Task.Delay(150).ConfigureAwait(true); // to show click effect
+            Application.Current.Shutdown();
         }
     }
 }
