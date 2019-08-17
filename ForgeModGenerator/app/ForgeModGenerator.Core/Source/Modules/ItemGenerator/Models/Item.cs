@@ -17,6 +17,12 @@ namespace ForgeModGenerator.ItemGenerator.Models
             set => SetProperty(ref type, value);
         }
 
+        private ArmorType armorType;
+        public ArmorType ArmorType {
+            get => armorType;
+            set => SetProperty(ref armorType, value);
+        }
+
         private string texturePath;
         public string TexturePath {
             get => texturePath;

@@ -2,11 +2,12 @@
 {
     public enum ItemType
     {
-        Hand,
+        Item,
         Hoe,
         Axe,
         Sword,
         Spade,
-        Pickaxe
+        Pickaxe,
+        Armor
     }
 }
