@@ -32,13 +32,13 @@ namespace ForgeModGenerator.Core
         public static bool operator ==(MCItemLocator left, MCItemLocator right) => left.Name == right.Name;
         public static bool operator !=(MCItemLocator left, MCItemLocator right) => !(left == right);
 
-        public static MCItemLocator[] GetAll()
+        public static MCItemLocator[] GetAllMinecraftItems()
         {
             List<MCItemLocator> locators = new List<MCItemLocator>(128);
             string defaultIconsPath = AppPaths.GetMCItemIconsPath(true);
             foreach (FileInfo item in IOHelper.EnumerateFileInfos(defaultIconsPath, "*.png"))
             {
-                string locatorName = Path.GetFileNameWithoutExtension(item.Name);
+                string locatorName = "minecraft:" + Path.GetFileNameWithoutExtension(item.Name);
                 MCItemLocator newLocator = new MCItemLocator(locatorName, Path.Combine(defaultIconsPath, item.Name));
                 locators.Add(newLocator);
             }

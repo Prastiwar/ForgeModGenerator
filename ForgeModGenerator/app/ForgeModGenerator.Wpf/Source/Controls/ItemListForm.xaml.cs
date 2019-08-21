@@ -16,7 +16,7 @@ namespace ForgeModGenerator.Controls
         }
 
         public static readonly DependencyProperty LocatorsProperty =
-            DependencyProperty.Register("Locators", typeof(MCItemLocator[]), typeof(ItemListForm), new PropertyMetadata(MCItemLocator.GetAll()));
+            DependencyProperty.Register("Locators", typeof(MCItemLocator[]), typeof(ItemListForm), new PropertyMetadata(MCItemLocator.GetAllMinecraftItems()));
         public MCItemLocator[] Locators {
             get => (MCItemLocator[])GetValue(LocatorsProperty);
             set => SetValue(LocatorsProperty, value);

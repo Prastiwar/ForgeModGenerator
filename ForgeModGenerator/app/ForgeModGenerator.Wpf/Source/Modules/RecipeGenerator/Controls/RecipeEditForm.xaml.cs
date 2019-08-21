@@ -122,6 +122,18 @@ namespace ForgeModGenerator.RecipeGenerator.Controls
             recipe.Pattern[patternIndex] = new string(chars);
         }
 
+        private async void SlotResult_Click(object sender, RoutedEventArgs e)
+        {
+            Button button = (Button)sender;
+            ItemListForm form = new ItemListForm();
+            bool changed = await StaticCommands.ShowMCItemList(button, "RecipeHost", form).ConfigureAwait(true);
+            if (changed)
+            {
+                RecipeCreator recipe = (RecipeCreator)button.DataContext;
+                recipe.Result.Item = form.SelectedLocator.Name;
+            }
+        }
+
         private async void Slot_Click(object sender, RoutedEventArgs e)
         {
             Button button = (Button)sender;

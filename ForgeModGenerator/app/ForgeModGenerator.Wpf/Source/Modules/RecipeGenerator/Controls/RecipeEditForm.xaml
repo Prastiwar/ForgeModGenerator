@@ -84,8 +84,8 @@
                                 <TextBlock Text="Item: "
                                            FontSize="14"
                                            FontWeight="Bold"
-                                           Margin="3,0,3,0"
-                                           Height="{Binding ActualHeight, ElementName=ResultItemTextBox, Mode=OneWay}"
+                                           Margin="3,0,3,4"
+                                           Height="{Binding ActualHeight, ElementName=ResultItemButton, Mode=OneWay}"
                                            VerticalAlignment="Center" />
                                 <Separator />
                                 <TextBlock x:Name="PatternTextBlock"
@@ -127,11 +127,20 @@
                                                       HideUpDownButtons="True"
                                                       NumericInputMode="Decimal"
                                                       FontSize="15" />
-                                <controls:SubmitTextBox x:Name="ResultItemTextBox"
-                                                        Text="{Binding Result.Item, ValidatesOnDataErrors=True}"
-                                                        VerticalAlignment="Center"
-                                                        IsTabStop="True"
-                                                        TextWrapping="Wrap" />
+                                <Button x:Name="ResultItemButton"
+                                        Padding="5"
+                                        Margin="15,0,3,0"
+                                        Height="48"
+                                        Width="48"
+                                        HorizontalAlignment="Left"
+                                        Background="{x:Null}"
+                                        Foreground="{x:Null}"
+                                        BorderBrush="Black"
+                                        Click="SlotResult_Click">
+                                    <Button.Content>
+                                        <Image />
+                                    </Button.Content>
+                                </Button>
                                 <Separator />
                                 <Grid x:Name="PatternGrid"
                                       Height="150"
