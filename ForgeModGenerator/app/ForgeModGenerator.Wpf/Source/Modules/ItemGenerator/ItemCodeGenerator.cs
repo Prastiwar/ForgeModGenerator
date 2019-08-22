@@ -4,6 +4,7 @@ using ForgeModGenerator.Models;
 using System;
 using System.CodeDom;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace ForgeModGenerator.ItemGenerator.CodeGeneration
@@ -25,7 +26,6 @@ namespace ForgeModGenerator.ItemGenerator.CodeGeneration
             unit.Namespaces[0].Types[0].Members.Add(NewFieldGlobal("Item", "MODLOGO", NewObject("ItemBase", NewPrimitive("modlogo"))));
             foreach (Item item in Elements)
             {
-                // TODO: Consider material
                 string newObjectType = $"{item.Type.ToString()}Base";
                 string baseObjectType = null;
                 List<CodeExpression> arguments = new List<CodeExpression>() { NewPrimitive(item.Name.ToLower()) };
@@ -87,8 +87,47 @@ namespace ForgeModGenerator.ItemGenerator.CodeGeneration
                     default:
                         throw new NotImplementedException($"{item.Type} was not implemented");
                 }
+                CodeMemberField materialField = null;
+                if (item.Type == ItemType.Armor)
+                {
+                    ArmorMaterial material = (ArmorMaterial)item.Material;
+                    materialField = NewFieldGlobal("ArmorMaterial", material.Name.ToUpper(), NewMethodInvokeType("EnumHelper", "addArmorMaterial",
+                        NewPrimitive(material.Name.ToLower()),
+                        NewPrimitive(material.TextureName),
+                        NewPrimitive(material.Durability),
+                        NewPrimitive(material.DamageReductionAmountArray), // FIX: array is not primitive
+                        NewPrimitive(material.Enchantability),
+                        NewPrimitive(material.SoundEvent),
+                        NewPrimitive(material.Toughness)
+                        ));
+                }
+                else
+                {
+                    ToolMaterial material = (ToolMaterial)item.Material;
+                    materialField = NewFieldGlobal("ToolMaterial", material.Name.ToUpper(), NewMethodInvokeType("EnumHelper", "addToolMaterial",
+                        NewPrimitive(material.Name.ToLower()),
+                        NewPrimitive(material.HarvestLevel),
+                        NewPrimitive(material.MaxUses),
+                        NewPrimitive(material.Efficiency),
+                        NewPrimitive(material.AttackDamage),
+                        NewPrimitive(material.Enchantability)
+                        ));
+                }
                 CodeMemberField field = NewFieldGlobal(baseObjectType, item.Name.ToUpper(), NewObject(newObjectType, arguments.ToArray()));
+                unit.Namespaces[0].Types[0].Members.Add(materialField);
                 unit.Namespaces[0].Types[0].Members.Add(field);
+                string jsonPath = Path.Combine(ModPaths.ModelsItemFolder(McMod.ModInfo.Name, McMod.Modid), item.Name.ToLower() + ".json");
+                string parent = item.Type == ItemType.Armor ? "generated" : "handheld";
+                string jsonText = $@"
+{{
+    ""parent"": ""item/{parent}"",
+    ""textures"": {{
+                    ""layer0"": ""modname:items/azurite_axe""
+    }}
+}}
+";
+                // TODO: Do not hard-code json
+                // TODO: Generate json
             }
             return unit;
         }

@@ -50,6 +50,8 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             ctor.Statements.Add(NewMethodInvoke(NewFieldReferenceType(SourceCodeLocator.Items(Modname, Organization).ClassName, SourceCodeLocator.Items(Modname, Organization).InitFieldName), "add", setRegistryName));
             clas.Members.Add(ctor);
 
+            clas.Members.Add(NewField(typeof(bool).FullName, "shouldMakeCollision", MemberAttributes.FamilyOrAssembly));
+
             CodeMemberMethod registerModels = NewMethod("registerModels", typeof(void).FullName, MemberAttributes.Public);
             registerModels.CustomAttributes.Add(NewOverrideAnnotation());
             CodeMethodInvokeExpression registerItemRenderer = NewMethodInvoke(NewMethodInvokeType(SourceCodeLocator.Manager(Modname, Organization).ClassName, "getProxy"), "registerItemRenderer", NewMethodInvokeType("Item", "getItemFromBlock", NewThis()),
@@ -71,17 +73,49 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             setBlockHarvestLevel.Statements.Add(NewReturnThis());
             clas.Members.Add(setBlockHarvestLevel);
 
+            CodeMemberMethod setCollidable = NewMethod("setCollidable", "BlockBase", MemberAttributes.Public, new Parameter(typeof(bool).FullName, "isCollidable"));
+            CodeAssignStatement assignCollidable = NewAssignVar("shouldMakeCollision", "isCollidable");
+            setCollidable.Statements.Add(assignCollidable);
+            setCollidable.Statements.Add(NewReturnThis());
+            clas.Members.Add(setCollidable);
+
+            CodeMemberMethod addCollisionBoxToList = NewMethod("addCollisionBoxToList", typeof(void).FullName, MemberAttributes.Public,
+                new Parameter("IBlockState", "state"),
+                new Parameter("World", "worldIn"),
+                new Parameter("BlockPos", "pos"),
+                new Parameter("AxisAlignedBB", "entityBox"),
+                new Parameter("List<AxisAlignedBB>", "collidingBoxes"),
+                new Parameter("@Nullable Entity", "entityIn"),
+                new Parameter(typeof(bool).FullName, "isActualState")
+                );
+            addCollisionBoxToList.CustomAttributes.Add(NewOverrideAnnotation());
+            CodeMethodInvokeExpression baseAddCollisionBoxToList = NewMethodInvoke(new CodeBaseReferenceExpression(), "addCollisionBoxToList",
+                NewVarReference("state"), NewVarReference("worldIn"), NewVarReference("pos"), NewVarReference("entityBox"), NewVarReference("collidingBoxes"), NewVarReference("entityIn"), NewVarReference("isActualState")
+                );
+            CodeConditionStatement ifStatement = new CodeConditionStatement(NewVarReference("shouldMakeCollision"), new CodeExpressionStatement(baseAddCollisionBoxToList));
+            addCollisionBoxToList.Statements.Add(ifStatement);
+            clas.Members.Add(addCollisionBoxToList);
+
             return NewCodeUnit(SourceCodeLocator.BlockBase(Modname, Organization).PackageName, clas,
                                      $"{SourceRootPackageName}.{SourceCodeLocator.Manager(Modname, Organization).ImportRelativeName}",
                                      $"{SourceRootPackageName}.{SourceCodeLocator.CreativeTab(Modname, Organization).ImportRelativeName}",
                                      $"{SourceRootPackageName}.{SourceCodeLocator.Blocks(Modname, Organization).ImportRelativeName}",
                                      $"{SourceRootPackageName}.{SourceCodeLocator.Items(Modname, Organization).ImportRelativeName}",
                                      $"{SourceRootPackageName}.{SourceCodeLocator.ModelInterface(Modname, Organization).ImportRelativeName}",
+                                     "java.util.List",
+                                     "javax.annotation.Nullable",
                                      "net.minecraft.block.Block",
                                      "net.minecraft.block.SoundType",
                                      "net.minecraft.block.material.Material",
+                                     "net.minecraft.block.state.IBlockState",
+                                     "net.minecraft.entity.Entity",
                                      "net.minecraft.item.Item",
-                                     "net.minecraft.item.ItemBlock");
+                                     "net.minecraft.item.ItemBlock",
+                                     "net.minecraft.util.math.AxisAlignedBB",
+                                     "net.minecraft.util.math.BlockPos",
+                                     "net.minecraft.world.World"
+                                     );
+
         }
 
         private CodeCompileUnit CreateOreBase()

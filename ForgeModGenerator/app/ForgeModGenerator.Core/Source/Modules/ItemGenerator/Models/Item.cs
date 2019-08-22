@@ -1,5 +1,4 @@
 ﻿using Prism.Mvvm;
-using System.Collections.Generic;
 
 namespace ForgeModGenerator.ItemGenerator.Models
 {
@@ -14,13 +13,25 @@ namespace ForgeModGenerator.ItemGenerator.Models
         private ItemType type;
         public ItemType Type {
             get => type;
-            set => SetProperty(ref type, value);
+            set {
+                SetProperty(ref type, value);
+                if (type != ItemType.Armor && ArmorType != ArmorType.None)
+                {
+                    ArmorType = ArmorType.None;
+                }
+            }
         }
 
         private ArmorType armorType;
         public ArmorType ArmorType {
             get => armorType;
-            set => SetProperty(ref armorType, value);
+            set {
+                SetProperty(ref armorType, value);
+                if (armorType != ArmorType.None && Type != ItemType.Armor)
+                {
+                    Type = ItemType.Armor;
+                }
+            }
         }
 
         private string texturePath;
@@ -29,22 +40,16 @@ namespace ForgeModGenerator.ItemGenerator.Models
             set => SetProperty(ref texturePath, value);
         }
 
-        private float maxDamage;
-        public float MaxDamage {
-            get => maxDamage;
-            set => SetProperty(ref maxDamage, value);
-        }
-
         private int stackSize;
         public int StackSize {
             get => stackSize;
             set => SetProperty(ref stackSize, value);
         }
 
-        private KeyValuePair<string, int> harvestLevel;
-        public KeyValuePair<string, int> HarvestLevel {
-            get => harvestLevel;
-            set => SetProperty(ref harvestLevel, value);
+        private Material material;
+        public Material Material {
+            get => material;
+            set => SetProperty(ref material, value);
         }
     }
 }

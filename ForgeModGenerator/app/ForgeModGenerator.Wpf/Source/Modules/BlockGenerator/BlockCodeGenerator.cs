@@ -32,13 +32,14 @@ namespace ForgeModGenerator.BlockGenerator.CodeGeneration
                 CodeMethodInvokeExpression setHardness = NewMethodInvoke(setBlockHarvestLevel, "setHardness", NewPrimitive(block.Hardness));
                 CodeMethodInvokeExpression setResistance = NewMethodInvoke(setHardness, "setResistance", NewPrimitive(block.Resistance));
                 CodeMethodInvokeExpression setLightLevel = NewMethodInvoke(setResistance, "setLightLevel", NewPrimitive(block.LightLevel / 15));
+                CodeMethodInvokeExpression setCollidable = NewMethodInvoke(setLightLevel, "setCollidable", NewPrimitive(block.ShouldMakeCollision));
                 switch (block.Type)
                 {
                     case BlockType.Hard:
-                        initExpression = setLightLevel;
+                        initExpression = setCollidable;
                         break;
                     case BlockType.Ore:
-                        CodeMethodInvokeExpression setDropItem = NewMethodInvoke(setResistance, "setDropItem", NewPrimitive(block.DropItem)); // FIX: DropItem is not primitive
+                        CodeMethodInvokeExpression setDropItem = NewMethodInvoke(setCollidable, "setDropItem", NewPrimitive(block.DropItem)); // FIX: DropItem is not primitive
                         initExpression = setDropItem;
                         break;
                     default:
@@ -60,7 +61,6 @@ namespace ForgeModGenerator.BlockGenerator.CodeGeneration
 }}
 ";              // TODO: Do not hard-code json
                 // TODO: Generate json
-                // TODO: Implement block.ShouldMakeCollision
             }
             return unit;
         }
