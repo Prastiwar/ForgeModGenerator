@@ -1,7 +1,6 @@
 ﻿using ForgeModGenerator.BlockGenerator.Models;
 using ForgeModGenerator.CodeGeneration;
 using ForgeModGenerator.Models;
-using System;
 using System.CodeDom;
 using System.Collections.Generic;
 using System.IO;
@@ -25,7 +24,6 @@ namespace ForgeModGenerator.BlockGenerator.CodeGeneration
             unit.Namespaces[0].Imports.Add(NewImport($"net.minecraft.block.Block"));
             foreach (Block block in Elements)
             {
-                CodeExpression initExpression = null;
                 CodeObjectCreateExpression assignObject = NewObject("BlockBase", NewPrimitive(block.Name.ToLower()), NewPrimitive(block.MaterialType));
                 CodeMethodInvokeExpression setSoundType = NewMethodInvoke(assignObject, "setSoundType", NewPrimitive(block.SoundType));
                 CodeMethodInvokeExpression setBlockHarvestLevel = NewMethodInvoke(setSoundType, "setBlockHarvestLevel", NewPrimitive(block.HarvestLevel.Key), NewPrimitive(block.HarvestLevel.Value));
@@ -33,17 +31,11 @@ namespace ForgeModGenerator.BlockGenerator.CodeGeneration
                 CodeMethodInvokeExpression setResistance = NewMethodInvoke(setHardness, "setResistance", NewPrimitive(block.Resistance));
                 CodeMethodInvokeExpression setLightLevel = NewMethodInvoke(setResistance, "setLightLevel", NewPrimitive(block.LightLevel / 15));
                 CodeMethodInvokeExpression setCollidable = NewMethodInvoke(setLightLevel, "setCollidable", NewPrimitive(block.ShouldMakeCollision));
-                switch (block.Type)
+                CodeExpression initExpression = setCollidable;
+                if (block.Type == BlockType.Ore)
                 {
-                    case BlockType.Hard:
-                        initExpression = setCollidable;
-                        break;
-                    case BlockType.Ore:
-                        CodeMethodInvokeExpression setDropItem = NewMethodInvoke(setCollidable, "setDropItem", NewPrimitive(block.DropItem)); // FIX: DropItem is not primitive
-                        initExpression = setDropItem;
-                        break;
-                    default:
-                        throw new NotImplementedException($"{block.Type} was not implemented");
+                    CodeMethodInvokeExpression setDropItem = NewMethodInvoke(setCollidable, "setDropItem", NewPrimitive(block.DropItem));
+                    initExpression = setDropItem;
                 }
                 unit.Namespaces[0].Types[0].Members.Add(NewFieldGlobal("Block", block.Name.ToUpper(), initExpression));
                 string jsonPath = Path.Combine(ModPaths.Blockstates(McMod.ModInfo.Name, McMod.Modid), block.Name.ToLower() + ".json");

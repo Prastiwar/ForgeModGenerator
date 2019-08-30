@@ -361,6 +361,7 @@
     <Compile Include="Source\App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Source\CodeGeneration\CodeDom\Expressions\CodePrimitiveArrayCreateExpression.cs" />
     <Compile Include="Source\CodeGeneration\CodeDom\Expressions\CodeInstanceOfExpression.cs" />
     <Compile Include="Source\CodeGeneration\CodeDom\Expressions\CodeSuperInvokeExpression.cs" />
     <Compile Include="Source\CodeGeneration\CodeDom\Generator\JavaCodeGenerator.cs" />

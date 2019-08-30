@@ -95,7 +95,7 @@ namespace ForgeModGenerator.ItemGenerator.CodeGeneration
                         NewPrimitive(material.Name.ToLower()),
                         NewPrimitive(material.TextureName),
                         NewPrimitive(material.Durability),
-                        NewPrimitive(material.DamageReductionAmountArray), // FIX: array is not primitive
+                        NewPrimitveArray(material.DamageReductionAmountArray),
                         NewPrimitive(material.Enchantability),
                         NewPrimitive(material.SoundEvent),
                         NewPrimitive(material.Toughness)

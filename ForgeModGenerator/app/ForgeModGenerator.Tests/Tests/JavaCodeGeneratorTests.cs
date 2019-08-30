@@ -258,6 +258,14 @@ namespace ForgeModGenerator.Tests
             Assert.IsTrue(code.Contains("for (Block block : ModBlocks.BLOCKS) {"), code);
         }
 
+        [TestMethod]
+        public void GeneratePrimitiveArray()
+        {
+            CodePrimitiveArrayCreateExpression array = new CodePrimitiveArrayCreateExpression(new string[] { "some", "test" });
+            string code = GenerateExpression(TestContext, array);
+            Assert.IsTrue(code.Contains("new String[] { \"some\", \"test\" }"), code);
+        }
+
         public static string GenerateExpression(TestContext context, CodeExpression expression) => GenerateStatement(context, new CodeExpressionStatement(expression));
         public static string GenerateStatement(TestContext context, CodeStatement statement)
         {

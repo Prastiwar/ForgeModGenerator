@@ -21,6 +21,9 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                 case CodeArrayCreateExpression val:
                     GenerateArrayCreateExpression(val);
                     break;
+                case CodePrimitiveArrayCreateExpression val:
+                    GenerateCodePrimitiveArrayCreateExpression(val);
+                    break;
                 case CodeBaseReferenceExpression val:
                     GenerateBaseReferenceExpression();
                     break;
@@ -82,6 +85,34 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                         throw new ArgumentException(InvalidElementType(e.GetType()));
                     }
             }
+        }
+
+        private void GenerateCodePrimitiveArrayCreateExpression(CodePrimitiveArrayCreateExpression e)
+        {
+            output.Write("new ");
+            OutputType(new CodeTypeReference(e.Array.GetType().GetElementType()));
+
+            Array array = (Array)e.Array;
+            if (array.Length == 0)
+            {
+                output.Write("[0]");
+            }
+            else
+            {
+                output.Write("[] { ");
+                int length = array.Length;
+                int lastIndex = length - 1;
+                for (int i = 0; i < length; i++)
+                {
+                    GeneratePrimitiveExpression(new CodePrimitiveExpression(array.GetValue(i)));
+                    if (i < lastIndex)
+                    {
+                        output.Write(", ");
+                    }
+                }
+                output.Write(" }");
+            }
+
         }
 
         private void GenerateArrayCreateExpression(CodeArrayCreateExpression e)

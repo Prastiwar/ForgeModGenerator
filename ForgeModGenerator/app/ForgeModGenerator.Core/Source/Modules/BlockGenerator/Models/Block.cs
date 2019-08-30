@@ -72,8 +72,8 @@ namespace ForgeModGenerator.BlockGenerator.Models
             set => SetProperty(ref soundType, value);
         }
 
-        private Item dropItem;
-        public Item DropItem {
+        private string dropItem;
+        public string DropItem {
             get => dropItem;
             set => SetProperty(ref dropItem, value);
         }

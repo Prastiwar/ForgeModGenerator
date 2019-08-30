@@ -111,6 +111,16 @@ namespace ForgeModGenerator.CodeGeneration
         protected CodeSnippetExpression NewSnippetExpression(string text) => new CodeSnippetExpression(text);
         protected CodeSnippetStatement NewSnippetStatement(string text) => new CodeSnippetStatement(text);
 
+        protected CodePrimitiveArrayCreateExpression NewPrimitveArray(int[] array) => new CodePrimitiveArrayCreateExpression(array);
+        protected CodePrimitiveArrayCreateExpression NewPrimitveArray(string[] array) => new CodePrimitiveArrayCreateExpression(array);
+        protected CodePrimitiveArrayCreateExpression NewPrimitveArray(double[] array) => new CodePrimitiveArrayCreateExpression(array);
+        protected CodePrimitiveArrayCreateExpression NewPrimitveArray(float[] array) => new CodePrimitiveArrayCreateExpression(array);
+        protected CodePrimitiveArrayCreateExpression NewPrimitveArray(long[] array) => new CodePrimitiveArrayCreateExpression(array);
+        protected CodePrimitiveArrayCreateExpression NewPrimitveArray(short[] array) => new CodePrimitiveArrayCreateExpression(array);
+        protected CodePrimitiveArrayCreateExpression NewPrimitveArray(bool[] array) => new CodePrimitiveArrayCreateExpression(array);
+        protected CodePrimitiveArrayCreateExpression NewPrimitveArray(byte[] array) => new CodePrimitiveArrayCreateExpression(array);
+        protected CodePrimitiveArrayCreateExpression NewPrimitveArray(char[] array) => new CodePrimitiveArrayCreateExpression(array);
+
         protected JavaCodeMemberMethod NewMethod(string name, string returnType, MemberAttributes attributes, params Parameter[] parameters)
         {
             JavaCodeMemberMethod method = new JavaCodeMemberMethod() {
