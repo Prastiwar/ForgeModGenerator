@@ -35,6 +35,13 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
                 throw new NotImplementedException($"CodeCompileUnit for {fileName} not found");
             }
         }
+        private CodeCompileUnit CreateMaterialBase()
+        {
+            CodeTypeDeclaration clas = NewClassWithBases(SourceCodeLocator.MaterialBase(Modname, Organization).ClassName, "Material");
+            // TODO: Implement MaterialBase class
+            CodeNamespace package = NewPackage(SourceCodeLocator.SoundEventBase(Modname, Organization).PackageName, clas, "net.minecraft.block.material");
+            return NewCodeUnit(package);
+        }
 
         private CodeCompileUnit CreateSoundEventBase()
         {

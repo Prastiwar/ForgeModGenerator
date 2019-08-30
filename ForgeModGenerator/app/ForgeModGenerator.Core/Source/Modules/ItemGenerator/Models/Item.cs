@@ -46,8 +46,8 @@ namespace ForgeModGenerator.ItemGenerator.Models
             set => SetProperty(ref stackSize, value);
         }
 
-        private Material material;
-        public Material Material {
+        private string material;
+        public string Material {
             get => material;
             set => SetProperty(ref material, value);
         }

@@ -1,6 +1,6 @@
-﻿namespace ForgeModGenerator.ItemGenerator.Models
+﻿namespace ForgeModGenerator.MaterialGenerator.Models
 {
-    public class ArmorMaterial : Material
+    public class ArmorMaterial : ItemMaterial
     {
         private int durability;
         public int Durability {

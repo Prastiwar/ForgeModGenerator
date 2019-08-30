@@ -131,7 +131,8 @@
                                              OpenRecipeGeneratorCommand="{Binding OpenRecipeGeneratorCommand}"
                                              OpenSettingsCommandCommand="{Binding OpenSettingsCommandCommand}"
                                              OpenSoundGeneratorCommand="{Binding OpenSoundGeneratorCommand}"
-                                             OpenTextureGeneratorCommand="{Binding OpenTextureGeneratorCommand}" />
+                                             OpenTextureGeneratorCommand="{Binding OpenTextureGeneratorCommand}"
+                                             OpenMaterialGeneratorCommand="{Binding OpenMaterialGeneratorCommand}" />
             <materialDesign:Transitioner x:Name="FrameTransitioner"
                                          Grid.Column="1"
                                          SelectedIndex="0"

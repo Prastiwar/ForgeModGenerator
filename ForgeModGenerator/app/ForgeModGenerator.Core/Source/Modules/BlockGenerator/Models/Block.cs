@@ -1,5 +1,4 @@
-﻿using ForgeModGenerator.ItemGenerator.Models;
-using Prism.Mvvm;
+﻿using Prism.Mvvm;
 using System.Collections.Generic;
 
 namespace ForgeModGenerator.BlockGenerator.Models

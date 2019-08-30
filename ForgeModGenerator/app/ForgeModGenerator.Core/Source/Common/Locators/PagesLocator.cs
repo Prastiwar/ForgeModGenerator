@@ -33,6 +33,7 @@ namespace ForgeModGenerator
         public const string TextureGenerator = "TextureGenerator";
         public const string BlockGenerator = "BlockGenerator";
         public const string ItemGenerator = "ItemGenerator";
+        public const string MaterialGenerator = "MaterialGenerator";
         public const string SoundGenerator = "SoundGenerator";
         public const string CommandGenerator = "CommandGenerator";
         public const string AchievementGenerator = "AchievementGenerator";

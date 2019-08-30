@@ -1,6 +1,6 @@
-﻿namespace ForgeModGenerator.ItemGenerator.Models
+﻿namespace ForgeModGenerator.MaterialGenerator.Models
 {
-    public class ToolMaterial : Material
+    public class ToolMaterial : ItemMaterial
     {
         private int harvestLevel;
         public int HarvestLevel {

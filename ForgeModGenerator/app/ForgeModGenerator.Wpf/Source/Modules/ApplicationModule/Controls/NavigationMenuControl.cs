@@ -52,6 +52,13 @@ namespace ForgeModGenerator.ApplicationModule.Controls
             set => SetValue(OpenItemGeneratorCommandProperty, value);
         }
 
+        public static readonly DependencyProperty OpenMaterialGeneratorCommandProperty =
+            DependencyProperty.Register("OpenMaterialGeneratorCommand", typeof(ICommand), typeof(NavigationMenuControl), new PropertyMetadata(null));
+        public ICommand OpenMaterialGeneratorCommand {
+            get => (ICommand)GetValue(OpenMaterialGeneratorCommandProperty);
+            set => SetValue(OpenMaterialGeneratorCommandProperty, value);
+        }
+
         public static readonly DependencyProperty OpenSoundGeneratorCommandProperty =
             DependencyProperty.Register("OpenSoundGeneratorCommand", typeof(ICommand), typeof(NavigationMenuControl), new PropertyMetadata(null));
         public ICommand OpenSoundGeneratorCommand {

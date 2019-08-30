@@ -12,6 +12,8 @@ using ForgeModGenerator.CommandGenerator.ViewModels;
 using ForgeModGenerator.CommandGenerator.Views;
 using ForgeModGenerator.ItemGenerator.ViewModels;
 using ForgeModGenerator.ItemGenerator.Views;
+using ForgeModGenerator.MaterialGenerator.ViewModels;
+using ForgeModGenerator.MaterialGenerator.Views;
 using ForgeModGenerator.Models;
 using ForgeModGenerator.ModGenerator;
 using ForgeModGenerator.ModGenerator.Serialization;
@@ -56,13 +58,11 @@ namespace ForgeModGenerator
 {
     public partial class App : PrismApplication
     {
-        public App()
-        {
+        public App() =>
 #if !DEBUG
             DispatcherUnhandledException += App_DispatcherUnhandledException;
 #endif
             AppDomain.CurrentDomain.ProcessExit += OnExit;
-        }
 
         private readonly MemoryCache globalCache = new MemoryCache(new MemoryCacheOptions());
 
@@ -199,6 +199,7 @@ namespace ForgeModGenerator
             containerRegistry.RegisterForNavigation<TextureGeneratorPage, TextureGeneratorViewModel>(Pages.TextureGenerator);
             containerRegistry.RegisterForNavigation<BlockGeneratorPage, BlockGeneratorViewModel>(Pages.BlockGenerator);
             containerRegistry.RegisterForNavigation<ItemGeneratorPage, ItemGeneratorViewModel>(Pages.ItemGenerator);
+            containerRegistry.RegisterForNavigation<MaterialGeneratorPage, MaterialGeneratorViewModel>(Pages.MaterialGenerator);
             containerRegistry.RegisterForNavigation<SoundGeneratorPage, SoundGeneratorViewModel>(Pages.SoundGenerator);
             containerRegistry.RegisterForNavigation<CommandGeneratorPage, CommandGeneratorViewModel>(Pages.CommandGenerator);
             containerRegistry.RegisterForNavigation<AchievementGeneratorPage, AchievementGeneratorViewModel>(Pages.AchievementGenerator);

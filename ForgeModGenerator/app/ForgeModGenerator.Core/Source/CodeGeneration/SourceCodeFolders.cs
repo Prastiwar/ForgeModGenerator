@@ -5,9 +5,11 @@
     {
         public const string Root = "fmg";
 
+        public const string Command = "command";
+
         public const string Block = "block";
 
-        public const string Command = "command";
+        public const string Material = "material";
 
         public const string Item = "item";
         public const string Armor = "armor";

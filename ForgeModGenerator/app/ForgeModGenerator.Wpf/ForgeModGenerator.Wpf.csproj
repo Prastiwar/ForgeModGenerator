@@ -416,6 +416,10 @@
     </Compile>
     <Compile Include="Source\Modules\CommandGenerator\Validation\CommandValidator.cs" />
     <Compile Include="Source\Modules\ItemGenerator\ItemCodeGenerator.cs" />
+    <Compile Include="Source\Modules\MaterialGenerator\MaterialCodeGenerator.cs" />
+    <Compile Include="Source\Modules\MaterialGenerator\MaterialGeneratorPage.xaml.cs">
+      <DependentUpon>MaterialGeneratorPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Source\Modules\ModGenerator\ModEditorFormFactory.cs" />
     <Compile Include="Source\Modules\ModGenerator\Serialization\ModInfoSerializer.cs" />
     <Compile Include="Source\Modules\ModGenerator\Serialization\ModSerializer.cs" />
@@ -552,6 +556,10 @@
     <Page Include="Source\Controls\ItemListForm.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Source\Modules\MaterialGenerator\MaterialGeneratorPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Source\Modules\RecipeGenerator\Controls\RecipeEditForm.xaml">
       <Generator>MSBuild:Compile</Generator>

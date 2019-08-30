@@ -65,6 +65,29 @@ namespace ForgeModGenerator.CodeGeneration
             return cache.Set(key, locator, cacheExpirationTime);
         }
 
+        public static InitClassLocator Materials(string modname, string organization)
+        {
+            string key = GetKey(nameof(Materials), modname, organization);
+            if (cache.TryGetValue(key, out InitClassLocator value))
+            {
+                return value;
+            }
+            InitClassLocator locator = new InitClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), Prefix + "Materials"), "MATERIALS");
+            CreateIfNotExist(locator.FullPath);
+            return cache.Set(key, locator, cacheExpirationTime);
+        }
+        public static ClassLocator MaterialBase(string modname, string organization)
+        {
+            string key = GetKey(nameof(MaterialBase), modname, organization);
+            if (cache.TryGetValue(key, out ClassLocator value))
+            {
+                return value;
+            }
+            ClassLocator locator = new ClassLocator(ClassLocator.CombineImport(GetPackageName(modname, organization), SourceCodeFolders.Material, "MaterialBase"));
+            CreateIfNotExist(locator.FullPath);
+            return cache.Set(key, locator, cacheExpirationTime);
+        }
+
         #region Item locators
         public static InitClassLocator Items(string modname, string organization)
         {

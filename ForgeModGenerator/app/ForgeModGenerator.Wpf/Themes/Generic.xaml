@@ -207,6 +207,12 @@
                                                         ToolTipService.IsEnabled="{Binding Tag, RelativeSource={RelativeSource AncestorType=StackPanel}}"
                                                         Kind="Pickaxe"
                                                         Command="{Binding OpenItemGeneratorCommand, RelativeSource={RelativeSource AncestorType=appcontrols:NavigationMenuControl}}" />
+                                    <controls:NavButton x:Name="MaterialGeneratorButton"
+                                                        Desc="Material Generator"
+                                                        ToolTip="Material Generator"
+                                                        ToolTipService.IsEnabled="{Binding Tag, RelativeSource={RelativeSource AncestorType=StackPanel}}"
+                                                        Kind="CheckboxMultipleBlankOutline"
+                                                        Command="{Binding OpenMaterialGeneratorCommand, RelativeSource={RelativeSource AncestorType=appcontrols:NavigationMenuControl}}" />
                                     <controls:NavButton x:Name="SoundGeneratorButton"
                                                         Desc="Sound Generator"
                                                         ToolTip="Sound Generator"

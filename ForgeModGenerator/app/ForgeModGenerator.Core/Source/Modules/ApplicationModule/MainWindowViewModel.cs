@@ -43,6 +43,9 @@ namespace ForgeModGenerator.ApplicationModule.ViewModels
         private ICommand openItemGeneratorCommand;
         public ICommand OpenItemGeneratorCommand => openItemGeneratorCommand ?? (openItemGeneratorCommand = new DelegateCommand(() => { navigation.NavigateTo(Pages.ItemGenerator); }));
 
+        private ICommand openMaterialGeneratorCommand;
+        public ICommand OpenMaterialGeneratorCommand => openMaterialGeneratorCommand ?? (openMaterialGeneratorCommand = new DelegateCommand(() => { navigation.NavigateTo(Pages.MaterialGenerator); }));
+
         private ICommand openSoundGeneratorCommand;
         public ICommand OpenSoundGeneratorCommand => openSoundGeneratorCommand ?? (openSoundGeneratorCommand = new DelegateCommand(() => { navigation.NavigateTo(Pages.SoundGenerator); }));
 
