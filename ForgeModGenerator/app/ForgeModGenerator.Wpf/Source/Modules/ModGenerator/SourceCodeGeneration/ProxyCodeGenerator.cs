@@ -1,44 +1,21 @@
 ﻿using ForgeModGenerator.CodeGeneration;
 using ForgeModGenerator.Models;
-using System;
 using System.CodeDom;
-using System.IO;
+using System.Collections.Generic;
 
 namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 {
     public class ProxyCodeGenerator : MultiScriptsCodeGenerator
     {
         public ProxyCodeGenerator(McMod mcMod) : base(mcMod) =>
-            ScriptLocators = new ClassLocator[] {
-                SourceCodeLocator.CommonProxyInterface(Modname, Organization),
-                SourceCodeLocator.ClientProxy(Modname, Organization),
-                SourceCodeLocator.ServerProxy(Modname, Organization)
+            ScriptGenerators = new Dictionary<ClassLocator, GenerateDelegateHandler> {
+                { SourceCodeLocator.CommonProxyInterface(Modname, Organization), CreateICommonProxyCodeUnit },
+                { SourceCodeLocator.ClientProxy(Modname, Organization), CreateClientProxyCodeUnit },
+                { SourceCodeLocator.ServerProxy(Modname, Organization), CreateServerProxyCodeUnit }
             };
 
-        public override ClassLocator[] ScriptLocators { get; }
+        public override Dictionary<ClassLocator, GenerateDelegateHandler> ScriptGenerators { get; }
 
-        public override ClassLocator ScriptLocator => ScriptLocators[0];
-
-        protected override CodeCompileUnit CreateTargetCodeUnit(string scriptPath)
-        {
-            string fileName = Path.GetFileNameWithoutExtension(scriptPath);
-            if (fileName == SourceCodeLocator.CommonProxyInterface(Modname, Organization).ClassName)
-            {
-                return CreateICommonProxyCodeUnit();
-            }
-            else if (fileName == SourceCodeLocator.ClientProxy(Modname, Organization).ClassName)
-            {
-                return CreateClientProxyCodeUnit();
-            }
-            else if (fileName == SourceCodeLocator.ServerProxy(Modname, Organization).ClassName)
-            {
-                return CreateServerProxyCodeUnit();
-            }
-            else
-            {
-                throw new NotImplementedException($"CodeCompileUnit for {fileName} not found");
-            }
-        }
 
         private CodeCompileUnit CreateClientProxyCodeUnit()
         {

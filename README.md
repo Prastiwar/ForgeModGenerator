@@ -29,6 +29,10 @@
   - [ ] Respect manual changes in files
   - [ ] Update source code
 
+- [ ] Material Generator
+
+  - [ ] Update source code
+
 - [x] Command Generator - programming knowledge is required
 
   - [x] Create simple command template

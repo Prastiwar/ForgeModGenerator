@@ -1,45 +1,158 @@
 ﻿using ForgeModGenerator.CodeGeneration;
 using ForgeModGenerator.CodeGeneration.CodeDom;
 using ForgeModGenerator.Models;
-using System;
 using System.CodeDom;
-using System.IO;
+using System.Collections.Generic;
 
 namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 {
     public class OtherBasesCodeGenerator : MultiScriptsCodeGenerator
     {
+
         public OtherBasesCodeGenerator(McMod mcMod) : base(mcMod)
-            => ScriptLocators = new ClassLocator[] {
-                SourceCodeLocator.SoundEventBase(Modname, Organization),
-                SourceCodeLocator.FoodEffectBase(Modname, Organization)
+            => ScriptGenerators = new Dictionary<ClassLocator, GenerateDelegateHandler>{
+                { SourceCodeLocator.SoundEventBase(Modname, Organization), CreateSoundEventBase},
+                { SourceCodeLocator.FoodEffectBase(Modname, Organization), CreateFoodEffectBase},
+                { SourceCodeLocator.MaterialBase(Modname, Organization), CreateMaterialBase}
             };
 
-        public override ClassLocator[] ScriptLocators { get; }
+        public override Dictionary<ClassLocator, GenerateDelegateHandler> ScriptGenerators { get; }
 
-        public override ClassLocator ScriptLocator => ScriptLocators[0];
-
-        protected override CodeCompileUnit CreateTargetCodeUnit(string scriptPath)
-        {
-            string fileName = Path.GetFileNameWithoutExtension(scriptPath);
-            if (fileName == SourceCodeLocator.SoundEventBase(Modname, Organization).ClassName)
-            {
-                return CreateSoundEventBase();
-            }
-            else if (fileName == SourceCodeLocator.FoodEffectBase(Modname, Organization).ClassName)
-            {
-                return CreateFoodEffectBase();
-            }
-            else
-            {
-                throw new NotImplementedException($"CodeCompileUnit for {fileName} not found");
-            }
-        }
         private CodeCompileUnit CreateMaterialBase()
         {
-            CodeTypeDeclaration clas = NewClassWithBases(SourceCodeLocator.MaterialBase(Modname, Organization).ClassName, "Material");
-            // TODO: Implement MaterialBase class
-            CodeNamespace package = NewPackage(SourceCodeLocator.SoundEventBase(Modname, Organization).PackageName, clas, "net.minecraft.block.material");
+            string baseClassName = SourceCodeLocator.MaterialBase(Modname, Organization).ClassName;
+            CodeTypeDeclaration clas = NewClassWithBases(baseClassName, "Material");
+            CodeConstructor ctor = NewConstructor(baseClassName, MemberAttributes.Public, new Parameter("MapColor", "color"));
+            ctor.Statements.Add(NewSuper(NewVarReference("color")));
+            ctor.Statements.Add(NewMethodInvoke(NewFieldReferenceType(SourceCodeLocator.Materials(Modname, Organization).ClassName, SourceCodeLocator.Materials(Modname, Organization).InitFieldName), "add", NewThis()));
+            clas.Members.Add(ctor);
+
+            clas.Members.Add(NewField(typeof(bool).FullName, "liquid", MemberAttributes.Family));
+            clas.Members.Add(NewField(typeof(bool).FullName, "solid", MemberAttributes.Family));
+            clas.Members.Add(NewField(typeof(bool).FullName, "shouldBlockLight", MemberAttributes.Family));
+            clas.Members.Add(NewField(typeof(bool).FullName, "shouldBlockMovement", MemberAttributes.Family));
+            clas.Members.Add(NewField(typeof(bool).FullName, "canBurn", MemberAttributes.Family));
+            clas.Members.Add(NewField(typeof(bool).FullName, "translucent", MemberAttributes.Family));
+            clas.Members.Add(NewField(typeof(bool).FullName, "requiresNoTool", MemberAttributes.Family));
+            clas.Members.Add(NewField(typeof(bool).FullName, "replaceable", MemberAttributes.Family));
+            clas.Members.Add(NewField(typeof(bool).FullName, "adventureModeExempt", MemberAttributes.Family));
+            clas.Members.Add(NewField("EnumPushReaction", "mobilityFlag", MemberAttributes.Family));
+
+            JavaCodeMemberMethod method = NewMethod("isLiquid", typeof(bool).FullName, MemberAttributes.Public);
+            method.CustomAttributes.Add(NewOverrideAnnotation());
+            method.Statements.Add(NewReturnVar("liquid"));
+            clas.Members.Add(method);
+
+            method = NewMethod("isSolid", typeof(bool).FullName, MemberAttributes.Public);
+            method.CustomAttributes.Add(NewOverrideAnnotation());
+            method.Statements.Add(NewReturnVar("solid"));
+            clas.Members.Add(method);
+
+            method = NewMethod("blocksLight", typeof(bool).FullName, MemberAttributes.Public);
+            method.CustomAttributes.Add(NewOverrideAnnotation());
+            method.Statements.Add(NewReturnVar("shouldBlockLight"));
+            clas.Members.Add(method);
+
+            method = NewMethod("blocksMovement", typeof(bool).FullName, MemberAttributes.Public);
+            method.CustomAttributes.Add(NewOverrideAnnotation());
+            method.Statements.Add(NewReturnVar("shouldBlockMovement"));
+            clas.Members.Add(method);
+
+            method = NewMethod("getCanBurn", typeof(bool).FullName, MemberAttributes.Public);
+            method.CustomAttributes.Add(NewOverrideAnnotation());
+            method.Statements.Add(NewReturnVar("canBurn"));
+            clas.Members.Add(method);
+
+            method = NewMethod("isToolNotRequired", typeof(bool).FullName, MemberAttributes.Public);
+            method.CustomAttributes.Add(NewOverrideAnnotation());
+            method.Statements.Add(NewReturnVar("requiresNoTool"));
+            clas.Members.Add(method);
+
+            method = NewMethod("isReplaceable", typeof(bool).FullName, MemberAttributes.Public);
+            method.CustomAttributes.Add(NewOverrideAnnotation());
+            method.Statements.Add(NewReturnVar("replaceable"));
+            clas.Members.Add(method);
+
+            method = NewMethod("getMobilityFlag", "EnumPushReaction", MemberAttributes.Public);
+            method.CustomAttributes.Add(NewOverrideAnnotation());
+            method.Statements.Add(NewReturnVar("mobilityFlag"));
+            clas.Members.Add(method);
+
+            method = NewMethod("isOpaque", typeof(bool).FullName, MemberAttributes.Public);
+            method.CustomAttributes.Add(NewOverrideAnnotation());
+            method.Statements.Add(NewSnippetStatement("		return this.translucent ? false : this.blocksMovement();"));
+            clas.Members.Add(method);
+
+            method = NewMethod("setTranslucent", baseClassName, MemberAttributes.Public, new Parameter(typeof(bool).FullName, "value"));
+            method.Statements.Add(NewAssignVar("translucent", "value"));
+            method.Statements.Add(NewReturnThis());
+            clas.Members.Add(method);
+
+            method = NewMethod("setRequiresNoTool", baseClassName, MemberAttributes.Public, new Parameter(typeof(bool).FullName, "value"));
+            method.Statements.Add(NewAssignVar("requiresNoTool", "value"));
+            method.Statements.Add(NewReturnThis());
+            clas.Members.Add(method);
+
+            method = NewMethod("setBurning", baseClassName, MemberAttributes.Public, new Parameter(typeof(bool).FullName, "value"));
+            method.Statements.Add(NewAssignVar("canBurn", "value"));
+            method.Statements.Add(NewReturnThis());
+            clas.Members.Add(method);
+
+            method = NewMethod("setReplaceable", baseClassName, MemberAttributes.Public, new Parameter(typeof(bool).FullName, "value"));
+            method.Statements.Add(NewAssignVar("replaceable", "value"));
+            method.Statements.Add(NewReturnThis());
+            clas.Members.Add(method);
+
+            method = NewMethod("setAdventureModeExempt", baseClassName, MemberAttributes.Public, new Parameter(typeof(bool).FullName, "value"));
+            method.Statements.Add(NewAssignVar("adventureModeExempt", "value"));
+            method.Statements.Add(NewReturnThis());
+            clas.Members.Add(method);
+
+            method = NewMethod("setMobilityFlag", baseClassName, MemberAttributes.Public, new Parameter("EnumPushReaction", "value"));
+            method.Statements.Add(NewAssignVar("mobilityFlag", "value"));
+            method.Statements.Add(NewReturnThis());
+            clas.Members.Add(method);
+
+            method = NewMethod("setReplaceable", "Material", MemberAttributes.Family);
+            method.Statements.Add(NewAssignPrimitive("replaceable", true));
+            method.Statements.Add(NewReturnThis());
+            method.CustomAttributes.Add(NewOverrideAnnotation());
+            clas.Members.Add(method);
+
+            method = NewMethod("setNoPushMobility", "Material", MemberAttributes.Family);
+            method.Statements.Add(NewAssignVar("mobilityFlag", "EnumPushReaction.DESTROY"));
+            method.Statements.Add(NewReturnThis());
+            method.CustomAttributes.Add(NewOverrideAnnotation());
+            clas.Members.Add(method);
+
+            method = NewMethod("setImmovableMobility", "Material", MemberAttributes.Family);
+            method.Statements.Add(NewAssignVar("mobilityFlag", "EnumPushReaction.BLOCK"));
+            method.Statements.Add(NewReturnThis());
+            method.CustomAttributes.Add(NewOverrideAnnotation());
+            clas.Members.Add(method);
+
+            method = NewMethod("setAdventureModeExempt", "Material", MemberAttributes.Family);
+            method.Statements.Add(NewAssignPrimitive("adventureModeExempt", true));
+            method.Statements.Add(NewReturnThis());
+            method.CustomAttributes.Add(NewOverrideAnnotation());
+            clas.Members.Add(method);
+
+            method = NewMethod("setRequiresTool", "Material", MemberAttributes.Family);
+            method.Statements.Add(NewAssignPrimitive("requiresNoTool", false));
+            method.Statements.Add(NewReturnThis());
+            method.CustomAttributes.Add(NewOverrideAnnotation());
+            clas.Members.Add(method);
+
+            method = NewMethod("setBurning", "Material", MemberAttributes.Family);
+            method.Statements.Add(NewAssignPrimitive("canBurn", true));
+            method.Statements.Add(NewReturnThis());
+            method.CustomAttributes.Add(NewOverrideAnnotation());
+            clas.Members.Add(method);
+
+            CodeNamespace package = NewPackage(SourceCodeLocator.MaterialBase(Modname, Organization).PackageName, clas,
+                                                                           "net.minecraft.block.material.EnumPushReaction",
+                                                                           "net.minecraft.block.material.MapColor",
+                                                                           "net.minecraft.block.material.Material");
             return NewCodeUnit(package);
         }
 

@@ -1,25 +1,27 @@
 ﻿using ForgeModGenerator.Models;
 using System.CodeDom;
+using System.Collections.Generic;
 
 namespace ForgeModGenerator.CodeGeneration
 {
-    public abstract class MultiScriptsCodeGenerator : ScriptCodeGenerator, IMultiScriptCodeGenerator
+    public abstract class MultiScriptsCodeGenerator : ScriptCodeGenerator/*, IMultiScriptCodeGenerator*/
     {
+        public delegate CodeCompileUnit GenerateDelegateHandler();
+
         public MultiScriptsCodeGenerator(McMod mcMod) : base(mcMod) { }
 
-        public abstract ClassLocator[] ScriptLocators { get; }
+        public override ClassLocator ScriptLocator => null;
+
+        public abstract Dictionary<ClassLocator, GenerateDelegateHandler> ScriptGenerators { get; }
 
         protected sealed override CodeCompileUnit CreateTargetCodeUnit() => new CodeCompileUnit();
 
         public override void RegenerateScript()
         {
-            foreach (ClassLocator locator in ScriptLocators)
+            foreach (KeyValuePair<ClassLocator, GenerateDelegateHandler> locator in ScriptGenerators)
             {
-                RegenerateScript(locator.FullPath, CreateTargetCodeUnit(locator.FullPath), GeneratorOptions);
+                RegenerateScript(locator.Key.FullPath, locator.Value(), GeneratorOptions);
             }
         }
-
-        protected abstract CodeCompileUnit CreateTargetCodeUnit(string scriptPath);
-
     }
 }

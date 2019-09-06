@@ -1,38 +1,19 @@
 ﻿using ForgeModGenerator.CodeGeneration;
 using ForgeModGenerator.Models;
-using System;
 using System.CodeDom;
-using System.IO;
+using System.Collections.Generic;
 
 namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 {
     public class BlockBasesCodeGenerator : MultiScriptsCodeGenerator
     {
-        public BlockBasesCodeGenerator(McMod mcMod) : base(mcMod) => ScriptLocators = new ClassLocator[] {
-                SourceCodeLocator.BlockBase(Modname, Organization),
-                SourceCodeLocator.OreBase(Modname, Organization)
+        public BlockBasesCodeGenerator(McMod mcMod) : base(mcMod) =>
+            ScriptGenerators = new Dictionary<ClassLocator, GenerateDelegateHandler> {
+                { SourceCodeLocator.BlockBase(Modname, Organization), CreateBlockBase },
+                { SourceCodeLocator.OreBase(Modname, Organization), CreateOreBase }
             };
 
-        public override ClassLocator[] ScriptLocators { get; }
-
-        public override ClassLocator ScriptLocator => ScriptLocators[0];
-
-        protected override CodeCompileUnit CreateTargetCodeUnit(string scriptPath)
-        {
-            string fileName = Path.GetFileNameWithoutExtension(scriptPath);
-            if (fileName == SourceCodeLocator.BlockBase(Modname, Organization).ClassName)
-            {
-                return CreateBlockBase();
-            }
-            else if (fileName == SourceCodeLocator.OreBase(Modname, Organization).ClassName)
-            {
-                return CreateOreBase();
-            }
-            else
-            {
-                throw new NotImplementedException($"CodeCompileUnit for {fileName} not found");
-            }
-        }
+        public override Dictionary<ClassLocator, GenerateDelegateHandler> ScriptGenerators { get; }
 
         private CodeCompileUnit CreateBlockBase()
         {

@@ -1,97 +1,60 @@
 ﻿using ForgeModGenerator.CodeGeneration;
 using ForgeModGenerator.CodeGeneration.CodeDom;
 using ForgeModGenerator.Models;
-using System;
 using System.CodeDom;
 using System.Collections.Generic;
-using System.IO;
 
 namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
 {
     public class ItemBasesCodeGenerator : MultiScriptsCodeGenerator
     {
         public ItemBasesCodeGenerator(McMod mcMod) : base(mcMod) =>
-            ScriptLocators = new ClassLocator[] {
-                SourceCodeLocator.ItemBase(Modname, Organization),
-                SourceCodeLocator.BowBase(Modname, Organization) ,
-                SourceCodeLocator.FoodBase(Modname, Organization),
-                SourceCodeLocator.ArmorBase(Modname, Organization),
-                SourceCodeLocator.SwordBase(Modname, Organization),
-                SourceCodeLocator.SpadeBase(Modname, Organization),
-                SourceCodeLocator.PickaxeBase(Modname, Organization),
-                SourceCodeLocator.HoeBase(Modname, Organization),
-                SourceCodeLocator.AxeBase(Modname, Organization),
+            ScriptGenerators = new Dictionary<ClassLocator, GenerateDelegateHandler> {
+                { SourceCodeLocator.ItemBase(Modname, Organization), ()=> CreateBaseItemUnit(SourceCodeLocator.ItemBase(Modname, Organization).PackageName, SourceCodeLocator.ItemBase(Modname, Organization).ClassName, "Item", false) },
+                { SourceCodeLocator.BowBase(Modname, Organization), ()=> CreateBaseItemUnit(SourceCodeLocator.BowBase(Modname, Organization).PackageName, SourceCodeLocator.BowBase(Modname, Organization).ClassName, "ItemBow", false) },
+                { SourceCodeLocator.SwordBase(Modname, Organization), ()=> CreateBaseItemUnit(SourceCodeLocator.SwordBase(Modname, Organization).PackageName, SourceCodeLocator.SwordBase(Modname, Organization).ClassName, "ItemSword", true) },
+                { SourceCodeLocator.SpadeBase(Modname, Organization), ()=> CreateBaseItemUnit(SourceCodeLocator.SpadeBase(Modname, Organization).PackageName, SourceCodeLocator.SpadeBase(Modname, Organization).ClassName, "ItemSpade", true) },
+                { SourceCodeLocator.PickaxeBase(Modname, Organization),()=> CreateBaseItemUnit(SourceCodeLocator.PickaxeBase(Modname, Organization).PackageName, SourceCodeLocator.PickaxeBase(Modname, Organization).ClassName, "ItemPickaxe", true) },
+                { SourceCodeLocator.HoeBase(Modname, Organization), ()=> CreateBaseItemUnit(SourceCodeLocator.HoeBase(Modname, Organization).PackageName, SourceCodeLocator.HoeBase(Modname, Organization).ClassName, "ItemHoe", true) },
+                { SourceCodeLocator.AxeBase(Modname, Organization), CreateAxeBase },
+                { SourceCodeLocator.FoodBase(Modname, Organization), CreateFoodBase},
+                { SourceCodeLocator.ArmorBase(Modname, Organization), CreateArmorBase},
             };
 
-        public override ClassLocator[] ScriptLocators { get; }
+        public override Dictionary<ClassLocator, GenerateDelegateHandler> ScriptGenerators { get; }
 
-        public override ClassLocator ScriptLocator => ScriptLocators[0];
-
-        protected override CodeCompileUnit CreateTargetCodeUnit(string scriptPath)
+        protected CodeCompileUnit CreateAxeBase()
         {
-            Parameter[] parameters = null;
-            CodeCompileUnit unit = null;
-            string fileName = Path.GetFileNameWithoutExtension(scriptPath);
-            if (fileName == SourceCodeLocator.ItemBase(Modname, Organization).ClassName)
-            {
-                return CreateBaseItemUnit(SourceCodeLocator.ItemBase(Modname, Organization).PackageName, fileName, "Item", false);
-            }
-            else if (fileName == SourceCodeLocator.BowBase(Modname, Organization).ClassName)
-            {
-                return CreateBaseItemUnit(SourceCodeLocator.BowBase(Modname, Organization).PackageName, fileName, "ItemBow", false);
-            }
-            else if (fileName == SourceCodeLocator.SwordBase(Modname, Organization).ClassName)
-            {
-                return CreateBaseItemUnit(SourceCodeLocator.SwordBase(Modname, Organization).PackageName, fileName, "ItemSword", true);
-            }
-            else if (fileName == SourceCodeLocator.SpadeBase(Modname, Organization).ClassName)
-            {
-                return CreateBaseItemUnit(SourceCodeLocator.SpadeBase(Modname, Organization).PackageName, fileName, "ItemSpade", true);
-            }
-            else if (fileName == SourceCodeLocator.PickaxeBase(Modname, Organization).ClassName)
-            {
-                return CreateBaseItemUnit(SourceCodeLocator.PickaxeBase(Modname, Organization).PackageName, fileName, "ItemPickaxe", true);
-            }
-            else if (fileName == SourceCodeLocator.HoeBase(Modname, Organization).ClassName)
-            {
-                return CreateBaseItemUnit(SourceCodeLocator.HoeBase(Modname, Organization).PackageName, fileName, "ItemHoe", true);
-            }
-            else if (fileName == SourceCodeLocator.AxeBase(Modname, Organization).ClassName)
-            {
-                unit = CreateBaseItemUnit(SourceCodeLocator.AxeBase(Modname, Organization).PackageName, fileName, "ItemAxe", true);
-                CodeConstructor ctor = (CodeConstructor)unit.Namespaces[0].Types[0].Members[0];
-                CodeSuperConstructorInvokeExpression super = (CodeSuperConstructorInvokeExpression)((CodeExpressionStatement)ctor.Statements[0]).Expression;
-                super.AddParameter(6.0F);
-                super.AddParameter(-3.2F);
-                return unit;
-            }
+            CodeCompileUnit unit = CreateBaseItemUnit(SourceCodeLocator.AxeBase(Modname, Organization).PackageName, SourceCodeLocator.AxeBase(Modname, Organization).ClassName, "ItemAxe", true);
+            CodeConstructor ctor = (CodeConstructor)unit.Namespaces[0].Types[0].Members[0];
+            CodeSuperConstructorInvokeExpression super = (CodeSuperConstructorInvokeExpression)((CodeExpressionStatement)ctor.Statements[0]).Expression;
+            super.AddParameter(6.0F);
+            super.AddParameter(-3.2F);
+            return unit;
+        }
 
-            else if (fileName == SourceCodeLocator.FoodBase(Modname, Organization).ClassName)
-            {
-                parameters = new Parameter[] {
+        protected CodeCompileUnit CreateFoodBase()
+        {
+            Parameter[] parameters = new Parameter[] {
                         new Parameter(typeof(string).FullName, "name"),
                         new Parameter(typeof(int).FullName, "amount"),
                         new Parameter(typeof(float).FullName, "saturation"),
                         new Parameter(typeof(bool).FullName, "isAnimalFood")
                     };
-                return CreateCustomItemUnit(SourceCodeLocator.FoodBase(Modname, Organization).PackageName, fileName, "ItemFood", parameters);
-            }
-            else if (fileName == SourceCodeLocator.ArmorBase(Modname, Organization).ClassName)
-            {
-                parameters = new Parameter[] {
+            return CreateCustomItemUnit(SourceCodeLocator.FoodBase(Modname, Organization).PackageName, SourceCodeLocator.FoodBase(Modname, Organization).ClassName, "ItemFood", parameters);
+        }
+
+        protected CodeCompileUnit CreateArmorBase()
+        {
+            Parameter[] parameters = new Parameter[] {
                         new Parameter(typeof(string).FullName, "name"),
                         new Parameter("ArmorMaterial", "materialIn"),
                         new Parameter(typeof(int).FullName, "renderIndexIn"),
                         new Parameter("EntityEquipmentSlot", "equipmentSlotIn")
                     };
-                unit = CreateCustomItemUnit(SourceCodeLocator.ArmorBase(Modname, Organization).PackageName, fileName, "ItemArmor", parameters);
-                unit.Namespaces[0].Imports.Add(new CodeNamespaceImport("net.minecraft.inventory.EntityEquipmentSlot"));
-                return unit;
-            }
-            else
-            {
-                throw new NotImplementedException($"CodeCompileUnit for {fileName} not found");
-            }
+            CodeCompileUnit unit = CreateCustomItemUnit(SourceCodeLocator.ArmorBase(Modname, Organization).PackageName, SourceCodeLocator.ArmorBase(Modname, Organization).ClassName, "ItemArmor", parameters);
+            unit.Namespaces[0].Imports.Add(new CodeNamespaceImport("net.minecraft.inventory.EntityEquipmentSlot"));
+            return unit;
         }
 
         private CodeCompileUnit CreateBaseItemUnit(string packageName, string className, string baseType, bool tool = false)
