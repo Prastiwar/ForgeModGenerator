@@ -61,9 +61,9 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.MahApps;component/Themes/MaterialDesignTheme.MahApps.NumericUpDown.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.MahApps;component/Themes/MaterialDesignTheme.MahApps.RangeSlider.xaml" />
                 <ResourceDictionary Source="../Themes/Generic.xaml" />
+                <ResourceDictionary Source="../Themes/EditableListThemes.xaml" />
                 <ResourceDictionary Source="../Themes/FolderExpanderThemes.xaml" />
                 <ResourceDictionary Source="../Themes/FolderListBoxThemes.xaml" />
-                <ResourceDictionary Source="../Themes/EditableListThemes.xaml" />
                 <ResourceDictionary>
                     <ControlTemplate x:Key="ErrorContentTemplate">
                         <StackPanel>

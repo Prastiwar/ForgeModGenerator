@@ -3,8 +3,8 @@
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                     xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
-                    xmlns:appcontrols="clr-namespace:ForgeModGenerator.ApplicationModule.Controls"
-                    xmlns:validations="clr-namespace:ForgeModGenerator.Validation">
+                    xmlns:validations="clr-namespace:ForgeModGenerator.Validation"
+                    xmlns:converters="clr-namespace:ForgeModGenerator.Converters">
     <Style TargetType="{x:Type controls:SubmitTextBox}"
            BasedOn="{StaticResource {x:Type TextBox}}" />
     <Style TargetType="{x:Type controls:PathNameSubmitTextBox}"
@@ -129,125 +129,6 @@
                                        Margin="0"
                                        RadiusX="10"
                                        RadiusY="5" />
-                        </Grid>
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-    <Style TargetType="{x:Type appcontrols:NavigationMenuControl}">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type appcontrols:NavigationMenuControl}">
-                    <Border Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}">
-                        <Grid x:Name="MenuGrid"
-                              Background="#2c2c2c">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="40" />
-                                <RowDefinition Height="1*" />
-                                <RowDefinition Height="20*" />
-                                <RowDefinition Height="1*" />
-                            </Grid.RowDefinitions>
-                            <StackPanel>
-                                <ToggleButton x:Name="MenuToggleButton"
-                                              Style="{StaticResource MaterialDesignActionToggleButton}"
-                                              Width="30"
-                                              Height="30"
-                                              Margin="5"
-                                              Background="#FF3C3C3C"
-                                              BorderBrush="#FF232323"
-                                              HorizontalAlignment="Right"
-                                              Command="{Binding ToggleMenu, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type appcontrols:NavigationMenuControl}}}">
-                                    <materialDesign:ToggleButtonAssist.OnContent>
-                                        <materialDesign:PackIcon Kind="ArrowLeft" />
-                                    </materialDesign:ToggleButtonAssist.OnContent>
-                                    <materialDesign:PackIcon Kind="ArrowRight" />
-                                </ToggleButton>
-                            </StackPanel>
-                            <ScrollViewer x:Name="MenuScroll"
-                                          Grid.Row="2"
-                                          VerticalScrollBarVisibility="Hidden">
-                                <StackPanel Tag="{Binding MenuComponent.IsActive, RelativeSource={RelativeSource AncestorType=appcontrols:NavigationMenuControl}, Converter={StaticResource InvertBooleanConverter}}">
-                                    <controls:NavButton x:Name="DashboardButton"
-                                                        Desc="Dashboard"
-                                                        ToolTip="Dashboard"
-                                                        ToolTipService.IsEnabled="{Binding Tag, RelativeSource={RelativeSource AncestorType=StackPanel}}"
-                                                        Kind="ViewDashboard"
-                                                        IsFirstSelected="True"
-                                                        Command="{Binding OpenDashboardCommand, RelativeSource={RelativeSource AncestorType=appcontrols:NavigationMenuControl}}" />
-                                    <controls:NavButton x:Name="BuildConfigurationButton"
-                                                        Desc="Build Configuration"
-                                                        ToolTip="Build Configuration"
-                                                        ToolTipService.IsEnabled="{Binding Tag, RelativeSource={RelativeSource AncestorType=StackPanel}}"
-                                                        Kind="Build"
-                                                        Command="{Binding OpenBuildConfigurationCommand, RelativeSource={RelativeSource AncestorType=appcontrols:NavigationMenuControl}}" />
-                                    <controls:NavButton x:Name="ModGeneratorButton"
-                                                        Desc="Mod Generator"
-                                                        ToolTip="Mod Generator"
-                                                        ToolTipService.IsEnabled="{Binding Tag, RelativeSource={RelativeSource AncestorType=StackPanel}}"
-                                                        Kind="CreateNewFolder"
-                                                        Command="{Binding OpenModGeneratorCommand, RelativeSource={RelativeSource AncestorType=appcontrols:NavigationMenuControl}}" />
-                                    <controls:NavButton x:Name="TextureGeneratorButton"
-                                                        Desc="Texture Generator"
-                                                        ToolTip="Texture Generator"
-                                                        ToolTipService.IsEnabled="{Binding Tag, RelativeSource={RelativeSource AncestorType=StackPanel}}"
-                                                        Kind="Texture"
-                                                        Command="{Binding OpenTextureGeneratorCommand, RelativeSource={RelativeSource AncestorType=appcontrols:NavigationMenuControl}}" />
-                                    <controls:NavButton x:Name="BlockGeneratorButton"
-                                                        Desc="Block Generator"
-                                                        ToolTip="Block Generator"
-                                                        ToolTipService.IsEnabled="{Binding Tag, RelativeSource={RelativeSource AncestorType=StackPanel}}"
-                                                        Kind="CubeOutline"
-                                                        Command="{Binding OpenBlockGeneratorCommand, RelativeSource={RelativeSource AncestorType=appcontrols:NavigationMenuControl}}" />
-                                    <controls:NavButton x:Name="ItemGeneratorButton"
-                                                        Desc="Item Generator"
-                                                        ToolTip="Item Generator"
-                                                        ToolTipService.IsEnabled="{Binding Tag, RelativeSource={RelativeSource AncestorType=StackPanel}}"
-                                                        Kind="Pickaxe"
-                                                        Command="{Binding OpenItemGeneratorCommand, RelativeSource={RelativeSource AncestorType=appcontrols:NavigationMenuControl}}" />
-                                    <controls:NavButton x:Name="MaterialGeneratorButton"
-                                                        Desc="Material Generator"
-                                                        ToolTip="Material Generator"
-                                                        ToolTipService.IsEnabled="{Binding Tag, RelativeSource={RelativeSource AncestorType=StackPanel}}"
-                                                        Kind="CheckboxMultipleBlankOutline"
-                                                        Command="{Binding OpenMaterialGeneratorCommand, RelativeSource={RelativeSource AncestorType=appcontrols:NavigationMenuControl}}" />
-                                    <controls:NavButton x:Name="SoundGeneratorButton"
-                                                        Desc="Sound Generator"
-                                                        ToolTip="Sound Generator"
-                                                        ToolTipService.IsEnabled="{Binding Tag, RelativeSource={RelativeSource AncestorType=StackPanel}}"
-                                                        Kind="FileMusic"
-                                                        Command="{Binding OpenSoundGeneratorCommand, RelativeSource={RelativeSource AncestorType=appcontrols:NavigationMenuControl}}" />
-                                    <controls:NavButton x:Name="CommandGeneratorButton"
-                                                        Desc="Command Generator"
-                                                        ToolTip="Command Generator"
-                                                        ToolTipService.IsEnabled="{Binding Tag, RelativeSource={RelativeSource AncestorType=StackPanel}}"
-                                                        Kind="CodeTags"
-                                                        Command="{Binding OpenCommandGeneratorCommand, RelativeSource={RelativeSource AncestorType=appcontrols:NavigationMenuControl}}" />
-                                    <controls:NavButton x:Name="AchievementGeneratorButton"
-                                                        Desc="Achievement Generator"
-                                                        ToolTip="Achievement Generator"
-                                                        ToolTipService.IsEnabled="{Binding Tag, RelativeSource={RelativeSource AncestorType=StackPanel}}"
-                                                        Kind="Achievement"
-                                                        Command="{Binding OpenAchievementGeneratorCommand, RelativeSource={RelativeSource AncestorType=appcontrols:NavigationMenuControl}}" />
-                                    <controls:NavButton x:Name="RecipeGeneratorButton"
-                                                        Desc="Recipe Generator"
-                                                        ToolTip="Recipe Generator"
-                                                        ToolTipService.IsEnabled="{Binding Tag, RelativeSource={RelativeSource AncestorType=StackPanel}}"
-                                                        Kind="Group"
-                                                        Command="{Binding OpenRecipeGeneratorCommand, RelativeSource={RelativeSource AncestorType=appcontrols:NavigationMenuControl}}" />
-                                </StackPanel>
-                            </ScrollViewer>
-                            <controls:ScrollButton x:Name="ArrowUpButton"
-                                                   Grid.Row="1"
-                                                   ArrowIcon="ArrowUp"
-                                                   ScrollTarget="{Binding ElementName=MenuScroll}"
-                                                   Direction="Top" />
-                            <controls:ScrollButton x:Name="ArrowDownButton"
-                                                   Grid.Row="3"
-                                                   ArrowIcon="ArrowDown"
-                                                   ScrollTarget="{Binding ElementName=MenuScroll}" />
                         </Grid>
                     </Border>
                 </ControlTemplate>

@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
+        xmlns:local="clr-namespace:ForgeModGenerator.ApplicationModule.Views"
         xmlns:aControls="clr-namespace:ForgeModGenerator.ApplicationModule.Controls"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:prism="http://prismlibrary.com/"
@@ -120,19 +121,113 @@
                 <ColumnDefinition Width="50" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <aControls:NavigationMenuControl x:Name="NavigationMenu"
-                                             OpenAchievementGeneratorCommand="{Binding OpenAchievementGeneratorCommand}"
-                                             OpenBlockGeneratorCommand="{Binding OpenBlockGeneratorCommand}"
-                                             OpenBuildConfigurationCommand="{Binding OpenBuildConfigurationCommand}"
-                                             OpenCommandGeneratorCommand="{Binding OpenCommandGeneratorCommand}"
-                                             OpenDashboardCommand="{Binding OpenDashboardCommand}"
-                                             OpenItemGeneratorCommand="{Binding OpenItemGeneratorCommand}"
-                                             OpenModGeneratorCommand="{Binding OpenModGeneratorCommand}"
-                                             OpenRecipeGeneratorCommand="{Binding OpenRecipeGeneratorCommand}"
-                                             OpenSettingsCommandCommand="{Binding OpenSettingsCommandCommand}"
-                                             OpenSoundGeneratorCommand="{Binding OpenSoundGeneratorCommand}"
-                                             OpenTextureGeneratorCommand="{Binding OpenTextureGeneratorCommand}"
-                                             OpenMaterialGeneratorCommand="{Binding OpenMaterialGeneratorCommand}" />
+            <Grid x:Name="MenuGrid"
+                  Background="#2c2c2c">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="20*" />
+                    <RowDefinition Height="1*" />
+                </Grid.RowDefinitions>
+                <StackPanel>
+                    <ToggleButton x:Name="MenuToggleButton"
+                                  Style="{StaticResource MaterialDesignActionToggleButton}"
+                                  Width="30"
+                                  Height="30"
+                                  Margin="5"
+                                  Background="#FF3C3C3C"
+                                  BorderBrush="#FF232323"
+                                  HorizontalAlignment="Right"
+                                  Command="{Binding ToggleMenuCommand, RelativeSource={RelativeSource AncestorType=local:MainWindow}}">
+                        <materialDesign:ToggleButtonAssist.OnContent>
+                            <materialDesign:PackIcon Kind="ArrowLeft" />
+                        </materialDesign:ToggleButtonAssist.OnContent>
+                        <materialDesign:PackIcon Kind="ArrowRight" />
+                    </ToggleButton>
+                </StackPanel>
+                <ScrollViewer x:Name="MenuScroll"
+                              Grid.Row="2"
+                              VerticalScrollBarVisibility="Hidden">
+                    <StackPanel Tag="{Binding MenuComponent.IsActive, Converter={StaticResource InvertBooleanConverter}}">
+                        <controls:NavButton x:Name="DashboardButton"
+                                            Desc="Dashboard"
+                                            ToolTip="Dashboard"
+                                            ToolTipService.IsEnabled="{Binding Tag, RelativeSource={RelativeSource AncestorType=StackPanel}}"
+                                            Kind="ViewDashboard"
+                                            IsFirstSelected="True"
+                                            Command="{Binding OpenDashboardCommand}" />
+                        <controls:NavButton x:Name="BuildConfigurationButton"
+                                            Desc="Build Configuration"
+                                            ToolTip="Build Configuration"
+                                            ToolTipService.IsEnabled="{Binding Tag, RelativeSource={RelativeSource AncestorType=StackPanel}}"
+                                            Kind="Build"
+                                            Command="{Binding OpenBuildConfigurationCommand}" />
+                        <controls:NavButton x:Name="ModGeneratorButton"
+                                            Desc="Mod Generator"
+                                            ToolTip="Mod Generator"
+                                            ToolTipService.IsEnabled="{Binding Tag, RelativeSource={RelativeSource AncestorType=StackPanel}}"
+                                            Kind="CreateNewFolder"
+                                            Command="{Binding OpenModGeneratorCommand}" />
+                        <controls:NavButton x:Name="TextureGeneratorButton"
+                                            Desc="Texture Generator"
+                                            ToolTip="Texture Generator"
+                                            ToolTipService.IsEnabled="{Binding Tag, RelativeSource={RelativeSource AncestorType=StackPanel}}"
+                                            Kind="Texture"
+                                            Command="{Binding OpenTextureGeneratorCommand}" />
+                        <controls:NavButton x:Name="BlockGeneratorButton"
+                                            Desc="Block Generator"
+                                            ToolTip="Block Generator"
+                                            ToolTipService.IsEnabled="{Binding Tag, RelativeSource={RelativeSource AncestorType=StackPanel}}"
+                                            Kind="CubeOutline"
+                                            Command="{Binding OpenBlockGeneratorCommand}" />
+                        <controls:NavButton x:Name="ItemGeneratorButton"
+                                            Desc="Item Generator"
+                                            ToolTip="Item Generator"
+                                            ToolTipService.IsEnabled="{Binding Tag, RelativeSource={RelativeSource AncestorType=StackPanel}}"
+                                            Kind="Pickaxe"
+                                            Command="{Binding OpenItemGeneratorCommand}" />
+                        <controls:NavButton x:Name="MaterialGeneratorButton"
+                                            Desc="Material Generator"
+                                            ToolTip="Material Generator"
+                                            ToolTipService.IsEnabled="{Binding Tag, RelativeSource={RelativeSource AncestorType=StackPanel}}"
+                                            Kind="CheckboxMultipleBlankOutline"
+                                            Command="{Binding OpenMaterialGeneratorCommand}" />
+                        <controls:NavButton x:Name="SoundGeneratorButton"
+                                            Desc="Sound Generator"
+                                            ToolTip="Sound Generator"
+                                            ToolTipService.IsEnabled="{Binding Tag, RelativeSource={RelativeSource AncestorType=StackPanel}}"
+                                            Kind="FileMusic"
+                                            Command="{Binding OpenSoundGeneratorCommand}" />
+                        <controls:NavButton x:Name="CommandGeneratorButton"
+                                            Desc="Command Generator"
+                                            ToolTip="Command Generator"
+                                            ToolTipService.IsEnabled="{Binding Tag, RelativeSource={RelativeSource AncestorType=StackPanel}}"
+                                            Kind="CodeTags"
+                                            Command="{Binding OpenCommandGeneratorCommand}" />
+                        <controls:NavButton x:Name="AchievementGeneratorButton"
+                                            Desc="Achievement Generator"
+                                            ToolTip="Achievement Generator"
+                                            ToolTipService.IsEnabled="{Binding Tag, RelativeSource={RelativeSource AncestorType=StackPanel}}"
+                                            Kind="Achievement"
+                                            Command="{Binding OpenAchievementGeneratorCommand}" />
+                        <controls:NavButton x:Name="RecipeGeneratorButton"
+                                            Desc="Recipe Generator"
+                                            ToolTip="Recipe Generator"
+                                            ToolTipService.IsEnabled="{Binding Tag, RelativeSource={RelativeSource AncestorType=StackPanel}}"
+                                            Kind="Group"
+                                            Command="{Binding OpenRecipeGeneratorCommand}" />
+                    </StackPanel>
+                </ScrollViewer>
+                <controls:ScrollButton x:Name="ArrowUpButton"
+                                       Grid.Row="1"
+                                       ArrowIcon="ArrowUp"
+                                       ScrollTarget="{Binding ElementName=MenuScroll}"
+                                       Direction="Top" />
+                <controls:ScrollButton x:Name="ArrowDownButton"
+                                       Grid.Row="3"
+                                       ArrowIcon="ArrowDown"
+                                       ScrollTarget="{Binding ElementName=MenuScroll}" />
+            </Grid>
             <materialDesign:Transitioner x:Name="FrameTransitioner"
                                          Grid.Column="1"
                                          SelectedIndex="0"

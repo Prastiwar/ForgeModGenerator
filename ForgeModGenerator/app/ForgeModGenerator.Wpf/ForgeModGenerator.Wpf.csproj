@@ -390,7 +390,7 @@
     <Compile Include="Source\Components\GridLengthVector.cs" />
     <Compile Include="Source\Controls\Proxy\SelectorDecorator.cs" />
     <Compile Include="Source\Common\SyncInvokeObject.cs" />
-    <Compile Include="Source\Controls\PathNameSubmitTextBox.cs" />
+    <Compile Include="Source\Controls\TextBox\PathNameSubmitTextBox.cs" />
     <Compile Include="Source\Converters\DataBindingDebugConverter.cs" />
     <Compile Include="Source\Converters\DialogResultAssemblyConverter.cs" />
     <Compile Include="Source\Converters\Json\ForgeVersionJsonConverter.cs" />
@@ -406,7 +406,6 @@
     <Compile Include="Source\FileSystem\Dialog\FileBrowserDialog.cs" />
     <Compile Include="Source\FileSystem\Dialog\FolderBrowserDialog.cs" />
     <Compile Include="Source\FileSystem\FileSystemWin.cs" />
-    <Compile Include="Source\Modules\ApplicationModule\Controls\NavigationMenuControl.cs" />
     <Compile Include="Source\Modules\BlockGenerator\BlockCodeGenerator.cs" />
     <Compile Include="Source\Modules\CommandGenerator\CodeGeneration\CommandCodeGenerator.cs" />
     <Compile Include="Source\Modules\CommandGenerator\CommandEditorFormFactory.cs" />
@@ -448,15 +447,15 @@
     <Compile Include="Source\Services\PrismRegionNavigationBridge.cs" />
     <Compile Include="Source\Utility\Extensions\BindingExtensions.cs" />
     <Compile Include="Source\Common\ThirdParty\WpfObservableRangeCollection.cs" />
-    <Compile Include="Source\Controls\EditableList.cs" />
-    <Compile Include="Source\Controls\FolderListBox.cs" />
-    <Compile Include="Source\Controls\ScrollButton.cs" />
+    <Compile Include="Source\Controls\Collection\EditableList.cs" />
+    <Compile Include="Source\Controls\Collection\FolderListBox.cs" />
+    <Compile Include="Source\Controls\Button\ScrollButton.cs" />
     <Compile Include="Source\Controls\SnackbarExtended.cs" />
     <Compile Include="Source\Converters\BoolValueConverter.cs" />
     <Compile Include="Source\Converters\InvertIntToVisibilityConverter.cs" />
     <Compile Include="Source\Converters\IntToVisibilityConverter.cs" />
     <Compile Include="Source\Converters\InvertBooleanConverter.cs" />
-    <Compile Include="Source\Controls\NavButton.cs" />
+    <Compile Include="Source\Controls\Button\NavButton.cs" />
     <Compile Include="Source\FileSystem\WpfFoldersFactory.cs" />
     <Compile Include="Source\Modules\ModGenerator\ModValidator.cs" />
     <Compile Include="Source\Modules\SoundGenerator\Controls\SoundFolderListBox.cs" />
@@ -489,7 +488,7 @@
     <Compile Include="Source\Modules\ModGenerator\SourceCodeGeneration\ProxyCodeGenerator.cs" />
     <Compile Include="Source\Modules\ModGenerator\SourceCodeGeneration\RegistryHandlerCodeGenerator.cs" />
     <Compile Include="Source\Modules\SoundGenerator\CodeGeneration\SoundCodeGenerator.cs" />
-    <Compile Include="Source\Controls\FolderExpanderControl.cs" />
+    <Compile Include="Source\Controls\Collection\FolderExpanderControl.cs" />
     <Compile Include="Source\Modules\ModGenerator\BuildConfiguration\ModBuildForm.xaml.cs">
       <DependentUpon>ModBuildForm.xaml</DependentUpon>
     </Compile>
@@ -505,7 +504,7 @@
       <DependentUpon>SoundEditForm.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Modules\SoundGenerator\Controls\SoundFolderExpanderControl.cs" />
-    <Compile Include="Source\Controls\SubmitTextBox.cs" />
+    <Compile Include="Source\Controls\TextBox\SubmitTextBox.cs" />
     <Compile Include="Source\Validations\CanMoveFileSystemInfoRule.cs" />
     <Compile Include="Source\Validations\FullPathValidator.cs" />
     <Compile Include="Source\Validations\NotEmptyRule.cs" />
