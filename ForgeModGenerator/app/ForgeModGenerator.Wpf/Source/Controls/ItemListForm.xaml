@@ -14,9 +14,27 @@
           Background="GhostWhite">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <ScrollViewer Grid.Row="0"
+        <Grid x:Name="FilterGrid"
+              Grid.Row="0"
+              Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock x:Name="SearchText"
+                       Grid.Column="0"
+                       Padding="5"
+                       Text="Search: " />
+            <TextBox x:Name="SearchTextBox"
+                     Grid.Column="1"
+                     Padding="1"
+                     Margin="10,0,0,0"
+                     Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType=local:ItemListForm}}" />
+        </Grid>
+        <ScrollViewer Grid.Row="1"
                       ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                       ScrollViewer.VerticalScrollBarVisibility="Auto">
             <ListBox x:Name="FilesListBox"
@@ -50,7 +68,7 @@
                 </ListBox.ItemTemplate>
             </ListBox>
         </ScrollViewer>
-        <StackPanel Grid.Row="1"
+        <StackPanel Grid.Row="2"
                     Orientation="Horizontal"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Bottom"

@@ -3,8 +3,7 @@
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                     xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
-                    xmlns:validations="clr-namespace:ForgeModGenerator.Validation"
-                    xmlns:converters="clr-namespace:ForgeModGenerator.Converters">
+                    xmlns:validations="clr-namespace:ForgeModGenerator.Validation">
     <Style TargetType="{x:Type controls:SubmitTextBox}"
            BasedOn="{StaticResource {x:Type TextBox}}" />
     <Style TargetType="{x:Type controls:PathNameSubmitTextBox}"
