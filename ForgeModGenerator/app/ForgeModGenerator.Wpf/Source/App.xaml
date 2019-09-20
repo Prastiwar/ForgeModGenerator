@@ -5,8 +5,7 @@
                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                         d1p1:Ignorable="d"
                         xmlns:d1p1="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                        xmlns:converters="clr-namespace:ForgeModGenerator.Converters"
-                        xmlns:system="clr-namespace:System;assembly=mscorlib">
+                        xmlns:converters="clr-namespace:ForgeModGenerator.Converters">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -29,6 +28,9 @@
                 </ResourceDictionary>
                 <ResourceDictionary>
                     <converters:MethodToCommandConverter x:Key="MethodToCommandConverter" />
+                </ResourceDictionary>
+                <ResourceDictionary>
+                    <converters:GetCommandConverter x:Key="GetCommandConverter" />
                 </ResourceDictionary>
                 <ResourceDictionary>
                     <converters:BoolToTextWrapConverter x:Key="BoolToTextWrapConverter" />

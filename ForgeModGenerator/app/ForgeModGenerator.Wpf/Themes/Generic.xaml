@@ -134,4 +134,6 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <Style TargetType="{x:Type controls:PageNavButton}"
+           BasedOn="{StaticResource {x:Type controls:NavButton}}"></Style>
 </ResourceDictionary>

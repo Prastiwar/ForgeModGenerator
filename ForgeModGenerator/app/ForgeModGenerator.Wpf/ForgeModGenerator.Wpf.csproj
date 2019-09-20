@@ -388,6 +388,7 @@
     <Compile Include="Source\CodeGeneration\ScriptCodeGenerator.cs" />
     <Compile Include="Source\Common\SharedWPFData.cs" />
     <Compile Include="Source\Components\GridLengthVector.cs" />
+    <Compile Include="Source\Controls\Button\PageNavButton.cs" />
     <Compile Include="Source\Controls\Proxy\SelectorDecorator.cs" />
     <Compile Include="Source\Common\SyncInvokeObject.cs" />
     <Compile Include="Source\Controls\TextBox\PathNameSubmitTextBox.cs" />
@@ -399,6 +400,7 @@
     <Compile Include="Source\Converters\Json\Resolver\LowercasePropertyResolver.cs" />
     <Compile Include="Source\Converters\Json\Resolver\NullToEmptyStringResolver.cs" />
     <Compile Include="Source\Converters\Json\Resolver\NullToEmptyStringValueProvider.cs" />
+    <Compile Include="Source\Converters\GetCommandConverter.cs" />
     <Compile Include="Source\Converters\MethodToCommandConverter.cs" />
     <Compile Include="Source\Converters\MultiValues\GenericTupleConverter.cs" />
     <Compile Include="Source\Converters\ValidateResultAssemblyConverter.cs" />

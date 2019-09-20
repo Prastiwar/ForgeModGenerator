@@ -22,42 +22,11 @@ namespace ForgeModGenerator.ApplicationModule.ViewModels
 
         public ISessionContextService SessionContext { get; }
 
+        public ICommand GetOpenPageCommand(string page) => new DelegateCommand(() => navigation.NavigateTo(page));
+
         private ICommand openSettingsCommand;
         public ICommand OpenSettingsCommand => openSettingsCommand ?? (openSettingsCommand = new DelegateCommand(NavigateToSettings));
 
-        private ICommand openDashboardCommand;
-        public ICommand OpenDashboardCommand => openDashboardCommand ?? (openDashboardCommand = new DelegateCommand(() => { navigation.NavigateTo(Pages.Dashboard); }));
-
-        private ICommand openModGeneratorCommand;
-        public ICommand OpenModGeneratorCommand => openModGeneratorCommand ?? (openModGeneratorCommand = new DelegateCommand(() => { navigation.NavigateTo(Pages.ModGenerator); }));
-
-        private ICommand openBuildConfigurationCommand;
-        public ICommand OpenBuildConfigurationCommand => openBuildConfigurationCommand ?? (openBuildConfigurationCommand = new DelegateCommand(() => { navigation.NavigateTo(Pages.BuildConfiguration); }));
-
-        private ICommand openTextureGeneratorCommand;
-        public ICommand OpenTextureGeneratorCommand => openTextureGeneratorCommand ?? (openTextureGeneratorCommand = new DelegateCommand(() => { navigation.NavigateTo(Pages.TextureGenerator); }));
-
-        private ICommand openBlockGeneratorCommand;
-        public ICommand OpenBlockGeneratorCommand => openBlockGeneratorCommand ?? (openBlockGeneratorCommand = new DelegateCommand(() => { navigation.NavigateTo(Pages.BlockGenerator); }));
-
-        private ICommand openItemGeneratorCommand;
-        public ICommand OpenItemGeneratorCommand => openItemGeneratorCommand ?? (openItemGeneratorCommand = new DelegateCommand(() => { navigation.NavigateTo(Pages.ItemGenerator); }));
-
-        private ICommand openMaterialGeneratorCommand;
-        public ICommand OpenMaterialGeneratorCommand => openMaterialGeneratorCommand ?? (openMaterialGeneratorCommand = new DelegateCommand(() => { navigation.NavigateTo(Pages.MaterialGenerator); }));
-
-        private ICommand openSoundGeneratorCommand;
-        public ICommand OpenSoundGeneratorCommand => openSoundGeneratorCommand ?? (openSoundGeneratorCommand = new DelegateCommand(() => { navigation.NavigateTo(Pages.SoundGenerator); }));
-
-        private ICommand openCommandGeneratorCommand;
-        public ICommand OpenCommandGeneratorCommand => openCommandGeneratorCommand ?? (openCommandGeneratorCommand = new DelegateCommand(() => { navigation.NavigateTo(Pages.CommandGenerator); }));
-
-        private ICommand openAchievementGeneratorCommand;
-        public ICommand OpenAchievementGeneratorCommand => openAchievementGeneratorCommand ?? (openAchievementGeneratorCommand = new DelegateCommand(() => { navigation.NavigateTo(Pages.AchievementGenerator); }));
-
-        private ICommand openRecipeGeneratorCommand;
-        public ICommand OpenRecipeGeneratorCommand => openRecipeGeneratorCommand ?? (openRecipeGeneratorCommand = new DelegateCommand(() => { navigation.NavigateTo(Pages.RecipeGenerator); }));
-        
         private ICommand refreshCommand;
         public ICommand RefreshCommand => refreshCommand ?? (refreshCommand = new DelegateCommand(ForceRefresh));
 

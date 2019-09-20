@@ -12,7 +12,7 @@ namespace ForgeModGenerator.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             string methodName = parameter as string;
-            if (value == null || methodName == null)
+            if (value == null || string.IsNullOrEmpty(methodName))
             {
                 return null;
             }

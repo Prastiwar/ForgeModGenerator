@@ -49,7 +49,7 @@ namespace ForgeModGenerator.Controls
 
         public void SetFilter(string filter)
         {
-            filter = filter.Trim();
+            filter = filter?.Trim();
             if (string.IsNullOrEmpty(filter))
             {
                 Locators = notFilteredLocators;
