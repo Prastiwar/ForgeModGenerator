@@ -25,7 +25,7 @@ namespace ForgeModGenerator.ApplicationModule.ViewModels
         public ICommand GetOpenPageCommand(string page) => new DelegateCommand(() => navigation.NavigateTo(page));
 
         private ICommand openSettingsCommand;
-        public ICommand OpenSettingsCommand => openSettingsCommand ?? (openSettingsCommand = new DelegateCommand(NavigateToSettings));
+        public ICommand OpenSettingsCommand => openSettingsCommand ?? (openSettingsCommand = GetOpenPageCommand("Settings"));
 
         private ICommand refreshCommand;
         public ICommand RefreshCommand => refreshCommand ?? (refreshCommand = new DelegateCommand(ForceRefresh));
@@ -47,7 +47,5 @@ namespace ForgeModGenerator.ApplicationModule.ViewModels
         private void RunSelectedMod(McMod mcMod) => modBuilder.Run(mcMod);
 
         private void ForceRefresh() => SessionContext.Refresh();
-
-        private void NavigateToSettings() => navigation.NavigateTo(Pages.Settings);
     }
 }

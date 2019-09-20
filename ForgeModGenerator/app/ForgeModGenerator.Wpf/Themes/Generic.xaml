@@ -116,7 +116,7 @@
                                            Foreground="White"
                                            Height="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Button}}"
                                            VerticalContentAlignment="Center"
-                                           Content="{Binding Desc, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:NavButton}}}" />
+                                           Content="{Binding Description, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:NavButton}}}" />
                                 </Grid>
                             </Button>
                             <Rectangle x:Name="SelectRectangle"

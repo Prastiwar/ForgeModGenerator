@@ -8,15 +8,17 @@ namespace ForgeModGenerator.Services
 
         private readonly Prism.Regions.IRegionManager regionManager;
 
+        public const string RegionName = "PageRegion";
+
         public bool NavigateTo(string name)
         {
-            regionManager.RequestNavigate(Pages.RegionName, name);
+            regionManager.RequestNavigate(RegionName, name);
             return true;
         }
 
         public bool NavigateTo(Uri uri)
         {
-            regionManager.RequestNavigate(Pages.RegionName, uri);
+            regionManager.RequestNavigate(RegionName, uri);
             return true;
         }
     }

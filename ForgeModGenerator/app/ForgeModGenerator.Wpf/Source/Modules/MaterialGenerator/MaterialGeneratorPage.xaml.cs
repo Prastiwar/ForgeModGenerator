@@ -5,9 +5,6 @@ namespace ForgeModGenerator.MaterialGenerator.Views
     /// <summary> MaterialGenerator UI View-ViewModel </summary>
     public partial class MaterialGeneratorPage : Page
     {
-        public MaterialGeneratorPage()
-        {
-            InitializeComponent();
-        }
+        public MaterialGeneratorPage() => InitializeComponent();
     }
 }

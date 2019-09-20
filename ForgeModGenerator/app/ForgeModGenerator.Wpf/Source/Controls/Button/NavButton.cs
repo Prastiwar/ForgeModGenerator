@@ -10,11 +10,11 @@ namespace ForgeModGenerator.Controls
     {
         static NavButton() => DefaultStyleKeyProperty.OverrideMetadata(typeof(NavButton), new FrameworkPropertyMetadata(typeof(NavButton)));
 
-        public static readonly DependencyProperty DescProperty =
-            DependencyProperty.Register("Desc", typeof(string), typeof(NavButton), new PropertyMetadata("Descvalue"));
-        public string Desc {
-            get => (string)GetValue(DescProperty);
-            set => SetValue(DescProperty, value);
+        public static readonly DependencyProperty DescriptionProperty =
+            DependencyProperty.Register("Description", typeof(string), typeof(NavButton), new PropertyMetadata("Description", OnDescriptionChanged));
+        public string Description {
+            get => (string)GetValue(DescriptionProperty);
+            set => SetValue(DescriptionProperty, value);
         }
 
         public static readonly DependencyProperty KindProperty =
@@ -43,6 +43,11 @@ namespace ForgeModGenerator.Controls
         public bool IsFirstSelected {
             get => (bool)GetValue(IsFirstSelectedProperty);
             set => SetValue(IsFirstSelectedProperty, value);
+        }
+        private static void OnDescriptionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            NavButton navButton = (NavButton)d;
+            navButton.ToolTip = navButton.Description;
         }
 
         protected override void OnInitialized(EventArgs e)

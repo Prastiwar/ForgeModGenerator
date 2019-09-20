@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
-        xmlns:core="clr-namespace:ForgeModGenerator;assembly=ForgeModGenerator.Core"
         xmlns:local="clr-namespace:ForgeModGenerator.ApplicationModule.Views"
         xmlns:aControls="clr-namespace:ForgeModGenerator.ApplicationModule.Controls"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
@@ -149,74 +148,52 @@
                 <ScrollViewer x:Name="MenuScroll"
                               Grid.Row="2"
                               VerticalScrollBarVisibility="Hidden">
-                    <StackPanel Tag="{Binding MenuComponent.IsActive, Converter={StaticResource InvertBooleanConverter}}">
+                    <StackPanel x:Name="PageNavButtonStackPanel">
                         <controls:PageNavButton x:Name="DashboardButton"
-                                                Desc="Dashboard"
-                                                ToolTip="Dashboard"
-                                                ToolTipService.IsEnabled="{Binding Tag, RelativeSource={RelativeSource AncestorType=StackPanel}}"
+                                                Description="Dashboard"
+                                                PageKey="Dashboard"
                                                 Kind="ViewDashboard"
-                                                PageKey="{x:Static core:Pages.Dashboard}"
                                                 IsFirstSelected="True" />
                         <controls:PageNavButton x:Name="BuildConfigurationButton"
-                                                Desc="Build Configuration"
-                                                ToolTip="Build Configuration"
-                                                ToolTipService.IsEnabled="{Binding Tag, RelativeSource={RelativeSource AncestorType=StackPanel}}"
-                                                Kind="Build"
-                                                PageKey="{x:Static core:Pages.BuildConfiguration}" />
+                                                Description="Build Configuration"
+                                                PageKey="BuildConfiguration"
+                                                Kind="Build" />
                         <controls:PageNavButton x:Name="ModGeneratorButton"
-                                                Desc="Mod Generator"
-                                                ToolTip="Mod Generator"
-                                                ToolTipService.IsEnabled="{Binding Tag, RelativeSource={RelativeSource AncestorType=StackPanel}}"
-                                                Kind="CreateNewFolder"
-                                                PageKey="{x:Static core:Pages.ModGenerator}" />
+                                                Description="Mod Generator"
+                                                PageKey="ModGenerator"
+                                                Kind="CreateNewFolder" />
                         <controls:PageNavButton x:Name="TextureGeneratorButton"
-                                                Desc="Texture Generator"
-                                                ToolTip="Texture Generator"
-                                                ToolTipService.IsEnabled="{Binding Tag, RelativeSource={RelativeSource AncestorType=StackPanel}}"
-                                                Kind="Texture"
-                                                PageKey="{x:Static core:Pages.TextureGenerator}" />
+                                                Description="Texture Generator"
+                                                PageKey="TextureGenerator"
+                                                Kind="Texture" />
                         <controls:PageNavButton x:Name="BlockGeneratorButton"
-                                                Desc="Block Generator"
-                                                ToolTip="Block Generator"
-                                                ToolTipService.IsEnabled="{Binding Tag, RelativeSource={RelativeSource AncestorType=StackPanel}}"
-                                                Kind="CubeOutline"
-                                                PageKey="{x:Static core:Pages.BlockGenerator}" />
+                                                Description="Block Generator"
+                                                PageKey="BlockGenerator"
+                                                Kind="CubeOutline" />
                         <controls:PageNavButton x:Name="ItemGeneratorButton"
-                                                Desc="Item Generator"
-                                                ToolTip="Item Generator"
-                                                ToolTipService.IsEnabled="{Binding Tag, RelativeSource={RelativeSource AncestorType=StackPanel}}"
-                                                Kind="Pickaxe"
-                                                PageKey="{x:Static core:Pages.ItemGenerator}" />
+                                                Description="Item Generator"
+                                                PageKey="ItemGenerator"
+                                                Kind="Pickaxe" />
                         <controls:PageNavButton x:Name="MaterialGeneratorButton"
-                                                Desc="Material Generator"
-                                                ToolTip="Material Generator"
-                                                ToolTipService.IsEnabled="{Binding Tag, RelativeSource={RelativeSource AncestorType=StackPanel}}"
-                                                Kind="CheckboxMultipleBlankOutline"
-                                                PageKey="{x:Static core:Pages.MaterialGenerator}" />
+                                                Description="Material Generator"
+                                                PageKey="MaterialGenerator"
+                                                Kind="CheckboxMultipleBlankOutline" />
                         <controls:PageNavButton x:Name="SoundGeneratorButton"
-                                                Desc="Sound Generator"
-                                                ToolTip="Sound Generator"
-                                                ToolTipService.IsEnabled="{Binding Tag, RelativeSource={RelativeSource AncestorType=StackPanel}}"
-                                                Kind="FileMusic"
-                                                PageKey="{x:Static core:Pages.SoundGenerator}" />
+                                                Description="Sound Generator"
+                                                PageKey="SoundGenerator"
+                                                Kind="FileMusic" />
                         <controls:PageNavButton x:Name="CommandGeneratorButton"
-                                                Desc="Command Generator"
-                                                ToolTip="Command Generator"
-                                                ToolTipService.IsEnabled="{Binding Tag, RelativeSource={RelativeSource AncestorType=StackPanel}}"
-                                                Kind="CodeTags"
-                                                PageKey="{x:Static core:Pages.CommandGenerator}" />
+                                                Description="Command Generator"
+                                                PageKey="CommandGenerator"
+                                                Kind="CodeTags" />
                         <controls:PageNavButton x:Name="AchievementGeneratorButton"
-                                                Desc="Achievement Generator"
-                                                ToolTip="Achievement Generator"
-                                                ToolTipService.IsEnabled="{Binding Tag, RelativeSource={RelativeSource AncestorType=StackPanel}}"
-                                                Kind="Achievement"
-                                                PageKey="{x:Static core:Pages.AchievementGenerator}" />
+                                                Description="Achievement Generator"
+                                                PageKey="AchievementGenerator"
+                                                Kind="Achievement" />
                         <controls:PageNavButton x:Name="RecipeGeneratorButton"
-                                                Desc="Recipe Generator"
-                                                ToolTip="Recipe Generator"
-                                                ToolTipService.IsEnabled="{Binding Tag, RelativeSource={RelativeSource AncestorType=StackPanel}}"
-                                                Kind="Group"
-                                                PageKey="{x:Static core:Pages.RecipeGenerator}" />
+                                                Description="Recipe Generator"
+                                                PageKey="RecipeGenerator"
+                                                Kind="Group" />
                     </StackPanel>
                 </ScrollViewer>
                 <controls:ScrollButton x:Name="ArrowUpButton"

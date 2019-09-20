@@ -161,8 +161,7 @@ namespace ForgeModGenerator
                 Type page = presentationAssembly.ExportedTypes.FirstOrDefault(x => x.Name == module + "Page");
                 if (page != null)
                 {
-                    string navName = (string)typeof(Pages).GetField(module, BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy).GetValue(null);
-                    containerRegistry.RegisterForNavigation(page, navName);
+                    containerRegistry.RegisterForNavigation(page, module);
                 }
             }
         }

@@ -1,4 +1,5 @@
 ﻿using ForgeModGenerator.Components;
+using ForgeModGenerator.Controls;
 using Prism.Commands;
 using System.Reflection;
 using System.Windows;
@@ -21,7 +22,7 @@ namespace ForgeModGenerator.ApplicationModule.Views
         protected Vector MenuSlideOffset { get; set; } = new Vector(170, 0);
 
         private ICommand toggleMenuCommand;
-        public ICommand ToggleMenuCommand => toggleMenuCommand ?? (toggleMenuCommand = new DelegateCommand(MenuComponent.Toggle));
+        public ICommand ToggleMenuCommand => toggleMenuCommand ?? (toggleMenuCommand = new DelegateCommand(ToggleNavigationMenu));
 
         private MethodInfo activateFrame;
         private MethodInfo ActivateFrame => activateFrame ?? (activateFrame = FrameTransitioner.GetType().GetMethod("ActivateFrame", BindingFlags.Instance | BindingFlags.NonPublic));
@@ -30,6 +31,15 @@ namespace ForgeModGenerator.ApplicationModule.Views
         private readonly object[] navigateForwardArgs = new object[] { 0, 1 };
 
         protected void InitializeMenu(Grid menuGrid, int row, int column) => MenuComponent = new MenuComponent(menuGrid, new MenuSettings(menuGrid, column, row, MenuSlideOffset, MenuSlideSpeed));
+
+        private void ToggleNavigationMenu()
+        {
+            MenuComponent.Toggle();
+            foreach (PageNavButton navButton in PageNavButtonStackPanel.Children)
+            {
+                ToolTipService.SetIsEnabled(navButton, !MenuComponent.IsActive);
+            }
+        }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
