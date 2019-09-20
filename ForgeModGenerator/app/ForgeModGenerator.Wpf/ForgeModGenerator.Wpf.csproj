@@ -422,8 +422,8 @@
       <DependentUpon>MaterialGeneratorPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Modules\ModGenerator\ModEditorFormFactory.cs" />
-    <Compile Include="Source\Modules\ModGenerator\Serialization\ModInfoSerializer.cs" />
-    <Compile Include="Source\Modules\ModGenerator\Serialization\ModSerializer.cs" />
+    <Compile Include="Source\Modules\ModGenerator\Serialization\McModInfoSerializer.cs" />
+    <Compile Include="Source\Modules\ModGenerator\Serialization\McModSerializer.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\CodeGeneration\RecipeCodeGenerator.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\Controls\EditableRecipeLists.cs" />
     <Compile Include="Source\Controls\ItemListForm.xaml.cs">

@@ -6,7 +6,7 @@ using System;
 
 namespace ForgeModGenerator.ModGenerator.Serialization
 {
-    public sealed class ModInfoSerializer : ISerializer<McModInfo>
+    public sealed class McModInfoSerializer : ISerializer<McModInfo>
     {
         private static readonly JsonConverter converter = new McModInfoJsonConverter();
 

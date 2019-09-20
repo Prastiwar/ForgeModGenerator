@@ -1,41 +1,21 @@
-﻿using ForgeModGenerator.AchievementGenerator.ViewModels;
-using ForgeModGenerator.AchievementGenerator.Views;
-using ForgeModGenerator.ApplicationModule.ViewModels;
+﻿using ForgeModGenerator.ApplicationModule.ViewModels;
 using ForgeModGenerator.ApplicationModule.Views;
-using ForgeModGenerator.BlockGenerator.ViewModels;
-using ForgeModGenerator.BlockGenerator.Views;
 using ForgeModGenerator.CodeGeneration;
 using ForgeModGenerator.CommandGenerator;
 using ForgeModGenerator.CommandGenerator.Models;
 using ForgeModGenerator.CommandGenerator.Validation;
-using ForgeModGenerator.CommandGenerator.ViewModels;
-using ForgeModGenerator.CommandGenerator.Views;
-using ForgeModGenerator.ItemGenerator.ViewModels;
-using ForgeModGenerator.ItemGenerator.Views;
-using ForgeModGenerator.MaterialGenerator.ViewModels;
-using ForgeModGenerator.MaterialGenerator.Views;
 using ForgeModGenerator.Models;
 using ForgeModGenerator.ModGenerator;
-using ForgeModGenerator.ModGenerator.Serialization;
 using ForgeModGenerator.ModGenerator.Validation;
-using ForgeModGenerator.ModGenerator.ViewModels;
-using ForgeModGenerator.ModGenerator.Views;
 using ForgeModGenerator.RecipeGenerator;
 using ForgeModGenerator.RecipeGenerator.Models;
-using ForgeModGenerator.RecipeGenerator.Serialization;
 using ForgeModGenerator.RecipeGenerator.Validation;
-using ForgeModGenerator.RecipeGenerator.ViewModels;
-using ForgeModGenerator.RecipeGenerator.Views;
 using ForgeModGenerator.Serialization;
 using ForgeModGenerator.Services;
 using ForgeModGenerator.SoundGenerator;
 using ForgeModGenerator.SoundGenerator.Models;
 using ForgeModGenerator.SoundGenerator.Serialization;
 using ForgeModGenerator.SoundGenerator.Validation;
-using ForgeModGenerator.SoundGenerator.ViewModels;
-using ForgeModGenerator.SoundGenerator.Views;
-using ForgeModGenerator.TextureGenerator.ViewModels;
-using ForgeModGenerator.TextureGenerator.Views;
 using ForgeModGenerator.Validation;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
@@ -51,6 +31,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
+using System.Linq;
+using System.Reflection;
 using System.Windows;
 using Unity;
 
@@ -80,7 +62,6 @@ namespace ForgeModGenerator
         {
             base.RegisterRequiredTypes(containerRegistry);
             SetProvider(containerRegistry);
-
             DialogService dialogService = new DialogService();
             NLogLoggerFactory fac = new NLogLoggerFactory();
             Log.Initialize(dialogService, fac.CreateLogger("ErrorLog"), fac.CreateLogger("InfoLog"));
@@ -125,12 +106,11 @@ namespace ForgeModGenerator
         private void SetProvider(IContainerRegistry containerRegistry)
         {
             ViewModelLocationProvider.SetDefaultViewTypeToViewModelTypeResolver(viewType => {
-                string viewName = viewType.FullName.Replace(".Views.", ".ViewModels.");
                 string coreAssemblyName = typeof(MainWindowViewModel).Assembly.FullName;
-                string viewModelName = string.Format(CultureInfo.InvariantCulture, "{0}ViewModel, {1}", viewName, coreAssemblyName);
+                string moduleName = viewType.FullName.Replace(".Views.", ".ViewModels.").Replace("Page", "");
+                string viewModelName = string.Format(CultureInfo.InvariantCulture, "{0}ViewModel, {1}", moduleName, coreAssemblyName);
                 return Type.GetType(viewModelName);
             });
-
             ViewModelLocationProvider.SetDefaultViewModelFactory(type => containerRegistry.GetContainer().TryResolve(type));
         }
 
@@ -146,16 +126,35 @@ namespace ForgeModGenerator
         {
             containerRegistry.Register<ISerializer, JsonSerializer>();
             containerRegistry.Register(typeof(ISerializer<>), typeof(JsonSerializer<>));
-            containerRegistry.Register<ISerializer<PreferenceData>, PreferenceDataSerializer>();
-            containerRegistry.Register<ISerializer<VSCLaunch>, VSCLaunchSerializer>();
 
-            containerRegistry.Register<ISerializer<IEnumerable<SoundEvent>, SoundEvent>, SoundEventsSerializer>();
-            containerRegistry.Register<ISoundEventsSerializer, SoundEventsSerializer>();
-
-            containerRegistry.Register<ISerializer<McMod>, ModSerializer>();
-            containerRegistry.Register<ISerializer<McModInfo>, ModInfoSerializer>();
-
-            containerRegistry.Register<ISerializer<Recipe>, RecipeSerializer>();
+            Assembly presentationAssembly = Assembly.GetAssembly(typeof(MainWindow));
+            Assembly coreAssembly = Assembly.GetAssembly(typeof(MainWindowViewModel));
+            IEnumerable<string> serializedModelNames = presentationAssembly.ExportedTypes.Where(x => x.Name.EndsWith("Serializer")).Select(x => x.Name.Replace("Serializer", ""));
+            foreach (string serializedItemName in serializedModelNames)
+            {
+                string modelName = serializedItemName;
+                Type model = coreAssembly.ExportedTypes.FirstOrDefault(x => x.Name == modelName);
+                bool isNamedPlural = modelName.EndsWith("s");
+                if (model == null && isNamedPlural)
+                {
+                    modelName = modelName.Remove(modelName.Length - 1, 1);
+                    model = coreAssembly.ExportedTypes.FirstOrDefault(x => x.Name == modelName);
+                }
+                if (model != null)
+                {
+                    Type serializer = presentationAssembly.ExportedTypes.FirstOrDefault(x => x.Name == modelName + "Serializer")
+                                     ?? presentationAssembly.ExportedTypes.FirstOrDefault(x => x.Name == modelName + "sSerializer");
+                    if (serializer != null)
+                    {
+                        // Predicate to exclude ISerializer, take all that ends with "Serializer" including generic versions
+                        Func<Type, bool> isSerializer = x => x.Name != nameof(ISerializer) && (x.Name.EndsWith("Serializer") || x.Name.Remove(x.Name.Length - 2, 2).EndsWith("Serializer"));
+                        foreach (Type serializationInterface in serializer.GetInterfaces().Where(isSerializer))
+                        {
+                            containerRegistry.Register(serializationInterface, serializer);
+                        }
+                    }
+                }
+            }
         }
 
         private void RegisterFactories(IContainerRegistry containerRegistry)
@@ -193,18 +192,19 @@ namespace ForgeModGenerator
 
         private void RegisterPages(IContainerRegistry containerRegistry)
         {
-            containerRegistry.RegisterForNavigation<DashboardPage, DashboardViewModel>(Pages.Dashboard);
-            containerRegistry.RegisterForNavigation<BuildConfigurationPage, BuildConfigurationViewModel>(Pages.BuildConfiguration);
-            containerRegistry.RegisterForNavigation<ModGeneratorPage, ModGeneratorViewModel>(Pages.ModGenerator);
-            containerRegistry.RegisterForNavigation<TextureGeneratorPage, TextureGeneratorViewModel>(Pages.TextureGenerator);
-            containerRegistry.RegisterForNavigation<BlockGeneratorPage, BlockGeneratorViewModel>(Pages.BlockGenerator);
-            containerRegistry.RegisterForNavigation<ItemGeneratorPage, ItemGeneratorViewModel>(Pages.ItemGenerator);
-            containerRegistry.RegisterForNavigation<MaterialGeneratorPage, MaterialGeneratorViewModel>(Pages.MaterialGenerator);
-            containerRegistry.RegisterForNavigation<SoundGeneratorPage, SoundGeneratorViewModel>(Pages.SoundGenerator);
-            containerRegistry.RegisterForNavigation<CommandGeneratorPage, CommandGeneratorViewModel>(Pages.CommandGenerator);
-            containerRegistry.RegisterForNavigation<AchievementGeneratorPage, AchievementGeneratorViewModel>(Pages.AchievementGenerator);
-            containerRegistry.RegisterForNavigation<RecipeGeneratorPage, RecipeGeneratorViewModel>(Pages.RecipeGenerator);
-            containerRegistry.RegisterForNavigation<SettingsPage, SettingsViewModel>(Pages.Settings);
+            Assembly presentationAssembly = Assembly.GetAssembly(typeof(MainWindow));
+            Assembly coreAssembly = Assembly.GetAssembly(typeof(MainWindowViewModel));
+            IEnumerable<string> moduleNames = coreAssembly.ExportedTypes.Where(x => x.Name.EndsWith("ViewModel")).Select(x => x.Name.Replace("ViewModel", ""));
+            foreach (string module in moduleNames)
+            {
+                Type viewModel = coreAssembly.ExportedTypes.First(x => x.Name.StartsWith(module) && x.Name.EndsWith("ViewModel"));
+                Type page = presentationAssembly.ExportedTypes.FirstOrDefault(x => x.Name.StartsWith(module) && x.Name.EndsWith("Page"));
+                if (page != null)
+                {
+                    string navName = (string)typeof(Pages).GetField(module, BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy).GetValue(null);
+                    containerRegistry.RegisterForNavigation(page, navName);
+                }
+            }
         }
 
         protected override void ConfigureDefaultRegionBehaviors(IRegionBehaviorFactory regionBehaviors)
