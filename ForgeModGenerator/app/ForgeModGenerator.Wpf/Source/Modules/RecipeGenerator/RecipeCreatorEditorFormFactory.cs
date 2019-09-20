@@ -6,9 +6,9 @@ using System;
 
 namespace ForgeModGenerator.RecipeGenerator
 {
-    public class RecipeEditorFormFactory : IEditorFormFactory<RecipeCreator>
+    public class RecipeCreatorEditorFormFactory : IEditorFormFactory<RecipeCreator>
     {
-        public RecipeEditorFormFactory(IMemoryCache cache, IDialogService dialogService)
+        public RecipeCreatorEditorFormFactory(IMemoryCache cache, IDialogService dialogService)
         {
             this.cache = cache;
             this.dialogService = dialogService;

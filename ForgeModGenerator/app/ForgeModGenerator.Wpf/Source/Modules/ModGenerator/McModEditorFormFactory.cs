@@ -8,9 +8,9 @@ using System.Linq;
 
 namespace ForgeModGenerator.ModGenerator
 {
-    public class ModEditorFormFactory : IEditorFormFactory<McMod>
+    public class McModEditorFormFactory : IEditorFormFactory<McMod>
     {
-        public ModEditorFormFactory(IMemoryCache cache, IDialogService dialogService, ISessionContextService sessionContext, ObservableCollection<WorkspaceSetup> setups)
+        public McModEditorFormFactory(IMemoryCache cache, IDialogService dialogService, ISessionContextService sessionContext, ObservableCollection<WorkspaceSetup> setups)
         {
             this.cache = cache;
             this.dialogService = dialogService;

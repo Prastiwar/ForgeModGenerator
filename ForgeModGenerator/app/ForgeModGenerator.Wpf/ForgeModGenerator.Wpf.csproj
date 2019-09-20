@@ -421,7 +421,7 @@
     <Compile Include="Source\Modules\MaterialGenerator\MaterialGeneratorPage.xaml.cs">
       <DependentUpon>MaterialGeneratorPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Source\Modules\ModGenerator\ModEditorFormFactory.cs" />
+    <Compile Include="Source\Modules\ModGenerator\McModEditorFormFactory.cs" />
     <Compile Include="Source\Modules\ModGenerator\Serialization\McModInfoSerializer.cs" />
     <Compile Include="Source\Modules\ModGenerator\Serialization\McModSerializer.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\CodeGeneration\RecipeCodeGenerator.cs" />
@@ -436,7 +436,7 @@
     <Compile Include="Source\Modules\RecipeGenerator\Converters\ShapedRecipeJsonConverter.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\Converters\ShapelessRecipeJsonConverter.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\Converters\SmeltingRecipeJsonConverter.cs" />
-    <Compile Include="Source\Modules\RecipeGenerator\RecipeEditorFormFactory.cs" />
+    <Compile Include="Source\Modules\RecipeGenerator\RecipeCreatorEditorFormFactory.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\Converters\RecipeListConverters.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\RecipeSerializer.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\RecipesFactory.cs" />
@@ -459,7 +459,7 @@
     <Compile Include="Source\Converters\InvertBooleanConverter.cs" />
     <Compile Include="Source\Controls\Button\NavButton.cs" />
     <Compile Include="Source\FileSystem\WpfFoldersFactory.cs" />
-    <Compile Include="Source\Modules\ModGenerator\ModValidator.cs" />
+    <Compile Include="Source\Modules\ModGenerator\McModValidator.cs" />
     <Compile Include="Source\Modules\SoundGenerator\Controls\SoundFolderListBox.cs" />
     <Compile Include="Source\Modules\SoundGenerator\ObservableSoundEvents.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundEventsFactory.cs" />

@@ -1,22 +1,14 @@
 ﻿using ForgeModGenerator.ApplicationModule.ViewModels;
 using ForgeModGenerator.ApplicationModule.Views;
 using ForgeModGenerator.CodeGeneration;
-using ForgeModGenerator.CommandGenerator;
-using ForgeModGenerator.CommandGenerator.Models;
-using ForgeModGenerator.CommandGenerator.Validation;
 using ForgeModGenerator.Models;
-using ForgeModGenerator.ModGenerator;
-using ForgeModGenerator.ModGenerator.Validation;
 using ForgeModGenerator.RecipeGenerator;
 using ForgeModGenerator.RecipeGenerator.Models;
-using ForgeModGenerator.RecipeGenerator.Validation;
 using ForgeModGenerator.Serialization;
 using ForgeModGenerator.Services;
 using ForgeModGenerator.SoundGenerator;
 using ForgeModGenerator.SoundGenerator.Models;
 using ForgeModGenerator.SoundGenerator.Serialization;
-using ForgeModGenerator.SoundGenerator.Validation;
-using ForgeModGenerator.Validation;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
@@ -47,8 +39,19 @@ namespace ForgeModGenerator
             AppDomain.CurrentDomain.ProcessExit += OnExit;
 
         private readonly MemoryCache globalCache = new MemoryCache(new MemoryCacheOptions());
+        private readonly Assembly presentationAssembly = Assembly.GetAssembly(typeof(MainWindow));
+        private readonly Assembly coreAssembly = Assembly.GetAssembly(typeof(MainWindowViewModel));
 
         private void OnExit(object sender, EventArgs e) => globalCache.Dispose();
+
+        private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            new ApplicationModule.BugReporter(e.Exception).Show();
+            MainWindow.Close();
+            e.Handled = true;
+            Crashes.TrackError(e.Exception);
+            Crashes.NotifyUserConfirmation(UserConfirmation.AlwaysSend);
+        }
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -58,14 +61,22 @@ namespace ForgeModGenerator
 
         protected override Window CreateShell() => (Window)Container.Resolve(typeof(MainWindow));
 
+        protected override void ConfigureDefaultRegionBehaviors(IRegionBehaviorFactory regionBehaviors)
+        {
+            base.ConfigureDefaultRegionBehaviors(regionBehaviors);
+            regionBehaviors.AddIfMissing(nameof(DisposeClosedViewsBehavior), typeof(DisposeClosedViewsBehavior));
+        }
+
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
             base.RegisterRequiredTypes(containerRegistry);
             SetProvider(containerRegistry);
             DialogService dialogService = new DialogService();
+
             NLogLoggerFactory fac = new NLogLoggerFactory();
             Log.Initialize(dialogService, fac.CreateLogger("ErrorLog"), fac.CreateLogger("InfoLog"));
             fac.Dispose();
+
             containerRegistry.RegisterInstance<IMemoryCache>(globalCache);
             SourceCodeLocator.Initialize(globalCache);
 
@@ -74,33 +85,20 @@ namespace ForgeModGenerator
 
             containerRegistry.RegisterInstance<ISynchronizeInvoke>(SyncInvokeObject.Default);
             containerRegistry.Register<IFileSystem, FileSystemWin>();
-            containerRegistry.Register<ICodeGenerationService, CodeGeneratorService>();
+
+            IEnumerable<Type> models = coreAssembly.ExportedTypes.Where(x => x.FullName.Contains(".Models.") && !x.IsEnum);
+            foreach (Type model in models)
+            {
+                RegisterModel(containerRegistry, model);
+            }
+            RegisterModel(containerRegistry, typeof(PreferenceData));
+
+            containerRegistry.Register<ISerializer, JsonSerializer>();
+            containerRegistry.Register(typeof(ISerializer<>), typeof(JsonSerializer<>));
 
             RegisterWorkspaceSetups(containerRegistry);
-            RegisterSerializers(containerRegistry);
-            RegisterValidators(containerRegistry);
-
-            ObservableCollection<WorkspaceSetup> workspaceSetups = new ObservableCollection<WorkspaceSetup>();
-            foreach (IContainerRegistration registry in containerRegistry.GetContainer().Registrations)
-            {
-                if (registry.RegisteredType == typeof(WorkspaceSetup))
-                {
-                    WorkspaceSetup setup = (WorkspaceSetup)containerRegistry.GetContainer().Resolve(typeof(WorkspaceSetup), registry.Name);
-                    workspaceSetups.Add(setup);
-                }
-            }
-            containerRegistry.RegisterInstance(workspaceSetups);
-
             RegisterFactories(containerRegistry);
             RegisterPages(containerRegistry);
-        }
-
-        private void RegisterWorkspaceSetups(IContainerRegistry containerRegistry)
-        {
-            containerRegistry.Register(typeof(WorkspaceSetup), typeof(EmptyWorkspace), "None");
-            containerRegistry.Register(typeof(WorkspaceSetup), typeof(VSCodeWorkspace), "VSCode");
-            containerRegistry.Register(typeof(WorkspaceSetup), typeof(IntelliJIDEAWorkspace), "IntelliJIDEA");
-            containerRegistry.Register(typeof(WorkspaceSetup), typeof(EclipseWorkspace), "Eclipse");
         }
 
         private void SetProvider(IContainerRegistry containerRegistry)
@@ -114,45 +112,57 @@ namespace ForgeModGenerator
             ViewModelLocationProvider.SetDefaultViewModelFactory(type => containerRegistry.GetContainer().TryResolve(type));
         }
 
-        private void RegisterValidators(IContainerRegistry containerRegistry)
+        private void RegisterModel(IContainerRegistry containerRegistry, Type model)
         {
-            containerRegistry.Register<IUniqueValidator<SoundEvent>, SoundEventValidator>();
-            containerRegistry.Register<IUniqueValidator<Recipe>, RecipeValidator>();
-            containerRegistry.Register<IUniqueValidator<Command>, CommandValidator>();
-            containerRegistry.Register<IValidator<McMod>, ModValidator>();
+            TryRegisterInterfaceForModel(containerRegistry, model, "Serializer");
+            TryRegisterInterfaceForModel(containerRegistry, model, "Validator");
+            TryRegisterInterfaceForModel(containerRegistry, model, "EditorFormFactory");
         }
 
-        private void RegisterSerializers(IContainerRegistry containerRegistry)
+        private bool TryRegisterInterfaceForModel(IContainerRegistry containerRegistry, Type model, string name)
         {
-            containerRegistry.Register<ISerializer, JsonSerializer>();
-            containerRegistry.Register(typeof(ISerializer<>), typeof(JsonSerializer<>));
-
-            Assembly presentationAssembly = Assembly.GetAssembly(typeof(MainWindow));
-            Assembly coreAssembly = Assembly.GetAssembly(typeof(MainWindowViewModel));
-            IEnumerable<string> serializedModelNames = presentationAssembly.ExportedTypes.Where(x => x.Name.EndsWith("Serializer")).Select(x => x.Name.Replace("Serializer", ""));
-            foreach (string serializedItemName in serializedModelNames)
+            bool registered = false;
+            string modelName = model.Name;
+            Type classType = presentationAssembly.ExportedTypes.FirstOrDefault(x => x.Name == modelName + name)
+                                         ?? presentationAssembly.ExportedTypes.FirstOrDefault(x => x.Name == modelName + "s" + name);
+            if (classType != null)
             {
-                string modelName = serializedItemName;
-                Type model = coreAssembly.ExportedTypes.FirstOrDefault(x => x.Name == modelName);
-                bool isNamedPlural = modelName.EndsWith("s");
-                if (model == null && isNamedPlural)
+                // Predicate to take all types that ends with nameof(name) including generic versions
+                Func<Type, bool> isNamed = x => x.Name.EndsWith(name) || x.Name.Remove(x.Name.Length - 2, 2).EndsWith(name);
+                foreach (Type interfaceType in classType.GetInterfaces().Where(isNamed))
                 {
-                    modelName = modelName.Remove(modelName.Length - 1, 1);
-                    model = coreAssembly.ExportedTypes.FirstOrDefault(x => x.Name == modelName);
+                    containerRegistry.Register(interfaceType, classType);
+                    registered = true;
                 }
-                if (model != null)
+            }
+            return registered;
+        }
+
+        private void RegisterWorkspaceSetups(IContainerRegistry containerRegistry)
+        {
+            ObservableCollection<WorkspaceSetup> workspaceSetups = new ObservableCollection<WorkspaceSetup>();
+            IEnumerable<Type> workspaces = coreAssembly.ExportedTypes.Where(x => x.Name.EndsWith("Workspace"));
+            foreach (Type workspace in workspaces)
+            {
+                string registryName = workspace.Name.Replace("Workspace", "");
+                containerRegistry.Register(typeof(WorkspaceSetup), workspace, registryName);
+                WorkspaceSetup setup = containerRegistry.GetContainer().Resolve<WorkspaceSetup>(registryName);
+                workspaceSetups.Add(setup);
+            }
+            containerRegistry.RegisterInstance(workspaceSetups);
+        }
+
+        private void RegisterPages(IContainerRegistry containerRegistry)
+        {
+            IEnumerable<string> moduleNames = coreAssembly.ExportedTypes.Where(x => x.Name.EndsWith("ViewModel")).Select(x => x.Name.Replace("ViewModel", ""));
+            foreach (string module in moduleNames)
+            {
+                Type viewModel = coreAssembly.ExportedTypes.First(x => x.Name == module + "ViewModel");
+                Type page = presentationAssembly.ExportedTypes.FirstOrDefault(x => x.Name == module + "Page");
+                if (page != null)
                 {
-                    Type serializer = presentationAssembly.ExportedTypes.FirstOrDefault(x => x.Name == modelName + "Serializer")
-                                     ?? presentationAssembly.ExportedTypes.FirstOrDefault(x => x.Name == modelName + "sSerializer");
-                    if (serializer != null)
-                    {
-                        // Predicate to exclude ISerializer, take all that ends with "Serializer" including generic versions
-                        Func<Type, bool> isSerializer = x => x.Name != nameof(ISerializer) && (x.Name.EndsWith("Serializer") || x.Name.Remove(x.Name.Length - 2, 2).EndsWith("Serializer"));
-                        foreach (Type serializationInterface in serializer.GetInterfaces().Where(isSerializer))
-                        {
-                            containerRegistry.Register(serializationInterface, serializer);
-                        }
-                    }
+                    string navName = (string)typeof(Pages).GetField(module, BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy).GetValue(null);
+                    containerRegistry.RegisterForNavigation(page, navName);
                 }
             }
         }
@@ -161,24 +171,18 @@ namespace ForgeModGenerator
         {
             containerRegistry.Register(typeof(IJsonUpdaterFactory<>), typeof(JsonUpdaterFactory<>));
             containerRegistry.Register(typeof(IJsonUpdaterFactory<,>), typeof(CollectionJsonUpdaterFactory<,>));
-            containerRegistry.Register<ISoundJsonUpdaterFactory, SoundJsonUpdaterFactory>();
-
-            containerRegistry.Register<IFoldersFactory<SoundEvent, Sound>, SoundEventsFactory>();
-            containerRegistry.Register<IFoldersFinder<SoundEvent, Sound>, SoundEventsFinder>();
-            containerRegistry.Register<IFolderSynchronizerFactory<SoundEvent, Sound>, SoundEventsSynchronizerFactory>();
-            containerRegistry.Register(typeof(IEditorFormFactory<Sound>), typeof(SoundEditorFormFactory));
-
             containerRegistry.Register(typeof(IFoldersFactory<,>), typeof(WpfFoldersFactory<,>));
             containerRegistry.Register(typeof(IFolderSynchronizerFactory<,>), typeof(FolderSynchronizerFactory<,>));
             containerRegistry.Register(typeof(IFoldersExplorerFactory<,>), typeof(FoldersExplorerFactory<,>));
             containerRegistry.Register(typeof(IFoldersFinder<,>), typeof(DefaultFoldersFinder<,>));
+            containerRegistry.Register(typeof(IEditorFormFactory<>), typeof(EditorFormFactory<>));
+
+            containerRegistry.Register<ISoundJsonUpdaterFactory, SoundJsonUpdaterFactory>();
+            containerRegistry.Register<IFoldersFactory<SoundEvent, Sound>, SoundEventsFactory>();
+            containerRegistry.Register<IFoldersFinder<SoundEvent, Sound>, SoundEventsFinder>();
+            containerRegistry.Register<IFolderSynchronizerFactory<SoundEvent, Sound>, SoundEventsSynchronizerFactory>();
 
             containerRegistry.Register(typeof(IFoldersFactory<ObservableFolder<Recipe>, Recipe>), typeof(RecipesFactory));
-
-            containerRegistry.Register(typeof(IEditorFormFactory<McMod>), typeof(ModEditorFormFactory));
-            containerRegistry.Register(typeof(IEditorFormFactory<Command>), typeof(CommandEditorFormFactory));
-            containerRegistry.Register(typeof(IEditorFormFactory<RecipeCreator>), typeof(RecipeEditorFormFactory));
-            containerRegistry.Register(typeof(IEditorFormFactory<>), typeof(EditorFormFactory<>));
         }
 
         private void RegisterServices(IContainerRegistry containerRegistry)
@@ -188,38 +192,7 @@ namespace ForgeModGenerator
             containerRegistry.Register<ISnackbarService, SnackbarService>();
             containerRegistry.Register<IModBuildService, ModBuildService>();
             containerRegistry.Register<IPreferenceService, PreferenceService>();
-        }
-
-        private void RegisterPages(IContainerRegistry containerRegistry)
-        {
-            Assembly presentationAssembly = Assembly.GetAssembly(typeof(MainWindow));
-            Assembly coreAssembly = Assembly.GetAssembly(typeof(MainWindowViewModel));
-            IEnumerable<string> moduleNames = coreAssembly.ExportedTypes.Where(x => x.Name.EndsWith("ViewModel")).Select(x => x.Name.Replace("ViewModel", ""));
-            foreach (string module in moduleNames)
-            {
-                Type viewModel = coreAssembly.ExportedTypes.First(x => x.Name.StartsWith(module) && x.Name.EndsWith("ViewModel"));
-                Type page = presentationAssembly.ExportedTypes.FirstOrDefault(x => x.Name.StartsWith(module) && x.Name.EndsWith("Page"));
-                if (page != null)
-                {
-                    string navName = (string)typeof(Pages).GetField(module, BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy).GetValue(null);
-                    containerRegistry.RegisterForNavigation(page, navName);
-                }
-            }
-        }
-
-        protected override void ConfigureDefaultRegionBehaviors(IRegionBehaviorFactory regionBehaviors)
-        {
-            base.ConfigureDefaultRegionBehaviors(regionBehaviors);
-            regionBehaviors.AddIfMissing(nameof(DisposeClosedViewsBehavior), typeof(DisposeClosedViewsBehavior));
-        }
-
-        private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
-        {
-            new ApplicationModule.BugReporter(e.Exception).Show();
-            MainWindow.Close();
-            e.Handled = true;
-            Crashes.TrackError(e.Exception);
-            Crashes.NotifyUserConfirmation(UserConfirmation.AlwaysSend);
+            containerRegistry.Register<ICodeGenerationService, CodeGeneratorService>();
         }
     }
 }
