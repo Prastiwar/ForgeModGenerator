@@ -416,6 +416,9 @@
       <DependentUpon>CommandEditForm.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Modules\CommandGenerator\Validation\CommandValidator.cs" />
+    <Compile Include="Source\Modules\ItemGenerator\Controls\ItemEditForm.xaml.cs">
+      <DependentUpon>ItemEditForm.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Source\Modules\ItemGenerator\ItemCodeGenerator.cs" />
     <Compile Include="Source\Modules\MaterialGenerator\MaterialCodeGenerator.cs" />
     <Compile Include="Source\Modules\MaterialGenerator\MaterialGeneratorPage.xaml.cs">
@@ -557,6 +560,10 @@
     <Page Include="Source\Controls\ItemListForm.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Source\Modules\ItemGenerator\Controls\ItemEditForm.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Source\Modules\MaterialGenerator\MaterialGeneratorPage.xaml">
       <Generator>MSBuild:Compile</Generator>
