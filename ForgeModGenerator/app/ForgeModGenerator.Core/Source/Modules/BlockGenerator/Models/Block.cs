@@ -1,5 +1,4 @@
 ﻿using Prism.Mvvm;
-using System.Collections.Generic;
 
 namespace ForgeModGenerator.BlockGenerator.Models
 {
@@ -59,14 +58,20 @@ namespace ForgeModGenerator.BlockGenerator.Models
             set => SetProperty(ref shouldMakeCollision, value);
         }
 
-        private KeyValuePair<string, int> harvestLevel;
-        public KeyValuePair<string, int> HarvestLevel {
+        private string harvestLevelTool;
+        public string HarvestLevelTool {
+            get => harvestLevelTool;
+            set => SetProperty(ref harvestLevelTool, value);
+        }
+
+        private int harvestLevel;
+        public int HarvestLevel {
             get => harvestLevel;
             set => SetProperty(ref harvestLevel, value);
         }
 
-        private SoundType soundType;
-        public SoundType SoundType {
+        private string soundType;
+        public string SoundType {
             get => soundType;
             set => SetProperty(ref soundType, value);
         }

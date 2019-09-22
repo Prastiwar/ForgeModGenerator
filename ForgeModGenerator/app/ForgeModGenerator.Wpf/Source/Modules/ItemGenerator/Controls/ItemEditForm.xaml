@@ -5,15 +5,105 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:wpf="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:mahapp="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:local="clr-namespace:ForgeModGenerator.ItemGenerator.Controls"
+             xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
              mc:Ignorable="d"
              d:DesignHeight="450"
-             d:DesignWidth="800">
+             d:DesignWidth="500">
     <Grid Margin="16">
         <StackPanel>
             <Border BorderThickness="0.7"
-                    BorderBrush="Black"></Border>
+                    BorderBrush="Black">
+                <Grid Background="GhostWhite">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="145" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0"
+                                Margin="7">
+                        <TextBlock Text="Type: "
+                                   FontSize="14"
+                                   FontWeight="Bold"
+                                   Margin="3,0,3,0"
+                                   Height="{Binding ActualHeight, ElementName=ItemTypeComboBox, Mode=OneWay}"
+                                   VerticalAlignment="Center" />
+                        <TextBlock Text="Armor Type"
+                                   FontSize="14"
+                                   FontWeight="Bold"
+                                   Margin="3,0,3,0"
+                                   Height="{Binding ActualHeight, ElementName=ArmorTypeComboBox, Mode=OneWay}"
+                                   VerticalAlignment="Center" />
+                        <TextBlock Text="Name: "
+                                   FontSize="14"
+                                   FontWeight="Bold"
+                                   Margin="3,0,3,0"
+                                   Height="{Binding ActualHeight, ElementName=NameTextBox, Mode=OneWay}"
+                                   VerticalAlignment="Center" />
+                        <TextBlock Text="Stack Size: "
+                                   FontSize="14"
+                                   FontWeight="Bold"
+                                   Margin="3,0,3,0"
+                                   Height="{Binding ActualHeight, ElementName=StackSizeSlider, Mode=OneWay}"
+                                   VerticalAlignment="Center" />
+                        <TextBlock Text="TexturePath: "
+                                   FontSize="14"
+                                   FontWeight="Bold"
+                                   Margin="3,0,3,0"
+                                   Height="{Binding ActualHeight, ElementName=TexturePathTextBox, Mode=OneWay}"
+                                   VerticalAlignment="Center" />
+                        <TextBlock Text="Material: "
+                                   FontSize="14"
+                                   FontWeight="Bold"
+                                   Margin="3,0,3,0"
+                                   Height="{Binding ActualHeight, ElementName=MaterialTextBox, Mode=OneWay}"
+                                   VerticalAlignment="Center" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1"
+                                Margin="7">
+                        <ComboBox x:Name="ItemTypeComboBox"
+                                  SelectedValue="{Binding Path=Type}"
+                                  ItemsSource="{Binding Path=ItemTypes, RelativeSource={RelativeSource AncestorType=local:ItemEditForm}}"
+                                  Background="#FF404040"
+                                  Foreground="#FFE8E8E8"
+                                  BorderBrush="Wheat"
+                                  FontSize="15"
+                                  MinWidth="250"
+                                  wpf:HintAssist.Hint="Select Item Type"
+                                  HorizontalContentAlignment="Center" />
+                        <ComboBox x:Name="ArmorTypeComboBox"
+                                  SelectedValue="{Binding Path=Type}"
+                                  ItemsSource="{Binding Path=ArmorTypes, RelativeSource={RelativeSource AncestorType=local:ItemEditForm}}"
+                                  Background="#FF404040"
+                                  Foreground="#FFE8E8E8"
+                                  BorderBrush="Wheat"
+                                  FontSize="15"
+                                  MinWidth="250"
+                                  wpf:HintAssist.Hint="Select Armor Type"
+                                  HorizontalContentAlignment="Center" />
+                        <controls:SubmitTextBox x:Name="NameTextBox"
+                                                Text="{Binding Name, ValidatesOnDataErrors=True}"
+                                                VerticalAlignment="Center"
+                                                IsTabStop="True"
+                                                TextWrapping="Wrap" />
+                        <Slider x:Name="StackSizeSlider"
+                                Value="{Binding Path=StackSize}"
+                                VerticalAlignment="Center"
+                                Height="25"
+                                Minimum="1"
+                                Maximum="64" />
+                        <controls:SubmitTextBox x:Name="TexturePathTextBox"
+                                                Text="{Binding TexturePath, ValidatesOnDataErrors=True}"
+                                                VerticalAlignment="Center"
+                                                IsTabStop="True"
+                                                TextWrapping="Wrap" />
+                        <controls:SubmitTextBox x:Name="MaterialTextBox"
+                                                Text="{Binding Material, ValidatesOnDataErrors=True}"
+                                                VerticalAlignment="Center"
+                                                IsTabStop="True"
+                                                TextWrapping="Wrap" />
+                    </StackPanel>
+                </Grid>
+            </Border>
             <StackPanel Orientation="Horizontal"
                         HorizontalAlignment="Center"
                         Margin="0,16,0,0">

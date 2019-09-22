@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 
 namespace ForgeModGenerator.RecipeGenerator.Controls
 {
@@ -25,13 +24,6 @@ namespace ForgeModGenerator.RecipeGenerator.Controls
             set => SetValue(RecipeTypesProperty, value);
         }
 
-        public static readonly DependencyProperty SelectTypeChangedProperty =
-            DependencyProperty.Register("SelectTypeChanged", typeof(ICommand), typeof(RecipeEditForm), new PropertyMetadata(null));
-        public ICommand SelectTypeChanged {
-            get => (ICommand)GetValue(SelectTypeChangedProperty);
-            set => SetValue(SelectTypeChangedProperty, value);
-        }
-
         public static readonly DependencyProperty IngredientsLengthLimitProperty =
             DependencyProperty.Register("IngredientsLengthLimit", typeof(int), typeof(RecipeEditForm), new PropertyMetadata(int.MaxValue));
         public int IngredientsLengthLimit {
@@ -46,6 +38,7 @@ namespace ForgeModGenerator.RecipeGenerator.Controls
         private void RecipeTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Type newType = (Type)e.AddedItems[0];
+
             bool shouldCollapseSmelting = newType != typeof(SmeltingRecipe);
             SetSmeltingVisibility(shouldCollapseSmelting);
 
@@ -53,7 +46,6 @@ namespace ForgeModGenerator.RecipeGenerator.Controls
             SetShapedVisibility(shouldCollapseShaped);
 
             bool shouldCollapseShapeless = newType != typeof(ShapelessRecipe);
-
             IngredientsTextBlock.Visibility = shouldCollapseSmelting && shouldCollapseShapeless ? Visibility.Collapsed : Visibility.Visible;
             IngredientsListBox.Visibility = shouldCollapseSmelting && shouldCollapseShapeless ? Visibility.Collapsed : Visibility.Visible;
 

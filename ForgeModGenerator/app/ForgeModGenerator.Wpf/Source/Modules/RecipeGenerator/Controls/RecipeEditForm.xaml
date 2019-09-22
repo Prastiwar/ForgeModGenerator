@@ -29,7 +29,7 @@
                               HorizontalContentAlignment="Center"
                               Width="220"
                               FontSize="11"
-                              materialDesign:HintAssist.Hint="Select Recipe Type"></ComboBox>
+                              materialDesign:HintAssist.Hint="Select Recipe Type" />
                     <Border BorderThickness="0.7"
                             BorderBrush="Black">
                         <Grid Background="GhostWhite">

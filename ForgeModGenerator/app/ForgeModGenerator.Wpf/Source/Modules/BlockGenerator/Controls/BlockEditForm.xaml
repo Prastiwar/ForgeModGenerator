@@ -7,13 +7,169 @@
              xmlns:wpf="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:mahapp="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:local="clr-namespace:ForgeModGenerator.BlockGenerator.Controls"
+             xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
              mc:Ignorable="d"
              d:DesignHeight="450"
-             d:DesignWidth="800">
+             d:DesignWidth="500">
     <Grid Margin="16">
         <StackPanel>
             <Border BorderThickness="0.7"
-                    BorderBrush="Black"></Border>
+                    BorderBrush="Black">
+                <Grid Background="GhostWhite">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="175" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0"
+                                Margin="7">
+                        <TextBlock Text="Type: "
+                                   FontSize="14"
+                                   FontWeight="Bold"
+                                   Margin="3,0,3,0"
+                                   Height="{Binding ActualHeight, ElementName=TypeComboBox, Mode=OneWay}"
+                                   VerticalAlignment="Center" />
+                        <TextBlock Text="Name: "
+                                   FontSize="14"
+                                   FontWeight="Bold"
+                                   Margin="3,0,3,0"
+                                   Height="{Binding ActualHeight, ElementName=NameTextBox, Mode=OneWay}"
+                                   VerticalAlignment="Center" />
+                        <TextBlock Text="TexturePath: "
+                                   FontSize="14"
+                                   FontWeight="Bold"
+                                   Margin="3,0,3,0"
+                                   Height="{Binding ActualHeight, ElementName=TexturePathTextBox, Mode=OneWay}"
+                                   VerticalAlignment="Center" />
+                        <TextBlock Text="InventoryTexturePath: "
+                                   FontSize="14"
+                                   FontWeight="Bold"
+                                   Margin="3,0,3,0"
+                                   Height="{Binding ActualHeight, ElementName=InventoryTexturePathTextBox, Mode=OneWay}"
+                                   VerticalAlignment="Center" />
+                        <TextBlock Text="Light Level: "
+                                   FontSize="14"
+                                   FontWeight="Bold"
+                                   Margin="3,0,3,0"
+                                   Height="{Binding ActualHeight, ElementName=LightLevelSlider, Mode=OneWay}"
+                                   VerticalAlignment="Center" />
+                        <TextBlock Text="Hardness: "
+                                   FontSize="14"
+                                   FontWeight="Bold"
+                                   Margin="3,0,3,0"
+                                   Height="{Binding ActualHeight, ElementName=HardnessNumeric, Mode=OneWay}"
+                                   VerticalAlignment="Center" />
+                        <TextBlock Text="Resistance: "
+                                   FontSize="14"
+                                   FontWeight="Bold"
+                                   Margin="3,0,3,0"
+                                   Height="{Binding ActualHeight, ElementName=ResistanceNumeric, Mode=OneWay}"
+                                   VerticalAlignment="Center" />
+                        <TextBlock Text="ShouldMakeCollision: "
+                                   FontSize="14"
+                                   FontWeight="Bold"
+                                   Margin="3,0,3,0"
+                                   Height="{Binding ActualHeight, ElementName=ShouldMakeCollisionCheckBox, Mode=OneWay}"
+                                   VerticalAlignment="Center" />
+                        <TextBlock Text="SoundType: "
+                                   FontSize="14"
+                                   FontWeight="Bold"
+                                   Margin="3,0,3,0"
+                                   Height="{Binding ActualHeight, ElementName=SoundTypeTextBox, Mode=OneWay}"
+                                   VerticalAlignment="Center" />
+                        <TextBlock Text="DropItem: "
+                                   FontSize="14"
+                                   FontWeight="Bold"
+                                   Margin="3,0,3,0"
+                                   Height="{Binding ActualHeight, ElementName=DropItemTextBox, Mode=OneWay}"
+                                   VerticalAlignment="Center" />
+                        <TextBlock Text="HarvestLevelTool: "
+                                   FontSize="14"
+                                   FontWeight="Bold"
+                                   Margin="3,0,3,0"
+                                   Height="{Binding ActualHeight, ElementName=HarvestLevelToolComboBox, Mode=OneWay}"
+                                   VerticalAlignment="Center" />
+                        <TextBlock Text="HarvestLevel: "
+                                   FontSize="14"
+                                   FontWeight="Bold"
+                                   Margin="3,0,3,0"
+                                   Height="{Binding ActualHeight, ElementName=HarvestLevelNumeric, Mode=OneWay}"
+                                   VerticalAlignment="Center" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1"
+                                Margin="7">
+                        <ComboBox x:Name="TypeComboBox"
+                                  SelectedValue="{Binding Path=Type}"
+                                  ItemsSource="{Binding Path=BlockTypes, RelativeSource={RelativeSource AncestorType=local:BlockEditForm}}"
+                                  Background="#FF404040"
+                                  Foreground="#FFE8E8E8"
+                                  BorderBrush="Wheat"
+                                  FontSize="15"
+                                  MinWidth="250"
+                                  wpf:HintAssist.Hint="Select Block Type"
+                                  HorizontalContentAlignment="Center" />
+                        <controls:SubmitTextBox x:Name="NameTextBox"
+                                                Text="{Binding Name, ValidatesOnDataErrors=True}"
+                                                VerticalAlignment="Center"
+                                                IsTabStop="True"
+                                                TextWrapping="Wrap" />
+                        <controls:SubmitTextBox x:Name="TexturePathTextBox"
+                                                Text="{Binding TexturePath, ValidatesOnDataErrors=True}"
+                                                VerticalAlignment="Center"
+                                                IsTabStop="True"
+                                                TextWrapping="Wrap" />
+                        <controls:SubmitTextBox x:Name="InventoryTexturePathTextBox"
+                                                Text="{Binding InventoryTexturePath, ValidatesOnDataErrors=True}"
+                                                VerticalAlignment="Center"
+                                                IsTabStop="True"
+                                                TextWrapping="Wrap" />
+                        <Slider x:Name="LightLevelSlider"
+                                Value="{Binding Path=LightLevel}"
+                                VerticalAlignment="Center"
+                                Height="25"
+                                Minimum="0"
+                                Maximum="15" />
+                        <mahapp:NumericUpDown x:Name="HardnessNumeric"
+                                              Value="{Binding Path=Hardness}"
+                                              HideUpDownButtons="True"
+                                              StringFormat="{}{0:N2}"
+                                              FontSize="15" />
+                        <mahapp:NumericUpDown x:Name="ResistanceNumeric"
+                                              Value="{Binding Path=Resistance}"
+                                              HideUpDownButtons="True"
+                                              StringFormat="{}{0:N2}"
+                                              FontSize="15" />
+                        <CheckBox x:Name="ShouldMakeCollisionCheckBox"
+                                  FontSize="15"
+                                  Height="25"
+                                  IsChecked="{Binding Path=ShouldMakeCollision}" />
+                        <controls:SubmitTextBox x:Name="SoundTypeTextBox"
+                                                Text="{Binding SoundType, ValidatesOnDataErrors=True}"
+                                                VerticalAlignment="Center"
+                                                IsTabStop="True"
+                                                TextWrapping="Wrap" />
+                        <controls:SubmitTextBox x:Name="DropItemTextBox"
+                                                Text="{Binding DropItem, ValidatesOnDataErrors=True}"
+                                                VerticalAlignment="Center"
+                                                IsTabStop="True"
+                                                TextWrapping="Wrap" />
+                        <ComboBox x:Name="HarvestLevelToolComboBox"
+                                  SelectedValue="{Binding Path=HarvestLevelTool}"
+                                  ItemsSource="{Binding Path=HarvestToolTypes, RelativeSource={RelativeSource AncestorType=local:BlockEditForm}}"
+                                  Background="#FF404040"
+                                  Foreground="#FFE8E8E8"
+                                  BorderBrush="Wheat"
+                                  FontSize="15"
+                                  MinWidth="250"
+                                  wpf:HintAssist.Hint="Select Harvest Tool"
+                                  HorizontalContentAlignment="Center" />
+                        <mahapp:NumericUpDown x:Name="HarvestLevelNumeric"
+                                              Value="{Binding Path=HarvestLevel}"
+                                              HideUpDownButtons="True"
+                                              StringFormat="{}{0:N2}"
+                                              FontSize="15" />
+                    </StackPanel>
+                </Grid>
+            </Border>
             <StackPanel Orientation="Horizontal"
                         HorizontalAlignment="Center"
                         Margin="0,16,0,0">

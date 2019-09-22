@@ -11,6 +11,7 @@ namespace ForgeModGenerator.BlockGenerator.Controls
         public BlockEditForm() => InitializeComponent();
 
         public IEnumerable<BlockType> BlockTypes => Enum.GetValues(typeof(BlockType)).Cast<BlockType>();
+        public IEnumerable<HarvestToolType> HarvestToolTypes => Enum.GetValues(typeof(HarvestToolType)).Cast<HarvestToolType>();
 
         public void SetDataContext(object context) => DataContext = context;
     }

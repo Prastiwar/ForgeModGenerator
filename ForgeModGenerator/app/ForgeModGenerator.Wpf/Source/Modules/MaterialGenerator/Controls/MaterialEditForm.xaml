@@ -7,13 +7,302 @@
              xmlns:wpf="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:mahapp="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:local="clr-namespace:ForgeModGenerator.MaterialGenerator.Controls"
+             xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
              mc:Ignorable="d"
              d:DesignHeight="450"
-             d:DesignWidth="800">
+             d:DesignWidth="500">
     <Grid Margin="16">
         <StackPanel>
-            <Border BorderThickness="0.7"
-                    BorderBrush="Black"></Border>
+            <Grid Background="GhostWhite">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="190" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0"
+                            Margin="7">
+                    <TextBlock x:Name="TypeTextBlock"
+                               Text="Type: "
+                               FontSize="14"
+                               FontWeight="Bold"
+                               Margin="3,0,3,0"
+                               Height="{Binding ActualHeight, ElementName=TypeComboBox, Mode=OneWay}"
+                               VerticalAlignment="Center" />
+                    <TextBlock x:Name="NameTextBlock"
+                               Text="Name: "
+                               FontSize="14"
+                               FontWeight="Bold"
+                               Margin="3,0,3,0"
+                               Height="{Binding ActualHeight, ElementName=NameTextBox, Mode=OneWay}"
+                               VerticalAlignment="Center" />
+                    <TextBlock x:Name="EfficiencyTextBlock"
+                               Text="Efficiency: "
+                               FontSize="14"
+                               FontWeight="Bold"
+                               Margin="3,0,3,0"
+                               Height="{Binding ActualHeight, ElementName=EfficiencyNumeric, Mode=OneWay}"
+                               VerticalAlignment="Center" />
+                    <TextBlock x:Name="AttackDamageTextBlock"
+                               Text="AttackDamage: "
+                               FontSize="14"
+                               FontWeight="Bold"
+                               Margin="3,0,3,0"
+                               Height="{Binding ActualHeight, ElementName=AttackDamageNumeric, Mode=OneWay}"
+                               VerticalAlignment="Center" />
+                    <TextBlock x:Name="MaxUsesTextBlock"
+                               Text="MaxUses: "
+                               FontSize="14"
+                               FontWeight="Bold"
+                               Margin="3,0,3,0"
+                               Height="{Binding ActualHeight, ElementName=MaxUsesNumeric, Mode=OneWay}"
+                               VerticalAlignment="Center" />
+                    <TextBlock x:Name="HarvestLevelTextBlock"
+                               Text="HarvestLevel: "
+                               FontSize="14"
+                               FontWeight="Bold"
+                               Margin="3,0,3,0"
+                               Height="{Binding ActualHeight, ElementName=HarvestLevelNumeric, Mode=OneWay}"
+                               VerticalAlignment="Center" />
+                    <TextBlock x:Name="IsLiquidTextBlock"
+                               Text="IsLiquid: "
+                               FontSize="14"
+                               FontWeight="Bold"
+                               Margin="3,0,3,0"
+                               Height="{Binding ActualHeight, ElementName=IsLiquidCheckBox, Mode=OneWay}"
+                               VerticalAlignment="Center" />
+                    <TextBlock x:Name="IsSolidTextBlock"
+                               Text="IsSolid: "
+                               FontSize="14"
+                               FontWeight="Bold"
+                               Margin="3,0,3,0"
+                               Height="{Binding ActualHeight, ElementName=IsSolidCheckBox, Mode=OneWay}"
+                               VerticalAlignment="Center" />
+                    <TextBlock x:Name="BlocksLightTextBlock"
+                               Text="BlocksLight: "
+                               FontSize="14"
+                               FontWeight="Bold"
+                               Margin="3,0,3,0"
+                               Height="{Binding ActualHeight, ElementName=BlocksLightCheckBox, Mode=OneWay}"
+                               VerticalAlignment="Center" />
+                    <TextBlock x:Name="IsTranslucentTextBlock"
+                               Text="IsTranslucent: "
+                               FontSize="14"
+                               FontWeight="Bold"
+                               Margin="3,0,3,0"
+                               Height="{Binding ActualHeight, ElementName=IsTranslucentCheckBox, Mode=OneWay}"
+                               VerticalAlignment="Center" />
+                    <TextBlock x:Name="RequiresNoToolTextBlock"
+                               Text="RequiresNoTool: "
+                               FontSize="14"
+                               FontWeight="Bold"
+                               Margin="3,0,3,0"
+                               Height="{Binding ActualHeight, ElementName=RequiresNoToolCheckBox, Mode=OneWay}"
+                               VerticalAlignment="Center" />
+                    <TextBlock x:Name="CanBurnTextBlock"
+                               Text="CanBurn: "
+                               FontSize="14"
+                               FontWeight="Bold"
+                               Margin="3,0,3,0"
+                               Height="{Binding ActualHeight, ElementName=CanBurnCheckBox, Mode=OneWay}"
+                               VerticalAlignment="Center" />
+                    <TextBlock x:Name="IsReplaceableTextBlock"
+                               Text="IsReplaceable: "
+                               FontSize="14"
+                               FontWeight="Bold"
+                               Margin="3,0,3,0"
+                               Height="{Binding ActualHeight, ElementName=IsReplaceableCheckBox, Mode=OneWay}"
+                               VerticalAlignment="Center" />
+                    <TextBlock x:Name="IsAdventureModeExemptTextBlock"
+                               Text="IsAdventureModeExempt: "
+                               FontSize="14"
+                               FontWeight="Bold"
+                               Margin="3,0,3,0"
+                               Height="{Binding ActualHeight, ElementName=IsAdventureModeExemptCheckBox, Mode=OneWay}"
+                               VerticalAlignment="Center" />
+                    <TextBlock x:Name="MobilityFlagTextBlock"
+                               Text="MobilityFlag: "
+                               FontSize="14"
+                               FontWeight="Bold"
+                               Margin="3,0,3,0"
+                               Height="{Binding ActualHeight, ElementName=MobilityFlagComboBox, Mode=OneWay}"
+                               VerticalAlignment="Center" />
+                    <TextBlock x:Name="DurabilityTextBlock"
+                               Text="Durability: "
+                               FontSize="14"
+                               FontWeight="Bold"
+                               Margin="3,0,3,0"
+                               Height="{Binding ActualHeight, ElementName=DurabilityNumeric, Mode=OneWay}"
+                               VerticalAlignment="Center" />
+                    <TextBlock x:Name="HelmetDamageReductionTextBlock"
+                               Text="HelmetDamageReduction: "
+                               FontSize="14"
+                               FontWeight="Bold"
+                               Margin="3,0,3,0"
+                               Height="{Binding ActualHeight, ElementName=HelmetDamageReductionNumeric, Mode=OneWay}"
+                               VerticalAlignment="Center" />
+                    <TextBlock x:Name="PlateDamageReductionTextBlock"
+                               Text="PlateDamageReduction: "
+                               FontSize="14"
+                               FontWeight="Bold"
+                               Margin="3,0,3,0"
+                               Height="{Binding ActualHeight, ElementName=PlateDamageReductionNumeric, Mode=OneWay}"
+                               VerticalAlignment="Center" />
+                    <TextBlock x:Name="LegsDamageReductionTextBlock"
+                               Text="LegsDamageReduction: "
+                               FontSize="14"
+                               FontWeight="Bold"
+                               Margin="3,0,3,0"
+                               Height="{Binding ActualHeight, ElementName=LegsDamageReductionNumeric, Mode=OneWay}"
+                               VerticalAlignment="Center" />
+                    <TextBlock x:Name="BootsDamageReductionTextBlock"
+                               Text="BootsDamageReduction: "
+                               FontSize="14"
+                               FontWeight="Bold"
+                               Margin="3,0,3,0"
+                               Height="{Binding ActualHeight, ElementName=BootsDamageReductionNumeric, Mode=OneWay}"
+                               VerticalAlignment="Center" />
+                    <TextBlock x:Name="ToughnessTextBlock"
+                               Text="Toughness: "
+                               FontSize="14"
+                               FontWeight="Bold"
+                               Margin="3,0,3,0"
+                               Height="{Binding ActualHeight, ElementName=ToughnessNumeric, Mode=OneWay}"
+                               VerticalAlignment="Center" />
+                    <TextBlock x:Name="TextureNameTextBlock"
+                               Text="TextureName: "
+                               FontSize="14"
+                               FontWeight="Bold"
+                               Margin="3,0,3,0"
+                               Height="{Binding ActualHeight, ElementName=TextureNameTextBox, Mode=OneWay}"
+                               VerticalAlignment="Center" />
+                    <TextBlock x:Name="SoundEventTextBlock"
+                               Text="SoundEvent: "
+                               FontSize="14"
+                               FontWeight="Bold"
+                               Margin="3,0,3,0"
+                               Height="{Binding ActualHeight, ElementName=SoundEventTextBox, Mode=OneWay}"
+                               VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Grid.Column="1"
+                            Margin="7">
+                    <ComboBox x:Name="TypeComboBox"
+                              SelectedValue="{Binding Path=Type}"
+                              ItemsSource="{Binding Path=BlockTypes, RelativeSource={RelativeSource AncestorType=local:MaterialEditForm}}"
+                              Background="#FF404040"
+                              Foreground="#FFE8E8E8"
+                              BorderBrush="Wheat"
+                              FontSize="15"
+                              MinWidth="250"
+                              wpf:HintAssist.Hint="Select Material Type"
+                              HorizontalContentAlignment="Center" />
+                    <controls:SubmitTextBox x:Name="NameTextBox"
+                                            Text="{Binding Name, ValidatesOnDataErrors=True}"
+                                            VerticalAlignment="Center"
+                                            IsTabStop="True"
+                                            TextWrapping="Wrap" />
+                    <mahapp:NumericUpDown x:Name="EfficiencyNumeric"
+                                          Value="{Binding Path=Efficiency}"
+                                          HideUpDownButtons="True"
+                                          StringFormat="{}{0:N2}"
+                                          FontSize="15" />
+                    <mahapp:NumericUpDown x:Name="AttackDamageNumeric"
+                                          Value="{Binding Path=AttackDamage}"
+                                          HideUpDownButtons="True"
+                                          StringFormat="{}{0:N2}"
+                                          FontSize="15" />
+                    <mahapp:NumericUpDown x:Name="MaxUsesNumeric"
+                                          Value="{Binding Path=MaxUses}"
+                                          HideUpDownButtons="True"
+                                          StringFormat="{}{0:N2}"
+                                          FontSize="15" />
+                    <mahapp:NumericUpDown x:Name="HarvestLevelNumeric"
+                                          Value="{Binding Path=HarvestLevel}"
+                                          HideUpDownButtons="True"
+                                          StringFormat="{}{0:N2}"
+                                          FontSize="15" />
+                    <CheckBox x:Name="IsLiquidCheckBox"
+                              FontSize="15"
+                              Height="25"
+                              IsChecked="{Binding Path=IsLiquid}" />
+                    <CheckBox x:Name="IsSolidCheckBox"
+                              FontSize="15"
+                              Height="25"
+                              IsChecked="{Binding Path=IsSolid}" />
+                    <CheckBox x:Name="BlocksLightCheckBox"
+                              FontSize="15"
+                              Height="25"
+                              IsChecked="{Binding Path=BlocksLight}" />
+                    <CheckBox x:Name="IsTranslucentCheckBox"
+                              FontSize="15"
+                              Height="25"
+                              IsChecked="{Binding Path=IsTranslucent}" />
+                    <CheckBox x:Name="RequiresNoToolCheckBox"
+                              FontSize="15"
+                              Height="25"
+                              IsChecked="{Binding Path=RequiresNoTool}" />
+                    <CheckBox x:Name="CanBurnCheckBox"
+                              FontSize="15"
+                              Height="25"
+                              IsChecked="{Binding Path=CanBurn}" />
+                    <CheckBox x:Name="IsReplaceableCheckBox"
+                              FontSize="15"
+                              Height="25"
+                              IsChecked="{Binding Path=IsReplaceable}" />
+                    <CheckBox x:Name="IsAdventureModeExemptCheckBox"
+                              FontSize="15"
+                              Height="25"
+                              IsChecked="{Binding Path=IsAdventureModeExempt}" />
+                    <ComboBox x:Name="MobilityFlagComboBox"
+                              SelectedValue="{Binding Path=Type}"
+                              ItemsSource="{Binding Path=PushReactions, RelativeSource={RelativeSource AncestorType=local:MaterialEditForm}}"
+                              Background="#FF404040"
+                              Foreground="#FFE8E8E8"
+                              BorderBrush="Wheat"
+                              FontSize="15"
+                              MinWidth="250"
+                              wpf:HintAssist.Hint="Select Mobility Flag"
+                              HorizontalContentAlignment="Center" />
+                    <mahapp:NumericUpDown x:Name="DurabilityNumeric"
+                                          Value="{Binding Path=Durability}"
+                                          HideUpDownButtons="True"
+                                          StringFormat="{}{0:N2}"
+                                          FontSize="15" />
+                    <mahapp:NumericUpDown x:Name="HelmetDamageReductionNumeric"
+                                          Value="{Binding Path=HelmetDamageReduction}"
+                                          HideUpDownButtons="True"
+                                          StringFormat="{}{0:N2}"
+                                          FontSize="15" />
+                    <mahapp:NumericUpDown x:Name="PlateDamageReductionNumeric"
+                                          Value="{Binding Path=PlateDamageReduction}"
+                                          HideUpDownButtons="True"
+                                          StringFormat="{}{0:N2}"
+                                          FontSize="15" />
+                    <mahapp:NumericUpDown x:Name="LegsDamageReductionNumeric"
+                                          Value="{Binding Path=LegsDamageReduction}"
+                                          HideUpDownButtons="True"
+                                          StringFormat="{}{0:N2}"
+                                          FontSize="15" />
+                    <mahapp:NumericUpDown x:Name="BootsDamageReductionNumeric"
+                                          Value="{Binding Path=BootsDamageReduction}"
+                                          HideUpDownButtons="True"
+                                          StringFormat="{}{0:N2}"
+                                          FontSize="15" />
+                    <mahapp:NumericUpDown x:Name="ToughnessNumeric"
+                                          Value="{Binding Path=Toughness}"
+                                          HideUpDownButtons="True"
+                                          StringFormat="{}{0:N2}"
+                                          FontSize="15" />
+                    <controls:SubmitTextBox x:Name="TextureNameTextBox"
+                                            Text="{Binding TextureName, ValidatesOnDataErrors=True}"
+                                            VerticalAlignment="Center"
+                                            IsTabStop="True"
+                                            TextWrapping="Wrap" />
+                    <controls:SubmitTextBox x:Name="SoundEventTextBox"
+                                            Text="{Binding SoundEvent, ValidatesOnDataErrors=True}"
+                                            VerticalAlignment="Center"
+                                            IsTabStop="True"
+                                            TextWrapping="Wrap" />
+                </StackPanel>
+            </Grid>
             <StackPanel Orientation="Horizontal"
                         HorizontalAlignment="Center"
                         Margin="0,16,0,0">

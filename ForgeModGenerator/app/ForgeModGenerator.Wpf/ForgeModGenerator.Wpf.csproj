@@ -409,6 +409,9 @@
     <Compile Include="Source\FileSystem\Dialog\FolderBrowserDialog.cs" />
     <Compile Include="Source\FileSystem\FileSystemWin.cs" />
     <Compile Include="Source\Modules\BlockGenerator\BlockCodeGenerator.cs" />
+    <Compile Include="Source\Modules\BlockGenerator\Controls\BlockEditForm.xaml.cs">
+      <DependentUpon>BlockEditForm.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Source\Modules\CommandGenerator\CodeGeneration\CommandCodeGenerator.cs" />
     <Compile Include="Source\Modules\CommandGenerator\CommandEditorFormFactory.cs" />
     <Compile Include="Source\Modules\CommandGenerator\CodeGeneration\CustomCommandCodeGenerator.cs" />
@@ -420,6 +423,9 @@
       <DependentUpon>ItemEditForm.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Modules\ItemGenerator\ItemCodeGenerator.cs" />
+    <Compile Include="Source\Modules\MaterialGenerator\Controls\MaterialEditForm.xaml.cs">
+      <DependentUpon>MaterialEditForm.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Source\Modules\MaterialGenerator\MaterialCodeGenerator.cs" />
     <Compile Include="Source\Modules\MaterialGenerator\MaterialGeneratorPage.xaml.cs">
       <DependentUpon>MaterialGeneratorPage.xaml</DependentUpon>
@@ -553,6 +559,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Source\Modules\BlockGenerator\Controls\BlockEditForm.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Source\Modules\CommandGenerator\Controls\CommandEditForm.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -562,6 +572,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Source\Modules\ItemGenerator\Controls\ItemEditForm.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Modules\MaterialGenerator\Controls\MaterialEditForm.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
