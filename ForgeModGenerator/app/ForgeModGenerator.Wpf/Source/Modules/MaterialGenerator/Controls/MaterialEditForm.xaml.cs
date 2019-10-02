@@ -1,4 +1,7 @@
-﻿using ForgeModGenerator.MaterialGenerator.Models;
+﻿using ForgeModGenerator.Controls;
+using ForgeModGenerator.Core;
+using ForgeModGenerator.MaterialGenerator.Models;
+using ForgeModGenerator.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +28,21 @@ namespace ForgeModGenerator.MaterialGenerator.Controls
         }
 
         public void SetDataContext(object context) => DataContext = context;
+
+        private async void TextureButton_Click(object sender, RoutedEventArgs e)
+        {
+            Button button = (Button)sender;
+            ItemListForm form = new ItemListForm();
+            bool changed = await StaticCommands.ShowMCItemList(button, (string)DialogHost.Identifier, form).ConfigureAwait(true);
+            if (changed)
+            {
+                MCItemLocator locator = form.SelectedLocator;
+                if (DataContext is ArmorMaterial armorMaterial)
+                {
+                    armorMaterial.TextureName = locator.Name;
+                }
+            }
+        }
 
         private void TypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -65,7 +83,7 @@ namespace ForgeModGenerator.MaterialGenerator.Controls
             ToughnessNumeric.Visibility = visibility;
             ToughnessTextBlock.Visibility = visibility;
 
-            TextureNameTextBox.Visibility = visibility;
+            TextureButton.Visibility = visibility;
             TextureNameTextBlock.Visibility = visibility;
 
         }
