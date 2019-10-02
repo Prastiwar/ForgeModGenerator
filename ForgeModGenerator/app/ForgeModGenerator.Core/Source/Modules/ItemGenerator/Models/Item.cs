@@ -34,10 +34,10 @@ namespace ForgeModGenerator.ItemGenerator.Models
             }
         }
 
-        private string texturePath;
-        public string TexturePath {
-            get => texturePath;
-            set => SetProperty(ref texturePath, value);
+        private string textureName;
+        public string TextureName {
+            get => textureName;
+            set => SetProperty(ref textureName, value);
         }
 
         private int stackSize;

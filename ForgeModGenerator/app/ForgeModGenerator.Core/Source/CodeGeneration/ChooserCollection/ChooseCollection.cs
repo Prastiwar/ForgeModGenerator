@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ForgeModGenerator.CodeGeneration
 {
-    public class ChooseCollection
+    public class ChooseCollection : IEnumerable<string>
     {
         protected List<string> Getters { get; } = new List<string>();
         protected virtual string[] BuiltInGetters { get; } = System.Array.Empty<string>();
@@ -23,5 +24,9 @@ namespace ForgeModGenerator.CodeGeneration
             }
             return getters;
         }
+
+        public IEnumerator<string> GetEnumerator() => ((IEnumerable<string>)GetGettersCollection()).GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetGettersCollection().GetEnumerator();
     }
 }

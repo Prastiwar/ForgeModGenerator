@@ -1,7 +1,11 @@
-﻿using ForgeModGenerator.ItemGenerator.Models;
+﻿using ForgeModGenerator.Controls;
+using ForgeModGenerator.Core;
+using ForgeModGenerator.ItemGenerator.Models;
+using ForgeModGenerator.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace ForgeModGenerator.ItemGenerator.Controls
@@ -17,13 +21,35 @@ namespace ForgeModGenerator.ItemGenerator.Controls
         public IEnumerable<ItemType> ItemTypes => Enum.GetValues(typeof(ItemType)).Cast<ItemType>();
         public IEnumerable<ArmorType> ArmorTypes => Enum.GetValues(typeof(ArmorType)).Cast<ArmorType>();
 
-        public void SetDataContext(object context) => DataContext = context;
+        public static readonly DependencyProperty MaterialsProperty =
+            DependencyProperty.Register("Materials", typeof(IEnumerable<string>), typeof(ItemEditForm), new PropertyMetadata(Enumerable.Empty<string>()));
+        public IEnumerable<string> Materials {
+            get => (IEnumerable<string>)GetValue(MaterialsProperty);
+            set => SetValue(MaterialsProperty, value);
+        }
 
+        public void SetDataContext(object context) => DataContext = context;
         private void ItemTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ItemType newType = (ItemType)e.AddedItems[0];
             bool shouldCollapseArmor = newType != ItemType.Armor;
-            ArmorTypeComboBox.Visibility = shouldCollapseArmor ? System.Windows.Visibility.Collapsed : System.Windows.Visibility.Visible;
+            ArmorTypeComboBox.Visibility = shouldCollapseArmor ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        private async void ItemButton_Click(object sender, RoutedEventArgs e)
+        {
+            Button btn = (Button)sender;
+            btn.Command.Execute(btn.CommandParameter);
+            ItemListForm form = new ItemListForm();
+            bool changed = await StaticCommands.ShowMCItemList(btn, (string)DialogHost.Identifier, form).ConfigureAwait(true);
+            if (changed)
+            {
+                MCItemLocator locator = form.SelectedLocator;
+                if (DataContext is Item item)
+                {
+                    item.TextureName = locator.Name;
+                }
+            }
         }
     }
 }

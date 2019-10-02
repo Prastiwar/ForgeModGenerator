@@ -107,7 +107,7 @@ namespace ForgeModGenerator.ItemGenerator.CodeGeneration
 {{
     ""parent"": ""item/{parent}"",
     ""textures"": {{
-                    ""layer0"": ""{McMod.Modid}:{item.TexturePath.Remove(0, item.TexturePath.IndexOf("textures\\") + 8).Replace("\\", "/")}""
+                    ""layer0"": ""{McMod.Modid}:{item.TextureName}""
     }}
 }}
 ";

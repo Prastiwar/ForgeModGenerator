@@ -3,6 +3,7 @@
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                     xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                     xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
+                    xmlns:util="clr-namespace:ForgeModGenerator.Utility"
                     xmlns:validations="clr-namespace:ForgeModGenerator.Validation">
     <Style TargetType="{x:Type controls:SubmitTextBox}"
            BasedOn="{StaticResource {x:Type TextBox}}" />
@@ -136,4 +137,42 @@
     </Style>
     <Style TargetType="{x:Type controls:PageNavButton}"
            BasedOn="{StaticResource {x:Type controls:NavButton}}"></Style>
+    <Style x:Key="ItemSlotButtonStyle"
+           BasedOn="{StaticResource {x:Type Button}}"
+           TargetType="{x:Type Button}">
+        <Setter Property="Width"
+                Value="5" />
+        <Setter Property="Padding"
+                Value="5" />
+        <Setter Property="HorizontalAlignment"
+                Value="Left" />
+        <Setter Property="Height"
+                Value="48" />
+        <Setter Property="Width"
+                Value="48" />
+        <Setter Property="Background"
+                Value="{x:Null}" />
+        <Setter Property="Foreground"
+                Value="{x:Null}" />
+        <Setter Property="BorderBrush"
+                Value="Black" />
+        <Setter Property="Command"
+                Value="{x:Static util:StaticCommands.ShowMCItemListCommand}" />
+        <Setter Property="CommandParameter">
+            <Setter.Value>
+                <MultiBinding Converter="{StaticResource MCItemListCommandConverter}">
+                    <Binding Path="."
+                             RelativeSource="{RelativeSource Mode=Self}" />
+                    <Binding Path="Identifier"
+                             RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=materialDesign:DialogHost}" />
+                    <Binding Source="{x:Null}" />
+                </MultiBinding>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Content">
+            <Setter.Value>
+                <Image />
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>

@@ -24,6 +24,9 @@
                     <converters:BoolToLaunchSetupConverter x:Key="BoolToLaunchSetupConverter" />
                 </ResourceDictionary>
                 <ResourceDictionary>
+                    <converters:MCItemListCommandConverter x:Key="MCItemListCommandConverter" />
+                </ResourceDictionary>
+                <ResourceDictionary>
                     <converters:DataBindingDebugConverter x:Key="DataBindingDebugConverter" />
                 </ResourceDictionary>
                 <ResourceDictionary>

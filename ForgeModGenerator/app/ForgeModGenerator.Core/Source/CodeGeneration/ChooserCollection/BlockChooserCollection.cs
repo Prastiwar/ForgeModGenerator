@@ -1,6 +1,6 @@
 ﻿namespace ForgeModGenerator.CodeGeneration
 {
-    public class BlockChooser : ChooseCollection
+    public class BlockChooserCollection : ChooseCollection
     {
         protected override string[] BuiltInGetters => new string[] {
             "Blocks.AIR",

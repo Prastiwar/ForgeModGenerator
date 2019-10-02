@@ -46,12 +46,12 @@ namespace ForgeModGenerator.BlockGenerator.CodeGeneration
                 string jsonText = $@"
 {{
     ""forge_marker"": 1,
-    ""defaults"": {{ ""textures"": {{ ""all"": ""{McMod.ModInfo.Name}:{block.InventoryTexturePath.Remove(0, block.TexturePath.IndexOf("textures\\") + 8).Replace("\\", "/")}"" }} }},
+    ""defaults"": {{ ""textures"": {{ ""all"": ""{McMod.ModInfo.Name}:{block.TextureName}"" }} }},
 	""variants"": {{{{
                 ""normal"": {{ ""model"": ""cube_all"" }},
                 ""inventory"": {{ 
                                 ""model"": ""cube_all"",
-                                ""textures"": {{ ""all"": ""{McMod.ModInfo.Name}:{block.InventoryTexturePath.Remove(0, block.InventoryTexturePath.IndexOf("textures\\") + 8).Replace("\\", "/")}"" }}
+                                ""textures"": {{ ""all"": ""{McMod.ModInfo.Name}:{block.InventoryTextureName}"" }}
                 }}
     }}
 }}

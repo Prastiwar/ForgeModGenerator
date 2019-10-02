@@ -22,14 +22,14 @@ namespace ForgeModGenerator.BlockGenerator.Models
             set => SetProperty(ref materialType, value);
         }
 
-        private string texturePath;
-        public string TexturePath {
-            get => texturePath;
-            set => SetProperty(ref texturePath, value);
+        private string textureName;
+        public string TextureName {
+            get => textureName;
+            set => SetProperty(ref textureName, value);
         }
 
         private string inventoryTexturePath;
-        public string InventoryTexturePath {
+        public string InventoryTextureName {
             get => inventoryTexturePath;
             set => SetProperty(ref inventoryTexturePath, value);
         }

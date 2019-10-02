@@ -32,6 +32,19 @@ namespace ForgeModGenerator.Core
         public static bool operator ==(MCItemLocator left, MCItemLocator right) => left.Name == right.Name;
         public static bool operator !=(MCItemLocator left, MCItemLocator right) => !(left == right);
 
+        public static MCItemLocator[] GetAllModItems(string modname, string modid)
+        {
+            List<MCItemLocator> locators = new List<MCItemLocator>(128);
+            string defaultIconsPath = ModPaths.TexturesFolder(modname, modid);
+            foreach (FileInfo item in IOHelper.EnumerateFileInfos(defaultIconsPath, "*.png"))
+            {
+                string locatorName = modid + ":" + Path.GetFileNameWithoutExtension(item.Name);
+                MCItemLocator newLocator = new MCItemLocator(locatorName, Path.Combine(defaultIconsPath, item.Name));
+                locators.Add(newLocator);
+            }
+            return locators.ToArray();
+        }
+
         public static MCItemLocator[] GetAllMinecraftItems()
         {
             List<MCItemLocator> locators = new List<MCItemLocator>(128);

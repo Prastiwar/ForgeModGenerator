@@ -11,12 +11,39 @@ namespace ForgeModGenerator.Utility
 {
     public static class StaticCommands
     {
-
         private static ICommand showMCItemListCommand;
         public static ICommand ShowMCItemListCommand => showMCItemListCommand ?? (showMCItemListCommand =
             new DelegateCommand<Tuple<ContentControl, string, ItemListForm>>(async (args) => await ShowMCItemList(args.Item1, args.Item2, args.Item3).ConfigureAwait(true)));
 
-        public static async System.Threading.Tasks.Task<bool> ShowMCItemList(ContentControl control, string dialogIdentifier = null, ItemListForm form = null)
+        public static void SetItemButtonImage(ContentControl control, MCItemLocator locator)
+        {
+            Uri uriSource = new Uri(locator.ImageFilePath);
+            if (control.Content is Image image)
+            {
+                if (!(image.Source is BitmapImage bitmap))
+                {
+                    bitmap = new BitmapImage(uriSource) {
+                        CacheOption = BitmapCacheOption.OnLoad
+                    };
+                    image.Source = bitmap;
+                }
+                bitmap.UriSource = uriSource;
+            }
+        }
+
+        public static async System.Threading.Tasks.Task<MCItemLocator> ShowMCItemList(string dialogIdentifier = null, ItemListForm form = null)
+        {
+            if (form == null)
+            {
+                form = new ItemListForm();
+            }
+            bool changed = string.IsNullOrEmpty(dialogIdentifier)
+                ? (bool)await DialogHost.Show(form).ConfigureAwait(true)
+                : (bool)await DialogHost.Show(form, dialogIdentifier).ConfigureAwait(true);
+            return changed ? form.SelectedLocator : default;
+        }
+
+        public static async System.Threading.Tasks.Task<bool> ShowMCItemList(object control, string dialogIdentifier = null, ItemListForm form = null)
         {
             if (form == null)
             {
@@ -27,17 +54,10 @@ namespace ForgeModGenerator.Utility
                 : (bool)await DialogHost.Show(form, dialogIdentifier).ConfigureAwait(true);
             if (changed)
             {
-                MCItemLocator locator = form.SelectedLocator;
-                Image content = (Image)control.Content;
-                Uri uriSource = new Uri(locator.ImageFilePath);
-                if (!(content.Source is BitmapImage bitmap))
+                if (control is ContentControl contentControl)
                 {
-                    bitmap = new BitmapImage(uriSource) {
-                        CacheOption = BitmapCacheOption.OnLoad
-                    };
-                    content.Source = bitmap;
+                    SetItemButtonImage(contentControl, form.SelectedLocator);
                 }
-                bitmap.UriSource = uriSource;
             }
             return changed;
         }

@@ -9,7 +9,7 @@
              xmlns:local="clr-namespace:ForgeModGenerator.MaterialGenerator.Controls"
              xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
              mc:Ignorable="d"
-             d:DesignHeight="450"
+             d:DesignHeight="800"
              d:DesignWidth="500">
     <Grid Margin="16">
         <StackPanel>
@@ -179,7 +179,7 @@
                                FontSize="14"
                                FontWeight="Bold"
                                Margin="3,0,3,0"
-                               Height="{Binding ActualHeight, ElementName=SoundEventTextBox, Mode=OneWay}"
+                               Height="{Binding ActualHeight, ElementName=SoundEventComboBox, Mode=OneWay}"
                                VerticalAlignment="Center" />
                 </StackPanel>
                 <StackPanel Grid.Column="1"
@@ -296,11 +296,16 @@
                                             VerticalAlignment="Center"
                                             IsTabStop="True"
                                             TextWrapping="Wrap" />
-                    <controls:SubmitTextBox x:Name="SoundEventTextBox"
-                                            Text="{Binding SoundEvent, ValidatesOnDataErrors=True}"
-                                            VerticalAlignment="Center"
-                                            IsTabStop="True"
-                                            TextWrapping="Wrap" />
+                    <ComboBox x:Name="SoundEventComboBox"
+                              SelectedValue="{Binding Path=SoundEvent}"
+                              ItemsSource="{Binding Path=SoundEvents, RelativeSource={RelativeSource AncestorType=local:MaterialEditForm}}"
+                              Background="#FF404040"
+                              Foreground="#FFE8E8E8"
+                              BorderBrush="Wheat"
+                              FontSize="15"
+                              MinWidth="250"
+                              wpf:HintAssist.Hint="Select Sound Event"
+                              HorizontalContentAlignment="Center" />
                 </StackPanel>
             </Grid>
             <StackPanel Orientation="Horizontal"
