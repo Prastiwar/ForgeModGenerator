@@ -6,6 +6,8 @@ namespace ForgeModGenerator.Utility
     {
         private static readonly StringBuilder output = new StringBuilder(32);
 
+        public static string RemoveEnding(this string text) => text.Remove(text.Length - 1, 1);
+
         public static string Replace(this string text, string oldString, string newString, int count)
         {
             output.Clear();

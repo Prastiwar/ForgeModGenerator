@@ -1,7 +1,6 @@
 ﻿using ForgeModGenerator.Services;
 using ForgeModGenerator.Utility;
 using Prism.Commands;
-using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,34 +11,18 @@ using System.Windows.Input;
 namespace ForgeModGenerator.ViewModels
 {
     /// <summary> Base ViewModel class to explore folders </summary>
-    public abstract class FoldersWatcherViewModelBase<TFolder, TFile> : BindableBase, IDisposable
+    public abstract class FoldersWatcherViewModelBase<TFolder, TFile> : ViewModelBase, IDisposable
         where TFolder : class, IFolderObject<TFile>
         where TFile : class, IFileObject
     {
         public FoldersWatcherViewModelBase(ISessionContextService sessionContext, IFoldersExplorerFactory<TFolder, TFile> explorerFactory)
-        {
-            Explorer = explorerFactory.Create();
-            SessionContext = sessionContext;
-            SessionContext.PropertyChanged += OnSessionContexPropertyChanged;
-        }
+            : base(sessionContext) => Explorer = explorerFactory.Create();
 
         public abstract string FoldersRootPath { get; }
 
         public IFoldersExplorer<TFolder, TFile> Explorer { get; }
 
-        public ISessionContextService SessionContext { get; }
-
-        private bool isLoading;
-        /// <summary> Determines when folders are loading - used to show loading circle </summary>
-        public bool IsLoading {
-            get => isLoading;
-            set => SetProperty(ref isLoading, value);
-        }
-
         public bool HasEmptyFolders => Explorer.HasEmptyFolders;
-
-        private ICommand onLoadedCommand;
-        public ICommand OnLoadedCommand => onLoadedCommand ?? (onLoadedCommand = new DelegateCommand(OnLoaded));
 
         private ICommand addFileCommand;
         public ICommand AddFileCommand => addFileCommand ?? (addFileCommand = new DelegateCommand<TFolder>(ShowFileDialogAndCopyToFolder));
@@ -59,11 +42,7 @@ namespace ForgeModGenerator.ViewModels
         private ICommand removeEmptyFoldersCommand;
         public ICommand RemoveEmptyFoldersCommand => removeEmptyFoldersCommand ?? (removeEmptyFoldersCommand = new DelegateCommand(Explorer.RemoveEmptyFolders));
 
-        protected virtual void OnLoaded() => Refresh();
-
-        protected virtual bool CanRefresh() => SessionContext.SelectedMod != null && Directory.Exists(FoldersRootPath);
-
-        public abstract Task<bool> Refresh();
+        protected override bool CanRefresh() => SessionContext.SelectedMod != null && Directory.Exists(FoldersRootPath);
 
         protected void RemoveFileFromFolder(Tuple<TFolder, TFile> param) => Explorer.RemoveFileFromFolder(param.Item1, param.Item2);
 
@@ -111,14 +90,6 @@ namespace ForgeModGenerator.ViewModels
             if (dialogResult == DialogResult.OK)
             {
                 Explorer.CopyFilesToFolder(folder, browser.FileNames);
-            }
-        }
-
-        protected virtual async void OnSessionContexPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(SessionContext.SelectedMod))
-            {
-                await Refresh().ConfigureAwait(false);
             }
         }
 
