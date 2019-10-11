@@ -10,7 +10,7 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
     {
         public ItemBasesCodeGenerator(McMod mcMod) : base(mcMod) =>
             ScriptGenerators = new Dictionary<ClassLocator, GenerateDelegateHandler> {
-                { SourceCodeLocator.ItemBase(Modname, Organization), ()=> CreateBaseItemUnit(SourceCodeLocator.ItemBase(Modname, Organization).PackageName, SourceCodeLocator.ItemBase(Modname, Organization).ClassName, "Item", false) },
+                { SourceCodeLocator.ItemBase(Modname, Organization), CreateItemBase },
                 { SourceCodeLocator.BowBase(Modname, Organization), ()=> CreateBaseItemUnit(SourceCodeLocator.BowBase(Modname, Organization).PackageName, SourceCodeLocator.BowBase(Modname, Organization).ClassName, "ItemBow", false) },
                 { SourceCodeLocator.SwordBase(Modname, Organization), ()=> CreateBaseItemUnit(SourceCodeLocator.SwordBase(Modname, Organization).PackageName, SourceCodeLocator.SwordBase(Modname, Organization).ClassName, "ItemSword", true) },
                 { SourceCodeLocator.SpadeBase(Modname, Organization), ()=> CreateBaseItemUnit(SourceCodeLocator.SpadeBase(Modname, Organization).PackageName, SourceCodeLocator.SpadeBase(Modname, Organization).ClassName, "ItemSpade", true) },
@@ -20,6 +20,15 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
                 { SourceCodeLocator.FoodBase(Modname, Organization), CreateFoodBase},
                 { SourceCodeLocator.ArmorBase(Modname, Organization), CreateArmorBase},
             };
+
+        private CodeCompileUnit CreateItemBase()
+        {
+            string className = SourceCodeLocator.ItemBase(Modname, Organization).ClassName;
+            CodeCompileUnit unit = CreateBaseItemUnit(SourceCodeLocator.ItemBase(Modname, Organization).PackageName, className, "Item", false);
+            CodeConstructor ctor = NewConstructor(className, MemberAttributes.Public, new Parameter(typeof(int).FullName, "stackSize"));
+            unit.Namespaces[0].Types[0].Members.Add(ctor);
+            return unit;
+        }
 
         public override Dictionary<ClassLocator, GenerateDelegateHandler> ScriptGenerators { get; }
 
@@ -70,7 +79,8 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             else
             {
                 toolParameters = new Parameter[] {
-                    new Parameter(typeof(string).FullName, "name")
+                    new Parameter(typeof(string).FullName, "name"),
+                    new Parameter(typeof(int).FullName, "stackSize")
                 };
             }
             return CreateCustomItemUnit(packageName, className, baseType, toolParameters);

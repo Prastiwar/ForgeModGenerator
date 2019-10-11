@@ -51,29 +51,36 @@ namespace ForgeModGenerator.ItemGenerator.CodeGeneration
             {
                 string newObjectType = $"{item.Type.ToString()}Base";
                 string baseObjectType = null;
-                List<CodeExpression> arguments = new List<CodeExpression>() { NewPrimitive(item.Name.ToLower()), NewPrimitive(item.Material) };
+                List<CodeExpression> arguments = new List<CodeExpression>(2) { NewPrimitive(item.Name.ToLower()) };
                 switch (item.Type)
                 {
                     case ItemType.Item:
                         baseObjectType = "Item";
+                        arguments.Add(NewPrimitive(item.StackSize));
                         break;
                     case ItemType.Hoe:
                         baseObjectType = "ItemHoe";
+                        arguments.Add(NewPrimitive(item.Material));
                         break;
                     case ItemType.Axe:
                         baseObjectType = "ItemAxe";
+                        arguments.Add(NewPrimitive(item.Material));
                         break;
                     case ItemType.Sword:
                         baseObjectType = "ItemSword";
+                        arguments.Add(NewPrimitive(item.Material));
                         break;
                     case ItemType.Spade:
                         baseObjectType = "ItemSpade";
+                        arguments.Add(NewPrimitive(item.Material));
                         break;
                     case ItemType.Pickaxe:
                         baseObjectType = "ItemPickaxe";
+                        arguments.Add(NewPrimitive(item.Material));
                         break;
                     case ItemType.Armor:
                         baseObjectType = "Item";
+                        arguments.Add(NewPrimitive(item.Material));
                         switch (item.ArmorType)
                         {
                             case ArmorType.Helmet:

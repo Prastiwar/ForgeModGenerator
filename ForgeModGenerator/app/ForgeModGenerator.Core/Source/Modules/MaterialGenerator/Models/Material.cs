@@ -1,8 +1,8 @@
-﻿using Prism.Mvvm;
+﻿using ForgeModGenerator.Models;
 
 namespace ForgeModGenerator.MaterialGenerator.Models
 {
-    public class Material : BindableBase
+    public class Material : ObservableDirtyObject
     {
         private string name;
         public string Name {
