@@ -51,6 +51,23 @@ namespace ForgeModGenerator.MaterialGenerator.CodeGeneration
                         NewPrimitive(toolMaterial.Enchantability)
                         ));
                 }
+                else if (element is BlockMaterial blockMaterial)
+                {
+                    CodeObjectCreateExpression assignObject = NewObject("Material");
+
+                    CodeMethodInvokeExpression setSolid = NewMethodInvoke(assignObject, "setSolid", NewPrimitive(blockMaterial.IsTranslucent));
+                    CodeMethodInvokeExpression setLiquid = NewMethodInvoke(setSolid, "setLiquid", NewPrimitive(blockMaterial.IsTranslucent));
+                    CodeMethodInvokeExpression setBlockLight = NewMethodInvoke(setLiquid, "setBlockLight", NewPrimitive(blockMaterial.IsTranslucent));
+                    CodeMethodInvokeExpression setBlockMovement = NewMethodInvoke(setBlockLight, "setBlockMovement", NewPrimitive(blockMaterial.IsTranslucent));
+                    CodeMethodInvokeExpression setTranslucent = NewMethodInvoke(assignObject, "setTranslucent", NewPrimitive(blockMaterial.IsTranslucent));
+                    CodeMethodInvokeExpression setRequiresNoTool = NewMethodInvoke(setTranslucent, "setRequiresNoTool", NewPrimitive(blockMaterial.RequiresNoTool));
+                    CodeMethodInvokeExpression setBurning = NewMethodInvoke(setRequiresNoTool, "setBurning", NewPrimitive(blockMaterial.CanBurn));
+                    CodeMethodInvokeExpression setReplaceable = NewMethodInvoke(setBurning, "setReplaceable", NewPrimitive(blockMaterial.IsReplaceable));
+                    CodeMethodInvokeExpression setAdventureModeExempt = NewMethodInvoke(setReplaceable, "setAdventureModeExempt", NewPrimitive(blockMaterial.IsAdventureModeExempt));
+                    CodeMethodInvokeExpression setMobilityFlag = NewMethodInvoke(setAdventureModeExempt, "setMobilityFlag", NewPrimitive(blockMaterial.MobilityFlag));
+
+                    materialField = NewFieldGlobal("Material", blockMaterial.Name.ToUpper(), setMobilityFlag);
+                }
                 else
                 {
                     throw new System.NotImplementedException($"{element.GetType()} was not implemented");

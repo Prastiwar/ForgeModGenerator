@@ -17,7 +17,7 @@ namespace ForgeModGenerator.BlockGenerator.ViewModels
 
         protected override string ScriptFilePath => SourceCodeLocator.Blocks(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.Organization).FullPath;
 
-        protected override Block CreateModelFromLine(string line)
+        protected override Block ParseModelFromJavaField(string line)
         {
             Block block = new Block();
             System.Globalization.CultureInfo invariancy = System.Globalization.CultureInfo.InvariantCulture;

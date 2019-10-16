@@ -14,7 +14,7 @@ namespace ForgeModGenerator.ItemGenerator.ViewModels
 
         protected override string ScriptFilePath => SourceCodeLocator.Items(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.Organization).FullPath;
 
-        protected override Item CreateModelFromLine(string line)
+        protected override Item ParseModelFromJavaField(string line)
         {
             Item item = new Item();
 

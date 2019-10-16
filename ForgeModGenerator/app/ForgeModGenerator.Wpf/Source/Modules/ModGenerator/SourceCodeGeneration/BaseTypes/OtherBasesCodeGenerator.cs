@@ -83,6 +83,26 @@ namespace ForgeModGenerator.ModGenerator.SourceCodeGeneration
             method.Statements.Add(NewSnippetStatement("		return this.translucent ? false : this.blocksMovement();"));
             clas.Members.Add(method);
 
+            method = NewMethod("setSolid", baseClassName, MemberAttributes.Public, new Parameter(typeof(bool).FullName, "value"));
+            method.Statements.Add(NewAssignVar("solid", "value"));
+            method.Statements.Add(NewReturnThis());
+            clas.Members.Add(method);
+
+            method = NewMethod("setLiquid", baseClassName, MemberAttributes.Public, new Parameter(typeof(bool).FullName, "value"));
+            method.Statements.Add(NewAssignVar("liquid", "value"));
+            method.Statements.Add(NewReturnThis());
+            clas.Members.Add(method);
+
+            method = NewMethod("setBlockLight", baseClassName, MemberAttributes.Public, new Parameter(typeof(bool).FullName, "value"));
+            method.Statements.Add(NewAssignVar("shouldBlockLight", "value"));
+            method.Statements.Add(NewReturnThis());
+            clas.Members.Add(method);
+
+            method = NewMethod("setBlockMovement", baseClassName, MemberAttributes.Public, new Parameter(typeof(bool).FullName, "value"));
+            method.Statements.Add(NewAssignVar("shouldBlockMovement", "value"));
+            method.Statements.Add(NewReturnThis());
+            clas.Members.Add(method);
+
             method = NewMethod("setTranslucent", baseClassName, MemberAttributes.Public, new Parameter(typeof(bool).FullName, "value"));
             method.Statements.Add(NewAssignVar("translucent", "value"));
             method.Statements.Add(NewReturnThis());

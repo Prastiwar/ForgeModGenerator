@@ -50,7 +50,7 @@ namespace ForgeModGenerator.ViewModels
             return false;
         }
 
-        protected abstract TModel CreateModelFromLine(string line);
+        protected abstract TModel ParseModelFromJavaField(string line);
         protected virtual TModel CreateNewEmptyModel() => Activator.CreateInstance<TModel>();
 
         protected async Task AddModelsAsync(IEnumerable<TModel> models)
@@ -82,7 +82,7 @@ namespace ForgeModGenerator.ViewModels
             foreach (string item in items)
             {
                 string line = item.Trim();
-                TModel model = CreateModelFromLine(line);
+                TModel model = ParseModelFromJavaField(line);
                 models.Add(model);
             }
             return models;
