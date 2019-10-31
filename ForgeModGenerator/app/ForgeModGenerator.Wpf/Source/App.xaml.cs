@@ -95,6 +95,7 @@ namespace ForgeModGenerator
 
             containerRegistry.Register<ISerializer, JsonSerializer>();
             containerRegistry.Register(typeof(ISerializer<>), typeof(JsonSerializer<>));
+            containerRegistry.Register(typeof(IEditorFormFactory<>), typeof(EditorFormFactory<>));
 
             RegisterWorkspaceSetups(containerRegistry);
             RegisterFactories(containerRegistry);
@@ -114,21 +115,34 @@ namespace ForgeModGenerator
 
         private void RegisterModel(IContainerRegistry containerRegistry, Type model)
         {
-            TryRegisterInterfaceForModel(containerRegistry, model, "Serializer");
-            TryRegisterInterfaceForModel(containerRegistry, model, "Validator");
-            TryRegisterInterfaceForModel(containerRegistry, model, "EditorFormFactory");
+            bool IsSerializerRegistered = TryRegisterInterfaceForModel(containerRegistry, model, "Serializer");
+            bool IsValidatorRegistered = TryRegisterInterfaceForModel(containerRegistry, model, "Validator");
+            bool IsEditorFormFactoryRegistered = TryRegisterInterfaceForModel(containerRegistry, model, "EditorFormFactory");
+            //if (!IsSerializerRegistered)
+            //{
+            //    Log.Warning($"Cannot register Serializer for model { model }");
+            //}
+            //if (!IsValidatorRegistered)
+            //{
+            //    Log.Warning($"Cannot register Validator for model { model }");
+            //}
+            //if (!IsEditorFormFactoryRegistered)
+            //{
+            //    Log.Warning($"Cannot register EditorFormFactory for model { model }");
+            //}
         }
 
-        private bool TryRegisterInterfaceForModel(IContainerRegistry containerRegistry, Type model, string name)
+        private bool TryRegisterInterfaceForModel(IContainerRegistry containerRegistry, Type model, string name, Type defaultClassType = null)
         {
             bool registered = false;
             string modelName = model.Name;
             Type classType = presentationAssembly.ExportedTypes.FirstOrDefault(x => x.Name == modelName + name)
                                          ?? presentationAssembly.ExportedTypes.FirstOrDefault(x => x.Name == modelName + "s" + name);
+            classType = classType ?? defaultClassType;
             if (classType != null)
             {
                 // Predicate to take all types that ends with nameof(name) including generic versions
-                Func<Type, bool> isNamed = x => x.Name.EndsWith(name) || x.Name.Remove(x.Name.Length - 2, 2).EndsWith(name);
+                bool isNamed(Type x) => x.Name.EndsWith(name) || x.Name.Remove(x.Name.Length - 2, 2).EndsWith(name);
                 foreach (Type interfaceType in classType.GetInterfaces().Where(isNamed))
                 {
                     containerRegistry.Register(interfaceType, classType);

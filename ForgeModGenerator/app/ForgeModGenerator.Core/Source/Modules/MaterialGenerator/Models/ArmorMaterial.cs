@@ -50,6 +50,46 @@
             set => SetProperty(ref soundEvent, value);
         }
 
-        public int[] DamageReductionAmountArray => new int[] { HelmetDamageReduction, PlateDamageReduction, LegsDamageReduction, BootsDamageReduction };
+        private readonly int[] damageReductionAmountArray = new int[4];
+        public int[] DamageReductionAmountArray {
+            get {
+                damageReductionAmountArray[0] = HelmetDamageReduction;
+                damageReductionAmountArray[1] = PlateDamageReduction;
+                damageReductionAmountArray[2] = LegsDamageReduction;
+                damageReductionAmountArray[3] = BootsDamageReduction;
+                return damageReductionAmountArray;
+            }
+        }
+
+        public override object DeepClone() => new ArmorMaterial() {
+            Name = Name,
+            Enchantability = Enchantability,
+            Durability = Durability,
+            HelmetDamageReduction = HelmetDamageReduction,
+            PlateDamageReduction = PlateDamageReduction,
+            LegsDamageReduction = LegsDamageReduction,
+            BootsDamageReduction = BootsDamageReduction,
+            Toughness = Toughness,
+            TextureName = TextureName,
+            SoundEvent = SoundEvent,
+        };
+
+        public override bool CopyValues(object fromCopy)
+        {
+            if (fromCopy is ArmorMaterial material)
+            {
+                base.CopyValues(fromCopy);
+                Durability = material.Durability;
+                HelmetDamageReduction = material.HelmetDamageReduction;
+                PlateDamageReduction = material.PlateDamageReduction;
+                LegsDamageReduction = material.LegsDamageReduction;
+                BootsDamageReduction = material.BootsDamageReduction;
+                Toughness = material.Toughness;
+                TextureName = material.TextureName;
+                SoundEvent = material.SoundEvent;
+                return true;
+            }
+            return false;
+        }
     }
 }

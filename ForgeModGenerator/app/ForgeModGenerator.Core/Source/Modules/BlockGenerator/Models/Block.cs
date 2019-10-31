@@ -2,7 +2,7 @@
 
 namespace ForgeModGenerator.BlockGenerator.Models
 {
-    public class Block : ObservableDirtyObject
+    public class Block : ObservableDirtyObject, ICopiable
     {
         private string name;
         public string Name {
@@ -80,6 +80,45 @@ namespace ForgeModGenerator.BlockGenerator.Models
         public string DropItem {
             get => dropItem;
             set => SetProperty(ref dropItem, value);
+        }
+
+        public virtual object Clone() => MemberwiseClone();
+        public virtual object DeepClone() => new Block() {
+            Name = Name,
+            Type = Type,
+            MaterialType = MaterialType,
+            TextureName = TextureName,
+            InventoryTextureName = InventoryTextureName,
+            LightLevel = LightLevel,
+            Hardness = Hardness,
+            Resistance = Resistance,
+            ShouldMakeCollision = ShouldMakeCollision,
+            HarvestLevelTool = HarvestLevelTool,
+            HarvestLevel = HarvestLevel,
+            SoundType = SoundType,
+            DropItem = DropItem
+        };
+
+        public virtual bool CopyValues(object fromCopy)
+        {
+            if (fromCopy is Block block)
+            {
+                Name = block.Name;
+                Type = block.Type;
+                MaterialType = block.MaterialType;
+                TextureName = block.TextureName;
+                InventoryTextureName = block.InventoryTextureName;
+                LightLevel = block.LightLevel;
+                Hardness = block.Hardness;
+                Resistance = block.Resistance;
+                ShouldMakeCollision = block.ShouldMakeCollision;
+                HarvestLevelTool = block.HarvestLevelTool;
+                HarvestLevel = block.HarvestLevel;
+                SoundType = block.SoundType;
+                DropItem = block.DropItem;
+                return true;
+            }
+            return false;
         }
     }
 }

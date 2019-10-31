@@ -25,5 +25,28 @@
             get => attackDamage;
             set => SetProperty(ref attackDamage, value);
         }
+
+        public override object DeepClone() => new ToolMaterial() {
+            Name = Name,
+            Enchantability = Enchantability,
+            HarvestLevel = HarvestLevel,
+            MaxUses = MaxUses,
+            Efficiency = Efficiency,
+            AttackDamage = AttackDamage,
+        };
+
+        public override bool CopyValues(object fromCopy)
+        {
+            if (fromCopy is ToolMaterial material)
+            {
+                base.CopyValues(fromCopy);
+                HarvestLevel = material.HarvestLevel;
+                MaxUses = material.MaxUses;
+                Efficiency = material.Efficiency;
+                AttackDamage = material.AttackDamage;
+                return true;
+            }
+            return false;
+        }
     }
 }

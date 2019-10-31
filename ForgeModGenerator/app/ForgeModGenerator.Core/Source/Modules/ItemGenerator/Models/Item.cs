@@ -2,7 +2,7 @@
 
 namespace ForgeModGenerator.ItemGenerator.Models
 {
-    public class Item : ObservableDirtyObject
+    public class Item : ObservableDirtyObject, ICopiable
     {
         private string name;
         public string Name {
@@ -50,6 +50,30 @@ namespace ForgeModGenerator.ItemGenerator.Models
         public string Material {
             get => material;
             set => SetProperty(ref material, value);
+        }
+        public virtual object Clone() => MemberwiseClone();
+        public virtual object DeepClone() => new Item() {
+            Name = Name,
+            Type = Type,
+            ArmorType = ArmorType,
+            TextureName = TextureName,
+            StackSize = StackSize,
+            Material = Material,
+        };
+
+        public virtual bool CopyValues(object fromCopy)
+        {
+            if (fromCopy is Item item)
+            {
+                Name = item.Name;
+                Type = item.Type;
+                ArmorType = item.ArmorType;
+                TextureName = item.TextureName;
+                StackSize = item.StackSize;
+                Material = item.Material;
+                return true;
+            }
+            return false;
         }
     }
 }
