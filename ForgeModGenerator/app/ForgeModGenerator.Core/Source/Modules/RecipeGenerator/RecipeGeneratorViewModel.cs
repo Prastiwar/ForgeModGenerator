@@ -49,8 +49,8 @@ namespace ForgeModGenerator.RecipeGenerator.ViewModels
         protected IUniqueValidator<Recipe> RecipeValidator { get; }
         protected ISerializer<Recipe> RecipeSerializer { get; }
 
-        private ICommand openRecipeEditor;
-        public ICommand OpenRecipeEditor => openRecipeEditor ?? (openRecipeEditor = new DelegateCommand<ObservableFolder<Recipe>>(EditAndGenerateNewRecipe));
+        private ICommand openRecipeEditorCommand;
+        public ICommand OpenRecipeEditorCommand => openRecipeEditorCommand ?? (openRecipeEditorCommand = new DelegateCommand<ObservableFolder<Recipe>>(EditAndGenerateNewRecipe));
 
         private string tempFilePath;
 
@@ -102,7 +102,11 @@ namespace ForgeModGenerator.RecipeGenerator.ViewModels
                     File.AppendAllText(path, json);
                 }
             }
-            new FileInfo(tempFilePath).Delete();
+            FileInfo tempFile = new FileInfo(tempFilePath);
+            if (tempFile.Exists)
+            {
+                tempFile.Delete();
+            }
         }
 
         protected void SubscribeFolderEvents(object sender, FileChangedEventArgs<ObservableFolder<Recipe>> e)

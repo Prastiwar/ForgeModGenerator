@@ -42,6 +42,10 @@ namespace ForgeModGenerator.ViewModels
         private ICommand removeEmptyFoldersCommand;
         public ICommand RemoveEmptyFoldersCommand => removeEmptyFoldersCommand ?? (removeEmptyFoldersCommand = new DelegateCommand(Explorer.RemoveEmptyFolders));
 
+
+        private ICommand editFileCommand;
+        public ICommand EditFileCommand => editFileCommand ?? (editFileCommand = new DelegateCommand<TFile>(EditFile));
+
         protected override bool CanRefresh() => SessionContext.SelectedMod != null && Directory.Exists(FoldersRootPath);
 
         protected void RemoveFileFromFolder(Tuple<TFolder, TFile> param) => Explorer.RemoveFileFromFolder(param.Item1, param.Item2);
@@ -90,6 +94,21 @@ namespace ForgeModGenerator.ViewModels
             if (dialogResult == DialogResult.OK)
             {
                 Explorer.CopyFilesToFolder(folder, browser.FileNames);
+            }
+        }
+
+        protected virtual void EditFile(TFile file)
+        {
+            System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo(file.Info.FullName) {
+                Verb = "edit"
+            };
+            try
+            {
+                System.Diagnostics.Process.Start(startInfo);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex);
             }
         }
 

@@ -10,17 +10,18 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
     /// <summary> BuildConfiguration Business ViewModel </summary>
     public class BuildConfigurationViewModel : BindableBase
     {
-        private readonly IModBuildService modBuilder;
-
-        public ISessionContextService SessionContext { get; }
-        protected ISerializer<McMod> ModSerializer { get; }
-
         public BuildConfigurationViewModel(ISessionContextService sessionContext, IModBuildService modBuilder, ISerializer<McMod> modSerializer)
         {
             this.modBuilder = modBuilder;
             ModSerializer = modSerializer;
             SessionContext = sessionContext;
         }
+
+        private readonly IModBuildService modBuilder;
+
+        public ISessionContextService SessionContext { get; }
+
+        protected ISerializer<McMod> ModSerializer { get; }
 
         private ICommand runClientCommand;
         public ICommand RunClientCommand => runClientCommand ?? (runClientCommand = new DelegateCommand<McMod>((mcMod) => modBuilder.RunClient(mcMod)));

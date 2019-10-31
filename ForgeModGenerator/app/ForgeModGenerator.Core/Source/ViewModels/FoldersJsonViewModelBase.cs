@@ -28,21 +28,6 @@ namespace ForgeModGenerator.ViewModels
             set => SetProperty(ref isFileUpdateAvailable, value);
         }
 
-        private ICommand editFileCommand;
-        public ICommand EditFileCommand {
-            get {
-                if (editFileCommand != null)
-                {
-                    return editFileCommand;
-                }
-                else if (FileEditor != null)
-                {
-                    return (editFileCommand = new DelegateCommand<TFile>(FileEditor.OpenItemEditor));
-                }
-                return editFileCommand = new DelegateCommand<TFile>((file) => { });
-            }
-        }
-
         private ICommand resolveJsonFileCommand;
         public ICommand ResolveJsonFileCommand => resolveJsonFileCommand ?? (resolveJsonFileCommand = new DelegateCommand(ResolveJsonFile));
 
@@ -88,6 +73,14 @@ namespace ForgeModGenerator.ViewModels
                 return Explorer.FileSynchronizer.Finder.EnumerateFilteredFiles(FoldersRootPath, SearchOption.AllDirectories).All(filePath => FileSystemInfoReference.IsReferenced(filePath));
             }
             return true;
+        }
+
+        protected override void EditFile(TFile file)
+        {
+            if (FileEditor != null)
+            {
+                FileEditor.OpenItemEditor(file);
+            }
         }
     }
 }
