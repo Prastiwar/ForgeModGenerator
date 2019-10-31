@@ -31,10 +31,12 @@
                                         Padding="0"
                                         Background="CornflowerBlue"
                                         BorderBrush="Black"
-                                        ContextMenu="{StaticResource DefaultFileItemContext}"
                                         Command="{Binding FileClickCommand, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
                                         CommandParameter="{Binding}">
                                     <materialDesign:PackIcon Kind="File" />
+                                    <Button.ContextMenu>
+                                        <controls:ItemContextMenu />
+                                    </Button.ContextMenu>
                                 </Button>
                                 <Label x:Name="FileRenameTextBox"
                                        Content="{Binding Info.NameWithoutExtension, Mode=OneTime}" />

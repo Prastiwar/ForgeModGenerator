@@ -34,9 +34,11 @@
                                         Padding="0"
                                         Background="CornflowerBlue"
                                         BorderBrush="Black"
-                                        ContextMenu="{StaticResource DefaultFileItemContext}"
                                         Command="{Binding FileClickCommand, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
                                         CommandParameter="{Binding}">
+                                    <Button.ContextMenu>
+                                        <controls:ItemContextMenu />
+                                    </Button.ContextMenu>
                                     <materialDesign:PackIcon Kind="Play" />
                                 </Button>
                                 <controls:SubmitTextBox x:Name="FileRenameTextBox"

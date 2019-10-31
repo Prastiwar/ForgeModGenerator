@@ -389,6 +389,9 @@
     <Compile Include="Source\Common\SharedWPFData.cs" />
     <Compile Include="Source\Components\GridLengthVector.cs" />
     <Compile Include="Source\Controls\Button\PageNavButton.cs" />
+    <Compile Include="Source\Controls\ItemContextMenu.xaml.cs">
+      <DependentUpon>ItemContextMenu.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Source\Controls\Proxy\SelectorDecorator.cs" />
     <Compile Include="Source\Common\SyncInvokeObject.cs" />
     <Compile Include="Source\Controls\TextBox\PathNameSubmitTextBox.cs" />
@@ -555,6 +558,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Source\Serialization\VSCLaunchSerializer.cs" />
+    <Page Include="Source\Controls\ItemContextMenu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Source\Modules\ApplicationModule\BugReporter.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

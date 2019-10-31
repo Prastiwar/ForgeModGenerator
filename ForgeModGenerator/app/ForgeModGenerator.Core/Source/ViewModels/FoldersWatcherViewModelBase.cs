@@ -99,11 +99,11 @@ namespace ForgeModGenerator.ViewModels
 
         protected virtual void EditFile(TFile file)
         {
-            System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo(file.Info.FullName) {
-                Verb = "edit"
-            };
             try
             {
+                System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo(file.Info.FullName) {
+                    Verb = "edit"
+                };
                 System.Diagnostics.Process.Start(startInfo);
             }
             catch (Exception ex)

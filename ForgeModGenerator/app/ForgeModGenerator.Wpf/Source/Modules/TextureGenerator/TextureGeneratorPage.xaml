@@ -26,9 +26,11 @@
                             <StackPanel Margin="5,5,5,10">
                                 <Image x:Name="TextureImage"
                                        Tag="{Binding RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
-                                       ContextMenu="{StaticResource DefaultFileItemContext}"
                                        Width="32"
                                        Height="32">
+                                    <Image.ContextMenu>
+                                        <controls:ItemContextMenu />
+                                    </Image.ContextMenu>
                                     <Image.Source>
                                         <BitmapImage UriSource="{Binding Info.FullName}"
                                                      CacheOption="OnLoad" />

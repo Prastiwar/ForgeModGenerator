@@ -84,23 +84,6 @@
                         </StackPanel>
                     </ControlTemplate>
                 </ResourceDictionary>
-                <ResourceDictionary>
-                    <ContextMenu x:Key="DefaultFileItemContext">
-                        <MenuItem Header="Remove"
-                                  Command="{Binding PlacementTarget.Tag.RemoveFileCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}">
-                            <MenuItem.CommandParameter>
-                                <MultiBinding Converter="{StaticResource GenericTupleConverter}">
-                                    <Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}"
-                                             Path="PlacementTarget.Tag.Folder" />
-                                    <Binding Path="." />
-                                </MultiBinding>
-                            </MenuItem.CommandParameter>
-                        </MenuItem>
-                        <MenuItem Header="Edit"
-                                  Command="{Binding PlacementTarget.Tag.EditFileCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}"
-                                  CommandParameter="{Binding}" />
-                    </ContextMenu>
-                </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
