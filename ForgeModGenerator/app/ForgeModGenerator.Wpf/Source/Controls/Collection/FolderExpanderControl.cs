@@ -29,9 +29,9 @@ namespace ForgeModGenerator.Controls
         }
 
         public static readonly DependencyProperty FolderProperty =
-                DependencyProperty.Register("Folder", typeof(IFolderObject), typeof(FolderExpanderControl), new PropertyMetadata(null));
-        public IFolderObject Folder {
-            get => (IFolderObject)GetValue(FolderProperty);
+                DependencyProperty.Register("Folder", typeof(object), typeof(FolderExpanderControl), new PropertyMetadata(null));
+        public object Folder {
+            get => (object)GetValue(FolderProperty);
             set => SetValue(FolderProperty, value);
         }
 
@@ -88,9 +88,9 @@ namespace ForgeModGenerator.Controls
 
         protected void ShowContainer()
         {
-            if (Folder != null)
+            if (Folder is IFolderObject folder)
             {
-                System.Diagnostics.Process.Start(Folder.Info.FullName);
+                System.Diagnostics.Process.Start(folder.Info.FullName);
             }
         }
     }

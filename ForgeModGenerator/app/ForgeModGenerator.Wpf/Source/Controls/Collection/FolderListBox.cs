@@ -19,9 +19,9 @@ namespace ForgeModGenerator.Controls
         }
 
         public static readonly DependencyProperty FolderTemplateProperty =
-            DependencyProperty.Register("FolderTemplate", typeof(DataTemplate), typeof(FolderListBox), new PropertyMetadata(null));
-        public DataTemplate FolderTemplate {
-            get => (DataTemplate)GetValue(FolderTemplateProperty);
+            DependencyProperty.Register("FolderTemplate", typeof(object), typeof(FolderListBox), new PropertyMetadata(null));
+        public object FolderTemplate {
+            get => GetValue(FolderTemplateProperty);
             set => SetValue(FolderTemplateProperty, value);
         }
 

@@ -415,6 +415,7 @@
     <Compile Include="Source\Modules\BlockGenerator\Controls\BlockEditForm.xaml.cs">
       <DependentUpon>BlockEditForm.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Source\Modules\BlockGenerator\BlockEditorFormFactory.cs" />
     <Compile Include="Source\Modules\CommandGenerator\CodeGeneration\CommandCodeGenerator.cs" />
     <Compile Include="Source\Modules\CommandGenerator\CommandEditorFormFactory.cs" />
     <Compile Include="Source\Modules\CommandGenerator\CodeGeneration\CustomCommandCodeGenerator.cs" />

@@ -19,6 +19,11 @@ namespace ForgeModGenerator.BlockGenerator.ViewModels
 
         protected override Block ParseModelFromJavaField(string line)
         {
+            if (string.IsNullOrEmpty(line))
+            {
+                return null;
+            }
+
             Block block = new Block();
             System.Globalization.CultureInfo invariancy = System.Globalization.CultureInfo.InvariantCulture;
 

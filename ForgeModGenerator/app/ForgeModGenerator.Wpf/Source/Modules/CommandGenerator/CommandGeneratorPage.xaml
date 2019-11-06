@@ -15,7 +15,7 @@
         <DataTemplate x:Key="FolderTemplate">
             <StackPanel>
                 <controls:FolderExpanderControl x:Name="CommandFolderExpanderControl"
-                                                Style="{StaticResource CommandFolderExpanderStyle}"
+                                                Style="{StaticResource SingleFolderExpanderStyle}"
                                                 HeaderText="{Binding Path=Info.Name}"
                                                 Folder="{Binding}"
                                                 AddFileCommand="{Binding Path=DataContext.OpenCommandEditor, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"

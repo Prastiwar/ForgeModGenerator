@@ -11,6 +11,8 @@ namespace ForgeModGenerator.Utility
 {
     public static class StaticCommands
     {
+        public static ICommand StartProcessCommand => new DelegateCommand<string>((uri) => System.Diagnostics.Process.Start(uri));
+
         private static ICommand showMCItemListCommand;
         public static ICommand ShowMCItemListCommand => showMCItemListCommand ?? (showMCItemListCommand =
             new DelegateCommand<Tuple<ContentControl, string, ItemListForm>>(async (args) => await ShowMCItemList(args.Item1, args.Item2, args.Item3).ConfigureAwait(true)));

@@ -5,23 +5,71 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:prism="http://prismlibrary.com/"
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+      xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+      xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
       prism:ViewModelLocator.AutoWireViewModel="True"
       mc:Ignorable="d"
       d:DesignHeight="450"
       d:DesignWidth="800">
+    <Page.Resources>
+        <StackPanel x:Key="FolderTemplate">
+            <controls:FolderExpanderControl x:Name="BlockFolderExpanderControl"
+                                            Style="{StaticResource SingleModelFolderExpanderStyle}"
+                                            HeaderText="Blocks"
+                                            Folder="{Binding Path=.}"
+                                            AddFileCommand="{Binding Path=DataContext.OpenModelEditor, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
+                                            RemoveFileCommand="{Binding Path=DataContext.RemoveFileCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
+                                            EditFileCommand="{Binding Path=DataContext.EditFileCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
+                                            ShowContainerCommand="{Binding Path=DataContext.OpenContainer, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
+                                            FileClickCommand="">
+                <controls:FolderExpanderControl.FileItemTemplate>
+                    <DataTemplate x:Name="FolderFileItemTemplate">
+                        <StackPanel Margin="5,5,5,10">
+                            <Button x:Name="FileButton"
+                                    Tag="{Binding RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
+                                    Width="32"
+                                    Height="32"
+                                    Padding="0"
+                                    Background="CornflowerBlue"
+                                    BorderBrush="Black"
+                                    Command="{Binding FileClickCommand, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
+                                    CommandParameter="{Binding}">
+                                <materialDesign:PackIcon Kind="File" />
+                                <Button.ContextMenu>
+                                    <controls:ItemContextMenu />
+                                </Button.ContextMenu>
+                            </Button>
+                            <Label x:Name="FileRenameTextBox"
+                                   Content="{Binding Name, Mode=OneTime}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </controls:FolderExpanderControl.FileItemTemplate>
+            </controls:FolderExpanderControl>
+        </StackPanel>
+    </Page.Resources>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding OnLoadedCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
     <materialDesign:DialogHost>
         <Grid Background="{StaticResource PageBackground}">
-            <StackPanel HorizontalAlignment="Center"
-                        VerticalAlignment="Center">
-                <Label Content="Block Generator"
-                       Foreground="DarkGray"
-                       HorizontalAlignment="Center"
-                       FontSize="50" />
-                <Label Content="In development"
-                       Foreground="DarkGray"
-                       HorizontalAlignment="Center"
-                       FontSize="50" />
-            </StackPanel>
+            <ProgressBar x:Name="LoadingProgressBar"
+                         Style="{StaticResource MaterialDesignCircularProgressBar}"
+                         Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"
+                         Width="150"
+                         Height="150"
+                         Foreground="White"
+                         Value="0"
+                         IsIndeterminate="True" />
+            <controls:FolderListBox x:Name="FoldersListBox"
+                                    Grid.Row="1"
+                                    RootPath="{Binding ScriptFileFolderPath}"
+                                    Style="{StaticResource SingleFolderBox}"
+                                    Visibility="{Binding IsLoading, Converter={StaticResource InvertedBoolToVisibility}}"
+                                    FoldersSource="{Binding ModelsRepository, Mode=OneWay}"
+                                    ShowEmptyMessage="{Binding SessionContext.IsModSelected, Converter={StaticResource InvertBooleanConverter}}"
+                                    FolderTemplate="{StaticResource FolderTemplate}" />
         </Grid>
     </materialDesign:DialogHost>
 </Page>

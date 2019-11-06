@@ -31,19 +31,32 @@ namespace ForgeModGenerator.ViewModels
         private ICommand openModelEditor;
         public ICommand OpenModelEditor => openModelEditor ?? (openModelEditor = new DelegateCommand<ObservableCollection<TModel>>(CreateNewModel));
 
+        private ICommand openContainer;
+        public ICommand OpenContainer => openContainer ?? (openContainer = new DelegateCommand(() => System.Diagnostics.Process.Start(ScriptFilePath)));
+
         private ObservableCollection<TModel> modelsRepository;
         public ObservableCollection<TModel> ModelsRepository {
             get => modelsRepository;
             set => SetProperty(ref modelsRepository, value);
         }
 
+        public string ScriptFileFolderPath => Path.GetDirectoryName(ScriptFilePath);
+
         public override async Task<bool> Refresh()
         {
             if (CanRefresh())
             {
                 IsLoading = true;
-                await AddModelsAsync(FindModelsFromScriptFile(ScriptFilePath)).ConfigureAwait(false);
-                RegenerateModels();
+                if (ModelsRepository == null)
+                {
+                    ModelsRepository = new ObservableCollection<TModel>();
+                }
+                else
+                {
+                    ModelsRepository.Clear();
+                }
+                IEnumerable<TModel> foundModels = FindModelsFromScriptFile(ScriptFilePath);
+                await AddModelsAsync(foundModels).ConfigureAwait(false);
                 IsLoading = false;
                 return true;
             }
@@ -55,7 +68,6 @@ namespace ForgeModGenerator.ViewModels
 
         protected async Task AddModelsAsync(IEnumerable<TModel> models)
         {
-            ModelsRepository.Clear();
             foreach (TModel model in models)
             {
                 ModelsRepository.Add(model);
@@ -63,27 +75,43 @@ namespace ForgeModGenerator.ViewModels
             }
         }
 
+        protected bool TryParseModelFromJavaField(string line, out TModel model)
+        {
+            try
+            {
+                model = ParseModelFromJavaField(line);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex);
+                model = null;
+                return false;
+            }
+            return model != null;
+        }
+
         protected void CreateNewModel(ObservableCollection<TModel> collection)
         {
             TModel newModel = CreateNewEmptyModel();
             newModel.IsDirty = false;
-            collection.Add(newModel);
             EditorForm.OpenItemEditor(newModel);
         }
 
         protected virtual IEnumerable<TModel> FindModelsFromScriptFile(string scriptFilePath)
         {
-            string text = File.ReadAllText(scriptFilePath);
-            int startIndex = text.IndexOf("{") + 1;
-            int endIndex = text.IndexOf("}", startIndex);
-            text = text.Substring(startIndex, endIndex - startIndex);
-            IEnumerable<string> items = text.Split(new string[] { "public static final" }, StringSplitOptions.RemoveEmptyEntries).Skip(1);
             List<TModel> models = new List<TModel>(8);
+            IEnumerable<string> items = File.ReadLines(scriptFilePath).Where(x => x.Trim().StartsWith("public static final"));
             foreach (string item in items)
             {
                 string line = item.Trim();
-                TModel model = ParseModelFromJavaField(line);
-                models.Add(model);
+                if (TryParseModelFromJavaField(line, out TModel model))
+                {
+                    models.Add(model);
+                }
+                else
+                {
+                    Log.Warning($"Couldn't parse model of type {typeof(TModel)} from java field line {line}");
+                }
             }
             return models;
         }
@@ -92,6 +120,10 @@ namespace ForgeModGenerator.ViewModels
         {
             if (e.Result)
             {
+                if (!ModelsRepository.Contains(e.ActualItem))
+                {
+                    ModelsRepository.Add(e.ActualItem);
+                }
                 RegenerateModels();
             }
         }

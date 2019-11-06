@@ -259,4 +259,109 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <Style x:Key="SingleFolderListBox"
+           TargetType="{x:Type controls:FolderListBox}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:FolderListBox}">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                        <Grid>
+                            <Label x:Name="EmptyFolderLabel"
+                                   Content="{Binding Path=EmptyMessage, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
+                                   Foreground="DarkGray"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   FontSize="50"
+                                   Visibility="{Binding Path=ShowEmptyMessage, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}" />
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <StackPanel>
+                                    <materialDesign:Card Background="#FF535353"
+                                                         Margin="10">
+                                        <StackPanel>
+                                            <StackPanel Orientation="Horizontal"
+                                                        Visibility="{Binding Path=ShowEmptyMessage, RelativeSource={RelativeSource AncestorType=soundControls:SoundFolderListBox}, Converter={StaticResource InvertedBoolToVisibility}}">
+                                                <Button x:Name="ShowContainerButton"
+                                                        Width="25"
+                                                        Height="25"
+                                                        Padding="0"
+                                                        Margin="5"
+                                                        ToolTip="Show Container"
+                                                        Command="{Binding Path=ShowRootContainerCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}">
+                                                    <materialDesign:PackIcon Kind="FolderOpen" />
+                                                </Button>
+                                            </StackPanel>
+                                            <ListBox x:Name="FoldersListBox"
+                                                     ItemsSource="{Binding Path=FoldersSource, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
+                                                     ItemTemplate="{Binding Path=FolderTemplate, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
+                                                     HorizontalContentAlignment="Stretch"
+                                                     VerticalContentAlignment="Stretch"
+                                                     ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                                     VirtualizingPanel.IsVirtualizing="True"
+                                                     VirtualizingPanel.VirtualizationMode="Recycling">
+                                                <ListBox.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <VirtualizingStackPanel></VirtualizingStackPanel>
+                                                    </ItemsPanelTemplate>
+                                                </ListBox.ItemsPanel>
+                                            </ListBox>
+                                        </StackPanel>
+                                    </materialDesign:Card>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="SingleFolderBox"
+           TargetType="{x:Type controls:FolderListBox}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:FolderListBox}">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                        <Grid>
+                            <Label x:Name="EmptyFolderLabel"
+                                   Content="{Binding Path=EmptyMessage, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
+                                   Foreground="DarkGray"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   FontSize="50"
+                                   Visibility="{Binding Path=ShowEmptyMessage, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}" />
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <StackPanel>
+                                    <materialDesign:Card Background="#FF535353"
+                                                         Margin="10">
+                                        <StackPanel>
+                                            <StackPanel Orientation="Horizontal"
+                                                        Visibility="{Binding Path=ShowEmptyMessage, RelativeSource={RelativeSource AncestorType=soundControls:SoundFolderListBox}, Converter={StaticResource InvertedBoolToVisibility}}">
+                                                <Button x:Name="ShowContainerButton"
+                                                        Width="25"
+                                                        Height="25"
+                                                        Padding="0"
+                                                        Margin="5"
+                                                        ToolTip="Show Container"
+                                                        Command="{Binding Path=ShowRootContainerCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}">
+                                                    <materialDesign:PackIcon Kind="FolderOpen" />
+                                                </Button>
+                                            </StackPanel>
+                                            <StackPanel>
+                                                <ContentPresenter DataContext="{Binding Path=FoldersSource, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
+                                                                  Content="{Binding Path=FolderTemplate, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </materialDesign:Card>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>
