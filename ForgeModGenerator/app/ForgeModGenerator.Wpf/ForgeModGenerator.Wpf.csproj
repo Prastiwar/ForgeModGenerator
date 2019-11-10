@@ -475,7 +475,7 @@
     <Compile Include="Source\Converters\InvertBooleanConverter.cs" />
     <Compile Include="Source\Controls\Button\NavButton.cs" />
     <Compile Include="Source\FileSystem\WpfFoldersFactory.cs" />
-    <Compile Include="Source\Modules\ModGenerator\McModValidator.cs" />
+    <Compile Include="Source\Modules\ModGenerator\Validation\McModValidator.cs" />
     <Compile Include="Source\Modules\SoundGenerator\Controls\SoundFolderListBox.cs" />
     <Compile Include="Source\Modules\SoundGenerator\ObservableSoundEvents.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundEventsFactory.cs" />
@@ -523,9 +523,11 @@
     </Compile>
     <Compile Include="Source\Modules\SoundGenerator\Controls\SoundFolderExpanderControl.cs" />
     <Compile Include="Source\Controls\TextBox\SubmitTextBox.cs" />
-    <Compile Include="Source\Validations\CanMoveFileSystemInfoRule.cs" />
-    <Compile Include="Source\Validations\FullPathValidator.cs" />
-    <Compile Include="Source\Validations\NotEmptyRule.cs" />
+    <Compile Include="Source\Validation\AbstractUniqueValidator.cs" />
+    <Compile Include="Source\Validation\CanMoveFileSystemInfoRule.cs" />
+    <Compile Include="Source\Validation\FluentValidationExtensions.cs" />
+    <Compile Include="Source\Validation\FullPathValidator.cs" />
+    <Compile Include="Source\Validation\NotEmptyRule.cs" />
     <Compile Include="Source\Modules\SoundGenerator\Validation\SoundEventValidator.cs" />
     <Compile Include="Source\Modules\TextureGenerator\TextureGeneratorPage.xaml.cs">
       <DependentUpon>TextureGeneratorPage.xaml</DependentUpon>
@@ -562,6 +564,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Source\Serialization\VSCLaunchSerializer.cs" />
+    <Compile Include="Source\Validation\UniquePropertyValidator.cs" />
     <Page Include="Source\Controls\ModelContextMenu.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -773,6 +776,12 @@
     <Analyzer Include="..\packages\Microsoft.NetCore.Analyzers.2.9.4\analyzers\dotnet\cs\Microsoft.NetCore.CSharp.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.NetFramework.Analyzers.2.9.4\analyzers\dotnet\cs\Microsoft.NetFramework.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.NetFramework.Analyzers.2.9.4\analyzers\dotnet\cs\Microsoft.NetFramework.CSharp.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Source\Modules\AchievementGenerator\Controls\" />
+    <Folder Include="Source\Modules\AchievementGenerator\Validation\" />
+    <Folder Include="Source\Modules\ItemGenerator\Validation\" />
+    <Folder Include="Source\Modules\MaterialGenerator\Validation\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
