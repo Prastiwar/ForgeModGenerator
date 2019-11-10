@@ -35,7 +35,7 @@
                                         CommandParameter="{Binding}">
                                     <materialDesign:PackIcon Kind="File" />
                                     <Button.ContextMenu>
-                                        <controls:ItemContextMenu />
+                                        <controls:FileContextMenu />
                                     </Button.ContextMenu>
                                 </Button>
                                 <Label x:Name="FileRenameTextBox"

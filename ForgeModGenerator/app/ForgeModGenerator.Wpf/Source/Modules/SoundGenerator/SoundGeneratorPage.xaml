@@ -37,7 +37,7 @@
                                         Command="{Binding FileClickCommand, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
                                         CommandParameter="{Binding}">
                                     <Button.ContextMenu>
-                                        <controls:ItemContextMenu />
+                                        <controls:FileContextMenu />
                                     </Button.ContextMenu>
                                     <materialDesign:PackIcon Kind="Play" />
                                 </Button>

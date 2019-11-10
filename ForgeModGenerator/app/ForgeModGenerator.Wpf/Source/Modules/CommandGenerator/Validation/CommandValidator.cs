@@ -16,11 +16,13 @@ namespace ForgeModGenerator.CommandGenerator.Validation
             SetDefaultRepository(commandRepository);
             RuleFor(x => x.Name).NotEmpty().WithMessage("Name cannot be empty")
                                 .Must(IsUnique).WithMessage("This name already exists");
+            RuleFor(x => x.ClassName).NotEmpty().WithMessage("ClassName cannot be empty")
+                                     .Must(IsUnique).WithMessage("This ClassName already exists");
         }
 
         public void SetDefaultRepository(IEnumerable<Command> instances) => Repository = instances;
 
-        private bool IsUnique(string name) => Repository.Where(x => x.Name == name).Take(2).Count() <= 1;
+        private bool IsUnique(string name) => !Repository.Any(x => x.Name == name);
 
         ValidateResult ForgeModGenerator.Validation.IValidator<Command>.Validate(Command instance) => ValidateResultAssemblyConverter.Convert(Validate(instance));
         ValidateResult ForgeModGenerator.Validation.IValidator<Command>.Validate(Command instance, string propertyName) => ValidateResultAssemblyConverter.Convert(this.Validate(instance, propertyName));

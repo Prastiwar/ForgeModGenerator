@@ -17,11 +17,11 @@
                                             Style="{StaticResource SingleModelFolderExpanderStyle}"
                                             HeaderText="Blocks"
                                             Folder="{Binding Path=.}"
-                                            AddFileCommand="{Binding Path=DataContext.OpenModelEditor, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
-                                            RemoveFileCommand="{Binding Path=DataContext.RemoveFileCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
-                                            EditFileCommand="{Binding Path=DataContext.EditFileCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
-                                            ShowContainerCommand="{Binding Path=DataContext.OpenContainer, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
-                                            FileClickCommand="">
+                                            AddFileCommand="{Binding Path=DataContext.OpenModelEditorCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
+                                            RemoveFileCommand="{Binding Path=DataContext.RemoveModelCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
+                                            EditFileCommand="{Binding Path=DataContext.EditModelCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
+                                            ShowContainerCommand="{Binding Path=DataContext.OpenContainerCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
+                                            FileClickCommand="{Binding Path=DataContext.EditModelCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}">
                 <controls:FolderExpanderControl.FileItemTemplate>
                     <DataTemplate x:Name="FolderFileItemTemplate">
                         <StackPanel Margin="5,5,5,10">
@@ -36,7 +36,7 @@
                                     CommandParameter="{Binding}">
                                 <materialDesign:PackIcon Kind="File" />
                                 <Button.ContextMenu>
-                                    <controls:ItemContextMenu />
+                                    <controls:ModelContextMenu />
                                 </Button.ContextMenu>
                             </Button>
                             <Label x:Name="FileRenameTextBox"

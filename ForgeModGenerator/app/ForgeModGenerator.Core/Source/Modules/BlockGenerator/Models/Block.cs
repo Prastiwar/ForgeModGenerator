@@ -1,8 +1,10 @@
 ﻿using ForgeModGenerator.Models;
+using ForgeModGenerator.Validation;
+using System.ComponentModel;
 
 namespace ForgeModGenerator.BlockGenerator.Models
 {
-    public class Block : ObservableDirtyObject, ICopiable
+    public class Block : ObservableDirtyObject, ICopiable, IDataErrorInfo, IValidable<Block>
     {
         private string name;
         public string Name {
@@ -120,5 +122,80 @@ namespace ForgeModGenerator.BlockGenerator.Models
             }
             return false;
         }
+
+        public ValidateResult Validate()
+        {
+            string errorString = OnValidate(nameof(Name));
+            if (!string.IsNullOrEmpty(errorString))
+            {
+                return new ValidateResult(false, errorString);
+            }
+            errorString = OnValidate(nameof(Type));
+            if (!string.IsNullOrEmpty(errorString))
+            {
+                return new ValidateResult(false, errorString);
+            }
+            errorString = OnValidate(nameof(MaterialType));
+            if (!string.IsNullOrEmpty(errorString))
+            {
+                return new ValidateResult(false, errorString);
+            }
+            errorString = OnValidate(nameof(TextureName));
+            if (!string.IsNullOrEmpty(errorString))
+            {
+                return new ValidateResult(false, errorString);
+            }
+            errorString = OnValidate(nameof(InventoryTextureName));
+            if (!string.IsNullOrEmpty(errorString))
+            {
+                return new ValidateResult(false, errorString);
+            }
+            errorString = OnValidate(nameof(LightLevel));
+            if (!string.IsNullOrEmpty(errorString))
+            {
+                return new ValidateResult(false, errorString);
+            }
+            errorString = OnValidate(nameof(Hardness));
+            if (!string.IsNullOrEmpty(errorString))
+            {
+                return new ValidateResult(false, errorString);
+            }
+            errorString = OnValidate(nameof(Resistance));
+            if (!string.IsNullOrEmpty(errorString))
+            {
+                return new ValidateResult(false, errorString);
+            }
+            errorString = OnValidate(nameof(ShouldMakeCollision));
+            if (!string.IsNullOrEmpty(errorString))
+            {
+                return new ValidateResult(false, errorString);
+            }
+            errorString = OnValidate(nameof(HarvestLevelTool));
+            if (!string.IsNullOrEmpty(errorString))
+            {
+                return new ValidateResult(false, errorString);
+            }
+            errorString = OnValidate(nameof(HarvestLevel));
+            if (!string.IsNullOrEmpty(errorString))
+            {
+                return new ValidateResult(false, errorString);
+            }
+            errorString = OnValidate(nameof(SoundType));
+            if (!string.IsNullOrEmpty(errorString))
+            {
+                return new ValidateResult(false, errorString);
+            }
+            errorString = OnValidate(nameof(DropItem));
+            if (!string.IsNullOrEmpty(errorString))
+            {
+                return new ValidateResult(false, errorString);
+            }
+            return ValidateResult.Valid;
+        }
+
+        public event PropertyValidationEventHandler<Block> ValidateProperty;
+        string IDataErrorInfo.Error => null;
+        string IDataErrorInfo.this[string propertyName] => OnValidate(propertyName);
+        private string OnValidate(string propertyName) => ValidateHelper.OnValidateError(ValidateProperty, this, propertyName);
     }
 }

@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       xmlns:prism="http://prismlibrary.com/"
-      xmlns:fmg="clr-namespace:ForgeModGenerator"
+      xmlns:util="clr-namespace:ForgeModGenerator.Utility"
       prism:ViewModelLocator.AutoWireViewModel="True"
       mc:Ignorable="d"
       d:DesignHeight="450"
@@ -27,8 +27,8 @@
                                         HorizontalAlignment="Left"
                                         VerticalAlignment="Center"
                                         ToolTip="Get help"
-                                        Command="{Binding Source={x:Static fmg:SharedWPFData.StartProcessCommand}}"
-                                        CommandParameter="https://mcforge.readthedocs.io/en/latest/gettingstarted/structuring/#the-mcmodinfo-file"/>
+                                        Command="{Binding Source={x:Static util:StaticCommands.StartProcessCommand}}"
+                                        CommandParameter="https://mcforge.readthedocs.io/en/latest/gettingstarted/structuring/#the-mcmodinfo-file" />
                                 <Button x:Name="CreateModButton"
                                         Content="{materialDesign:PackIcon Kind=Plus}"
                                         Margin="10,1"

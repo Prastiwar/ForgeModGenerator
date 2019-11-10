@@ -29,7 +29,7 @@
                                        Width="32"
                                        Height="32">
                                     <Image.ContextMenu>
-                                        <controls:ItemContextMenu />
+                                        <controls:FileContextMenu />
                                     </Image.ContextMenu>
                                     <Image.Source>
                                         <BitmapImage UriSource="{Binding Info.FullName}"

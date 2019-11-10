@@ -1,5 +1,6 @@
 ﻿using ForgeModGenerator.Models;
 using ForgeModGenerator.Services;
+using ForgeModGenerator.Validation;
 using Prism.Commands;
 using System;
 using System.Collections.Generic;
@@ -12,27 +13,37 @@ using System.Windows.Input;
 namespace ForgeModGenerator.ViewModels
 {
     public abstract class SimpleInitViewModelBase<TModel> : ViewModelBase
-        where TModel : ObservableDirtyObject
+        where TModel : ObservableDirtyObject, IValidable<TModel>
     {
         public SimpleInitViewModelBase(ISessionContextService sessionContext,
                                         IEditorFormFactory<TModel> editorFormFactory,
+                                        IUniqueValidator<TModel> validator,
                                         ICodeGenerationService codeGenerationService)
             : base(sessionContext)
         {
+            Validator = validator;
             CodeGenerationService = codeGenerationService;
             EditorForm = editorFormFactory.Create();
             EditorForm.ItemEdited += OnModelEdited;
+            EditorForm.Validator = validator;
         }
 
         protected abstract string ScriptFilePath { get; }
+        protected IUniqueValidator<TModel> Validator { get; }
         protected ICodeGenerationService CodeGenerationService { get; }
         protected IEditorForm<TModel> EditorForm { get; }
 
-        private ICommand openModelEditor;
-        public ICommand OpenModelEditor => openModelEditor ?? (openModelEditor = new DelegateCommand<ObservableCollection<TModel>>(CreateNewModel));
+        private ICommand openModelEditorCommand;
+        public ICommand OpenModelEditorCommand => openModelEditorCommand ?? (openModelEditorCommand = new DelegateCommand<ObservableCollection<TModel>>(CreateNewModel));
 
-        private ICommand openContainer;
-        public ICommand OpenContainer => openContainer ?? (openContainer = new DelegateCommand(() => System.Diagnostics.Process.Start(ScriptFilePath)));
+        private ICommand editModelCommand;
+        public ICommand EditModelCommand => editModelCommand ?? (editModelCommand = new DelegateCommand<TModel>(EditModel));
+
+        private ICommand removeModelCommand;
+        public ICommand RemoveModelCommand => removeModelCommand ?? (removeModelCommand = new DelegateCommand<TModel>(RemoveModel));
+
+        private ICommand openContainerCommand;
+        public ICommand OpenContainerCommand => openContainerCommand ?? (openContainerCommand = new DelegateCommand(() => System.Diagnostics.Process.Start(ScriptFilePath)));
 
         private ObservableCollection<TModel> modelsRepository;
         public ObservableCollection<TModel> ModelsRepository {
@@ -57,6 +68,7 @@ namespace ForgeModGenerator.ViewModels
                 }
                 IEnumerable<TModel> foundModels = FindModelsFromScriptFile(ScriptFilePath);
                 await AddModelsAsync(foundModels).ConfigureAwait(false);
+                Validator?.SetDefaultRepository(ModelsRepository);
                 IsLoading = false;
                 return true;
             }
@@ -64,7 +76,12 @@ namespace ForgeModGenerator.ViewModels
         }
 
         protected abstract TModel ParseModelFromJavaField(string line);
-        protected virtual TModel CreateNewEmptyModel() => Activator.CreateInstance<TModel>();
+        protected virtual TModel CreateNewEmptyModel()
+        {
+            TModel model = Activator.CreateInstance<TModel>();
+            model.ValidateProperty += ValidateModel;
+            return model;
+        }
 
         protected async Task AddModelsAsync(IEnumerable<TModel> models)
         {
@@ -90,12 +107,18 @@ namespace ForgeModGenerator.ViewModels
             return model != null;
         }
 
-        protected void CreateNewModel(ObservableCollection<TModel> collection)
+        protected virtual void CreateNewModel(ObservableCollection<TModel> collection)
         {
             TModel newModel = CreateNewEmptyModel();
             newModel.IsDirty = false;
             EditorForm.OpenItemEditor(newModel);
         }
+
+        protected virtual void EditModel(TModel model) => EditorForm.OpenItemEditor(model);
+
+        protected virtual void RemoveModel(TModel model) => ModelsRepository.Remove(model);
+
+        protected string ValidateModel(TModel sender, string propertyName) => Validator?.Validate(sender, ModelsRepository, propertyName).Error;
 
         protected virtual IEnumerable<TModel> FindModelsFromScriptFile(string scriptFilePath)
         {

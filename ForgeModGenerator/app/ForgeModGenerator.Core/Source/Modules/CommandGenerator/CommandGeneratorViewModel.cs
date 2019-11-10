@@ -18,15 +18,15 @@ namespace ForgeModGenerator.CommandGenerator.ViewModels
         public CommandGeneratorViewModel(ISessionContextService sessionContext,
                                         IFoldersExplorerFactory<ObservableFolder<Command>, Command> factory,
                                         IEditorFormFactory<Command> editorFormFactory,
-                                        IUniqueValidator<Command> commandValidator,
+                                        IUniqueValidator<Command> validator,
                                         ICodeGenerationService codeGenerationService)
             : base(sessionContext, factory)
         {
-            CommandValidator = commandValidator;
+            CommandValidator = validator;
             CodeGenerationService = codeGenerationService;
             EditorForm = editorFormFactory.Create();
             EditorForm.ItemEdited += CreateCommand;
-            EditorForm.Validator = commandValidator;
+            EditorForm.Validator = validator;
 
             Explorer.OpenFileDialog.Filter = "Java file (*.java) | *.java";
             Explorer.OpenFileDialog.Multiselect = true;

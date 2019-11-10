@@ -5,7 +5,9 @@
                     xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
                     xmlns:util="clr-namespace:ForgeModGenerator.Utility"
                     xmlns:validations="clr-namespace:ForgeModGenerator.Validation">
-    <Style TargetType="{x:Type controls:ItemContextMenu}"
+    <Style TargetType="{x:Type controls:FileContextMenu}"
+           BasedOn="{StaticResource {x:Type ContextMenu}}" />
+    <Style TargetType="{x:Type controls:ModelContextMenu}"
            BasedOn="{StaticResource {x:Type ContextMenu}}" />
     <Style TargetType="{x:Type controls:SubmitTextBox}"
            BasedOn="{StaticResource {x:Type TextBox}}" />

@@ -1,6 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:fmg="clr-namespace:ForgeModGenerator"
+                    xmlns:util="clr-namespace:ForgeModGenerator.Utility"
                     xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
                     xmlns:soundControls="clr-namespace:ForgeModGenerator.SoundGenerator.Controls"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
@@ -125,7 +125,7 @@
                                                         Padding="0"
                                                         Margin="5"
                                                         ToolTip="Get Help"
-                                                        Command="{Binding Source={x:Static fmg:SharedWPFData.StartProcessCommand}}"
+                                                        Command="{Binding Source={x:Static util:StaticCommands.StartProcessCommand}}"
                                                         CommandParameter="https://mcforge.readthedocs.io/en/latest/effects/sounds/#sounds">
                                                     <materialDesign:PackIcon Kind="Help" />
                                                 </Button>
@@ -184,7 +184,7 @@
                                                     Margin="5"
                                                     ToolTip="Get Help"
                                                     HorizontalAlignment="Left"
-                                                    Command="{Binding Source={x:Static fmg:SharedWPFData.StartProcessCommand}}"
+                                                    Command="{Binding Source={x:Static util:StaticCommands.StartProcessCommand}}"
                                                     CommandParameter="https://mcforge.readthedocs.io/en/latest/utilities/recipes/#recipes">
                                                 <materialDesign:PackIcon Kind="Help" />
                                             </Button>

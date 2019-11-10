@@ -386,11 +386,13 @@
     <Compile Include="Source\CodeGeneration\InitVariablesCodeGenerator.cs" />
     <Compile Include="Source\CodeGeneration\MultiScriptsCodeGenerator.cs" />
     <Compile Include="Source\CodeGeneration\ScriptCodeGenerator.cs" />
-    <Compile Include="Source\Common\SharedWPFData.cs" />
     <Compile Include="Source\Components\GridLengthVector.cs" />
     <Compile Include="Source\Controls\Button\PageNavButton.cs" />
-    <Compile Include="Source\Controls\ItemContextMenu.xaml.cs">
-      <DependentUpon>ItemContextMenu.xaml</DependentUpon>
+    <Compile Include="Source\Controls\ModelContextMenu.xaml.cs">
+      <DependentUpon>ModelContextMenu.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Controls\FileContextMenu.xaml.cs">
+      <DependentUpon>FileContextMenu.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Controls\Proxy\SelectorDecorator.cs" />
     <Compile Include="Source\Common\SyncInvokeObject.cs" />
@@ -411,11 +413,12 @@
     <Compile Include="Source\FileSystem\Dialog\FileBrowserDialog.cs" />
     <Compile Include="Source\FileSystem\Dialog\FolderBrowserDialog.cs" />
     <Compile Include="Source\FileSystem\FileSystemWin.cs" />
-    <Compile Include="Source\Modules\BlockGenerator\BlockCodeGenerator.cs" />
+    <Compile Include="Source\Modules\BlockGenerator\CodeGeneration\BlockCodeGenerator.cs" />
     <Compile Include="Source\Modules\BlockGenerator\Controls\BlockEditForm.xaml.cs">
       <DependentUpon>BlockEditForm.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Modules\BlockGenerator\BlockEditorFormFactory.cs" />
+    <Compile Include="Source\Modules\BlockGenerator\Validation\BlockValidator.cs" />
     <Compile Include="Source\Modules\CommandGenerator\CodeGeneration\CommandCodeGenerator.cs" />
     <Compile Include="Source\Modules\CommandGenerator\CommandEditorFormFactory.cs" />
     <Compile Include="Source\Modules\CommandGenerator\CodeGeneration\CustomCommandCodeGenerator.cs" />
@@ -559,7 +562,11 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Source\Serialization\VSCLaunchSerializer.cs" />
-    <Page Include="Source\Controls\ItemContextMenu.xaml">
+    <Page Include="Source\Controls\ModelContextMenu.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Controls\FileContextMenu.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

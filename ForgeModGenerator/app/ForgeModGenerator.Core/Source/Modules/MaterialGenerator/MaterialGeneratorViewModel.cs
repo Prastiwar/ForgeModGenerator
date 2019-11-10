@@ -1,6 +1,7 @@
 ﻿using ForgeModGenerator.CodeGeneration;
 using ForgeModGenerator.MaterialGenerator.Models;
 using ForgeModGenerator.Services;
+using ForgeModGenerator.Validation;
 using ForgeModGenerator.ViewModels;
 
 namespace ForgeModGenerator.MaterialGenerator.ViewModels
@@ -8,8 +9,11 @@ namespace ForgeModGenerator.MaterialGenerator.ViewModels
     /// <summary> MaterialGenerator Business ViewModel </summary>
     public class MaterialGeneratorViewModel : SimpleInitViewModelBase<Material>
     {
-        public MaterialGeneratorViewModel(ISessionContextService sessionContext, IEditorFormFactory<Material> editorFormFactory, ICodeGenerationService codeGenerationService)
-            : base(sessionContext, editorFormFactory, codeGenerationService) { }
+        public MaterialGeneratorViewModel(ISessionContextService sessionContext,
+                                          IEditorFormFactory<Material> editorFormFactory,
+                                          IUniqueValidator<Material> validator,
+                                          ICodeGenerationService codeGenerationService)
+            : base(sessionContext, editorFormFactory, validator, codeGenerationService) { }
 
         protected override string ScriptFilePath => SourceCodeLocator.Materials(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.Organization).FullPath;
 

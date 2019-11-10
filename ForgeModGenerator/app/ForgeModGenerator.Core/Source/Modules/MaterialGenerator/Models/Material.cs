@@ -1,8 +1,10 @@
 ﻿using ForgeModGenerator.Models;
+using ForgeModGenerator.Validation;
+using System.ComponentModel;
 
 namespace ForgeModGenerator.MaterialGenerator.Models
 {
-    public class Material : ObservableDirtyObject, ICopiable
+    public class Material : ObservableDirtyObject, ICopiable, IDataErrorInfo, IValidable<Material>
     {
         private string name;
         public string Name {
@@ -23,5 +25,12 @@ namespace ForgeModGenerator.MaterialGenerator.Models
             }
             return false;
         }
+
+        public ValidateResult Validate() => throw new System.NotImplementedException();
+
+        public event PropertyValidationEventHandler<Material> ValidateProperty;
+        string IDataErrorInfo.Error => null;
+        string IDataErrorInfo.this[string propertyName] => OnValidate(propertyName);
+        private string OnValidate(string propertyName) => ValidateHelper.OnValidateError(ValidateProperty, this, propertyName);
     }
 }
