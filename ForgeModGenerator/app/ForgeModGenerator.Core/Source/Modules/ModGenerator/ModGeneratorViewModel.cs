@@ -86,7 +86,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
         
         private void ShowContainer(McMod mcMod) => Process.Start(ModPaths.ModRootFolder(mcMod.ModInfo.Name));
 
-        private string OnModValidate(McMod sender, string propertyName) => ModValidator.Validate(sender, propertyName).Error;
+        private string OnModValidate(object sender, string propertyName) => ModValidator.Validate((McMod)sender, propertyName).Error;
 
         private async void RemoveMod(McMod mcMod)
         {

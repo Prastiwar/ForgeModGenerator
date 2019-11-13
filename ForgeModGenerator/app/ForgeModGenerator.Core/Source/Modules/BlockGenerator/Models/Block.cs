@@ -1,10 +1,8 @@
 ﻿using ForgeModGenerator.Models;
-using ForgeModGenerator.Validation;
-using System.ComponentModel;
 
 namespace ForgeModGenerator.BlockGenerator.Models
 {
-    public class Block : ObservableDirtyObject, ICopiable, IDataErrorInfo, IValidable<Block>
+    public class Block : ObservableModel
     {
         private string name;
         public string Name {
@@ -84,118 +82,33 @@ namespace ForgeModGenerator.BlockGenerator.Models
             set => SetProperty(ref dropItem, value);
         }
 
-        public virtual object Clone() => MemberwiseClone();
-        public virtual object DeepClone() => new Block() {
-            Name = Name,
-            Type = Type,
-            MaterialType = MaterialType,
-            TextureName = TextureName,
-            InventoryTextureName = InventoryTextureName,
-            LightLevel = LightLevel,
-            Hardness = Hardness,
-            Resistance = Resistance,
-            ShouldMakeCollision = ShouldMakeCollision,
-            HarvestLevelTool = HarvestLevelTool,
-            HarvestLevel = HarvestLevel,
-            SoundType = SoundType,
-            DropItem = DropItem
-        };
-
-        public virtual bool CopyValues(object fromCopy)
+        public override bool CopyValues(object fromCopy)
         {
-            if (fromCopy is Block block)
+            if (fromCopy is Block fromModel)
             {
-                Name = block.Name;
-                Type = block.Type;
-                MaterialType = block.MaterialType;
-                TextureName = block.TextureName;
-                InventoryTextureName = block.InventoryTextureName;
-                LightLevel = block.LightLevel;
-                Hardness = block.Hardness;
-                Resistance = block.Resistance;
-                ShouldMakeCollision = block.ShouldMakeCollision;
-                HarvestLevelTool = block.HarvestLevelTool;
-                HarvestLevel = block.HarvestLevel;
-                SoundType = block.SoundType;
-                DropItem = block.DropItem;
+                Name = fromModel.Name;
+                Type = fromModel.Type;
+                MaterialType = fromModel.MaterialType;
+                TextureName = fromModel.TextureName;
+                InventoryTextureName = fromModel.InventoryTextureName;
+                LightLevel = fromModel.LightLevel;
+                Hardness = fromModel.Hardness;
+                Resistance = fromModel.Resistance;
+                ShouldMakeCollision = fromModel.ShouldMakeCollision;
+                HarvestLevelTool = fromModel.HarvestLevelTool;
+                HarvestLevel = fromModel.HarvestLevel;
+                SoundType = fromModel.SoundType;
+                DropItem = fromModel.DropItem;
                 return true;
             }
             return false;
         }
 
-        public ValidateResult Validate()
+        public override object DeepClone()
         {
-            string errorString = OnValidate(nameof(Name));
-            if (!string.IsNullOrEmpty(errorString))
-            {
-                return new ValidateResult(false, errorString);
-            }
-            errorString = OnValidate(nameof(Type));
-            if (!string.IsNullOrEmpty(errorString))
-            {
-                return new ValidateResult(false, errorString);
-            }
-            errorString = OnValidate(nameof(MaterialType));
-            if (!string.IsNullOrEmpty(errorString))
-            {
-                return new ValidateResult(false, errorString);
-            }
-            errorString = OnValidate(nameof(TextureName));
-            if (!string.IsNullOrEmpty(errorString))
-            {
-                return new ValidateResult(false, errorString);
-            }
-            errorString = OnValidate(nameof(InventoryTextureName));
-            if (!string.IsNullOrEmpty(errorString))
-            {
-                return new ValidateResult(false, errorString);
-            }
-            errorString = OnValidate(nameof(LightLevel));
-            if (!string.IsNullOrEmpty(errorString))
-            {
-                return new ValidateResult(false, errorString);
-            }
-            errorString = OnValidate(nameof(Hardness));
-            if (!string.IsNullOrEmpty(errorString))
-            {
-                return new ValidateResult(false, errorString);
-            }
-            errorString = OnValidate(nameof(Resistance));
-            if (!string.IsNullOrEmpty(errorString))
-            {
-                return new ValidateResult(false, errorString);
-            }
-            errorString = OnValidate(nameof(ShouldMakeCollision));
-            if (!string.IsNullOrEmpty(errorString))
-            {
-                return new ValidateResult(false, errorString);
-            }
-            errorString = OnValidate(nameof(HarvestLevelTool));
-            if (!string.IsNullOrEmpty(errorString))
-            {
-                return new ValidateResult(false, errorString);
-            }
-            errorString = OnValidate(nameof(HarvestLevel));
-            if (!string.IsNullOrEmpty(errorString))
-            {
-                return new ValidateResult(false, errorString);
-            }
-            errorString = OnValidate(nameof(SoundType));
-            if (!string.IsNullOrEmpty(errorString))
-            {
-                return new ValidateResult(false, errorString);
-            }
-            errorString = OnValidate(nameof(DropItem));
-            if (!string.IsNullOrEmpty(errorString))
-            {
-                return new ValidateResult(false, errorString);
-            }
-            return ValidateResult.Valid;
+            Block block = new Block();
+            block.CopyValues(this);
+            return block;
         }
-
-        public event PropertyValidationEventHandler<Block> ValidateProperty;
-        string IDataErrorInfo.Error => null;
-        string IDataErrorInfo.this[string propertyName] => OnValidate(propertyName);
-        private string OnValidate(string propertyName) => ValidateHelper.OnValidateError(ValidateProperty, this, propertyName);
     }
 }

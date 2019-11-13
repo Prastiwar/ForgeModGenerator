@@ -84,7 +84,7 @@ namespace ForgeModGenerator.CommandGenerator.ViewModels
             EditorForm.OpenItemEditor(newCommand);
         }
 
-        protected string ValidateCommand(Command sender, IEnumerable<Command> instances, string propertyName) => CommandValidator.Validate(sender, instances, propertyName).Error;
+        protected string ValidateCommand(object sender, IEnumerable<Command> instances, string propertyName) => CommandValidator.Validate((Command)sender, instances, propertyName).Error;
 
         protected void CreateCommand(object sender, ItemEditedEventArgs<Command> e)
         {

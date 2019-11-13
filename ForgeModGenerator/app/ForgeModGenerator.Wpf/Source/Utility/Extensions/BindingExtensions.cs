@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Data;
 
-namespace ForgeModGenerator.Utility
+namespace ForgeModGenerator
 {
     public static class BindingExtensions
     {

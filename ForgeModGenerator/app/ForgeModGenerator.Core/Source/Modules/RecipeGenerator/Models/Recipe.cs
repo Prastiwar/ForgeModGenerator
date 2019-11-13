@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace ForgeModGenerator.RecipeGenerator.Models
 {
-    public class Recipe : FileObject, IDataErrorInfo, IValidable<Recipe>
+    public class Recipe : FileObject, IDataErrorInfo, IValidable
     {
         protected Recipe() { }
         public Recipe(string filePath) : base(filePath) { }
@@ -36,37 +36,11 @@ namespace ForgeModGenerator.RecipeGenerator.Models
             {
                 Name = recipe.Name;
                 Group = recipe.Group;
-                ValidateProperty = recipe.ValidateProperty;
                 base.CopyValues(fromCopy);
                 IsDirty = false;
                 return true;
             }
             return false;
         }
-
-        public virtual ValidateResult Validate()
-        {
-            string error = OnValidate(nameof(Type));
-            if (!string.IsNullOrEmpty(error))
-            {
-                return new ValidateResult(false, error);
-            }
-            error = OnValidate(nameof(Name));
-            if (!string.IsNullOrEmpty(error))
-            {
-                return new ValidateResult(false, error);
-            }
-            error = OnValidate(nameof(Group));
-            if (!string.IsNullOrEmpty(error))
-            {
-                return new ValidateResult(false, error);
-            }
-            return ValidateResult.Valid;
-        }
-
-        public event PropertyValidationEventHandler<Recipe> ValidateProperty;
-        string IDataErrorInfo.Error => null;
-        string IDataErrorInfo.this[string propertyName] => OnValidate(propertyName);
-        private string OnValidate(string propertyName) => ValidateHelper.OnValidateError(ValidateProperty, this, propertyName);
     }
 }

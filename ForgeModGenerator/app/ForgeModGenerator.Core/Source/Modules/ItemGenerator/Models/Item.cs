@@ -1,10 +1,8 @@
 ﻿using ForgeModGenerator.Models;
-using ForgeModGenerator.Validation;
-using System.ComponentModel;
 
 namespace ForgeModGenerator.ItemGenerator.Models
 {
-    public class Item : ObservableDirtyObject, ICopiable, IDataErrorInfo, IValidable<Item>
+    public class Item : ObservableModel
     {
         private string name;
         public string Name {
@@ -53,36 +51,27 @@ namespace ForgeModGenerator.ItemGenerator.Models
             get => material;
             set => SetProperty(ref material, value);
         }
-        public virtual object Clone() => MemberwiseClone();
-        public virtual object DeepClone() => new Item() {
-            Name = Name,
-            Type = Type,
-            ArmorType = ArmorType,
-            TextureName = TextureName,
-            StackSize = StackSize,
-            Material = Material,
-        };
 
-        public virtual bool CopyValues(object fromCopy)
+        public override bool CopyValues(object fromCopy)
         {
-            if (fromCopy is Item item)
+            if (fromCopy is Item fromModel)
             {
-                Name = item.Name;
-                Type = item.Type;
-                ArmorType = item.ArmorType;
-                TextureName = item.TextureName;
-                StackSize = item.StackSize;
-                Material = item.Material;
+                Name = fromModel.Name;
+                Type = fromModel.Type;
+                ArmorType = fromModel.ArmorType;
+                TextureName = fromModel.TextureName;
+                StackSize = fromModel.StackSize;
+                Material = fromModel.Material;
                 return true;
             }
             return false;
         }
 
-        public ValidateResult Validate() => throw new System.NotImplementedException();
-
-        public event PropertyValidationEventHandler<Item> ValidateProperty;
-        string IDataErrorInfo.Error => null;
-        string IDataErrorInfo.this[string propertyName] => OnValidate(propertyName);
-        private string OnValidate(string propertyName) => ValidateHelper.OnValidateError(ValidateProperty, this, propertyName);
+        public override object DeepClone()
+        {
+            Item item = new Item();
+            item.CopyValues(this);
+            return item;
+        }
     }
 }

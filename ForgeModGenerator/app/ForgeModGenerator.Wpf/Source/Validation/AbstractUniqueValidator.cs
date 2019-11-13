@@ -21,11 +21,14 @@ namespace ForgeModGenerator.Validation
                 return true;
             }
             bool isUnique = !Repository.Any(x => {
-                object value = x.GetType().GetProperty(context.PropertyName, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public).GetValue(x);
-                if (value is TProperty val)
+                if (!x.Equals(instance))
                 {
-                    bool isEqual = val.Equals(propertyValue);
-                    return isEqual;
+                    object value = x.GetType().GetProperty(context.PropertyName, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public).GetValue(x);
+                    if (value is TProperty val)
+                    {
+                        bool isEqual = val.Equals(propertyValue);
+                        return isEqual;
+                    }
                 }
                 return false;
             });

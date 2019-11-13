@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace ForgeModGenerator
 {
-    public class FileObject : ObservableDirtyObject, IFileObject
+    public class FileObject : ObservableModel, IFileObject
     {
         protected FileObject() { }
 
@@ -37,14 +37,17 @@ namespace ForgeModGenerator
 
         protected virtual void OnInfoPropertyChanged(object sender, PropertyChangedEventArgs e) { }
 
-        public virtual object Clone() => MemberwiseClone();
-        public virtual object DeepClone() => new FileObject(Info.FullName);
+        public override object DeepClone() => new FileObject(Info.FullName);
 
-        public virtual bool CopyValues(object fromCopy)
+        public override bool CopyValues(object fromCopy)
         {
             if (fromCopy is IFileObject fileItem)
             {
                 SetInfo(fileItem.Info.FullName);
+                if (fileItem is ObservableModel model)
+                {
+                    SetValidateProperty(model);
+                }
                 return true;
             }
             return false;

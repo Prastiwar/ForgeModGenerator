@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace ForgeModGenerator.Utility
+namespace ForgeModGenerator
 {
     public static class JsonExtensions
     {

@@ -13,7 +13,7 @@ using System.Windows.Input;
 namespace ForgeModGenerator.ViewModels
 {
     public abstract class SimpleInitViewModelBase<TModel> : ViewModelBase
-        where TModel : ObservableDirtyObject, IValidable<TModel>
+        where TModel : ObservableDirtyObject, IValidable
     {
         public SimpleInitViewModelBase(ISessionContextService sessionContext,
                                         IEditorFormFactory<TModel> editorFormFactory,
@@ -118,7 +118,7 @@ namespace ForgeModGenerator.ViewModels
 
         protected virtual void RemoveModel(TModel model) => ModelsRepository.Remove(model);
 
-        protected string ValidateModel(TModel sender, string propertyName) => Validator?.Validate(sender, ModelsRepository, propertyName).Error;
+        protected string ValidateModel(object sender, string propertyName) => Validator?.Validate((TModel)sender, ModelsRepository, propertyName).Error;
 
         protected virtual IEnumerable<TModel> FindModelsFromScriptFile(string scriptFilePath)
         {

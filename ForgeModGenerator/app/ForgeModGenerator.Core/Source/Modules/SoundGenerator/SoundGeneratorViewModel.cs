@@ -168,7 +168,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             RaisePropertyChanged(nameof(HasEmptyFolders));
         }
 
-        private string OnSoundEventValidate(SoundEvent sender, string propertyName) => SoundEventValidator.Validate(sender, Explorer.Folders.Files, propertyName).Error;
+        private string OnSoundEventValidate(object sender, string propertyName) => SoundEventValidator.Validate((SoundEvent)sender, Explorer.Folders.Files, propertyName).Error;
 
         private void OnSoundPropertyChanged(Sound file, PropertyChangedEventArgs e)
         {

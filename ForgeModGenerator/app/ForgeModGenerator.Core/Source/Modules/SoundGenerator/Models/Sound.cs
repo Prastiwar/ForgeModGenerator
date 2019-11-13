@@ -5,7 +5,7 @@ using System.IO;
 
 namespace ForgeModGenerator.SoundGenerator.Models
 {
-    public class Sound : FileObject, IValidable
+    public class Sound : FileObject
     {
         public enum SoundType { file, @event }
 
@@ -73,13 +73,11 @@ namespace ForgeModGenerator.SoundGenerator.Models
             set => DirtSetProperty(ref preload, value);
         }
 
-        private SoundType type = SoundType.file;
+        private SoundType type = SoundType.file;        
         public SoundType Type {
             get => type;
             set => DirtSetProperty(ref type, value);
         }
-
-        public ValidateResult Validate() => ValidateResult.Valid;
 
         internal string GetSoundsFolder() => ModPaths.SoundsFolder(McMod.GetModnameFromPath(Info.FullName), modid);
 
@@ -139,7 +137,6 @@ namespace ForgeModGenerator.SoundGenerator.Models
                 AttenuationDistance = sound.AttenuationDistance;
                 Preload = sound.Preload;
                 Type = sound.Type;
-
                 base.CopyValues(fromCopy);
                 IsDirty = false;
                 return true;

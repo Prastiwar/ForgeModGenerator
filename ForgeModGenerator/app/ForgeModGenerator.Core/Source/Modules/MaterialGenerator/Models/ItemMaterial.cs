@@ -8,16 +8,18 @@
             set => SetProperty(ref enchantability, value);
         }
 
-        public override object DeepClone() => new ItemMaterial() {
-            Name = Name,
-            Enchantability = Enchantability
-        };
+        public override object DeepClone()
+        {
+            ItemMaterial material = new ItemMaterial();
+            material.CopyValues(this);
+            return material;
+        }
 
         public override bool CopyValues(object fromCopy)
         {
+            base.CopyValues(fromCopy);
             if (fromCopy is ItemMaterial material)
             {
-                base.CopyValues(fromCopy);
                 Enchantability = material.Enchantability;
                 return true;
             }

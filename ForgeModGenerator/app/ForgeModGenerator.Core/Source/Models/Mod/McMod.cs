@@ -7,16 +7,14 @@ using System.Linq;
 
 namespace ForgeModGenerator.Models
 {
-    public enum ModSide
+    public sealed class McMod : ObservableDirtyObject, ICopiable<McMod>, IDataErrorInfo, IValidable/*<McMod>*/
     {
-        ClientServer,
-        Client,
-        Server
-    }
-
-    public sealed class McMod : ObservableDirtyObject, ICopiable<McMod>, IDataErrorInfo, IValidable<McMod>
-    {
-        public McMod(McModInfo modInfo, string organization, ForgeVersion forgeVersion, ModSide side = ModSide.ClientServer, LaunchSetup launchSetup = LaunchSetup.Client, WorkspaceSetup workspaceSetup = null)
+        public McMod(McModInfo modInfo,
+                     string organization,
+                     ForgeVersion forgeVersion,
+                     ModSide side = ModSide.ClientServer,
+                     LaunchSetup launchSetup = LaunchSetup.Client,
+                     WorkspaceSetup workspaceSetup = null)
         {
             ModInfo = modInfo;
             Organization = organization;
@@ -88,7 +86,7 @@ namespace ForgeModGenerator.Models
             return ValidateResult.Valid;
         }
 
-        public event PropertyValidationEventHandler<McMod> ValidateProperty;
+        public event PropertyValidationEventHandler ValidateProperty;
         string IDataErrorInfo.Error => null;
         string IDataErrorInfo.this[string propertyName] => OnValidate(propertyName);
         private string OnValidate(string propertyName) => ValidateHelper.OnValidateError(ValidateProperty, this, propertyName);

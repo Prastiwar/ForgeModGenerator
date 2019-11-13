@@ -52,11 +52,6 @@ namespace ForgeModGenerator.SoundGenerator.Models
             set => DirtSetProperty(ref subtitle, value);
         }
 
-        public event PropertyValidationEventHandler<SoundEvent> ValidateProperty;
-
-        string IDataErrorInfo.Error => null;
-        string IDataErrorInfo.this[string propertyName] => OnValidate(propertyName);
-
         public override object DeepClone()
         {
             ObservableFolder<Sound> baseClone = (ObservableFolder<Sound>)base.DeepClone();
@@ -89,6 +84,11 @@ namespace ForgeModGenerator.SoundGenerator.Models
             string errorString = OnValidate(nameof(EventName));
             return new ValidateResult(string.IsNullOrEmpty(errorString), errorString);
         }
+
+        public event PropertyValidationEventHandler ValidateProperty;
+
+        string IDataErrorInfo.Error => null;
+        string IDataErrorInfo.this[string propertyName] => OnValidate(propertyName);
 
         private string OnValidate(string propertyName) => ValidateHelper.OnValidateError(ValidateProperty, this, propertyName);
 

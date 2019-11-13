@@ -1,10 +1,8 @@
-﻿using ForgeModGenerator.Validation;
-using System.ComponentModel;
-using System.IO;
+﻿using System.IO;
 
 namespace ForgeModGenerator.CommandGenerator.Models
 {
-    public sealed class Command : FileObject, IDataErrorInfo, IValidable<Command>
+    public sealed class Command : FileObject
     {
         private Command() { }
 
@@ -97,42 +95,12 @@ namespace ForgeModGenerator.CommandGenerator.Models
                 Usage = command.Usage;
                 Permission = command.Permission;
                 PermissionLevel = command.PermissionLevel;
-
+                SetValidateProperty(command);
                 base.CopyValues(fromCopy);
                 IsDirty = false;
                 return true;
             }
             return false;
         }
-
-        public ValidateResult Validate()
-        {
-            string errorString = OnValidate(nameof(Name));
-            if (!string.IsNullOrEmpty(errorString))
-            {
-                return new ValidateResult(false, errorString);
-            }
-            errorString = OnValidate(nameof(Usage));
-            if (!string.IsNullOrEmpty(errorString))
-            {
-                return new ValidateResult(false, errorString);
-            }
-            errorString = OnValidate(nameof(Permission));
-            if (!string.IsNullOrEmpty(errorString))
-            {
-                return new ValidateResult(false, errorString);
-            }
-            errorString = OnValidate(nameof(PermissionLevel));
-            if (!string.IsNullOrEmpty(errorString))
-            {
-                return new ValidateResult(false, errorString);
-            }
-            return ValidateResult.Valid;
-        }
-
-        public event PropertyValidationEventHandler<Command> ValidateProperty;
-        string IDataErrorInfo.Error => null;
-        string IDataErrorInfo.this[string propertyName] => OnValidate(propertyName);
-        private string OnValidate(string propertyName) => ValidateHelper.OnValidateError(ValidateProperty, this, propertyName);
     }
 }

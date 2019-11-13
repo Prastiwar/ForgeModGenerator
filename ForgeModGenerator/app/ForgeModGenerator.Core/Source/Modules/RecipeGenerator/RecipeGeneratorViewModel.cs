@@ -84,7 +84,7 @@ namespace ForgeModGenerator.RecipeGenerator.ViewModels
             EditorForm.OpenItemEditor(newRecipe);
         }
 
-        protected string ValidateRecipe(Recipe sender, IEnumerable<Recipe> instances, string propertyName) => RecipeValidator.Validate(sender, instances, propertyName).Error;
+        protected string ValidateRecipe(object sender, IEnumerable<Recipe> instances, string propertyName) => RecipeValidator.Validate((Recipe)sender, instances, propertyName).Error;
 
         protected void CreateRecipe(object sender, ItemEditedEventArgs<RecipeCreator> e)
         {

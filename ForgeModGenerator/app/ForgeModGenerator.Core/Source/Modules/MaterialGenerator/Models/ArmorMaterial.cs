@@ -61,24 +61,18 @@
             }
         }
 
-        public override object DeepClone() => new ArmorMaterial() {
-            Name = Name,
-            Enchantability = Enchantability,
-            Durability = Durability,
-            HelmetDamageReduction = HelmetDamageReduction,
-            PlateDamageReduction = PlateDamageReduction,
-            LegsDamageReduction = LegsDamageReduction,
-            BootsDamageReduction = BootsDamageReduction,
-            Toughness = Toughness,
-            TextureName = TextureName,
-            SoundEvent = SoundEvent,
-        };
+        public override object DeepClone()
+        {
+            ArmorMaterial material = new ArmorMaterial();
+            material.CopyValues(this);
+            return material;
+        }
 
         public override bool CopyValues(object fromCopy)
         {
+            base.CopyValues(fromCopy);
             if (fromCopy is ArmorMaterial material)
             {
-                base.CopyValues(fromCopy);
                 Durability = material.Durability;
                 HelmetDamageReduction = material.HelmetDamageReduction;
                 PlateDamageReduction = material.PlateDamageReduction;
