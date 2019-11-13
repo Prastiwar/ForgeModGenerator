@@ -12,6 +12,7 @@ namespace ForgeModGenerator.RecipeGenerator.Validation
         {
             RuleFor(x => x.Name).NotEmpty().WithMessage("Name cannot be empty")
                                 .Must(IsUnique).WithMessage("This name already exists");
+            RuleFor(x => ((RecipeCreator)x).Ingredients).Must(NotEmptyIngredients).WithMessage("Ingredients cannot be empty").When(x => x is RecipeCreator creator && creator.RecipeType == typeof(ShapelessRecipe));
             RuleFor(x => ((ShapelessRecipe)x).Ingredients).Must(NotEmptyIngredients).WithMessage("Ingredients cannot be empty").When(x => x is ShapelessRecipe);
         }
 

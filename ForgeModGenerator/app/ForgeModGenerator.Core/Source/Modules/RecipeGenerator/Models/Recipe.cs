@@ -1,10 +1,8 @@
-﻿using ForgeModGenerator.Validation;
-using System;
-using System.ComponentModel;
+﻿using System;
 
 namespace ForgeModGenerator.RecipeGenerator.Models
 {
-    public class Recipe : FileObject, IDataErrorInfo, IValidable
+    public class Recipe : FileObject
     {
         protected Recipe() { }
         public Recipe(string filePath) : base(filePath) { }

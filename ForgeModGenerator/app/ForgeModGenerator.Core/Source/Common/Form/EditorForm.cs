@@ -68,18 +68,18 @@ namespace ForgeModGenerator
         {
             if (e.Result)
             {
-                bool isValid = true;
+                ValidateResult result = ValidateResult.Valid;
                 if (Validator != null)
                 {
-                    isValid = Validator.Validate(e.ActualItem).IsValid;
+                    result = Validator.Validate(e.ActualItem);
                 }
                 else if (e.ActualItem is IValidable validableItem)
                 {
-                    isValid = validableItem.Validate().IsValid;
+                    result = validableItem.Validate();
                 }
-                if (!isValid)
+                if (!result.IsValid)
                 {
-                    DialogService.ShowMessage("Form is not valid, fix errors before saving", "Invalid form");
+                    DialogService.ShowMessage($"Form is not valid, fix errors before saving:\n{result.Error}", "Invalid form");
                     return false;
                 }
             }

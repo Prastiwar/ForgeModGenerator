@@ -184,7 +184,7 @@
                             </Button>
                             <ListBox x:Name="KeysListBox"
                                      Grid.Column="1"
-                                     ItemsSource="{Binding Path=ItemsSource, RelativeSource={RelativeSource AncestorType=recipeControls:EditableIngredientList}, Mode=TwoWay}"
+                                     ItemsSource="{Binding Path=ItemsSource, RelativeSource={RelativeSource AncestorType=recipeControls:EditableIngredientList}, Mode=TwoWay, ValidatesOnDataErrors=True}"
                                      FontSize="11"
                                      HorizontalContentAlignment="Stretch"
                                      MinHeight="25">

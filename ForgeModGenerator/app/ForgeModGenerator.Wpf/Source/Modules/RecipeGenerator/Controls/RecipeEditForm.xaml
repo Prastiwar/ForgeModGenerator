@@ -305,7 +305,7 @@
                         <local:EditableIngredientList x:Name="IngredientsListBox"
                                                       LengthLimit="{Binding IngredientsLengthLimit, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:RecipeEditForm}}"
                                                       HorizontalAlignment="Stretch"
-                                                      ItemsSource="{Binding Ingredients}"
+                                                      ItemsSource="{Binding Ingredients, ValidatesOnDataErrors=True}"
                                                       HorizontalContentAlignment="Stretch" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal"
