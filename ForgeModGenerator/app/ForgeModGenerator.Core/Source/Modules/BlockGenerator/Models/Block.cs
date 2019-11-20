@@ -59,8 +59,8 @@ namespace ForgeModGenerator.BlockGenerator.Models
             set => SetProperty(ref shouldMakeCollision, value);
         }
 
-        private string harvestLevelTool;
-        public string HarvestLevelTool {
+        private HarvestToolType harvestLevelTool;
+        public HarvestToolType HarvestLevelTool {
             get => harvestLevelTool;
             set => SetProperty(ref harvestLevelTool, value);
         }

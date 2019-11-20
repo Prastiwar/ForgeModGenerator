@@ -18,7 +18,7 @@ namespace ForgeModGenerator.MaterialGenerator.Controls
             TypeComboBox.SelectionChanged += TypeComboBox_SelectionChanged;
         }
 
-        public IEnumerable<PushReaction> PushReactions => Enum.GetValues(typeof(PushReaction)).Cast<PushReaction>();
+        public IEnumerable<PushReaction> PushReactions => ReflectionHelper.GetEnumValues<PushReaction>();
 
         public static readonly DependencyProperty SoundEventsProperty =
             DependencyProperty.Register("SoundEvents", typeof(IEnumerable<string>), typeof(MaterialEditForm), new PropertyMetadata(Enumerable.Empty<string>()));

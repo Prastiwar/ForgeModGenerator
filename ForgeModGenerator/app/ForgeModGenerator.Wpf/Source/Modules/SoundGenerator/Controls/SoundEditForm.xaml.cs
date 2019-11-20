@@ -1,7 +1,6 @@
 ﻿using ForgeModGenerator.SoundGenerator.Models;
-using System;
+using ForgeModGenerator.Utility;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Controls;
 
 namespace ForgeModGenerator.SoundGenerator.Controls
@@ -10,7 +9,7 @@ namespace ForgeModGenerator.SoundGenerator.Controls
     {
         public SoundEditForm() => InitializeComponent();
 
-        public IEnumerable<Sound.SoundType> SoundTypes => Enum.GetValues(typeof(Sound.SoundType)).Cast<Sound.SoundType>();
+        public IEnumerable<Sound.SoundType> SoundTypes => ReflectionHelper.GetEnumValues<Sound.SoundType>();
 
         public void SetDataContext(object context) => DataContext = context;
     }

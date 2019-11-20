@@ -153,8 +153,6 @@
                                       HorizontalContentAlignment="Center" />
                             <ComboBox x:Name="HarvestLevelToolComboBox"
                                       SelectedValue="{Binding Path=HarvestLevelTool}"
-                                      SelectedValuePath="{Binding Path=HarvestLevelTool}"
-                                      SelectedItem="{Binding Path=HarvestLevelTool}"
                                       ItemsSource="{Binding Path=HarvestToolTypes, RelativeSource={RelativeSource AncestorType=local:BlockEditForm}}"
                                       Background="#FF404040"
                                       Foreground="#FFE8E8E8"

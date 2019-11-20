@@ -63,7 +63,7 @@ namespace ForgeModGenerator.BlockGenerator.ViewModels
             startIndex = line.IndexOf("(", endIndex) + 1;
             endIndex = line.IndexOf(",", startIndex);
             string blockHarvestTool = line.Substring(startIndex, endIndex - startIndex);
-            block.HarvestLevelTool = blockHarvestTool.Replace("\"", "");
+            block.HarvestLevelTool = ReflectionHelper.ParseEnum<HarvestToolType>(blockHarvestTool.Replace("\"", ""));
 
             startIndex = line.IndexOf(" ", endIndex) + 1;
             endIndex = line.IndexOf(")", startIndex);
@@ -112,7 +112,7 @@ namespace ForgeModGenerator.BlockGenerator.ViewModels
                 string textureName = jsonContent.Substring(startIndex, endIndex - startIndex);
                 block.TextureName = textureName;
 
-                startIndex = jsonContent.IndexOf(keyword, endIndex) + keyword.Length ;
+                startIndex = jsonContent.IndexOf(keyword, endIndex) + keyword.Length;
                 startIndex = jsonContent.IndexOf("\"", startIndex) + 1;
                 endIndex = jsonContent.IndexOf("\"", startIndex);
                 string inventoryTextureName = jsonContent.Substring(startIndex, endIndex - startIndex);

@@ -18,8 +18,8 @@ namespace ForgeModGenerator.ItemGenerator.Controls
             ItemTypeComboBox.SelectionChanged += ItemTypeComboBox_SelectionChanged;
         }
 
-        public IEnumerable<ItemType> ItemTypes => Enum.GetValues(typeof(ItemType)).Cast<ItemType>();
-        public IEnumerable<ArmorType> ArmorTypes => Enum.GetValues(typeof(ArmorType)).Cast<ArmorType>();
+        public IEnumerable<ItemType> ItemTypes => ReflectionHelper.GetEnumValues<ItemType>();
+        public IEnumerable<ArmorType> ArmorTypes => ReflectionHelper.GetEnumValues<ArmorType>();
 
         public static readonly DependencyProperty MaterialsProperty =
             DependencyProperty.Register("Materials", typeof(IEnumerable<string>), typeof(ItemEditForm), new PropertyMetadata(Enumerable.Empty<string>()));

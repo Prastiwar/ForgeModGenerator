@@ -1,10 +1,9 @@
 ﻿using ForgeModGenerator.Models;
 using ForgeModGenerator.Services;
+using ForgeModGenerator.Utility;
 using Microsoft.Extensions.Caching.Memory;
 using Prism.Commands;
-using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace ForgeModGenerator.ModGenerator
 {
@@ -28,7 +27,7 @@ namespace ForgeModGenerator.ModGenerator
                 AddForgeVersionCommand = new DelegateCommand(sessionContext.DownloadNewForgeVersion),
                 Setups = setups,
                 ForgeVersions = sessionContext.ForgeVersions,
-                Sides = Enum.GetValues(typeof(ModSide)).Cast<ModSide>()
+                Sides = ReflectionHelper.GetEnumValues<ModSide>()
             }
         };
     }

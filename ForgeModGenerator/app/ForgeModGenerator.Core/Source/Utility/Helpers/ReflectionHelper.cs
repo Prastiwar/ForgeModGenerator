@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace ForgeModGenerator.Utility
@@ -8,6 +9,9 @@ namespace ForgeModGenerator.Utility
     {
         private const BindingFlags NonPublicFlags = BindingFlags.NonPublic | BindingFlags.Instance;
         private const BindingFlags PublicFlags = BindingFlags.Public | BindingFlags.Instance;
+
+        public static T ParseEnum<T>(string value) => (T)Enum.Parse(typeof(T), value, true);
+        public static IEnumerable<T> GetEnumValues<T>() => Enum.GetValues(typeof(T)).Cast<T>();
 
         public static T CreateInstance<T>(bool nonPublic) => (T)Activator.CreateInstance(typeof(T), nonPublic);
         public static T CreateInstance<T>(params object[] args) => (T)Activator.CreateInstance(typeof(T), args);

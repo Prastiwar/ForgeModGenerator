@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Windows.Input;
 
 namespace ForgeModGenerator.ModGenerator.ViewModels
@@ -58,7 +57,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
         public IDialogService DialogService { get; }
         public IFileSystem FileSystem { get; }
 
-        public IEnumerable<ModSide> Sides => Enum.GetValues(typeof(ModSide)).Cast<ModSide>();
+        public IEnumerable<ModSide> Sides => ReflectionHelper.GetEnumValues<ModSide>();
 
         private McMod newMod;
         public McMod NewMod {
@@ -83,7 +82,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
 
         private ICommand showModContainerCommand;
         public ICommand ShowModContainerCommand => showModContainerCommand ?? (showModContainerCommand = new DelegateCommand<McMod>(ShowContainer));
-        
+
         private void ShowContainer(McMod mcMod) => Process.Start(ModPaths.ModRootFolder(mcMod.ModInfo.Name));
 
         private string OnModValidate(object sender, string propertyName) => ModValidator.Validate((McMod)sender, propertyName).Error;
