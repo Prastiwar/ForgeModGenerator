@@ -173,10 +173,5 @@
                 </MultiBinding>
             </Setter.Value>
         </Setter>
-        <Setter Property="Content">
-            <Setter.Value>
-                <Image />
-            </Setter.Value>
-        </Setter>
     </Style>
 </ResourceDictionary>

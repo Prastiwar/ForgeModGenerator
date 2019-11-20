@@ -44,7 +44,6 @@ namespace ForgeModGenerator.BlockGenerator.Controls
 
         private async Task<MCItemLocator> SetTexture(Button button)
         {
-            button.Command.Execute(button.CommandParameter);
             ItemListForm form = new ItemListForm();
             bool changed = await StaticCommands.ShowMCItemList(button, (string)DialogHost.Identifier, form).ConfigureAwait(true);
             return changed ? form.SelectedLocator : default;

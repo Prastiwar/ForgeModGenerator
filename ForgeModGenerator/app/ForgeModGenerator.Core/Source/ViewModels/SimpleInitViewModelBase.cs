@@ -103,16 +103,25 @@ namespace ForgeModGenerator.ViewModels
             }
             List<TModel> models = new List<TModel>(8);
             IEnumerable<string> items = File.ReadLines(scriptFilePath).Where(x => x.Trim().StartsWith("public static final"));
+            bool firstIsArray = true;
             foreach (string item in items)
             {
-                string line = item.Trim();
-                if (TryParseModelFromJavaField(line, out TModel model))
+                if (!firstIsArray)
                 {
-                    models.Add(model);
+                    string line = item.Trim();
+                    if (TryParseModelFromJavaField(line, out TModel model))
+                    {
+                        models.Add(model);
+                    }
+                    else
+                    {
+                        Log.Warning($"Couldn't parse model of type {typeof(TModel)} from java field line {line}");
+                    }
                 }
                 else
                 {
-                    Log.Warning($"Couldn't parse model of type {typeof(TModel)} from java field line {line}");
+                    firstIsArray = false;
+                    continue;
                 }
             }
             return models;

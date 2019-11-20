@@ -19,6 +19,17 @@ namespace ForgeModGenerator.BlockGenerator.ViewModels
 
         protected override string ScriptFilePath => SourceCodeLocator.Blocks(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.Organization).FullPath;
 
+        protected override void RemoveModel(Block model)
+        {
+            base.RemoveModel(model);
+            string blockstatePath =
+                Path.Combine(ModPaths.Blockstates(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.Modid), model.Name + ".json");
+            if (File.Exists(blockstatePath))
+            {
+                File.Delete(blockstatePath);
+            }
+        }
+
         protected override Block ParseModelFromJavaField(string line)
         {
             if (string.IsNullOrEmpty(line))
@@ -34,25 +45,25 @@ namespace ForgeModGenerator.BlockGenerator.ViewModels
             string type = line.Substring(startIndex, endIndex - startIndex);
             block.Type = type == "OreBase" ? BlockType.Ore : BlockType.Hard;
 
-            startIndex = line.IndexOf("\"", endIndex) + 1;
-            endIndex = line.IndexOf("\"", startIndex);
+            startIndex = line.IndexOf("(", endIndex) + 1;
+            endIndex = line.IndexOf(",", startIndex);
             string name = line.Substring(startIndex, endIndex - startIndex);
-            block.Name = name;
+            block.Name = name.Replace("\"", "");
 
             startIndex = line.IndexOf(" ", endIndex) + 1;
             endIndex = line.IndexOf(")", startIndex);
             string material = line.Substring(startIndex, endIndex - startIndex);
-            block.MaterialType = material;
+            block.MaterialType = material.Replace("\"", "");
 
             startIndex = line.IndexOf("(", endIndex) + 1;
             endIndex = line.IndexOf(")", startIndex);
             string soundType = line.Substring(startIndex, endIndex - startIndex);
-            block.SoundType = soundType;
+            block.SoundType = soundType.Replace("\"", "");
 
-            startIndex = line.IndexOf("\"", endIndex) + 1;
-            endIndex = line.IndexOf("\"", startIndex);
+            startIndex = line.IndexOf("(", endIndex) + 1;
+            endIndex = line.IndexOf(",", startIndex);
             string blockHarvestTool = line.Substring(startIndex, endIndex - startIndex);
-            block.HarvestLevelTool = blockHarvestTool;
+            block.HarvestLevelTool = blockHarvestTool.Replace("\"", "");
 
             startIndex = line.IndexOf(" ", endIndex) + 1;
             endIndex = line.IndexOf(")", startIndex);
@@ -72,7 +83,9 @@ namespace ForgeModGenerator.BlockGenerator.ViewModels
             startIndex = line.IndexOf("(", endIndex) + 1;
             endIndex = line.IndexOf(")", startIndex);
             string lightLevel = line.Substring(startIndex, endIndex - startIndex);
-            block.LightLevel = (int)(float.Parse(lightLevel.RemoveEnding(), invariancy) * 15);
+            float lightLevelFloat = float.Parse(lightLevel.RemoveEnding(), invariancy);
+            lightLevelFloat = lightLevelFloat > 0 ? lightLevelFloat * 15 : 0;
+            block.LightLevel = (int)(lightLevelFloat);
 
             startIndex = line.IndexOf("(", endIndex) + 1;
             endIndex = line.IndexOf(")", startIndex);
@@ -87,17 +100,20 @@ namespace ForgeModGenerator.BlockGenerator.ViewModels
                 block.DropItem = dropItem;
             }
 
-            string blockstatesPath = ModPaths.Blockstates(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.Organization);
-            string blockJsonPath = Path.Combine(blockstatesPath, name.ToLower() + ".json");
+            string blockstatesPath = ModPaths.Blockstates(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
+            string blockJsonPath = Path.Combine(blockstatesPath, block.Name.ToLower() + ".json");
             if (File.Exists(blockJsonPath))
             {
                 string jsonContent = File.ReadAllText(blockJsonPath);
-                startIndex = jsonContent.IndexOf(SessionContext.SelectedMod.ModInfo.Modid, 1);
+                string keyword = "\"all\":";
+                startIndex = jsonContent.IndexOf(keyword, 1) + keyword.Length;
+                startIndex = jsonContent.IndexOf("\"", startIndex) + 1;
                 endIndex = jsonContent.IndexOf("\"", startIndex);
                 string textureName = jsonContent.Substring(startIndex, endIndex - startIndex);
                 block.TextureName = textureName;
 
-                startIndex = jsonContent.IndexOf(SessionContext.SelectedMod.ModInfo.Modid, endIndex);
+                startIndex = jsonContent.IndexOf(keyword, endIndex) + keyword.Length ;
+                startIndex = jsonContent.IndexOf("\"", startIndex) + 1;
                 endIndex = jsonContent.IndexOf("\"", startIndex);
                 string inventoryTextureName = jsonContent.Substring(startIndex, endIndex - startIndex);
                 block.InventoryTextureName = inventoryTextureName;

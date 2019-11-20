@@ -153,6 +153,8 @@
                                       HorizontalContentAlignment="Center" />
                             <ComboBox x:Name="HarvestLevelToolComboBox"
                                       SelectedValue="{Binding Path=HarvestLevelTool}"
+                                      SelectedValuePath="{Binding Path=HarvestLevelTool}"
+                                      SelectedItem="{Binding Path=HarvestLevelTool}"
                                       ItemsSource="{Binding Path=HarvestToolTypes, RelativeSource={RelativeSource AncestorType=local:BlockEditForm}}"
                                       Background="#FF404040"
                                       Foreground="#FFE8E8E8"
@@ -188,14 +190,14 @@
                                       IsChecked="{Binding Path=ShouldMakeCollision}" />
                             <Button x:Name="TextureButton"
                                     Style="{StaticResource ItemSlotButtonStyle}"
+                                    Command="{x:Null}"
                                     Click="TextureButton_Click"
-                                    Margin="15,0,15,0"
-                                    HorizontalAlignment="Left" />
+                                    Margin="15,0,15,0" />
                             <Button x:Name="InventoryTextureButton"
                                     Style="{StaticResource ItemSlotButtonStyle}"
+                                    Command="{x:Null}"
                                     Click="InventoryTextureButton_Click"
-                                    Margin="15,0,15,0"
-                                    HorizontalAlignment="Left" />
+                                    Margin="15,0,15,0" />
                         </StackPanel>
                     </Grid>
                 </Border>

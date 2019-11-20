@@ -32,22 +32,27 @@ namespace ForgeModGenerator.BlockGenerator.CodeGeneration
                 CodeMethodInvokeExpression setDropItem = NewMethodInvoke(setCollidable, "setDropItem", NewPrimitive(block.DropItem));
                 initExpression = setDropItem;
             }
+            CreateBlockstateJson(block);
+            return NewFieldGlobal("Block", block.Name.ToUpper(), initExpression);
+        }
+
+        private void CreateBlockstateJson(Block block)
+        {
             string jsonPath = Path.Combine(ModPaths.Blockstates(McMod.ModInfo.Name, McMod.Modid), block.Name.ToLower() + ".json");
             string jsonText = $@"
 {{
     ""forge_marker"": 1,
-    ""defaults"": {{ ""textures"": {{ ""all"": ""{McMod.ModInfo.Name}:{block.TextureName}"" }} }},
-	""variants"": {{{{
+    ""defaults"": {{ ""textures"": {{ ""all"": ""{block.TextureName}"" }} }},
+	""variants"": {{
                 ""normal"": {{ ""model"": ""cube_all"" }},
                 ""inventory"": {{ 
                                 ""model"": ""cube_all"",
-                                ""textures"": {{ ""all"": ""{McMod.ModInfo.Name}:{block.InventoryTextureName}"" }}
+                                ""textures"": {{ ""all"": ""{block.InventoryTextureName}"" }}
                 }}
     }}
 }}
 ";              // TODO: Do not hard-code json
             File.WriteAllText(jsonPath, jsonText);
-            return NewFieldGlobal("Block", block.Name.ToUpper(), initExpression);
         }
 
         protected override CodeCompileUnit CreateTargetCodeUnit()

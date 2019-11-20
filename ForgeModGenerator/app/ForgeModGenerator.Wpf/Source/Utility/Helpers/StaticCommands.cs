@@ -20,6 +20,10 @@ namespace ForgeModGenerator.Utility
         public static void SetItemButtonImage(ContentControl control, MCItemLocator locator)
         {
             Uri uriSource = new Uri(locator.ImageFilePath);
+            if (control.Content == null)
+            {
+                control.Content = new Image();
+            }
             if (control.Content is Image image)
             {
                 if (!(image.Source is BitmapImage bitmap))
