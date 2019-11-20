@@ -22,10 +22,10 @@ namespace ForgeModGenerator.BlockGenerator.CodeGeneration
             CodeCompileUnit unit = CreateDefaultTargetCodeUnit(ScriptLocator.ClassName, "Block");
             unit.Namespaces[0].Imports.Add(NewImport($"{SourceRootPackageName}.{SourceCodeLocator.BlockBase(Modname, Organization).ImportRelativeName}"));
             unit.Namespaces[0].Imports.Add(NewImport($"net.minecraft.block.Block"));
-            unit.Namespaces[0].Imports.Add(NewImport($"import java.util.ArrayList"));
-            unit.Namespaces[0].Imports.Add(NewImport($"import java.util.List"));
-            unit.Namespaces[0].Imports.Add(NewImport($"import net.minecraft.block.Block"));
-            unit.Namespaces[0].Imports.Add(NewImport($"import net.minecraft.block.SoundType"));
+            unit.Namespaces[0].Imports.Add(NewImport($"java.util.ArrayList"));
+            unit.Namespaces[0].Imports.Add(NewImport($"java.util.List"));
+            unit.Namespaces[0].Imports.Add(NewImport($"net.minecraft.block.Block"));
+            unit.Namespaces[0].Imports.Add(NewImport($"net.minecraft.block.SoundType"));
             foreach (Block block in Elements)
             {
                 CodeObjectCreateExpression assignObject = NewObject("BlockBase", NewPrimitive(block.Name.ToLower()), NewPrimitive(block.MaterialType));

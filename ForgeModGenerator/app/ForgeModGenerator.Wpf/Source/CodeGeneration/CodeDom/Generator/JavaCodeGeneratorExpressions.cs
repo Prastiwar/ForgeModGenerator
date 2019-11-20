@@ -308,6 +308,12 @@ namespace ForgeModGenerator.CodeGeneration.CodeDom
                 case bool val:
                     output.Write(val ? "true" : "false");
                     break;
+                case Enum val:
+                    output.Write($"{val.GetType().Name}.{Enum.GetName(val.GetType(), val)}");
+                    break;
+                case StringGetter val:
+                    output.Write(val);
+                    break;
                 default:
                     throw new ArgumentException("Invalid Primitive Type " + e.Value.GetType());
             }

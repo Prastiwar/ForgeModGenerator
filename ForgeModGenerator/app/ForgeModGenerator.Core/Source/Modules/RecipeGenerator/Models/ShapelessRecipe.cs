@@ -31,7 +31,7 @@ namespace ForgeModGenerator.RecipeGenerator.Models
             ShapelessRecipe recipe = new ShapelessRecipe() {
                 Name = Name,
                 Group = Group,
-                Ingredients =  Ingredients.DeepCollectionClone<ObservableCollection<Ingredient>, Ingredient>(),
+                Ingredients =  Ingredients?.DeepCollectionClone<ObservableCollection<Ingredient>, Ingredient>(),
                 Result = new RecipeResult {
                     Count = Result.Count,
                     Item = Result.Item

@@ -1,8 +1,8 @@
 ﻿namespace ForgeModGenerator.CodeGeneration
 {
-    public class SoundEventChooserCollection : ChooseCollection
+    public class SoundEventChooseCollection : ChooseCollection
     {
-        protected override string[] BuiltInGetters => new string[] {
+        protected override StringGetter[] BuiltInGetters => new StringGetter[] {
             "SoundEvents.AMBIENT_CAVE",
             "SoundEvents.BLOCK_ANVIL_BREAK",
             "SoundEvents.BLOCK_ANVIL_DESTROY",

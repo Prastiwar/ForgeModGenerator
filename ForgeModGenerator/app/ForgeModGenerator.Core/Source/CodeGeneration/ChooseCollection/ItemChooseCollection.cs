@@ -2,7 +2,7 @@
 {
     public class ItemChooseCollection : ChooseCollection
     {
-        protected override string[] BuiltInGetters => new string[] {
+        protected override StringGetter[] BuiltInGetters => new StringGetter[] {
             "Items.AIR",
             "Items.IRON_SHOVEL",
             "Items.IRON_PICKAXE",

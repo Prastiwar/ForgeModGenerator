@@ -1,8 +1,8 @@
 ﻿namespace ForgeModGenerator.CodeGeneration
 {
-    public class ArmorMaterialChooserCollection : ChooseCollection
+    public class ArmorMaterialChooseCollection : ChooseCollection
     {
-        protected override string[] BuiltInGetters => new string[] {
+        protected override StringGetter[] BuiltInGetters => new StringGetter[] {
             "ArmorMaterial.LEATHER",
             "ArmorMaterial.CHAIN",
             "ArmorMaterial.IRON",

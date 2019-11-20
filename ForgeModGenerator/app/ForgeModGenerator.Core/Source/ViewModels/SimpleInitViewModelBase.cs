@@ -43,7 +43,7 @@ namespace ForgeModGenerator.ViewModels
         public ICommand RemoveModelCommand => removeModelCommand ?? (removeModelCommand = new DelegateCommand<TModel>(RemoveModel));
 
         private ICommand openContainerCommand;
-        public ICommand OpenContainerCommand => openContainerCommand ?? (openContainerCommand = new DelegateCommand(() => System.Diagnostics.Process.Start(ScriptFilePath)));
+        public ICommand OpenContainerCommand => openContainerCommand ?? (openContainerCommand = new DelegateCommand(() => System.Diagnostics.Process.Start(Path.GetDirectoryName(ScriptFilePath))));
 
         private ObservableCollection<TModel> modelsRepository;
         public ObservableCollection<TModel> ModelsRepository {
@@ -122,6 +122,10 @@ namespace ForgeModGenerator.ViewModels
 
         protected virtual IEnumerable<TModel> FindModelsFromScriptFile(string scriptFilePath)
         {
+            if (!File.Exists(scriptFilePath))
+            {
+                return Enumerable.Empty<TModel>();
+            }
             List<TModel> models = new List<TModel>(8);
             IEnumerable<string> items = File.ReadLines(scriptFilePath).Where(x => x.Trim().StartsWith("public static final"));
             foreach (string item in items)
@@ -154,7 +158,7 @@ namespace ForgeModGenerator.ViewModels
         protected virtual void RegenerateModels()
         {
             McMod mod = SessionContext.SelectedMod;
-            CodeGenerationService.RegenerateInitScript(ScriptFilePath, mod, ModelsRepository);
+            CodeGenerationService.RegenerateInitScript(Path.GetFileNameWithoutExtension(ScriptFilePath), mod, ModelsRepository);
         }
     }
 }

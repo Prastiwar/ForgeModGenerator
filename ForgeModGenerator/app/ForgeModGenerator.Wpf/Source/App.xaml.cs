@@ -32,11 +32,14 @@ namespace ForgeModGenerator
 {
     public partial class App : PrismApplication
     {
-        public App() =>
+        public App()
+        {
 #if !DEBUG
             DispatcherUnhandledException += App_DispatcherUnhandledException;
 #endif
             AppDomain.CurrentDomain.ProcessExit += OnExit;
+            ;
+        }
 
         private readonly MemoryCache globalCache = new MemoryCache(new MemoryCacheOptions());
         private readonly Assembly presentationAssembly = Assembly.GetAssembly(typeof(MainWindow));
@@ -70,28 +73,18 @@ namespace ForgeModGenerator
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
             base.RegisterRequiredTypes(containerRegistry);
+
             SetProvider(containerRegistry);
-            DialogService dialogService = new DialogService();
 
-            NLogLoggerFactory fac = new NLogLoggerFactory();
-            Log.Initialize(dialogService, fac.CreateLogger("ErrorLog"), fac.CreateLogger("InfoLog"));
-            fac.Dispose();
+            RegisterInstances(containerRegistry);
 
-            containerRegistry.RegisterInstance<IMemoryCache>(globalCache);
-            SourceCodeLocator.Initialize(globalCache);
+            InitializeStatics(containerRegistry);
 
-            containerRegistry.RegisterInstance<IDialogService>(dialogService);
             RegisterServices(containerRegistry);
 
-            containerRegistry.RegisterInstance<ISynchronizeInvoke>(SyncInvokeObject.Default);
             containerRegistry.Register<IFileSystem, FileSystemWin>();
 
-            IEnumerable<Type> models = coreAssembly.ExportedTypes.Where(x => x.FullName.Contains(".Models.") && !x.IsEnum);
-            foreach (Type model in models)
-            {
-                RegisterModel(containerRegistry, model);
-            }
-            RegisterModel(containerRegistry, typeof(PreferenceData));
+            RegisterModels(containerRegistry);
 
             containerRegistry.Register<ISerializer, JsonSerializer>();
             containerRegistry.Register(typeof(ISerializer<>), typeof(JsonSerializer<>));
@@ -100,6 +93,30 @@ namespace ForgeModGenerator
             RegisterWorkspaceSetups(containerRegistry);
             RegisterFactories(containerRegistry);
             RegisterPages(containerRegistry);
+        }
+
+        private void InitializeStatics(IContainerRegistry containerRegistry)
+        {
+            NLogLoggerFactory fac = new NLogLoggerFactory();
+            Log.Initialize(containerRegistry.GetContainer().Resolve<DialogService>(), fac.CreateLogger("ErrorLog"), fac.CreateLogger("InfoLog"));
+            fac.Dispose();
+
+            SourceCodeLocator.Initialize(globalCache);
+        }
+
+        private void RegisterInstances(IContainerRegistry containerRegistry)
+        {
+            containerRegistry.RegisterInstance<IMemoryCache>(globalCache);
+            containerRegistry.RegisterInstance<IDialogService>(new DialogService());
+            containerRegistry.RegisterInstance<ISynchronizeInvoke>(SyncInvokeObject.Default);
+
+            containerRegistry.RegisterInstance(new ArmorMaterialChooseCollection());
+            containerRegistry.RegisterInstance(new BlockChooseCollection());
+            containerRegistry.RegisterInstance(new BlockMaterialChooseCollection());
+            containerRegistry.RegisterInstance(new ItemChooseCollection());
+            containerRegistry.RegisterInstance(new SoundEventChooseCollection());
+            containerRegistry.RegisterInstance(new SoundTypeChooseCollection());
+            containerRegistry.RegisterInstance(new ToolMaterialChooseCollection());
         }
 
         private void SetProvider(IContainerRegistry containerRegistry)
@@ -113,23 +130,21 @@ namespace ForgeModGenerator
             ViewModelLocationProvider.SetDefaultViewModelFactory(type => containerRegistry.GetContainer().TryResolve(type));
         }
 
+        private void RegisterModels(IContainerRegistry containerRegistry)
+        {
+            IEnumerable<Type> models = coreAssembly.ExportedTypes.Where(x => x.FullName.Contains(".Models.") && !x.IsEnum);
+            foreach (Type model in models)
+            {
+                RegisterModel(containerRegistry, model);
+            }
+            RegisterModel(containerRegistry, typeof(PreferenceData));
+        }
+
         private void RegisterModel(IContainerRegistry containerRegistry, Type model)
         {
             bool IsSerializerRegistered = TryRegisterInterfaceForModel(containerRegistry, model, "Serializer");
             bool IsValidatorRegistered = TryRegisterInterfaceForModel(containerRegistry, model, "Validator");
             bool IsEditorFormFactoryRegistered = TryRegisterInterfaceForModel(containerRegistry, model, "EditorFormFactory");
-            //if (!IsSerializerRegistered)
-            //{
-            //    Log.Warning($"Cannot register Serializer for model { model }");
-            //}
-            //if (!IsValidatorRegistered)
-            //{
-            //    Log.Warning($"Cannot register Validator for model { model }");
-            //}
-            //if (!IsEditorFormFactoryRegistered)
-            //{
-            //    Log.Warning($"Cannot register EditorFormFactory for model { model }");
-            //}
         }
 
         private bool TryRegisterInterfaceForModel(IContainerRegistry containerRegistry, Type model, string name, Type defaultClassType = null)

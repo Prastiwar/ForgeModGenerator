@@ -1,4 +1,6 @@
-﻿namespace ForgeModGenerator.MaterialGenerator.Models
+﻿using ForgeModGenerator.CodeGeneration;
+
+namespace ForgeModGenerator.MaterialGenerator.Models
 {
     public class ArmorMaterial : ItemMaterial
     {
@@ -44,8 +46,8 @@
             set => SetProperty(ref textureName, value);
         }
 
-        private string soundEvent;
-        public string SoundEvent {
+        private StringGetter soundEvent;
+        public StringGetter SoundEvent {
             get => soundEvent;
             set => SetProperty(ref soundEvent, value);
         }

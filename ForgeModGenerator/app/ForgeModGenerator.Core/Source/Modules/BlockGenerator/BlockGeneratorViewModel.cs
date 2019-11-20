@@ -42,7 +42,7 @@ namespace ForgeModGenerator.BlockGenerator.ViewModels
             startIndex = line.IndexOf(" ", endIndex) + 1;
             endIndex = line.IndexOf(")", startIndex);
             string material = line.Substring(startIndex, endIndex - startIndex);
-            block.MaterialType = (MaterialType)System.Enum.Parse(typeof(MaterialType), material.Remove(0, "Material.".Length), true);
+            block.MaterialType = material;
 
             startIndex = line.IndexOf("(", endIndex) + 1;
             endIndex = line.IndexOf(")", startIndex);

@@ -1,4 +1,5 @@
-﻿using ForgeModGenerator.Models;
+﻿using ForgeModGenerator.CodeGeneration;
+using ForgeModGenerator.Models;
 
 namespace ForgeModGenerator.BlockGenerator.Models
 {
@@ -16,8 +17,8 @@ namespace ForgeModGenerator.BlockGenerator.Models
             set => SetProperty(ref type, value);
         }
 
-        private MaterialType materialType;
-        public MaterialType MaterialType {
+        private StringGetter materialType;
+        public StringGetter MaterialType {
             get => materialType;
             set => SetProperty(ref materialType, value);
         }
@@ -70,14 +71,14 @@ namespace ForgeModGenerator.BlockGenerator.Models
             set => SetProperty(ref harvestLevel, value);
         }
 
-        private string soundType;
-        public string SoundType {
+        private StringGetter soundType;
+        public StringGetter SoundType {
             get => soundType;
             set => SetProperty(ref soundType, value);
         }
 
-        private string dropItem;
-        public string DropItem {
+        private StringGetter dropItem;
+        public StringGetter DropItem {
             get => dropItem;
             set => SetProperty(ref dropItem, value);
         }

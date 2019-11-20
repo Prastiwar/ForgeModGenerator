@@ -15,6 +15,10 @@ namespace ForgeModGenerator.Utility
             where TCollection : ICollection<TItem>
             where TItem : ICopiable
         {
+            if (collection == null)
+            {
+                throw new NullReferenceException(nameof(collection));
+            }
             TCollection newCollection = Activator.CreateInstance<TCollection>();
             foreach (TItem item in collection)
             {

@@ -1,4 +1,5 @@
 ﻿using ForgeModGenerator.BlockGenerator.Models;
+using ForgeModGenerator.CodeGeneration;
 using ForgeModGenerator.Controls;
 using ForgeModGenerator.Core;
 using ForgeModGenerator.Utility;
@@ -19,10 +20,24 @@ namespace ForgeModGenerator.BlockGenerator.Controls
         public IEnumerable<HarvestToolType> HarvestToolTypes => Enum.GetValues(typeof(HarvestToolType)).Cast<HarvestToolType>();
 
         public static readonly DependencyProperty SoundTypesProperty =
-            DependencyProperty.Register("SoundTypes", typeof(IEnumerable<string>), typeof(BlockEditForm), new PropertyMetadata(Enumerable.Empty<string>()));
-        public IEnumerable<string> SoundTypes {
-            get => (IEnumerable<string>)GetValue(SoundTypesProperty);
+            DependencyProperty.Register("SoundTypes", typeof(ChooseCollection), typeof(BlockEditForm), new PropertyMetadata(null));
+        public ChooseCollection SoundTypes {
+            get => (ChooseCollection)GetValue(SoundTypesProperty);
             set => SetValue(SoundTypesProperty, value);
+        }
+
+        public static readonly DependencyProperty DropItemsProperty =
+            DependencyProperty.Register("DropItems", typeof(ChooseCollection), typeof(BlockEditForm), new PropertyMetadata(null));
+        public ChooseCollection DropItems {
+            get => (ChooseCollection)GetValue(DropItemsProperty);
+            set => SetValue(DropItemsProperty, value);
+        }
+
+        public static readonly DependencyProperty MaterialTypesProperty =
+            DependencyProperty.Register("MaterialTypes", typeof(ChooseCollection), typeof(BlockEditForm), new PropertyMetadata(null));
+        public ChooseCollection MaterialTypes {
+            get => (ChooseCollection)GetValue(MaterialTypesProperty);
+            set => SetValue(MaterialTypesProperty, value);
         }
 
         public void SetDataContext(object context) => DataContext = context;

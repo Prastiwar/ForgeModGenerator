@@ -1,4 +1,5 @@
-﻿using ForgeModGenerator.Models;
+﻿using ForgeModGenerator.CodeGeneration;
+using ForgeModGenerator.Models;
 
 namespace ForgeModGenerator.ItemGenerator.Models
 {
@@ -46,8 +47,8 @@ namespace ForgeModGenerator.ItemGenerator.Models
             set => SetProperty(ref stackSize, value);
         }
 
-        private string material;
-        public string Material {
+        private StringGetter material;
+        public StringGetter Material {
             get => material;
             set => SetProperty(ref material, value);
         }
