@@ -5,6 +5,7 @@ using Prism.Commands;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -61,6 +62,7 @@ namespace ForgeModGenerator.ViewModels
                 if (ModelsRepository == null)
                 {
                     ModelsRepository = new ObservableCollection<TModel>();
+                    ModelsRepository.CollectionChanged += OnModelsRepositoryChanged;
                 }
                 else
                 {
@@ -74,6 +76,7 @@ namespace ForgeModGenerator.ViewModels
             }
             return false;
         }
+
 
         protected abstract TModel ParseModelFromJavaField(string line);
         protected virtual TModel CreateNewEmptyModel()
@@ -90,6 +93,29 @@ namespace ForgeModGenerator.ViewModels
                 ModelsRepository.Add(model);
                 await Task.Delay(1).ConfigureAwait(true);
             }
+        }
+
+        protected virtual IEnumerable<TModel> FindModelsFromScriptFile(string scriptFilePath)
+        {
+            if (!File.Exists(scriptFilePath))
+            {
+                return Enumerable.Empty<TModel>();
+            }
+            List<TModel> models = new List<TModel>(8);
+            IEnumerable<string> items = File.ReadLines(scriptFilePath).Where(x => x.Trim().StartsWith("public static final"));
+            foreach (string item in items)
+            {
+                string line = item.Trim();
+                if (TryParseModelFromJavaField(line, out TModel model))
+                {
+                    models.Add(model);
+                }
+                else
+                {
+                    Log.Warning($"Couldn't parse model of type {typeof(TModel)} from java field line {line}");
+                }
+            }
+            return models;
         }
 
         protected bool TryParseModelFromJavaField(string line, out TModel model)
@@ -120,29 +146,6 @@ namespace ForgeModGenerator.ViewModels
 
         protected string ValidateModel(object sender, string propertyName) => Validator?.Validate((TModel)sender, ModelsRepository, propertyName).Error;
 
-        protected virtual IEnumerable<TModel> FindModelsFromScriptFile(string scriptFilePath)
-        {
-            if (!File.Exists(scriptFilePath))
-            {
-                return Enumerable.Empty<TModel>();
-            }
-            List<TModel> models = new List<TModel>(8);
-            IEnumerable<string> items = File.ReadLines(scriptFilePath).Where(x => x.Trim().StartsWith("public static final"));
-            foreach (string item in items)
-            {
-                string line = item.Trim();
-                if (TryParseModelFromJavaField(line, out TModel model))
-                {
-                    models.Add(model);
-                }
-                else
-                {
-                    Log.Warning($"Couldn't parse model of type {typeof(TModel)} from java field line {line}");
-                }
-            }
-            return models;
-        }
-
         protected virtual void OnModelEdited(object sender, ItemEditedEventArgs<TModel> e)
         {
             if (e.Result)
@@ -151,6 +154,14 @@ namespace ForgeModGenerator.ViewModels
                 {
                     ModelsRepository.Add(e.ActualItem);
                 }
+                RegenerateModels();
+            }
+        }
+
+        protected virtual void OnModelsRepositoryChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action.HasFlag(NotifyCollectionChangedAction.Remove) || e.Action.HasFlag(NotifyCollectionChangedAction.Reset))
+            {
                 RegenerateModels();
             }
         }

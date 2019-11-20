@@ -3,18 +3,18 @@
     public class SoundTypeChooseCollection : ChooseCollection
     {
         protected override StringGetter[] BuiltInGetters => new StringGetter[] {
-            "Wood",
-            "Ground",
-            "Plant",
-            "Stone",
-            "Metal",
-            "Glass",
-            "Cloth",
-            "Sand",
-            "Snow",
-            "Ladder",
-            "Anvil",
-            "Slime"
+            "SoundType.Wood",
+            "SoundType.Ground",
+            "SoundType.Plant",
+            "SoundType.Stone",
+            "SoundType.Metal",
+            "SoundType.Glass",
+            "SoundType.Cloth",
+            "SoundType.Sand",
+            "SoundType.Snow",
+            "SoundType.Ladder",
+            "SoundType.Anvil",
+            "SoundType.Slime"
         };
     }
 }
