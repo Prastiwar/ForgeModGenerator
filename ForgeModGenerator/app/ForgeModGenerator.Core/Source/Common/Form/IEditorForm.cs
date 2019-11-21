@@ -10,7 +10,6 @@ namespace ForgeModGenerator
         event EventHandler<ItemEditedEventArgs<TItem>> ItemEdited;
         event EventHandler<TItem> OpenFormFailed;
 
-        IUIElement Form { get; set; }
         IValidator<TItem> Validator { get; set; }
         TItem EditingItem { get; }
 

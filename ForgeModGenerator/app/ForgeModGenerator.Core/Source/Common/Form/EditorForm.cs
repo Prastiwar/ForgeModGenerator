@@ -7,38 +7,41 @@ namespace ForgeModGenerator
 {
     public class EditorForm<TItem> : IEditorForm<TItem> where TItem : ICopiable, IDirty
     {
-        public EditorForm(IMemoryCache cache, IDialogService dialogService)
+        public EditorForm(IMemoryCache cache, IDialogService dialogService, IUIElementProvider formProvider)
         {
             Cache = cache;
+            DialogService = dialogService;
+            FormProvider = formProvider;
             EdiTItemCacheKey = Guid.NewGuid().ToString();
             FormClosing = DefaultOnFormClosing;
-            DialogService = dialogService;
         }
 
         public event EventHandler<TItem> OpenFormFailed;
         public event EventHandler<ItemEditorClosingDialogEventArgs<TItem>> FormClosing;
         public event EventHandler<ItemEditedEventArgs<TItem>> ItemEdited;
 
-        public IUIElement Form { get; set; }
         public IValidator<TItem> Validator { get; set; }
         public TItem EditingItem { get; protected set; }
 
         protected IDialogService DialogService { get; set; }
         protected IMemoryCache Cache { get; private set; }
         protected string EdiTItemCacheKey { get; }
+        protected IUIElementProvider FormProvider { get; set; }
+        protected IUIElement UsedForm { get; set; }
 
         public virtual async void OpenItemEditor(TItem item)
         {
             EditingItem = item;
-            if (Form == null)
+            if (FormProvider == null)
             {
                 return;
             }
+            UsedForm = FormProvider.GetUIElement();
             Cache.Set(EdiTItemCacheKey, EditingItem.DeepClone()); // cache item state so it can be restored later
             bool result = false;
             try
             {
-                result = (bool)await DialogService.Show(Form,
+                result = (bool)await DialogService.Show(UsedForm,
                     (sender, args) => {
                         OnItemEditorOpening(sender, new ItemEditorOpeningDialogEventArgs<TItem>(item));
                         if (args.ShouldClose)
@@ -55,8 +58,9 @@ namespace ForgeModGenerator
                         }
                     }).ConfigureAwait(true);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Log.Error(ex, "Couldn't open form");
                 OnOpenFormFailed(item);
                 return;
             }
@@ -93,7 +97,7 @@ namespace ForgeModGenerator
             return true;
         }
 
-        protected virtual void OnItemEditorOpening(object sender, ItemEditorOpeningDialogEventArgs<TItem> args) => Form.SetDataContext(EditingItem);
+        protected virtual void OnItemEditorOpening(object sender, ItemEditorOpeningDialogEventArgs<TItem> args) => UsedForm.SetDataContext(EditingItem);
 
         protected virtual void OnItemEdited(ItemEditedEventArgs<TItem> e)
         {

@@ -169,7 +169,7 @@ namespace ForgeModGenerator.ViewModels
 
         protected virtual void OnModelsRepositoryChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (e.Action.HasFlag(NotifyCollectionChangedAction.Remove) || e.Action.HasFlag(NotifyCollectionChangedAction.Reset))
+            if (e.Action.HasFlag(NotifyCollectionChangedAction.Remove))
             {
                 RegenerateModels();
             }

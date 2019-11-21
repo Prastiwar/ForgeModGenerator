@@ -1,5 +1,7 @@
 ﻿using ForgeModGenerator.ApplicationModule.ViewModels;
 using ForgeModGenerator.ApplicationModule.Views;
+using ForgeModGenerator.BlockGenerator;
+using ForgeModGenerator.BlockGenerator.Models;
 using ForgeModGenerator.CodeGeneration;
 using ForgeModGenerator.Models;
 using ForgeModGenerator.RecipeGenerator;
@@ -88,7 +90,6 @@ namespace ForgeModGenerator
 
             containerRegistry.Register<ISerializer, JsonSerializer>();
             containerRegistry.Register(typeof(ISerializer<>), typeof(JsonSerializer<>));
-            containerRegistry.Register(typeof(IEditorFormFactory<>), typeof(EditorFormFactory<>));
 
             RegisterWorkspaceSetups(containerRegistry);
             RegisterFactories(containerRegistry);
@@ -144,7 +145,30 @@ namespace ForgeModGenerator
         {
             bool IsSerializerRegistered = TryRegisterInterfaceForModel(containerRegistry, model, "Serializer");
             bool IsValidatorRegistered = TryRegisterInterfaceForModel(containerRegistry, model, "Validator");
+            bool IsFormProviderRegistered = TryRegisterClassForModel(containerRegistry, model, "ModelFormProvider");
             bool IsEditorFormFactoryRegistered = TryRegisterInterfaceForModel(containerRegistry, model, "EditorFormFactory");
+        }
+
+        private bool TryRegisterClassForModel(IContainerRegistry containerRegistry, Type model, string name, Type defaultClassType = null)
+        {
+            bool registered = false;
+            string modelName = model.Name;
+            Type classType = presentationAssembly.ExportedTypes.FirstOrDefault(x => x.Name == modelName + name)
+                                         ?? presentationAssembly.ExportedTypes.FirstOrDefault(x => x.Name == modelName + "s" + name);
+            classType = classType ?? defaultClassType;
+            if (classType != null)
+            {
+                // Predicate to take all types that ends with nameof(name) including generic versions
+                bool isNamed(Type x) => x.Name.EndsWith(name) || x.Name.Remove(x.Name.Length - 2, 2).EndsWith(name);
+                Type type = classType.BaseType;
+                while (type != null && isNamed(type))
+                {
+                    containerRegistry.Register(type, classType);
+                    registered = true;
+                    type = type.BaseType;
+                }
+            }
+            return registered;
         }
 
         private bool TryRegisterInterfaceForModel(IContainerRegistry containerRegistry, Type model, string name, Type defaultClassType = null)
@@ -203,7 +227,7 @@ namespace ForgeModGenerator
             containerRegistry.Register(typeof(IFolderSynchronizerFactory<,>), typeof(FolderSynchronizerFactory<,>));
             containerRegistry.Register(typeof(IFoldersExplorerFactory<,>), typeof(FoldersExplorerFactory<,>));
             containerRegistry.Register(typeof(IFoldersFinder<,>), typeof(DefaultFoldersFinder<,>));
-            containerRegistry.Register(typeof(IEditorFormFactory<>), typeof(EditorFormFactory<>));
+            containerRegistry.Register(typeof(IEditorFormFactory<>), typeof(ModelEditorFormFactory<>));
 
             containerRegistry.Register<ISoundJsonUpdaterFactory, SoundJsonUpdaterFactory>();
             containerRegistry.Register<IFoldersFactory<SoundEvent, Sound>, SoundEventsFactory>();

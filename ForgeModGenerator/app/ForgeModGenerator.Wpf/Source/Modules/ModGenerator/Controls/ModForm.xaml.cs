@@ -1,4 +1,5 @@
 ﻿using ForgeModGenerator.Models;
+using ForgeModGenerator.Utility;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -11,18 +12,13 @@ namespace ForgeModGenerator.ModGenerator.Controls
     {
         public ModForm() => InitializeComponent();
 
+        public IEnumerable<ModSide> Sides => ReflectionHelper.GetEnumValues<ModSide>();
+
         public static readonly DependencyProperty RemoveModCommandProperty =
             DependencyProperty.Register("RemoveModCommand", typeof(ICommand), typeof(ModForm), new PropertyMetadata(null));
         public ICommand RemoveModCommand {
             get => (ICommand)GetValue(RemoveModCommandProperty);
             set => SetValue(RemoveModCommandProperty, value);
-        }
-
-        public static readonly DependencyProperty SidesProperty =
-            DependencyProperty.Register("Sides", typeof(IEnumerable<ModSide>), typeof(ModForm), new PropertyMetadata(null));
-        public IEnumerable<ModSide> Sides {
-            get => (IEnumerable<ModSide>)GetValue(SidesProperty);
-            set => SetValue(SidesProperty, value);
         }
 
         public static readonly DependencyProperty SetupsProperty =

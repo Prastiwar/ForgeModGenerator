@@ -25,7 +25,12 @@ namespace ForgeModGenerator.ViewModels
         private ICommand onLoadedCommand;
         public ICommand OnLoadedCommand => onLoadedCommand ?? (onLoadedCommand = new DelegateCommand(OnLoaded));
 
+        private ICommand onUnloadedCommand;
+        public ICommand OnUnloadedCommand => onUnloadedCommand ?? (onUnloadedCommand = new DelegateCommand(OnUnloaded));
+
         protected virtual void OnLoaded() => Refresh();
+
+        protected virtual void OnUnloaded() { }
 
         protected virtual bool CanRefresh() => SessionContext.SelectedMod != null;
 

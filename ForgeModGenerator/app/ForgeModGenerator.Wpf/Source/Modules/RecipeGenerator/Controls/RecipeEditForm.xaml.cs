@@ -118,7 +118,7 @@ namespace ForgeModGenerator.RecipeGenerator.Controls
         {
             Button button = (Button)sender;
             ItemListForm form = new ItemListForm();
-            bool changed = await StaticCommands.ShowMCItemList(button, "RecipeHost", form).ConfigureAwait(true);
+            bool changed = await StaticCommands.ShowMCItemList(button, (string)DialogHost.Identifier, form).ConfigureAwait(true);
             if (changed)
             {
                 RecipeCreator recipe = (RecipeCreator)button.DataContext;
@@ -130,7 +130,7 @@ namespace ForgeModGenerator.RecipeGenerator.Controls
         {
             Button button = (Button)sender;
             ItemListForm form = new ItemListForm();
-            bool changed = await StaticCommands.ShowMCItemList(button, "RecipeHost", form).ConfigureAwait(true);
+            bool changed = await StaticCommands.ShowMCItemList(button, (string)DialogHost.Identifier, form).ConfigureAwait(true);
             if (changed)
             {
                 UpdatePattern((RecipeCreator)button.DataContext, (string)button.Tag, form.SelectedLocator.Name);

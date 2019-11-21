@@ -1,5 +1,8 @@
 ﻿using MaterialDesignThemes.Wpf;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -7,6 +10,8 @@ namespace ForgeModGenerator.Services
 {
     public class DialogService : IDialogService
     {
+        private readonly FieldInfo dialogInstancesField = typeof(DialogHost).GetField("LoadedInstances", BindingFlags.NonPublic | BindingFlags.Static);
+
         public Task ShowError(string message, string title, string buttonText = null, Action afterHideCallback = null)
         {
             MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Error);
@@ -51,25 +56,47 @@ namespace ForgeModGenerator.Services
             return Task.FromResult(boolResult);
         }
 
-        public Task<object> Show(object content) => DialogHost.Show(content);
-        public Task<object> Show(object content, EventHandler<DialogOpenedEventArgs> openedArgs, EventHandler<DialogClosingEventArgs> closingArgs) =>
-            DialogHost.Show(content,
-                new DialogOpenedEventHandler((s, args) => {
-                    DialogOpenedEventArgs extArgs = new DialogOpenedEventArgs();
-                    openedArgs(s, extArgs);
-                    if (extArgs.ShouldClose)
-                    {
-                        args.Session.Close();
-                    }
-                }),
-                new DialogClosingEventHandler((s, args) => {
-                    DialogClosingEventArgs extArgs = new DialogClosingEventArgs(args.Parameter);
-                    closingArgs(s, extArgs);
-                    if (extArgs.IsCancelled)
-                    {
-                        args.Cancel();
-                    }
-                })
-            );
+        public Task<object> Show(object content) => ShowDialog(content, null, null);
+
+        public Task<object> Show(object content, EventHandler<DialogOpenedEventArgs> openedArgs, EventHandler<DialogClosingEventArgs> closingArgs)
+        {
+            DialogOpenedEventHandler openedEventHandler = new DialogOpenedEventHandler((s, args) => {
+                DialogOpenedEventArgs extArgs = new DialogOpenedEventArgs();
+                openedArgs(s, extArgs);
+                if (extArgs.ShouldClose)
+                {
+                    args.Session.Close();
+                }
+            });
+
+            DialogClosingEventHandler dialogClosingEventHandler = new DialogClosingEventHandler((s, args) => {
+                DialogClosingEventArgs extArgs = new DialogClosingEventArgs(args.Parameter);
+                closingArgs(s, extArgs);
+                if (extArgs.IsCancelled)
+                {
+                    args.Cancel();
+                }
+            });
+            return ShowDialog(content, openedEventHandler, dialogClosingEventHandler);
+        }
+
+        private Task<object> ShowDialog(object content, DialogOpenedEventHandler openedEventHandler, DialogClosingEventHandler dialogClosingEventHandler)
+        {
+            HashSet<DialogHost> instances = (HashSet<DialogHost>)dialogInstancesField.GetValue(null);
+            if (instances != null)
+            {
+                if (instances.Count == 0)
+                {
+                    throw new InvalidOperationException("No loaded DialogHost instances.");
+                }
+                DialogHost host = instances.First();
+                if (host.IsOpen)
+                {
+                    host.IsOpen = false;
+                }
+                return host.ShowDialog(content, openedEventHandler, dialogClosingEventHandler);
+            }
+            return DialogHost.Show(content, openedEventHandler, dialogClosingEventHandler);
+        }
     }
 }

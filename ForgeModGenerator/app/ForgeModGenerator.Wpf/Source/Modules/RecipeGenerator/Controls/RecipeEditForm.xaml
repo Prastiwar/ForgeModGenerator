@@ -14,7 +14,8 @@
              d:DesignWidth="500">
     <Grid Margin="16"
           Background="WhiteSmoke">
-        <materialDesign:DialogHost Identifier="RecipeHost">
+        <materialDesign:DialogHost x:Name="DialogHost"
+                                   Identifier="RecipeHost">
             <ScrollViewer>
                 <StackPanel>
                     <ComboBox x:Name="RecipeTypeComboBox"
