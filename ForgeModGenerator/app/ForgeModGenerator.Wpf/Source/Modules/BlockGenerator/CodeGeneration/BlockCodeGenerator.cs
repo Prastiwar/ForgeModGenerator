@@ -24,7 +24,8 @@ namespace ForgeModGenerator.BlockGenerator.CodeGeneration
             CodeMethodInvokeExpression setBlockHarvestLevel = NewMethodInvoke(setSoundType, "setBlockHarvestLevel", NewPrimitive(block.HarvestLevelTool.ToString()), NewPrimitive(block.HarvestLevel));
             CodeMethodInvokeExpression setHardness = NewMethodInvoke(setBlockHarvestLevel, "setHardness", NewPrimitive(block.Hardness));
             CodeMethodInvokeExpression setResistance = NewMethodInvoke(setHardness, "setResistance", NewPrimitive(block.Resistance));
-            CodeMethodInvokeExpression setLightLevel = NewMethodInvoke(setResistance, "setLightLevel", NewPrimitive(block.LightLevel / 15));
+            float lightLevel = (float)System.Math.Round(((float)block.LightLevel / 15), 2);
+            CodeMethodInvokeExpression setLightLevel = NewMethodInvoke(setResistance, "setLightLevel", NewPrimitive(lightLevel));
             CodeMethodInvokeExpression setCollidable = NewMethodInvoke(setLightLevel, "setCollidable", NewPrimitive(block.ShouldMakeCollision));
             CodeExpression initExpression = setCollidable;
             if (block.Type == BlockType.Ore)

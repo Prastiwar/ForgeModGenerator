@@ -10,7 +10,7 @@
              xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
              xmlns:materialDesign="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
              mc:Ignorable="d"
-             d:DesignHeight="450"
+             d:DesignHeight="490"
              d:DesignWidth="500">
     <Grid Margin="16">
         <materialDesign:DialogHost x:Name="DialogHost"
@@ -176,12 +176,17 @@
                                                   HideUpDownButtons="True"
                                                   StringFormat="{}{0:N2}"
                                                   FontSize="15" />
-                            <Slider x:Name="LightLevelSlider"
-                                    Value="{Binding Path=LightLevel}"
-                                    VerticalAlignment="Center"
-                                    Height="25"
-                                    Minimum="0"
-                                    Maximum="15" />
+                            <StackPanel x:Name="LightLevelSlider"
+                                        Orientation="Horizontal">
+                                <Label  Width="24"
+                                        Content="{Binding Path=LightLevel, Mode=OneWay}" />
+                                <Slider Value="{Binding Path=LightLevel}"
+                                        Margin="5,5,0,0"
+                                        MinWidth="250"
+                                        Height="25"
+                                        Minimum="0"
+                                        Maximum="15" />
+                            </StackPanel>
                             <CheckBox x:Name="ShouldMakeCollisionCheckBox"
                                       FontSize="15"
                                       Height="25"
