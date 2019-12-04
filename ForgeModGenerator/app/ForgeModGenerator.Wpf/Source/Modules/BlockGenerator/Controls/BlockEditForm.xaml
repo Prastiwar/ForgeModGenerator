@@ -25,79 +25,92 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0"
                                     Margin="7">
-                            <TextBlock Text="Name: "
+                            <TextBlock x:Name="NameTextBlock"
+                                       Text="Name: "
                                        FontSize="14"
                                        FontWeight="Bold"
                                        Margin="3,0,3,0"
                                        Height="{Binding ActualHeight, ElementName=NameTextBox, Mode=OneWay}"
                                        VerticalAlignment="Center" />
-                            <TextBlock Text="Type: "
+                            <TextBlock x:Name="TypeTextBlock"
+                                       Text="Type: "
                                        FontSize="14"
                                        FontWeight="Bold"
                                        Margin="3,0,3,0"
                                        Height="{Binding ActualHeight, ElementName=TypeComboBox, Mode=OneWay}"
                                        VerticalAlignment="Center" />
-                            <TextBlock Text="SoundType: "
+                            <TextBlock x:Name="SoundTypeTextBlock"
+                                       Text="SoundType: "
                                        FontSize="14"
                                        FontWeight="Bold"
                                        Margin="3,0,3,0"
                                        Height="{Binding ActualHeight, ElementName=SoundTypeComboBox, Mode=OneWay}"
                                        VerticalAlignment="Center" />
-                            <TextBlock Text="DropItem: "
+                            <TextBlock x:Name="DropItemTextBlock"
+                                       Text="DropItem: "
                                        FontSize="14"
                                        FontWeight="Bold"
                                        Margin="3,0,3,0"
                                        Height="{Binding ActualHeight, ElementName=DropItemComboBox, Mode=OneWay}"
                                        VerticalAlignment="Center" />
-                            <TextBlock Text="Material: "
+                            <TextBlock x:Name="MaterialTextBlock"
+                                       Text="Material: "
                                        FontSize="14"
                                        FontWeight="Bold"
                                        Margin="3,0,3,0"
                                        Height="{Binding ActualHeight, ElementName=DropItemComboBox, Mode=OneWay}"
                                        VerticalAlignment="Center" />
-                            <TextBlock Text="HarvestLevelTool: "
+                            <TextBlock x:Name="HarvestLevelToolTextBlock"
+                                       Text="Harvest Level Tool: "
                                        FontSize="14"
                                        FontWeight="Bold"
                                        Margin="3,0,3,0"
                                        Height="{Binding ActualHeight, ElementName=HarvestLevelToolComboBox, Mode=OneWay}"
                                        VerticalAlignment="Center" />
-                            <TextBlock Text="HarvestLevel: "
+                            <TextBlock x:Name="HarvestLevelTextBlock"
+                                       Text="Harvest Level: "
                                        FontSize="14"
                                        FontWeight="Bold"
                                        Margin="3,0,3,0"
                                        Height="{Binding ActualHeight, ElementName=HarvestLevelNumeric, Mode=OneWay}"
                                        VerticalAlignment="Center" />
-                            <TextBlock Text="Hardness: "
+                            <TextBlock x:Name="HardnessTextBlock"
+                                       Text="Hardness: "
                                        FontSize="14"
                                        FontWeight="Bold"
                                        Margin="3,0,3,0"
                                        Height="{Binding ActualHeight, ElementName=HardnessNumeric, Mode=OneWay}"
                                        VerticalAlignment="Center" />
-                            <TextBlock Text="Resistance: "
+                            <TextBlock x:Name="ResistanceTextBlock"
+                                       Text="Resistance: "
                                        FontSize="14"
                                        FontWeight="Bold"
                                        Margin="3,0,3,0"
                                        Height="{Binding ActualHeight, ElementName=ResistanceNumeric, Mode=OneWay}"
                                        VerticalAlignment="Center" />
-                            <TextBlock Text="Light Level: "
+                            <TextBlock x:Name="LightLevelTextBlock"
+                                       Text="Light Level: "
                                        FontSize="14"
                                        FontWeight="Bold"
                                        Margin="3,0,3,0"
                                        Height="{Binding ActualHeight, ElementName=LightLevelSlider, Mode=OneWay}"
                                        VerticalAlignment="Center" />
-                            <TextBlock Text="ShouldMakeCollision: "
+                            <TextBlock x:Name="ShouldMakeCollisionTextBlock"
+                                       Text="Should Make Collision: "
                                        FontSize="14"
                                        FontWeight="Bold"
                                        Margin="3,0,3,0"
                                        Height="{Binding ActualHeight, ElementName=ShouldMakeCollisionCheckBox, Mode=OneWay}"
                                        VerticalAlignment="Center" />
-                            <TextBlock Text="Texture: "
+                            <TextBlock x:Name="TextureTextBlock"
+                                       Text="Texture: "
                                        FontSize="14"
                                        FontWeight="Bold"
                                        Margin="3,0,3,0"
                                        Height="{Binding ActualHeight, ElementName=TextureButton, Mode=OneWay}"
                                        VerticalAlignment="Center" />
-                            <TextBlock Text="InventoryTexture: "
+                            <TextBlock x:Name="InventoryTextureTextBlock"
+                                       Text="Inventory Texture: "
                                        FontSize="14"
                                        FontWeight="Bold"
                                        Margin="3,0,3,0"
@@ -114,6 +127,7 @@
                             <ComboBox x:Name="TypeComboBox"
                                       SelectedValue="{Binding Path=Type}"
                                       ItemsSource="{Binding Path=BlockTypes, RelativeSource={RelativeSource AncestorType=local:BlockEditForm}}"
+                                      SelectionChanged="TypeComboBox_SelectionChanged"
                                       Background="#FF404040"
                                       Foreground="#FFE8E8E8"
                                       BorderBrush="Wheat"
@@ -142,7 +156,7 @@
                                       wpf:HintAssist.Hint="Select Drop Item"
                                       HorizontalContentAlignment="Center" />
                             <ComboBox x:Name="MaterialTypeComboBox"
-                                      SelectedValue="{Binding Path=MaterialType}"
+                                      SelectedValue="{Binding Path=MaterialType, ValidatesOnDataErrors=True}"
                                       ItemsSource="{Binding Path=MaterialTypes, RelativeSource={RelativeSource AncestorType=local:BlockEditForm}}"
                                       Background="#FF404040"
                                       Foreground="#FFE8E8E8"
@@ -191,16 +205,30 @@
                                       FontSize="15"
                                       Height="25"
                                       IsChecked="{Binding Path=ShouldMakeCollision}" />
-                            <Button x:Name="TextureButton"
-                                    Style="{StaticResource ItemSlotButtonStyle}"
-                                    Command="{x:Null}"
-                                    Click="TextureButton_Click"
-                                    Margin="15,0,15,0" />
-                            <Button x:Name="InventoryTextureButton"
-                                    Style="{StaticResource ItemSlotButtonStyle}"
-                                    Command="{x:Null}"
-                                    Click="InventoryTextureButton_Click"
-                                    Margin="15,0,15,0" />
+                            <StackPanel x:Name="TextureButton"
+                                        Orientation="Horizontal">
+                                <Button Style="{StaticResource ItemSlotButtonStyle}"
+                                        Command="{x:Null}"
+                                        Click="TextureButton_Click"
+                                        Margin="15,0,15,0" />
+                                <controls:SubmitTextBox MinWidth="150"
+                                                        VerticalAlignment="Top"
+                                                        IsTabStop="True"
+                                                        IsEnabled="False"
+                                                        Text="{Binding Path=TextureName, ValidatesOnDataErrors=True}" />
+                            </StackPanel>
+                            <StackPanel x:Name="InventoryTextureButton"
+                                        Orientation="Horizontal">
+                                <Button Style="{StaticResource ItemSlotButtonStyle}"
+                                        Command="{x:Null}"
+                                        Click="InventoryTextureButton_Click"
+                                        Margin="15,0,15,0" />
+                                <controls:SubmitTextBox MinWidth="150"
+                                                        VerticalAlignment="Top"
+                                                        IsTabStop="True"
+                                                        IsEnabled="False"
+                                                        Text="{Binding Path=InventoryTextureName, ValidatesOnDataErrors=True}" />
+                            </StackPanel>
                         </StackPanel>
                     </Grid>
                 </Border>

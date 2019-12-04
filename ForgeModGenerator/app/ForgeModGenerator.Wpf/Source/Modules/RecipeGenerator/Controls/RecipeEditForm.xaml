@@ -21,6 +21,7 @@
                     <ComboBox x:Name="RecipeTypeComboBox"
                               SelectedItem="{Binding Path=RecipeType}"
                               ItemsSource="{Binding Path=RecipeTypes, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:RecipeEditForm}}"
+                              SelectionChanged="RecipeTypeComboBox_SelectionChanged"
                               DisplayMemberPath="Name"
                               Background="#FF404040"
                               Foreground="#FFE8E8E8"

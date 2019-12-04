@@ -7,6 +7,7 @@
         public StringGetter(string val) => value = val;
 
         public static implicit operator StringGetter(string val) => new StringGetter(val);
+        public static implicit operator string(StringGetter val) => val?.value;
 
         public override string ToString() => value;
 

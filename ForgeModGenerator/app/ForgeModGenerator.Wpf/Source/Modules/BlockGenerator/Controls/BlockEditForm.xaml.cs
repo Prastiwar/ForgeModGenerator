@@ -40,6 +40,15 @@ namespace ForgeModGenerator.BlockGenerator.Controls
 
         public void SetDataContext(object context) => DataContext = context;
 
+        private void TypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            BlockType newType = (BlockType)e.AddedItems[0];
+            bool shouldShowDropItem = !newType.HasFlag(BlockType.Ore);
+            Visibility dropItemVisibility = shouldShowDropItem ? Visibility.Visible : Visibility.Collapsed;
+            DropItemComboBox.Visibility = dropItemVisibility;
+            DropItemTextBlock.Visibility = dropItemVisibility;
+        }
+
         private async Task<MCItemLocator> SetTexture(Button button)
         {
             ItemListForm form = new ItemListForm();

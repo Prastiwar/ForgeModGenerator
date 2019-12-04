@@ -11,11 +11,7 @@ namespace ForgeModGenerator.RecipeGenerator.Controls
 {
     public partial class RecipeEditForm : UserControl, IUIElement
     {
-        public RecipeEditForm()
-        {
-            InitializeComponent();
-            RecipeTypeComboBox.SelectionChanged += RecipeTypeComboBox_SelectionChanged;
-        }
+        public RecipeEditForm() => InitializeComponent();
 
         public static readonly DependencyProperty RecipeTypesProperty =
             DependencyProperty.Register("RecipeTypes", typeof(IEnumerable<Type>), typeof(RecipeEditForm), new PropertyMetadata(Enumerable.Empty<Type>()));

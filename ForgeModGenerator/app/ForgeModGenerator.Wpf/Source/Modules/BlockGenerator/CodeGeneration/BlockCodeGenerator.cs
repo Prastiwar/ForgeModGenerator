@@ -19,20 +19,26 @@ namespace ForgeModGenerator.BlockGenerator.CodeGeneration
 
         protected override CodeMemberField CreateElementField(Block block)
         {
-            CodeObjectCreateExpression assignObject = NewObject("BlockBase", NewPrimitive(block.Name.ToLower()), NewPrimitive(block.MaterialType));
-            CodeMethodInvokeExpression setSoundType = NewMethodInvoke(assignObject, "setSoundType", NewPrimitive(block.SoundType));
-            CodeMethodInvokeExpression setBlockHarvestLevel = NewMethodInvoke(setSoundType, "setBlockHarvestLevel", NewPrimitive(block.HarvestLevelTool.ToString()), NewPrimitive(block.HarvestLevel));
-            CodeMethodInvokeExpression setHardness = NewMethodInvoke(setBlockHarvestLevel, "setHardness", NewPrimitive(block.Hardness));
-            CodeMethodInvokeExpression setResistance = NewMethodInvoke(setHardness, "setResistance", NewPrimitive(block.Resistance));
-            float lightLevel = (float)System.Math.Round(((float)block.LightLevel / 15), 2);
-            CodeMethodInvokeExpression setLightLevel = NewMethodInvoke(setResistance, "setLightLevel", NewPrimitive(lightLevel));
-            CodeMethodInvokeExpression setCollidable = NewMethodInvoke(setLightLevel, "setCollidable", NewPrimitive(block.ShouldMakeCollision));
-            CodeExpression initExpression = setCollidable;
-            if (block.Type == BlockType.Ore)
+            CodeExpression initExpression = null;
+
+            initExpression = NewObject("BlockBase", NewPrimitive(block.Name.ToLower()), NewPrimitive(block.MaterialType));
+            if (!string.IsNullOrEmpty(block.SoundType))
             {
-                CodeMethodInvokeExpression setDropItem = NewMethodInvoke(setCollidable, "setDropItem", NewPrimitive(block.DropItem));
-                initExpression = setDropItem;
+                initExpression = NewMethodInvoke(initExpression, "setSoundType", NewPrimitive(block.SoundType));
             }
+
+            initExpression = NewMethodInvoke(initExpression, "setBlockHarvestLevel", NewPrimitive(block.HarvestLevelTool.ToString()), NewPrimitive(block.HarvestLevel));
+            initExpression = NewMethodInvoke(initExpression, "setHardness", NewPrimitive(block.Hardness));
+            initExpression = NewMethodInvoke(initExpression, "setResistance", NewPrimitive(block.Resistance));
+            float lightLevel = (float)System.Math.Round(((float)block.LightLevel / 15), 2);
+            initExpression = NewMethodInvoke(initExpression, "setLightLevel", NewPrimitive(lightLevel));
+            initExpression = NewMethodInvoke(initExpression, "setCollidable", NewPrimitive(block.ShouldMakeCollision));
+
+            if (block.Type == BlockType.Ore && !string.IsNullOrEmpty(block.DropItem))
+            {
+                initExpression = NewMethodInvoke(initExpression, "setDropItem", NewPrimitive(block.DropItem));
+            }
+
             CreateBlockstateJson(block);
             return NewFieldGlobal("Block", block.Name.ToUpper(), initExpression);
         }
