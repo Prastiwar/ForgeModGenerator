@@ -1,5 +1,6 @@
 ﻿using ForgeModGenerator.Models;
 using ForgeModGenerator.Services;
+using ForgeModGenerator.Utility;
 using ForgeModGenerator.Validation;
 using Prism.Commands;
 using System;
@@ -77,6 +78,25 @@ namespace ForgeModGenerator.ViewModels
             return false;
         }
 
+        /// <summary> Returns content from parantheses block => forString(content) </summary>
+        protected string GetParenthesesContentFor(string fromString, string forString, int startLookingForStringIndex = 0)
+        {
+            int startIndex = fromString.IndexOf(forString, startLookingForStringIndex);
+            if (startIndex < 0)
+            {
+                return "";
+            }
+            fromString = fromString.Substring(startIndex);
+            string content = fromString.GetParenthesesContent();
+            return content;
+        }
+
+        /// <summary> Returns content from parantheses block => forString(content) </summary>
+        protected string[] SplitParenthesesContentFor(string fromString, string forString, int startLookingForStringIndex = 0)
+        {
+            string content = GetParenthesesContentFor(fromString, forString, startLookingForStringIndex);
+            return content == null ? Array.Empty<string>() : content.SplitTrim(',');
+        }
 
         protected abstract TModel ParseModelFromJavaField(string line);
         protected virtual TModel CreateNewEmptyModel()

@@ -1,7 +1,5 @@
 ﻿using ForgeModGenerator.ApplicationModule.ViewModels;
 using ForgeModGenerator.ApplicationModule.Views;
-using ForgeModGenerator.BlockGenerator;
-using ForgeModGenerator.BlockGenerator.Models;
 using ForgeModGenerator.CodeGeneration;
 using ForgeModGenerator.Models;
 using ForgeModGenerator.RecipeGenerator;
@@ -111,13 +109,11 @@ namespace ForgeModGenerator
             containerRegistry.RegisterInstance<IDialogService>(new DialogService());
             containerRegistry.RegisterInstance<ISynchronizeInvoke>(SyncInvokeObject.Default);
 
-            containerRegistry.RegisterInstance(new ArmorMaterialChooseCollection());
-            containerRegistry.RegisterInstance(new BlockChooseCollection());
-            containerRegistry.RegisterInstance(new BlockMaterialChooseCollection());
-            containerRegistry.RegisterInstance(new ItemChooseCollection());
-            containerRegistry.RegisterInstance(new SoundEventChooseCollection());
-            containerRegistry.RegisterInstance(new SoundTypeChooseCollection());
-            containerRegistry.RegisterInstance(new ToolMaterialChooseCollection());
+            foreach (Type chooseCollectionType in coreAssembly.ExportedTypes.Where(x => x.Name.EndsWith("ChooseCollection")))
+            {
+                containerRegistry.RegisterInstance(Activator.CreateInstance(chooseCollectionType));
+            }
+
         }
 
         private void SetProvider(IContainerRegistry containerRegistry)

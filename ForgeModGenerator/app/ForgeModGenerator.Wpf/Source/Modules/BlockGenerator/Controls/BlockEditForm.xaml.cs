@@ -43,7 +43,7 @@ namespace ForgeModGenerator.BlockGenerator.Controls
         private void TypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             BlockType newType = (BlockType)e.AddedItems[0];
-            bool shouldShowDropItem = !newType.HasFlag(BlockType.Ore);
+            bool shouldShowDropItem = newType.HasFlag(BlockType.Ore);
             Visibility dropItemVisibility = shouldShowDropItem ? Visibility.Visible : Visibility.Collapsed;
             DropItemComboBox.Visibility = dropItemVisibility;
             DropItemTextBlock.Visibility = dropItemVisibility;

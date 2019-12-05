@@ -4,6 +4,7 @@ using ForgeModGenerator.Services;
 using ForgeModGenerator.Utility;
 using ForgeModGenerator.Validation;
 using ForgeModGenerator.ViewModels;
+using System;
 using System.IO;
 
 namespace ForgeModGenerator.BlockGenerator.ViewModels
@@ -39,64 +40,41 @@ namespace ForgeModGenerator.BlockGenerator.ViewModels
 
             Block block = new Block();
             System.Globalization.CultureInfo invariancy = System.Globalization.CultureInfo.InvariantCulture;
+            string[] args = Array.Empty<string>();
 
-            int startIndex = line.IndexOf("new ") + 4;
+            int startIndex = line.IndexOf("new ") + "new ".Length;
             int endIndex = line.IndexOf("(", startIndex);
             string type = line.Substring(startIndex, endIndex - startIndex);
             block.Type = type == "OreBase" ? BlockType.Ore : BlockType.Hard;
 
-            startIndex = line.IndexOf("(", endIndex) + 1;
-            endIndex = line.IndexOf(",", startIndex);
-            string name = line.Substring(startIndex, endIndex - startIndex);
-            block.Name = name.Replace("\"", "");
-
-            startIndex = line.IndexOf(" ", endIndex) + 1;
-            endIndex = line.IndexOf(")", startIndex);
-            string material = line.Substring(startIndex, endIndex - startIndex);
-            block.MaterialType = material.Replace("\"", "");
-
-            startIndex = line.IndexOf("(", endIndex) + 1;
-            endIndex = line.IndexOf(")", startIndex);
-            string soundType = line.Substring(startIndex, endIndex - startIndex);
+            string soundType = GetParenthesesContentFor(line, "setSoundType");
             block.SoundType = soundType.Replace("\"", "");
 
-            startIndex = line.IndexOf("(", endIndex) + 1;
-            endIndex = line.IndexOf(",", startIndex);
-            string blockHarvestTool = line.Substring(startIndex, endIndex - startIndex);
-            block.HarvestLevelTool = ReflectionHelper.ParseEnum<HarvestToolType>(blockHarvestTool.Replace("\"", ""));
-
-            startIndex = line.IndexOf(" ", endIndex) + 1;
-            endIndex = line.IndexOf(")", startIndex);
-            string blockHarvestLevel = line.Substring(startIndex, endIndex - startIndex);
-            block.HarvestLevel = int.Parse(blockHarvestLevel);
-
-            startIndex = line.IndexOf("(", endIndex) + 1;
-            endIndex = line.IndexOf(")", startIndex);
-            string hardness = line.Substring(startIndex, endIndex - startIndex);
+            string hardness = GetParenthesesContentFor(line, "setHardness");
             block.Hardness = float.Parse(hardness.RemoveEnding(), invariancy);
 
-            startIndex = line.IndexOf("(", endIndex) + 1;
-            endIndex = line.IndexOf(")", startIndex);
-            string resistance = line.Substring(startIndex, endIndex - startIndex);
+            string resistance = GetParenthesesContentFor(line, "setResistance");
             block.Resistance = float.Parse(resistance.RemoveEnding(), invariancy);
 
-            startIndex = line.IndexOf("(", endIndex) + 1;
-            endIndex = line.IndexOf(")", startIndex);
-            string lightLevel = line.Substring(startIndex, endIndex - startIndex);
+            string collidable = GetParenthesesContentFor(line, "setCollidable");
+            block.ShouldMakeCollision = bool.Parse(collidable);
+
+            args = SplitParenthesesContentFor(line, type);
+            block.Name = args[0].Replace("\"", "");
+            block.MaterialType = args[1];
+
+            args = SplitParenthesesContentFor(line, "setBlockHarvestLevel", endIndex);
+            block.HarvestLevelTool = ReflectionHelper.ParseEnum<HarvestToolType>(args[0].Replace("\"", ""));
+            block.HarvestLevel = int.Parse(args[1]);
+
+            string lightLevel = GetParenthesesContentFor(line, "setLightLevel");
             float lightLevelFloat = float.Parse(lightLevel.RemoveEnding(), invariancy);
             lightLevelFloat = lightLevelFloat > 0 ? lightLevelFloat * 15 : 0;
             block.LightLevel = (int)(lightLevelFloat);
 
-            startIndex = line.IndexOf("(", endIndex) + 1;
-            endIndex = line.IndexOf(")", startIndex);
-            string collidable = line.Substring(startIndex, endIndex - startIndex);
-            block.ShouldMakeCollision = bool.Parse(collidable);
-
             if (type == "OreBase")
             {
-                startIndex = line.IndexOf("(", endIndex) + 1;
-                endIndex = line.IndexOf(")", startIndex);
-                string dropItem = line.Substring(startIndex, endIndex - startIndex);
+                string dropItem = GetParenthesesContentFor(line, "setDropItem");
                 block.DropItem = dropItem;
             }
 

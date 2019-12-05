@@ -58,7 +58,7 @@
                                        FontSize="14"
                                        FontWeight="Bold"
                                        Margin="3,0,3,0"
-                                       Height="{Binding ActualHeight, ElementName=DropItemComboBox, Mode=OneWay}"
+                                       Height="{Binding ActualHeight, ElementName=MaterialTypeComboBox, Mode=OneWay}"
                                        VerticalAlignment="Center" />
                             <TextBlock x:Name="HarvestLevelToolTextBlock"
                                        Text="Harvest Level Tool: "
