@@ -17,11 +17,11 @@
 
 ## Development Status
 
-- [ ] Block Generator
+- [x] Block Generator
 
-  - [ ] Create block json files
-  - [ ] Respect manual changes in files
-  - [ ] Update source code
+  - [x] Create block json files
+  - [x] Respect manual changes in files
+  - [x] Update source code
 
 - [ ] Item Generator
 
