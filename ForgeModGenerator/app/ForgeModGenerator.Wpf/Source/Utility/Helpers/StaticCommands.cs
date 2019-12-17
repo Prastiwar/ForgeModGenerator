@@ -3,6 +3,7 @@ using ForgeModGenerator.Core;
 using MaterialDesignThemes.Wpf;
 using Prism.Commands;
 using System;
+using System.IO;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
@@ -19,6 +20,10 @@ namespace ForgeModGenerator.Utility
 
         public static void SetItemButtonImage(ContentControl control, MCItemLocator locator)
         {
+            if (!File.Exists(locator.ImageFilePath))
+            {
+                return;
+            }
             Uri uriSource = new Uri(locator.ImageFilePath);
             if (control.Content == null)
             {

@@ -107,14 +107,14 @@
                                        FontSize="14"
                                        FontWeight="Bold"
                                        Margin="3,0,3,0"
-                                       Height="{Binding ActualHeight, ElementName=TextureButton, Mode=OneWay}"
+                                       Height="{Binding ActualHeight, ElementName=TextureStackPanel, Mode=OneWay}"
                                        VerticalAlignment="Center" />
                             <TextBlock x:Name="InventoryTextureTextBlock"
                                        Text="Inventory Texture: "
                                        FontSize="14"
                                        FontWeight="Bold"
                                        Margin="3,0,3,0"
-                                       Height="{Binding ActualHeight, ElementName=InventoryTextureButton, Mode=OneWay}"
+                                       Height="{Binding ActualHeight, ElementName=InventoryTextureStackPanel, Mode=OneWay}"
                                        VerticalAlignment="Center" />
                         </StackPanel>
                         <StackPanel Grid.Column="1"
@@ -205,9 +205,10 @@
                                       FontSize="15"
                                       Height="25"
                                       IsChecked="{Binding Path=ShouldMakeCollision}" />
-                            <StackPanel x:Name="TextureButton"
+                            <StackPanel x:Name="TextureStackPanel"
                                         Orientation="Horizontal">
-                                <Button Style="{StaticResource ItemSlotButtonStyle}"
+                                <Button x:Name="TextureButton"
+                                        Style="{StaticResource ItemSlotButtonStyle}"
                                         Command="{x:Null}"
                                         Click="TextureButton_Click"
                                         Margin="15,0,15,0" />
@@ -217,9 +218,10 @@
                                                         IsEnabled="False"
                                                         Text="{Binding Path=TextureName, ValidatesOnDataErrors=True}" />
                             </StackPanel>
-                            <StackPanel x:Name="InventoryTextureButton"
+                            <StackPanel x:Name="InventoryTextureStackPanel"
                                         Orientation="Horizontal">
-                                <Button Style="{StaticResource ItemSlotButtonStyle}"
+                                <Button x:Name="InventoryTextureButton"
+                                        Style="{StaticResource ItemSlotButtonStyle}"
                                         Command="{x:Null}"
                                         Click="InventoryTextureButton_Click"
                                         Margin="15,0,15,0" />

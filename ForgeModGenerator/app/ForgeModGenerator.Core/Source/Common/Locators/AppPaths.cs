@@ -19,13 +19,15 @@ namespace ForgeModGenerator
             }
         }
 
-        public static string GetMCItemIconsPath(bool extractDefaults = false)
+        private static bool wasMCItemIconsExtracted;
+        public static string GetMCItemIconsPath()
         {
             string path = Path.Combine(Assets, "mcitemicons");
             CreateIfNotExist(path);
-            if (extractDefaults)
+            if (!wasMCItemIconsExtracted)
             {
                 ExtractMCItemIcons(path);
+                wasMCItemIconsExtracted = true;
             }
             return path;
         }

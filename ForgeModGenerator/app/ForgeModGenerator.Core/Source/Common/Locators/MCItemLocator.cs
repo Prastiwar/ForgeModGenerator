@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace ForgeModGenerator.Core
 {
@@ -32,6 +33,8 @@ namespace ForgeModGenerator.Core
         public static bool operator ==(MCItemLocator left, MCItemLocator right) => left.Name == right.Name;
         public static bool operator !=(MCItemLocator left, MCItemLocator right) => !(left == right);
 
+        public static MCItemLocator[] GetAllPossibleItems(string modname, string modid) => GetAllModItems(modname, modid).Concat(GetAllMinecraftItems()).ToArray();
+
         public static MCItemLocator[] GetAllModItems(string modname, string modid)
         {
             List<MCItemLocator> locators = new List<MCItemLocator>(128);
@@ -48,7 +51,7 @@ namespace ForgeModGenerator.Core
         public static MCItemLocator[] GetAllMinecraftItems()
         {
             List<MCItemLocator> locators = new List<MCItemLocator>(128);
-            string defaultIconsPath = AppPaths.GetMCItemIconsPath(true);
+            string defaultIconsPath = AppPaths.GetMCItemIconsPath();
             foreach (FileInfo item in IOHelper.EnumerateFileInfos(defaultIconsPath, "*.png"))
             {
                 string locatorName = "minecraft:" + Path.GetFileNameWithoutExtension(item.Name);

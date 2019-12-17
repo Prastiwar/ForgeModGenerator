@@ -4,6 +4,7 @@ using ForgeModGenerator.Controls;
 using ForgeModGenerator.Core;
 using ForgeModGenerator.Utility;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,7 +13,23 @@ namespace ForgeModGenerator.BlockGenerator.Controls
 {
     public partial class BlockEditForm : UserControl, IUIElement
     {
-        public BlockEditForm() => InitializeComponent();
+        public BlockEditForm()
+        {
+            InitializeComponent();
+            DataContextChanged += BlockEditForm_DataContextChanged;
+        }
+
+        private void BlockEditForm_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (DataContext is Block block)
+            {
+                MCItemLocator[] locators = MCItemLocator.GetAllMinecraftItems();
+                MCItemLocator inventoryTextureLocator = locators.FirstOrDefault(x => x.Name == block.InventoryTextureName);
+                MCItemLocator textureLocator = locators.FirstOrDefault(x => x.Name == block.TextureName);
+                StaticCommands.SetItemButtonImage(InventoryTextureButton, inventoryTextureLocator);
+                StaticCommands.SetItemButtonImage(TextureButton, textureLocator);
+            }
+        }
 
         public IEnumerable<BlockType> BlockTypes => ReflectionHelper.GetEnumValues<BlockType>();
         public IEnumerable<HarvestToolType> HarvestToolTypes => ReflectionHelper.GetEnumValues<HarvestToolType>();
