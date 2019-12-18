@@ -427,6 +427,7 @@
       <DependentUpon>CommandEditForm.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Modules\CommandGenerator\Validation\CommandValidator.cs" />
+    <Compile Include="Source\Modules\ItemGenerator\ItemEditorFormProvider.cs" />
     <Compile Include="Source\Modules\ItemGenerator\Controls\ItemEditForm.xaml.cs">
       <DependentUpon>ItemEditForm.xaml</DependentUpon>
     </Compile>
@@ -434,6 +435,7 @@
     <Compile Include="Source\Modules\MaterialGenerator\Controls\MaterialEditForm.xaml.cs">
       <DependentUpon>MaterialEditForm.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Source\Modules\MaterialGenerator\MaterialEditorFormProvider.cs" />
     <Compile Include="Source\Modules\MaterialGenerator\MaterialCodeGenerator.cs" />
     <Compile Include="Source\Modules\MaterialGenerator\MaterialGeneratorPage.xaml.cs">
       <DependentUpon>MaterialGeneratorPage.xaml</DependentUpon>
@@ -526,6 +528,7 @@
     <Compile Include="Source\Controls\TextBox\SubmitTextBox.cs" />
     <Compile Include="Source\Validation\AbstractUniqueValidator.cs" />
     <Compile Include="Source\Validation\CanMoveFileSystemInfoRule.cs" />
+    <Compile Include="Source\Validation\GenericUniqueValidator.cs" />
     <Compile Include="Source\Validation\FullPathValidator.cs" />
     <Compile Include="Source\Validation\NotEmptyRule.cs" />
     <Compile Include="Source\Modules\SoundGenerator\Validation\SoundEventValidator.cs" />

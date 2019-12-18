@@ -9,6 +9,7 @@ using ForgeModGenerator.Services;
 using ForgeModGenerator.SoundGenerator;
 using ForgeModGenerator.SoundGenerator.Models;
 using ForgeModGenerator.SoundGenerator.Serialization;
+using ForgeModGenerator.Validation;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
@@ -83,6 +84,7 @@ namespace ForgeModGenerator
             RegisterServices(containerRegistry);
 
             containerRegistry.Register<IFileSystem, FileSystemWin>();
+            containerRegistry.Register(typeof(IUniqueValidator<>), typeof(GenericUniqueValidator<>));
 
             RegisterModels(containerRegistry);
 
@@ -111,9 +113,9 @@ namespace ForgeModGenerator
 
             foreach (Type chooseCollectionType in coreAssembly.ExportedTypes.Where(x => x.Name.EndsWith("ChooseCollection")))
             {
-                containerRegistry.RegisterInstance(Activator.CreateInstance(chooseCollectionType));
+                object instance = Activator.CreateInstance(chooseCollectionType);
+                containerRegistry.RegisterInstance(chooseCollectionType, instance);
             }
-
         }
 
         private void SetProvider(IContainerRegistry containerRegistry)

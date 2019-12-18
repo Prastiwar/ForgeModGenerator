@@ -31,13 +31,14 @@ namespace ForgeModGenerator
             {
                 found = FindFoldersFromFile(path);
             }
+            List<TFolder> foundList = found?.ToList();
 
-            bool isEmpty = found == null || !found.Any();
+            bool isEmpty = foundList == null || !foundList.Any();
             if (isEmpty && createRootIfEmpty)
             {
-                found = CreateEmptyFoldersRoot(IOHelper.GetDirectoryPath(path));
+                foundList = CreateEmptyFoldersRoot(IOHelper.GetDirectoryPath(path)).ToList();
             }
-            return found.ToList();
+            return foundList;
         }
 
         protected override ICollection<TFolder> DeserializeFolders(string fileCotent) => Serializer.DeserializeObject<Collection<TFolder>>(fileCotent);

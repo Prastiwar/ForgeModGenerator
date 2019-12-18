@@ -1,4 +1,5 @@
-﻿using ForgeModGenerator.Controls;
+﻿using ForgeModGenerator.CodeGeneration;
+using ForgeModGenerator.Controls;
 using ForgeModGenerator.Core;
 using ForgeModGenerator.MaterialGenerator.Models;
 using ForgeModGenerator.Utility;
@@ -21,9 +22,9 @@ namespace ForgeModGenerator.MaterialGenerator.Controls
         public IEnumerable<PushReaction> PushReactions => ReflectionHelper.GetEnumValues<PushReaction>();
 
         public static readonly DependencyProperty SoundEventsProperty =
-            DependencyProperty.Register("SoundEvents", typeof(IEnumerable<string>), typeof(MaterialEditForm), new PropertyMetadata(Enumerable.Empty<string>()));
-        public IEnumerable<string> SoundEvents {
-            get => (IEnumerable<string>)GetValue(SoundEventsProperty);
+            DependencyProperty.Register("SoundEvents", typeof(ChooseCollection), typeof(MaterialEditForm), new PropertyMetadata(Enumerable.Empty<string>()));
+        public ChooseCollection SoundEvents {
+            get => (ChooseCollection)GetValue(SoundEventsProperty);
             set => SetValue(SoundEventsProperty, value);
         }
 

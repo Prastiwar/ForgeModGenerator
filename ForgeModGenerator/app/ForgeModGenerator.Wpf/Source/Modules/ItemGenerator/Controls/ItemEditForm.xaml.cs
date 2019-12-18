@@ -1,8 +1,8 @@
-﻿using ForgeModGenerator.Controls;
+﻿using ForgeModGenerator.CodeGeneration;
+using ForgeModGenerator.Controls;
 using ForgeModGenerator.Core;
 using ForgeModGenerator.ItemGenerator.Models;
 using ForgeModGenerator.Utility;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -22,9 +22,9 @@ namespace ForgeModGenerator.ItemGenerator.Controls
         public IEnumerable<ArmorType> ArmorTypes => ReflectionHelper.GetEnumValues<ArmorType>();
 
         public static readonly DependencyProperty MaterialsProperty =
-            DependencyProperty.Register("Materials", typeof(IEnumerable<string>), typeof(ItemEditForm), new PropertyMetadata(Enumerable.Empty<string>()));
-        public IEnumerable<string> Materials {
-            get => (IEnumerable<string>)GetValue(MaterialsProperty);
+            DependencyProperty.Register("Materials", typeof(ChooseCollection), typeof(ItemEditForm), new PropertyMetadata(Enumerable.Empty<string>()));
+        public ChooseCollection Materials {
+            get => (ChooseCollection)GetValue(MaterialsProperty);
             set => SetValue(MaterialsProperty, value);
         }
 
