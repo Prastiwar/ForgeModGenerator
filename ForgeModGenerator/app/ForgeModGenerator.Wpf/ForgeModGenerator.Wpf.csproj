@@ -396,6 +396,7 @@
     </Compile>
     <Compile Include="Source\Controls\Proxy\SelectorDecorator.cs" />
     <Compile Include="Source\Common\SyncInvokeObject.cs" />
+    <Compile Include="Source\Controls\Proxy\MultiBindingDecorator.cs" />
     <Compile Include="Source\Controls\TextBox\PathNameSubmitTextBox.cs" />
     <Compile Include="Source\Converters\DataBindingDebugConverter.cs" />
     <Compile Include="Source\Converters\DialogResultAssemblyConverter.cs" />
