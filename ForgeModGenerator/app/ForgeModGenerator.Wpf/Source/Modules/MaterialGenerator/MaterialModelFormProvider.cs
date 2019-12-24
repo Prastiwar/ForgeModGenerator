@@ -5,9 +5,9 @@ using ForgeModGenerator.MaterialGenerator.Models;
 namespace ForgeModGenerator.MaterialGenerator
 {
 
-    public class MaterialEditorFormProvider : ModelFormProvider<Material>
+    public class MaterialModelFormProvider : ModelFormProvider<Material>
     {
-        public MaterialEditorFormProvider(SoundEventChooseCollection soundEvents) => this.soundEvents = soundEvents;
+        public MaterialModelFormProvider(SoundEventChooseCollection soundEvents) => this.soundEvents = soundEvents;
 
         private readonly SoundEventChooseCollection soundEvents;
 

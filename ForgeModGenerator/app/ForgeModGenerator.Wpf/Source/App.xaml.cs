@@ -1,6 +1,8 @@
 ﻿using ForgeModGenerator.ApplicationModule.ViewModels;
 using ForgeModGenerator.ApplicationModule.Views;
 using ForgeModGenerator.CodeGeneration;
+using ForgeModGenerator.MaterialGenerator;
+using ForgeModGenerator.MaterialGenerator.Models;
 using ForgeModGenerator.Models;
 using ForgeModGenerator.RecipeGenerator;
 using ForgeModGenerator.RecipeGenerator.Models;

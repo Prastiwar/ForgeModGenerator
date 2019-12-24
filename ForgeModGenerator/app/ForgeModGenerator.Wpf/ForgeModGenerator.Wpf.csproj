@@ -414,20 +414,20 @@
     <Compile Include="Source\FileSystem\Dialog\FileBrowserDialog.cs" />
     <Compile Include="Source\FileSystem\Dialog\FolderBrowserDialog.cs" />
     <Compile Include="Source\FileSystem\FileSystemWin.cs" />
-    <Compile Include="Source\Modules\BlockGenerator\BlockEditorFormProvider.cs" />
+    <Compile Include="Source\Modules\BlockGenerator\BlockModelFormProvider.cs" />
     <Compile Include="Source\Modules\BlockGenerator\CodeGeneration\BlockCodeGenerator.cs" />
     <Compile Include="Source\Modules\BlockGenerator\Controls\BlockEditForm.xaml.cs">
       <DependentUpon>BlockEditForm.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Modules\BlockGenerator\Validation\BlockValidator.cs" />
     <Compile Include="Source\Modules\CommandGenerator\CodeGeneration\CommandCodeGenerator.cs" />
-    <Compile Include="Source\Modules\CommandGenerator\CommandEditorFormProvider.cs" />
+    <Compile Include="Source\Modules\CommandGenerator\CommandModelFormProvider.cs" />
     <Compile Include="Source\Modules\CommandGenerator\CodeGeneration\CustomCommandCodeGenerator.cs" />
     <Compile Include="Source\Modules\CommandGenerator\Controls\CommandEditForm.xaml.cs">
       <DependentUpon>CommandEditForm.xaml</DependentUpon>
     </Compile>
     <Compile Include="Source\Modules\CommandGenerator\Validation\CommandValidator.cs" />
-    <Compile Include="Source\Modules\ItemGenerator\ItemEditorFormProvider.cs" />
+    <Compile Include="Source\Modules\ItemGenerator\ItemModelFormProvider.cs" />
     <Compile Include="Source\Modules\ItemGenerator\Controls\ItemEditForm.xaml.cs">
       <DependentUpon>ItemEditForm.xaml</DependentUpon>
     </Compile>
@@ -435,12 +435,12 @@
     <Compile Include="Source\Modules\MaterialGenerator\Controls\MaterialEditForm.xaml.cs">
       <DependentUpon>MaterialEditForm.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Source\Modules\MaterialGenerator\MaterialEditorFormProvider.cs" />
+    <Compile Include="Source\Modules\MaterialGenerator\MaterialModelFormProvider.cs" />
     <Compile Include="Source\Modules\MaterialGenerator\MaterialCodeGenerator.cs" />
     <Compile Include="Source\Modules\MaterialGenerator\MaterialGeneratorPage.xaml.cs">
       <DependentUpon>MaterialGeneratorPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Source\Modules\ModGenerator\McModEditorFormFactory.cs" />
+    <Compile Include="Source\Modules\ModGenerator\McModModelFormProvider.cs" />
     <Compile Include="Source\Modules\ModGenerator\Serialization\McModInfoSerializer.cs" />
     <Compile Include="Source\Modules\ModGenerator\Serialization\McModSerializer.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\CodeGeneration\RecipeCodeGenerator.cs" />
@@ -455,12 +455,12 @@
     <Compile Include="Source\Modules\RecipeGenerator\Converters\ShapedRecipeJsonConverter.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\Converters\ShapelessRecipeJsonConverter.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\Converters\SmeltingRecipeJsonConverter.cs" />
-    <Compile Include="Source\Modules\RecipeGenerator\RecipeCreatorEditorFormFactory.cs" />
+    <Compile Include="Source\Modules\RecipeGenerator\RecipeCreatorModelFormProvider.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\Converters\RecipeListConverters.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\RecipeSerializer.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\RecipesFactory.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\Validation\RecipeValidator.cs" />
-    <Compile Include="Source\Modules\SoundGenerator\SoundEditorFormFactory.cs" />
+    <Compile Include="Source\Modules\SoundGenerator\SoundModelFormProvider.cs" />
     <Compile Include="Source\Serialization\PreferenceDataSerializer.cs" />
     <Compile Include="Source\Serialization\JsonSerializer.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundEventsSerializer.cs" />
