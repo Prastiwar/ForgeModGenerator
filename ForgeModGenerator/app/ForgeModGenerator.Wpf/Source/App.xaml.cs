@@ -10,6 +10,7 @@ using ForgeModGenerator.SoundGenerator;
 using ForgeModGenerator.SoundGenerator.Models;
 using ForgeModGenerator.SoundGenerator.Serialization;
 using ForgeModGenerator.Validation;
+using ForgeModGenerator.ViewModels;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
@@ -85,6 +86,8 @@ namespace ForgeModGenerator
 
             containerRegistry.Register<IFileSystem, FileSystemWin>();
             containerRegistry.Register(typeof(IUniqueValidator<>), typeof(GenericUniqueValidator<>));
+            containerRegistry.Register(typeof(GeneratorContext<>), typeof(GeneratorContext<>));
+            containerRegistry.Register(typeof(ModelFormProvider<>), typeof(NoneModelFormProvider<>));
 
             RegisterModels(containerRegistry);
 

@@ -31,7 +31,7 @@ namespace ForgeModGenerator.Controls
         public static readonly DependencyProperty FolderProperty =
                 DependencyProperty.Register("Folder", typeof(object), typeof(FolderExpanderControl), new PropertyMetadata(null));
         public object Folder {
-            get => (object)GetValue(FolderProperty);
+            get => GetValue(FolderProperty);
             set => SetValue(FolderProperty, value);
         }
 

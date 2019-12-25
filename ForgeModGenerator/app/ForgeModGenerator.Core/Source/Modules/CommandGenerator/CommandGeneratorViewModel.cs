@@ -1,7 +1,6 @@
 ﻿using ForgeModGenerator.CodeGeneration;
 using ForgeModGenerator.CommandGenerator.Models;
 using ForgeModGenerator.Models;
-using ForgeModGenerator.Services;
 using ForgeModGenerator.ViewModels;
 using Prism.Commands;
 using System.IO;
@@ -18,16 +17,11 @@ namespace ForgeModGenerator.CommandGenerator.ViewModels
             : base(context, factory)
         {
             Explorer.OpenFileDialog.Filter = "Java file (*.java) | *.java";
-            Explorer.OpenFileDialog.Multiselect = true;
-            Explorer.OpenFileDialog.CheckFileExists = true;
-            Explorer.OpenFileDialog.ValidateNames = true;
-            Explorer.OpenFolderDialog.ShowNewFolderButton = true;
             Explorer.AllowFileExtensions(".java");
-
             Explorer.FileSynchronizer.SyncFilter = NotifyFilter.File;
         }
 
-        public override string FoldersRootPath => SessionContext.SelectedMod != null
+        public override string DirectoryRootPath => SessionContext.SelectedMod != null
             ? Path.GetDirectoryName(SourceCodeLocator.CustomCommand(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.Organization, "None").FullPath)
             : null;
 
@@ -42,8 +36,8 @@ namespace ForgeModGenerator.CommandGenerator.ViewModels
             {
                 IsLoading = true;
                 Explorer.Folders.Clear();
-                await InitializeFoldersAsync(await Explorer.FileSynchronizer.Finder.FindFoldersAsync(FoldersRootPath, true).ConfigureAwait(true)).ConfigureAwait(false);
-                Explorer.FileSynchronizer.RootPath = FoldersRootPath;
+                await InitializeFoldersAsync(await Explorer.FileSynchronizer.Finder.FindFoldersAsync(DirectoryRootPath, true).ConfigureAwait(true)).ConfigureAwait(false);
+                Explorer.FileSynchronizer.RootPath = DirectoryRootPath;
                 Explorer.FileSynchronizer.SetEnableSynchronization(true);
                 SubscribeFolderEvents(Explorer.Folders, new FileChangedEventArgs<ObservableFolder<Command>>(Explorer.Folders.Files, FileChange.Add));
                 RegenerateCode();

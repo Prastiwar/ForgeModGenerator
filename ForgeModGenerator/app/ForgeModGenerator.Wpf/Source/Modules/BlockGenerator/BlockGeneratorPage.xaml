@@ -17,11 +17,11 @@
                                             Style="{StaticResource SingleModelFolderExpanderStyle}"
                                             HeaderText="Blocks"
                                             Folder="{Binding Path=.}"
-                                            AddFileCommand="{Binding Path=DataContext.OpenModelEditorCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
-                                            RemoveFileCommand="{Binding Path=DataContext.RemoveModelCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
-                                            EditFileCommand="{Binding Path=DataContext.EditModelCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
                                             ShowContainerCommand="{Binding Path=DataContext.OpenContainerCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
-                                            FileClickCommand="{Binding Path=DataContext.EditModelCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}">
+                                            AddFileCommand="{Binding Path=DataContext.OpenModelEditorCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
+                                            RemoveFileCommand="{Binding Path=DataContext.RemoveItemCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
+                                            EditFileCommand="{Binding Path=DataContext.EditItemCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
+                                            FileClickCommand="{Binding Path=DataContext.EditItemCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}">
                 <controls:FolderExpanderControl.FileItemTemplate>
                     <DataTemplate x:Name="FolderFileItemTemplate">
                         <StackPanel Margin="5,5,5,10">
@@ -64,7 +64,7 @@
                          IsIndeterminate="True" />
             <controls:FolderListBox x:Name="FoldersListBox"
                                     Grid.Row="1"
-                                    RootPath="{Binding ScriptFileFolderPath}"
+                                    RootPath="{Binding DirectoryRootPath}"
                                     Style="{StaticResource SingleFolderBox}"
                                     Visibility="{Binding IsLoading, Converter={StaticResource InvertedBoolToVisibility}}"
                                     FoldersSource="{Binding ModelsRepository, Mode=OneWay}"

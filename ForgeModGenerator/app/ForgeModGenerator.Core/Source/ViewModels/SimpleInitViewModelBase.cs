@@ -16,25 +16,12 @@ namespace ForgeModGenerator.ViewModels
     public abstract class SimpleInitViewModelBase<TModel> : GeneratorViewModelBase<TModel>
         where TModel : ObservableDirtyObject, IValidable
     {
-        public SimpleInitViewModelBase(GeneratorContext<TModel> context)
-            : base(context)
-        {
-            EditorForm = Context.EditorFormFactory.Create();
-            EditorForm.ItemEdited += OnModelEdited;
-            EditorForm.Validator = Context.Validator;
-        }
+        public SimpleInitViewModelBase(GeneratorContext<TModel> context) : base(context) { }
 
         protected abstract string ScriptFilePath { get; }
-        protected IEditorForm<TModel> EditorForm { get; }
 
         private ICommand openModelEditorCommand;
         public ICommand OpenModelEditorCommand => openModelEditorCommand ?? (openModelEditorCommand = new DelegateCommand<ObservableCollection<TModel>>(CreateNewModel));
-
-        private ICommand editModelCommand;
-        public ICommand EditModelCommand => editModelCommand ?? (editModelCommand = new DelegateCommand<TModel>(EditModel));
-
-        private ICommand removeModelCommand;
-        public ICommand RemoveModelCommand => removeModelCommand ?? (removeModelCommand = new DelegateCommand<TModel>(RemoveModel));
 
         private ICommand openContainerCommand;
         public ICommand OpenContainerCommand => openContainerCommand ?? (openContainerCommand = new DelegateCommand(() => System.Diagnostics.Process.Start(Path.GetDirectoryName(ScriptFilePath))));
@@ -45,7 +32,7 @@ namespace ForgeModGenerator.ViewModels
             set => SetProperty(ref modelsRepository, value);
         }
 
-        public string ScriptFileFolderPath => Path.GetDirectoryName(ScriptFilePath);
+        public override string DirectoryRootPath => Path.GetDirectoryName(ScriptFilePath);
 
         public override async Task<bool> Refresh()
         {
@@ -161,13 +148,11 @@ namespace ForgeModGenerator.ViewModels
             EditorForm.OpenItemEditor(newModel);
         }
 
-        protected virtual void EditModel(TModel model) => EditorForm.OpenItemEditor(model);
-
-        protected virtual void RemoveModel(TModel model) => ModelsRepository.Remove(model);
+        protected override void RemoveItem(TModel item) => ModelsRepository.Remove(item);
 
         protected string ValidateModel(object sender, string propertyName) => Context.Validator?.Validate((TModel)sender, ModelsRepository, propertyName).Error;
 
-        protected virtual void OnModelEdited(object sender, ItemEditedEventArgs<TModel> e)
+        protected override void OnItemEdited(object sender, ItemEditedEventArgs<TModel> e)
         {
             if (e.Result)
             {

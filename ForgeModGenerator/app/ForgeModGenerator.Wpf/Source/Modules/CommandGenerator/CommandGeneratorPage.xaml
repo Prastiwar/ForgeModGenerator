@@ -20,7 +20,7 @@
                                                 Folder="{Binding}"
                                                 AddFileCommand="{Binding Path=DataContext.OpenCommandEditor, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
                                                 RemoveFileCommand="{Binding Path=DataContext.RemoveFileCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
-                                                EditFileCommand="{Binding Path=DataContext.EditFileCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}">
+                                                EditFileCommand="{Binding Path=DataContext.EditItemCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}">
                     <controls:FolderExpanderControl.FileItemTemplate>
                         <DataTemplate x:Name="FolderFileItemTemplate">
                             <StackPanel Margin="5,5,5,10">

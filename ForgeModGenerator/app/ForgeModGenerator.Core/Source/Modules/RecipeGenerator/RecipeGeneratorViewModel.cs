@@ -21,16 +21,11 @@ namespace ForgeModGenerator.RecipeGenerator.ViewModels
             RecipeSerializer = recipeSerializer;
 
             Explorer.OpenFileDialog.Filter = "Json file (*.json) | *.json";
-            Explorer.OpenFileDialog.Multiselect = true;
-            Explorer.OpenFileDialog.CheckFileExists = true;
-            Explorer.OpenFileDialog.ValidateNames = true;
-            Explorer.OpenFolderDialog.ShowNewFolderButton = true;
             Explorer.AllowFileExtensions(".json");
-
             Explorer.FileSynchronizer.SyncFilter = NotifyFilter.File;
         }
 
-        public override string FoldersRootPath => SessionContext.SelectedMod != null
+        public override string DirectoryRootPath => SessionContext.SelectedMod != null
             ? ModPaths.RecipesFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid)
             : null;
 
@@ -47,8 +42,8 @@ namespace ForgeModGenerator.RecipeGenerator.ViewModels
             {
                 IsLoading = true;
                 Explorer.Folders.Clear();
-                await InitializeFoldersAsync(await Explorer.FileSynchronizer.Finder.FindFoldersAsync(FoldersRootPath, true).ConfigureAwait(true)).ConfigureAwait(false);
-                Explorer.FileSynchronizer.RootPath = FoldersRootPath;
+                await InitializeFoldersAsync(await Explorer.FileSynchronizer.Finder.FindFoldersAsync(DirectoryRootPath, true).ConfigureAwait(true)).ConfigureAwait(false);
+                Explorer.FileSynchronizer.RootPath = DirectoryRootPath;
                 Explorer.FileSynchronizer.SetEnableSynchronization(true);
                 SubscribeFolderEvents(Explorer.Folders, new FileChangedEventArgs<ObservableFolder<Recipe>>(Explorer.Folders.Files, FileChange.Add));
                 RegenerateCode();

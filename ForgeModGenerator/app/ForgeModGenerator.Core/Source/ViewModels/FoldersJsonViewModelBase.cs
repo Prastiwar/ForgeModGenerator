@@ -21,8 +21,6 @@ namespace ForgeModGenerator.ViewModels
         /// <summary> Path to json file that can be deserialized to folders </summary>
         public abstract string FoldersJsonFilePath { get; }
 
-        public IEditorForm<TFile> FileEditor { get; protected set; }
-
         public IDialogService DialogService { get; protected set; }
 
         private bool isFileUpdateAvailable;
@@ -73,18 +71,12 @@ namespace ForgeModGenerator.ViewModels
         {
             if (SessionContext.SelectedMod != null)
             {
-                return Explorer.FileSynchronizer.Finder.EnumerateFilteredFiles(FoldersRootPath, SearchOption.AllDirectories).All(filePath => FileSystemInfoReference.IsReferenced(filePath));
+                return Explorer.FileSynchronizer.Finder.EnumerateFilteredFiles(DirectoryRootPath, SearchOption.AllDirectories).All(filePath => FileSystemInfoReference.IsReferenced(filePath));
             }
             return true;
         }
 
-        protected override void EditFile(TFile file)
-        {
-            if (FileEditor != null)
-            {
-                FileEditor.OpenItemEditor(file);
-            }
-        }
+        protected override void EditItem(TFile item) => EditorForm?.OpenItemEditor(item);
 
         protected override void RegenerateCode() => ForceJsonFileUpdate();
     }

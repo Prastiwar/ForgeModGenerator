@@ -16,9 +16,14 @@ namespace ForgeModGenerator.ViewModels
     {
         public FoldersWatcherViewModelBase(GeneratorContext<TFile> context,
                                            IFoldersExplorerFactory<TFolder, TFile> explorerFactory)
-            : base(context) => Explorer = explorerFactory.Create();
-
-        public abstract string FoldersRootPath { get; }
+            : base(context)
+        {
+            Explorer = explorerFactory.Create();
+            Explorer.OpenFileDialog.Multiselect = true;
+            Explorer.OpenFileDialog.CheckFileExists = true;
+            Explorer.OpenFileDialog.ValidateNames = true;
+            Explorer.OpenFolderDialog.ShowNewFolderButton = true;
+        }
 
         public IFoldersExplorer<TFolder, TFile> Explorer { get; }
 
@@ -42,12 +47,9 @@ namespace ForgeModGenerator.ViewModels
         private ICommand removeEmptyFoldersCommand;
         public ICommand RemoveEmptyFoldersCommand => removeEmptyFoldersCommand ?? (removeEmptyFoldersCommand = new DelegateCommand(Explorer.RemoveEmptyFolders));
 
+        protected override bool CanRefresh() => SessionContext.SelectedMod != null && Directory.Exists(DirectoryRootPath);
 
-        private ICommand editFileCommand;
-        public ICommand EditFileCommand => editFileCommand ?? (editFileCommand = new DelegateCommand<TFile>(EditFile));
-
-        protected override bool CanRefresh() => SessionContext.SelectedMod != null && Directory.Exists(FoldersRootPath);
-
+        protected override void RemoveItem(TFile item) => throw new NotImplementedException(); // TODO: Refactor RemoveFileFromFolder
         protected void RemoveFileFromFolder(Tuple<TFolder, TFile> param) => Explorer.RemoveFileFromFolder(param.Item1, param.Item2);
 
         protected async Task InitializeFoldersAsync(IEnumerable<TFolder> folders)
@@ -70,7 +72,7 @@ namespace ForgeModGenerator.ViewModels
             DialogResult dialogResult = Explorer.ShowFolderDialog(out IFolderBrowser browser);
             if (dialogResult == DialogResult.OK)
             {
-                await Explorer.CopyFolderToRootAsync(FoldersRootPath, browser.SelectedPath).ConfigureAwait(false);
+                await Explorer.CopyFolderToRootAsync(DirectoryRootPath, browser.SelectedPath).ConfigureAwait(false);
             }
         }
 
@@ -80,8 +82,8 @@ namespace ForgeModGenerator.ViewModels
             if (dialogResult == DialogResult.OK)
             {
                 string fileName = Path.GetFileNameWithoutExtension(browser.FileName);
-                string newFolderPath = Path.Combine(FoldersRootPath, fileName);
-                string newFolderName = IOHelper.GetUniqueName(fileName, name => !Directory.Exists((newFolderPath = Path.Combine(FoldersRootPath, name))));
+                string newFolderPath = Path.Combine(DirectoryRootPath, fileName);
+                string newFolderName = IOHelper.GetUniqueName(fileName, name => !Directory.Exists((newFolderPath = Path.Combine(DirectoryRootPath, name))));
                 Directory.CreateDirectory(newFolderPath);
                 TFolder folder = Explorer.CreateFolder(newFolderPath);
                 Explorer.CopyFilesToFolder(folder, browser.FileNames);
@@ -97,11 +99,11 @@ namespace ForgeModGenerator.ViewModels
             }
         }
 
-        protected virtual void EditFile(TFile file)
+        protected override void EditItem(TFile item)
         {
             try
             {
-                System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo(file.Info.FullName) {
+                System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo(item.Info.FullName) {
                     Verb = "edit"
                 };
                 System.Diagnostics.Process.Start(startInfo);

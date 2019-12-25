@@ -14,7 +14,6 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
     /// <summary> SoundGenerator Business ViewModel </summary>
     public class SoundGeneratorViewModel : FoldersJsonViewModelBase<SoundEvent, Sound>
     {
-        // TODO: Refactor dependency mess
         public SoundGeneratorViewModel(GeneratorContext<Sound> context,
                                        IDialogService dialogService,
                                        IFoldersExplorerFactory<SoundEvent, Sound> factory,
@@ -32,16 +31,9 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
 
             Explorer.AllowFileExtensions(".ogg");
             Explorer.OpenFileDialog.Filter = "Sound file (*.ogg) | *.ogg";
-            Explorer.OpenFileDialog.Multiselect = true;
-            Explorer.OpenFileDialog.CheckFileExists = true;
-            Explorer.OpenFileDialog.ValidateNames = true;
-            Explorer.OpenFolderDialog.ShowNewFolderButton = true;
-
-            FileEditor = Context.EditorFormFactory.Create();
-            FileEditor.ItemEdited += OnSoundEdited;
         }
 
-        public override string FoldersRootPath => SessionContext.SelectedMod != null ? ModPaths.SoundsFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid) : null;
+        public override string DirectoryRootPath => SessionContext.SelectedMod != null ? ModPaths.SoundsFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid) : null;
 
         public override string FoldersJsonFilePath => SessionContext.SelectedMod != null ? ModPaths.SoundsJson(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid) : null;
 
@@ -82,7 +74,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
                     throw new System.InvalidOperationException($"{Explorer.FileSynchronizer.Finder} must be {typeof(SoundEventsFinder)}");
                 }
                 await InitializeFoldersAsync(await Explorer.FileSynchronizer.Finder.FindFoldersAsync(FoldersJsonFilePath, true).ConfigureAwait(true)).ConfigureAwait(false);
-                Explorer.FileSynchronizer.RootPath = FoldersRootPath;
+                Explorer.FileSynchronizer.RootPath = DirectoryRootPath;
                 Explorer.FileSynchronizer.SetEnableSynchronization(true);
                 RaisePropertyChanged(nameof(HasEmptyFolders));
                 SubscribeFolderEvents(Explorer.Folders, new FileChangedEventArgs<SoundEvent>(Explorer.Folders.Files, FileChange.Add));
@@ -108,8 +100,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             McMod mcMod = SessionContext.SelectedMod;
             Context.CodeGenerationService.RegenerateInitScript(SourceCodeLocator.SoundEvents(mcMod.ModInfo.Name, mcMod.Organization).ClassName, mcMod, Explorer.Folders.Files);
         }
-
-        protected void OnSoundEdited(object sender, ItemEditedEventArgs<Sound> args)
+        protected override void OnItemEdited(object sender, ItemEditedEventArgs<Sound> args)
         {
             if (args.Result)
             {

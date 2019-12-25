@@ -14,11 +14,11 @@ namespace ForgeModGenerator.BlockGenerator.ViewModels
 
         protected override string ScriptFilePath => SourceCodeLocator.Blocks(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.Organization).FullPath;
 
-        protected override void RemoveModel(Block model)
+        protected override void RemoveItem(Block item)
         {
-            base.RemoveModel(model);
+            base.RemoveItem(item);
             string blockstatePath =
-                Path.Combine(ModPaths.Blockstates(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.Modid), model.Name + ".json");
+                Path.Combine(ModPaths.Blockstates(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.Modid), item.Name + ".json");
             if (File.Exists(blockstatePath))
             {
                 File.Delete(blockstatePath);

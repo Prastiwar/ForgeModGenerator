@@ -20,7 +20,7 @@
                                                 AddFileCommand="{Binding Path=DataContext.AddFileCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
                                                 RemoveFileCommand="{Binding Path=DataContext.RemoveFileCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
                                                 RemoveFolderCommand="{Binding Path=DataContext.RemoveFolderCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
-                                                EditFileCommand="{Binding Path=DataContext.EditFileCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}">
+                                                EditFileCommand="{Binding Path=DataContext.EditItemCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}">
                     <controls:FolderExpanderControl.FileItemTemplate>
                         <DataTemplate x:Name="FolderFileItemTemplate">
                             <StackPanel Margin="5,5,5,10">
@@ -65,7 +65,7 @@
                                     Visibility="{Binding IsLoading, Converter={StaticResource InvertedBoolToVisibility}}"
                                     FoldersSource="{Binding Explorer.Folders.Files, Mode=OneWay}"
                                     AddFolderCommand="{Binding AddFolderCommand}"
-                                    RootPath="{Binding FoldersRootPath}"
+                                    RootPath="{Binding DirectoryRootPath}"
                                     ShowEmptyMessage="{Binding SessionContext.IsModSelected, Converter={StaticResource InvertBooleanConverter}}"
                                     FolderTemplate="{StaticResource FolderTemplate}" />
         </Grid>
