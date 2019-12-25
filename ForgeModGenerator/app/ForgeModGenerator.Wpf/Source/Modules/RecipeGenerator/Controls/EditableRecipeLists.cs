@@ -1,7 +1,12 @@
 ﻿using ForgeModGenerator.Controls;
 using ForgeModGenerator.RecipeGenerator.Models;
+using ForgeModGenerator.Utility;
+using Prism.Commands;
+using System;
 using System.Collections.ObjectModel;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace ForgeModGenerator.RecipeGenerator.Controls
 {
@@ -18,7 +23,7 @@ namespace ForgeModGenerator.RecipeGenerator.Controls
             get {
                 char key = (char)('a' + counter);
                 counter++;
-                return new RecipeKey(key, "minecraft:");
+                return new RecipeKey(key, "");
             }
         }
         private int counter;
@@ -41,7 +46,27 @@ namespace ForgeModGenerator.RecipeGenerator.Controls
             set => SetValue(LengthLimitProperty, value);
         }
 
-        protected override Ingredient DefaultItem => new Ingredient("minecraft:", "");
+        private ICommand itemClickCommand;
+        public ICommand ItemClickCommand => itemClickCommand ?? (itemClickCommand = new DelegateCommand<Tuple<ContentControl, string, ItemListForm>>(OnItemClick));
+
+        private async void OnItemClick(Tuple<ContentControl, string, ItemListForm> parameter)
+        {
+            ItemListForm form = parameter.Item3;
+            if (form == null)
+            {
+                form = new ItemListForm();
+            }
+            bool changed = await StaticCommands.ShowMCItemList(parameter.Item1, parameter.Item2, form).ConfigureAwait(true);
+            if (changed)
+            {
+                if (parameter.Item1.DataContext is Ingredient ingredient)
+                {
+                    ingredient.Item = form.SelectedLocator.Name;
+                }
+            }
+        }
+
+        protected override Ingredient DefaultItem => new Ingredient();
 
         protected override void DefaultAdd(ObservableCollection<Ingredient> collection)
         {

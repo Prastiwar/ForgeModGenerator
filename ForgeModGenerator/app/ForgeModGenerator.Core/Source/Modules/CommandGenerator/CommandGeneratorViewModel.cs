@@ -2,10 +2,8 @@
 using ForgeModGenerator.CommandGenerator.Models;
 using ForgeModGenerator.Models;
 using ForgeModGenerator.Services;
-using ForgeModGenerator.Validation;
 using ForgeModGenerator.ViewModels;
 using Prism.Commands;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -15,19 +13,10 @@ namespace ForgeModGenerator.CommandGenerator.ViewModels
     /// <summary> CommandGenerator Business ViewModel </summary>
     public class CommandGeneratorViewModel : FoldersWatcherViewModelBase<ObservableFolder<Command>, Command>
     {
-        public CommandGeneratorViewModel(ISessionContextService sessionContext,
-                                        IFoldersExplorerFactory<ObservableFolder<Command>, Command> factory,
-                                        IEditorFormFactory<Command> editorFormFactory,
-                                        IUniqueValidator<Command> validator,
-                                        ICodeGenerationService codeGenerationService)
-            : base(sessionContext, factory)
+        public CommandGeneratorViewModel(GeneratorContext<Command> context,
+                                        IFoldersExplorerFactory<ObservableFolder<Command>, Command> factory)
+            : base(context, factory)
         {
-            CommandValidator = validator;
-            CodeGenerationService = codeGenerationService;
-            EditorForm = editorFormFactory.Create();
-            EditorForm.ItemEdited += CreateCommand;
-            EditorForm.Validator = validator;
-
             Explorer.OpenFileDialog.Filter = "Java file (*.java) | *.java";
             Explorer.OpenFileDialog.Multiselect = true;
             Explorer.OpenFileDialog.CheckFileExists = true;
@@ -41,10 +30,6 @@ namespace ForgeModGenerator.CommandGenerator.ViewModels
         public override string FoldersRootPath => SessionContext.SelectedMod != null
             ? Path.GetDirectoryName(SourceCodeLocator.CustomCommand(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.Organization, "None").FullPath)
             : null;
-
-        protected ICodeGenerationService CodeGenerationService { get; }
-        protected IEditorForm<Command> EditorForm { get; }
-        protected IUniqueValidator<Command> CommandValidator { get; }
 
         private ICommand openCommandEditor;
         public ICommand OpenCommandEditor => openCommandEditor ?? (openCommandEditor = new DelegateCommand<ObservableFolder<Command>>(CreateNewCommand));
@@ -61,7 +46,7 @@ namespace ForgeModGenerator.CommandGenerator.ViewModels
                 Explorer.FileSynchronizer.RootPath = FoldersRootPath;
                 Explorer.FileSynchronizer.SetEnableSynchronization(true);
                 SubscribeFolderEvents(Explorer.Folders, new FileChangedEventArgs<ObservableFolder<Command>>(Explorer.Folders.Files, FileChange.Add));
-                RegenerateCommands();
+                RegenerateCode();
                 IsLoading = false;
                 return true;
             }
@@ -79,19 +64,17 @@ namespace ForgeModGenerator.CommandGenerator.ViewModels
                 PermissionLevel = 4
             };
             newCommand.IsDirty = false;
-            newCommand.ValidateProperty += (sender, propertyName) => ValidateCommand(sender, folder.Files, propertyName);
-            CommandValidator.SetDefaultRepository(folder.Files);
+            newCommand.ValidateProperty += (sender, propertyName) => OnValidate(sender, folder.Files, propertyName);
+            Context.Validator.SetDefaultRepository(folder.Files);
             EditorForm.OpenItemEditor(newCommand);
         }
 
-        protected string ValidateCommand(object sender, IEnumerable<Command> instances, string propertyName) => CommandValidator.Validate((Command)sender, instances, propertyName).Error;
-
-        protected void CreateCommand(object sender, ItemEditedEventArgs<Command> e)
+        protected override void OnItemEdited(object sender, ItemEditedEventArgs<Command> e)
         {
             if (e.Result)
             {
                 McMod mod = SessionContext.SelectedMod;
-                CodeGenerationService.CreateCustomScript(mod, e.ActualItem);
+                Context.CodeGenerationService.CreateCustomScript(mod, e.ActualItem);
             }
             new FileInfo(tempFilePath).Delete();
         }
@@ -114,12 +97,12 @@ namespace ForgeModGenerator.CommandGenerator.ViewModels
             }
         }
 
-        protected void RegenerateCommands()
+        protected virtual void OnFilesChanged(object sender, FileChangedEventArgs<Command> e) => RegenerateCode();
+
+        protected override void RegenerateCode()
         {
             McMod mod = SessionContext.SelectedMod;
-            CodeGenerationService.RegenerateInitScript(SourceCodeLocator.Commands(mod.ModInfo.Name, mod.Organization).ClassName, mod, Explorer.Folders.Files[0].Files);
+            Context.CodeGenerationService.RegenerateInitScript(SourceCodeLocator.Commands(mod.ModInfo.Name, mod.Organization).ClassName, mod, Explorer.Folders.Files[0].Files);
         }
-
-        protected virtual void OnFilesChanged(object sender, FileChangedEventArgs<Command> e) => RegenerateCommands();
     }
 }

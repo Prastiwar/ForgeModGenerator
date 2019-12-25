@@ -1,7 +1,5 @@
 ﻿using ForgeModGenerator.CodeGeneration;
 using ForgeModGenerator.ItemGenerator.Models;
-using ForgeModGenerator.Services;
-using ForgeModGenerator.Validation;
 using ForgeModGenerator.ViewModels;
 using System.IO;
 
@@ -10,11 +8,7 @@ namespace ForgeModGenerator.ItemGenerator.ViewModels
     /// <summary> ItemGenerator Business ViewModel </summary>
     public class ItemGeneratorViewModel : SimpleInitViewModelBase<Item>
     {
-        public ItemGeneratorViewModel(ISessionContextService sessionContext,
-                                      IEditorFormFactory<Item> editorFormFactory,
-                                      IUniqueValidator<Item> validator,
-                                      ICodeGenerationService codeGenerationService)
-            : base(sessionContext, editorFormFactory, validator, codeGenerationService) { }
+        public ItemGeneratorViewModel(GeneratorContext<Item> context) : base(context) { }
 
         protected override string ScriptFilePath => SourceCodeLocator.Items(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.Organization).FullPath;
 

@@ -13,7 +13,10 @@ namespace ForgeModGenerator.ViewModels
         where TFolder : class, IFolderObject<TFile>
         where TFile : class, IFileObject
     {
-        public FoldersJsonViewModelBase(ISessionContextService sessionContext, IDialogService dialogService, IFoldersExplorerFactory<TFolder, TFile> factory) : base(sessionContext, factory) => DialogService = dialogService;
+        public FoldersJsonViewModelBase(GeneratorContext<TFile> context,
+                                        IDialogService dialogService,
+                                        IFoldersExplorerFactory<TFolder, TFile> factory)
+            : base(context, factory) => DialogService = dialogService;
 
         /// <summary> Path to json file that can be deserialized to folders </summary>
         public abstract string FoldersJsonFilePath { get; }
@@ -82,5 +85,7 @@ namespace ForgeModGenerator.ViewModels
                 FileEditor.OpenItemEditor(file);
             }
         }
+
+        protected override void RegenerateCode() => ForceJsonFileUpdate();
     }
 }

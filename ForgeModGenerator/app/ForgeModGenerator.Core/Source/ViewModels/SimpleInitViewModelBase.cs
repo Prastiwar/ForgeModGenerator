@@ -1,5 +1,4 @@
 ﻿using ForgeModGenerator.Models;
-using ForgeModGenerator.Services;
 using ForgeModGenerator.Utility;
 using ForgeModGenerator.Validation;
 using Prism.Commands;
@@ -14,25 +13,18 @@ using System.Windows.Input;
 
 namespace ForgeModGenerator.ViewModels
 {
-    public abstract class SimpleInitViewModelBase<TModel> : ViewModelBase
+    public abstract class SimpleInitViewModelBase<TModel> : GeneratorViewModelBase<TModel>
         where TModel : ObservableDirtyObject, IValidable
     {
-        public SimpleInitViewModelBase(ISessionContextService sessionContext,
-                                        IEditorFormFactory<TModel> editorFormFactory,
-                                        IUniqueValidator<TModel> validator,
-                                        ICodeGenerationService codeGenerationService)
-            : base(sessionContext)
+        public SimpleInitViewModelBase(GeneratorContext<TModel> context)
+            : base(context)
         {
-            Validator = validator;
-            CodeGenerationService = codeGenerationService;
-            EditorForm = editorFormFactory.Create();
+            EditorForm = Context.EditorFormFactory.Create();
             EditorForm.ItemEdited += OnModelEdited;
-            EditorForm.Validator = validator;
+            EditorForm.Validator = Context.Validator;
         }
 
         protected abstract string ScriptFilePath { get; }
-        protected IUniqueValidator<TModel> Validator { get; }
-        protected ICodeGenerationService CodeGenerationService { get; }
         protected IEditorForm<TModel> EditorForm { get; }
 
         private ICommand openModelEditorCommand;
@@ -71,7 +63,7 @@ namespace ForgeModGenerator.ViewModels
                 }
                 IEnumerable<TModel> foundModels = FindModelsFromScriptFile(ScriptFilePath);
                 await AddModelsAsync(foundModels).ConfigureAwait(false);
-                Validator?.SetDefaultRepository(ModelsRepository);
+                Context.Validator?.SetDefaultRepository(ModelsRepository);
                 IsLoading = false;
                 return true;
             }
@@ -173,7 +165,7 @@ namespace ForgeModGenerator.ViewModels
 
         protected virtual void RemoveModel(TModel model) => ModelsRepository.Remove(model);
 
-        protected string ValidateModel(object sender, string propertyName) => Validator?.Validate((TModel)sender, ModelsRepository, propertyName).Error;
+        protected string ValidateModel(object sender, string propertyName) => Context.Validator?.Validate((TModel)sender, ModelsRepository, propertyName).Error;
 
         protected virtual void OnModelEdited(object sender, ItemEditedEventArgs<TModel> e)
         {
@@ -183,7 +175,7 @@ namespace ForgeModGenerator.ViewModels
                 {
                     ModelsRepository.Add(e.ActualItem);
                 }
-                RegenerateModels();
+                RegenerateCode();
             }
         }
 
@@ -191,14 +183,14 @@ namespace ForgeModGenerator.ViewModels
         {
             if (e.Action.HasFlag(NotifyCollectionChangedAction.Remove))
             {
-                RegenerateModels();
+                RegenerateCode();
             }
         }
 
-        protected virtual void RegenerateModels()
+        protected override void RegenerateCode()
         {
             McMod mod = SessionContext.SelectedMod;
-            CodeGenerationService.RegenerateInitScript(Path.GetFileNameWithoutExtension(ScriptFilePath), mod, ModelsRepository);
+            Context.CodeGenerationService.RegenerateInitScript(Path.GetFileNameWithoutExtension(ScriptFilePath), mod, ModelsRepository);
         }
     }
 }

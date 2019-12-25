@@ -224,6 +224,7 @@
                                                             Grid.Column="0">
                                                     <Button x:Name="ItemButton"
                                                             Style="{StaticResource ItemSlotButtonStyle}"
+                                                            Command="{Binding Path=ItemClickCommand, RelativeSource={RelativeSource AncestorType=recipeControls:EditableIngredientList}}"
                                                             Margin="3,0,3,0" />
                                                 </StackPanel>
                                                 <StackPanel Margin="5"

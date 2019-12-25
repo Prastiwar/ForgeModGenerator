@@ -455,7 +455,7 @@
     <Compile Include="Source\Modules\RecipeGenerator\Converters\ShapedRecipeJsonConverter.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\Converters\ShapelessRecipeJsonConverter.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\Converters\SmeltingRecipeJsonConverter.cs" />
-    <Compile Include="Source\Modules\RecipeGenerator\RecipeCreatorModelFormProvider.cs" />
+    <Compile Include="Source\Modules\RecipeGenerator\RecipeModelFormProvider.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\Converters\RecipeListConverters.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\RecipeSerializer.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\RecipesFactory.cs" />

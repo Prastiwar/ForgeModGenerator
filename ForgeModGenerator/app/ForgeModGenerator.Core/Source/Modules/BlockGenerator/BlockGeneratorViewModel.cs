@@ -1,8 +1,6 @@
 ﻿using ForgeModGenerator.BlockGenerator.Models;
 using ForgeModGenerator.CodeGeneration;
-using ForgeModGenerator.Services;
 using ForgeModGenerator.Utility;
-using ForgeModGenerator.Validation;
 using ForgeModGenerator.ViewModels;
 using System;
 using System.IO;
@@ -12,11 +10,7 @@ namespace ForgeModGenerator.BlockGenerator.ViewModels
     /// <summary> BlockGenerator Business ViewModel </summary>
     public class BlockGeneratorViewModel : SimpleInitViewModelBase<Block>
     {
-        public BlockGeneratorViewModel(ISessionContextService sessionContext,
-                                       IEditorFormFactory<Block> editorFormFactory,
-                                       IUniqueValidator<Block> validator,
-                                       ICodeGenerationService codeGenerationService)
-            : base(sessionContext, editorFormFactory, validator, codeGenerationService) { }
+        public BlockGeneratorViewModel(GeneratorContext<Block> context) : base(context) { }
 
         protected override string ScriptFilePath => SourceCodeLocator.Blocks(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.Organization).FullPath;
 

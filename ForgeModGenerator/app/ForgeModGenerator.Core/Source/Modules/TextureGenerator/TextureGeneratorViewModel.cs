@@ -7,7 +7,9 @@ namespace ForgeModGenerator.TextureGenerator.ViewModels
     /// <summary> TextureGenerator Business ViewModel </summary>
     public class TextureGeneratorViewModel : FoldersWatcherViewModelBase<ObservableFolder<FileObject>, FileObject>
     {
-        public TextureGeneratorViewModel(ISessionContextService sessionContext, IFoldersExplorerFactory<ObservableFolder<FileObject>, FileObject> explorerFactory) : base(sessionContext, explorerFactory)
+        public TextureGeneratorViewModel(GeneratorContext<FileObject> context,
+                                         IFoldersExplorerFactory<ObservableFolder<FileObject>, FileObject> explorerFactory) 
+            : base(context, explorerFactory)
         {
             Explorer.OpenFileDialog.Filter = "Image (*.png) | *.png";
             Explorer.OpenFileDialog.Multiselect = true;
@@ -33,5 +35,7 @@ namespace ForgeModGenerator.TextureGenerator.ViewModels
             }
             return false;
         }
+
+        protected override void RegenerateCode() { }
     }
 }

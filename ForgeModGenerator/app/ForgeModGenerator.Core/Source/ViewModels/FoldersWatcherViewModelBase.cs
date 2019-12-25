@@ -1,5 +1,4 @@
-﻿using ForgeModGenerator.Services;
-using ForgeModGenerator.Utility;
+﻿using ForgeModGenerator.Utility;
 using Prism.Commands;
 using System;
 using System.Collections.Generic;
@@ -11,12 +10,13 @@ using System.Windows.Input;
 namespace ForgeModGenerator.ViewModels
 {
     /// <summary> Base ViewModel class to explore folders </summary>
-    public abstract class FoldersWatcherViewModelBase<TFolder, TFile> : ViewModelBase, IDisposable
+    public abstract class FoldersWatcherViewModelBase<TFolder, TFile> : GeneratorViewModelBase<TFile>, IDisposable
         where TFolder : class, IFolderObject<TFile>
         where TFile : class, IFileObject
     {
-        public FoldersWatcherViewModelBase(ISessionContextService sessionContext, IFoldersExplorerFactory<TFolder, TFile> explorerFactory)
-            : base(sessionContext) => Explorer = explorerFactory.Create();
+        public FoldersWatcherViewModelBase(GeneratorContext<TFile> context,
+                                           IFoldersExplorerFactory<TFolder, TFile> explorerFactory)
+            : base(context) => Explorer = explorerFactory.Create();
 
         public abstract string FoldersRootPath { get; }
 

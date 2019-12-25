@@ -15,22 +15,20 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
     public class SoundGeneratorViewModel : FoldersJsonViewModelBase<SoundEvent, Sound>
     {
         // TODO: Refactor dependency mess
-        public SoundGeneratorViewModel(ISessionContextService sessionContext,
-                                        IDialogService dialogService,
-                                        IFoldersExplorerFactory<SoundEvent, Sound> factory,
-                                        IPreferenceService preferenceService,
-                                        ISoundJsonUpdaterFactory jsonUpdaterFactory,
-                                        IEditorFormFactory<Sound> editorFormFactory,
-                                        IUniqueValidator<SoundEvent> soundEventValidator,
-                                        ICodeGenerationService codeGenerationService)
-            : base(sessionContext, dialogService, factory)
+        public SoundGeneratorViewModel(GeneratorContext<Sound> context,
+                                       IDialogService dialogService,
+                                       IFoldersExplorerFactory<SoundEvent, Sound> factory,
+                                       IPreferenceService preferenceService,
+                                       ISoundJsonUpdaterFactory jsonUpdaterFactory,
+                                       IUniqueValidator<SoundEvent> soundEventValidator,
+                                       SoundEventChooseCollection soundEventChooseCollection)
+            : base(context, dialogService, factory)
         {
             Preferences = preferenceService.GetOrCreate<SoundsGeneratorPreferences>();
-
             PreferenceService = preferenceService;
             JsonUpdaterFactory = jsonUpdaterFactory;
             SoundEventValidator = soundEventValidator;
-            CodeGenerationService = codeGenerationService;
+            SoundEventChooseCollection = soundEventChooseCollection;
 
             Explorer.AllowFileExtensions(".ogg");
             Explorer.OpenFileDialog.Filter = "Sound file (*.ogg) | *.ogg";
@@ -39,7 +37,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             Explorer.OpenFileDialog.ValidateNames = true;
             Explorer.OpenFolderDialog.ShowNewFolderButton = true;
 
-            FileEditor = editorFormFactory.Create();
+            FileEditor = Context.EditorFormFactory.Create();
             FileEditor.ItemEdited += OnSoundEdited;
         }
 
@@ -51,7 +49,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
 
         protected IPreferenceService PreferenceService { get; }
         protected ISoundJsonUpdaterFactory JsonUpdaterFactory { get; }
-        protected ICodeGenerationService CodeGenerationService { get; }
+        protected SoundEventChooseCollection SoundEventChooseCollection { get; }
         protected IUniqueValidator<SoundEvent> SoundEventValidator { get; }
 
         protected override bool CanRefresh() => SessionContext.SelectedMod != null;
@@ -108,7 +106,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
         {
             base.ForceJsonFileUpdate();
             McMod mcMod = SessionContext.SelectedMod;
-            CodeGenerationService.RegenerateInitScript(SourceCodeLocator.SoundEvents(mcMod.ModInfo.Name, mcMod.Organization).ClassName, mcMod, Explorer.Folders.Files);
+            Context.CodeGenerationService.RegenerateInitScript(SourceCodeLocator.SoundEvents(mcMod.ModInfo.Name, mcMod.Organization).ClassName, mcMod, Explorer.Folders.Files);
         }
 
         protected void OnSoundEdited(object sender, ItemEditedEventArgs<Sound> args)
@@ -158,8 +156,16 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
                 {
                     RaisePropertyChanged(nameof(HasEmptyFolders));
                 }
+                foreach (Sound file in e.Files)
+                {
+                    SoundEventChooseCollection.RemoveGetter(GetGetterName(file.Name));
+                }
             }
         }
+
+        protected string GetGetterName(string modelName) =>
+            SourceCodeLocator.SoundEvents(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.Organization).ClassName + "." + modelName;
+
 
         private void OnFoldersCollectionChanged(object sender, FileChangedEventArgs<SoundEvent> e)
         {

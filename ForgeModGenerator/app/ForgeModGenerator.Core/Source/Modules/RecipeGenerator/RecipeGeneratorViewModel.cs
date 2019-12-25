@@ -2,11 +2,8 @@
 using ForgeModGenerator.Models;
 using ForgeModGenerator.RecipeGenerator.Models;
 using ForgeModGenerator.Serialization;
-using ForgeModGenerator.Services;
-using ForgeModGenerator.Validation;
 using ForgeModGenerator.ViewModels;
 using Prism.Commands;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -16,19 +13,12 @@ namespace ForgeModGenerator.RecipeGenerator.ViewModels
     /// <summary> RecipeGenerator Business ViewModel </summary>
     public class RecipeGeneratorViewModel : FoldersWatcherViewModelBase<ObservableFolder<Recipe>, Recipe>
     {
-        public RecipeGeneratorViewModel(ISessionContextService sessionContext,
+        public RecipeGeneratorViewModel(GeneratorContext<Recipe> context,
                                         IFoldersExplorerFactory<ObservableFolder<Recipe>, Recipe> factory,
-                                        IEditorFormFactory<RecipeCreator> editorFormFactory,
-                                        IUniqueValidator<Recipe> recipeValidator,
-                                        ISerializer<Recipe> recipeSerializer,
-                                        ICodeGenerationService codeGenerationService)
-            : base(sessionContext, factory)
+                                        ISerializer<Recipe> recipeSerializer)
+            : base(context, factory)
         {
-            RecipeValidator = recipeValidator;
             RecipeSerializer = recipeSerializer;
-            CodeGenerationService = codeGenerationService;
-            EditorForm = editorFormFactory.Create();
-            EditorForm.ItemEdited += CreateRecipe;
 
             Explorer.OpenFileDialog.Filter = "Json file (*.json) | *.json";
             Explorer.OpenFileDialog.Multiselect = true;
@@ -44,9 +34,6 @@ namespace ForgeModGenerator.RecipeGenerator.ViewModels
             ? ModPaths.RecipesFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid)
             : null;
 
-        protected ICodeGenerationService CodeGenerationService { get; }
-        protected IEditorForm<RecipeCreator> EditorForm { get; }
-        protected IUniqueValidator<Recipe> RecipeValidator { get; }
         protected ISerializer<Recipe> RecipeSerializer { get; }
 
         private ICommand openRecipeEditorCommand;
@@ -64,7 +51,7 @@ namespace ForgeModGenerator.RecipeGenerator.ViewModels
                 Explorer.FileSynchronizer.RootPath = FoldersRootPath;
                 Explorer.FileSynchronizer.SetEnableSynchronization(true);
                 SubscribeFolderEvents(Explorer.Folders, new FileChangedEventArgs<ObservableFolder<Recipe>>(Explorer.Folders.Files, FileChange.Add));
-                RegenerateRecipes();
+                RegenerateCode();
                 IsLoading = false;
                 return true;
             }
@@ -77,16 +64,17 @@ namespace ForgeModGenerator.RecipeGenerator.ViewModels
             RecipeCreator newRecipe = new RecipeCreator(tempFilePath) {
                 Name = "NewRecipe",
             };
-            newRecipe.Ingredients.Add(new Ingredient("", ""));
+            newRecipe.Ingredients.Add(new Ingredient());
             newRecipe.IsDirty = false;
-            newRecipe.ValidateProperty += (sender, propertyName) => ValidateRecipe(sender, folder.Files, propertyName);
-            RecipeValidator.SetDefaultRepository(folder.Files);
+            newRecipe.ValidateProperty += (sender, propertyName) => OnValidate(sender, folder.Files, propertyName);
+            Context.Validator.SetDefaultRepository(folder.Files);
             EditorForm.OpenItemEditor(newRecipe);
         }
 
-        protected string ValidateRecipe(object sender, IEnumerable<Recipe> instances, string propertyName) => RecipeValidator.Validate((Recipe)sender, instances, propertyName).Error;
+        protected override void OnItemEdited(object sender, ItemEditedEventArgs<Recipe> e)
+            => OnRecipeCreatorEdited(sender, new ItemEditedEventArgs<RecipeCreator>(e.Result, (RecipeCreator)e.CachedItem, (RecipeCreator)e.ActualItem));
 
-        protected void CreateRecipe(object sender, ItemEditedEventArgs<RecipeCreator> e)
+        protected void OnRecipeCreatorEdited(object sender, ItemEditedEventArgs<RecipeCreator> e)
         {
             if (e.Result)
             {
@@ -127,12 +115,12 @@ namespace ForgeModGenerator.RecipeGenerator.ViewModels
             }
         }
 
-        protected void RegenerateRecipes()
+        protected virtual void OnFilesChanged(object sender, FileChangedEventArgs<Recipe> e) => RegenerateCode();
+
+        protected override void RegenerateCode()
         {
             McMod mod = SessionContext.SelectedMod;
-            CodeGenerationService.RegenerateInitScript(SourceCodeLocator.Recipes(mod.ModInfo.Name, mod.Organization).ClassName, mod, Explorer.Folders.Files[0].Files);
+            Context.CodeGenerationService.RegenerateInitScript(SourceCodeLocator.Recipes(mod.ModInfo.Name, mod.Organization).ClassName, mod, Explorer.Folders.Files[0].Files);
         }
-
-        protected virtual void OnFilesChanged(object sender, FileChangedEventArgs<Recipe> e) => RegenerateRecipes();
     }
 }
