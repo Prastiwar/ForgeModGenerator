@@ -3,41 +3,33 @@ using ForgeModGenerator.Serialization;
 using ForgeModGenerator.Services;
 using ForgeModGenerator.Utility;
 using ForgeModGenerator.Validation;
+using ForgeModGenerator.ViewModels;
 using Prism.Commands;
-using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace ForgeModGenerator.ModGenerator.ViewModels
 {
     /// <summary> ModGenerator Business ViewModel </summary>
-    public class ModGeneratorViewModel : BindableBase
+    public class ModGeneratorViewModel : GeneratorViewModelBase<McMod>
     {
-        public ModGeneratorViewModel(ISessionContextService sessionContext,
+        public ModGeneratorViewModel(GeneratorContext<McMod> context,
                                      IDialogService dialogService,
                                      IFileSystem fileSystem,
-                                     IEditorFormFactory<McMod> editorFormFactory,
-                                     IValidator<McMod> modValidator,
-                                     ICodeGenerationService codeGenerationService,
                                      ISerializer<McMod> modSerializer,
                                      ISerializer<McModInfo> modInfoSerializer)
+            : base(context)
         {
-            SessionContext = sessionContext;
             DialogService = dialogService;
             FileSystem = fileSystem;
-            EditorFormFactory = editorFormFactory;
-            ModValidator = modValidator;
-            CodeGenerationService = codeGenerationService;
             ModSerializer = modSerializer;
             ModInfoSerializer = modInfoSerializer;
             ResetNewMod();
-            EditorForm = editorFormFactory.Create();
-            EditorForm.Validator = modValidator;
-            EditorForm.ItemEdited += Editor_OnItemEdited;
         }
 
         private readonly string[] assetsFolerToGenerate = new string[] {
@@ -46,14 +38,9 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
             "textures/blocks", "textures/entity", "textures/items", "textures/models/armor"
         };
 
-        protected IValidator<McMod> ModValidator { get; set; }
-        protected IEditorForm<McMod> EditorForm { get; set; }
-        protected IEditorFormFactory<McMod> EditorFormFactory { get; }
-        protected ICodeGenerationService CodeGenerationService { get; }
         protected ISerializer<McMod> ModSerializer { get; }
         protected ISerializer<McModInfo> ModInfoSerializer { get; }
 
-        public ISessionContextService SessionContext { get; }
         public IDialogService DialogService { get; }
         public IFileSystem FileSystem { get; }
 
@@ -74,35 +61,33 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
         private ICommand createModCommand;
         public ICommand CreateModCommand => createModCommand ?? (createModCommand = new DelegateCommand(() => CreateNewMod(NewMod)));
 
-        private ICommand removeModCommand;
-        public ICommand RemoveModCommand => removeModCommand ?? (removeModCommand = new DelegateCommand<McMod>(RemoveMod));
-
-        private ICommand editModCommand;
-        public ICommand EditModCommand => editModCommand ?? (editModCommand = new DelegateCommand<McMod>(EditMod));
-
         private ICommand showModContainerCommand;
         public ICommand ShowModContainerCommand => showModContainerCommand ?? (showModContainerCommand = new DelegateCommand<McMod>(ShowContainer));
 
+        public override string DirectoryRootPath => AppPaths.Mods;
+
+        public override Task<bool> Refresh() => Task.FromResult(true);
+
         private void ShowContainer(McMod mcMod) => Process.Start(ModPaths.ModRootFolder(mcMod.ModInfo.Name));
 
-        private string OnModValidate(object sender, string propertyName) => ModValidator.Validate((McMod)sender, propertyName).Error;
+        private string OnModValidate(object sender, string propertyName) => OnValidate(sender, SessionContext.Mods, propertyName);
 
-        private async void RemoveMod(McMod mcMod)
+        protected override async void RemoveItem(McMod item)
         {
             bool shouldRemove = await DialogService.ShowMessage("Are you sure you want to delete this mod? Folder will be moved to trash bin",
                                                                 "Confirm deletion", "Yes", "No", null).ConfigureAwait(true);
             if (shouldRemove)
             {
-                if (SessionContext.Mods.Remove(mcMod))
+                if (SessionContext.Mods.Remove(item))
                 {
                     try
                     {
-                        FileSystem.DeleteDirectory(ModPaths.ModRootFolder(mcMod.ModInfo.Name), true);
+                        FileSystem.DeleteDirectory(ModPaths.ModRootFolder(item.ModInfo.Name), true);
                     }
                     catch (Exception ex)
                     {
                         Log.Error(ex, "Couldn't remove mod. Make sure folder or its file is not used in any other process", true);
-                        SessionContext.Mods.Add(mcMod); // remove failed, so rollback
+                        SessionContext.Mods.Add(item); // remove failed, so rollback
                     }
                 }
             }
@@ -120,17 +105,17 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
             Screenshots = new ObservableCollection<string>()
         }, "newexampleorg", SessionContext.ForgeVersions[0]);
 
-        private void EditMod(McMod mcMod)
+        protected override void EditItem(McMod item)
         {
-            SelectedEditMod = mcMod;
-            mcMod.ValidateProperty += OnModValidate;
-            EditorForm.OpenItemEditor(mcMod);
+            SelectedEditMod = item;
+            item.ValidateProperty += OnModValidate;
+            EditorForm.OpenItemEditor(item);
         }
 
         private void CreateNewMod(McMod mcMod)
         {
-            IEditorForm<McMod> tempEditor = EditorFormFactory.Create();
-            tempEditor.Validator = ModValidator;
+            IEditorForm<McMod> tempEditor = Context.EditorFormFactory.Create();
+            tempEditor.Validator = Context.Validator;
             tempEditor.ItemEdited += (sender, e) => {
                 if (e.Result)
                 {
@@ -142,7 +127,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
             tempEditor.OpenItemEditor(mcMod);
         }
 
-        private void Editor_OnItemEdited(object sender, ItemEditedEventArgs<McMod> e)
+        protected override void OnItemEdited(object sender, ItemEditedEventArgs<McMod> e)
         {
             if (e.Result)
             {
@@ -160,16 +145,10 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
 
         private void GenerateMod(McMod mcMod)
         {
-            ValidateResult validation = ModValidator.Validate(mcMod);
+            ValidateResult validation = Context.Validator.Validate(mcMod);
             if (!validation.IsValid)
             {
                 Log.Warning($"Selected mod is not valid. Reason: {validation}", true);
-                return;
-            }
-            string newModPath = ModPaths.ModRootFolder(mcMod.ModInfo.Name);
-            if (Directory.Exists(newModPath))
-            {
-                Log.Warning($"{newModPath} already exists", true);
                 return;
             }
             mcMod.ForgeVersion.UnZip(newModPath);
@@ -177,7 +156,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
 
             string assetsPath = ModPaths.AssetsFolder(mcMod.ModInfo.Name, mcMod.ModInfo.Modid);
             IOHelper.GenerateFolders(assetsPath, assetsFolerToGenerate);
-            CodeGenerationService.RegenerateSourceCode(mcMod);
+            Context.CodeGenerationService.RegenerateSourceCode(mcMod);
 
             mcMod.WorkspaceSetup.Setup(mcMod);
             ModHelper.ExportMcInfo(ModInfoSerializer, mcMod.ModInfo);
@@ -198,7 +177,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
 
         private void SaveModChanges(McMod oldModValues, McMod mcMod)
         {
-            ValidateResult validation = ModValidator.Validate(mcMod);
+            ValidateResult validation = Context.Validator.Validate(mcMod);
             if (!validation.IsValid)
             {
                 Log.Warning($"Selected mod is not valid. Reason: {validation}", true);
@@ -263,7 +242,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
 
                 if (organizationChanged || nameChanged || modidChanged)
                 {
-                    CodeGenerationService.RegenerateSourceCode(mcMod);
+                    Context.CodeGenerationService.RegenerateSourceCode(mcMod);
                 }
                 else
                 {
@@ -271,7 +250,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
                     bool mcVersionChanged = mcMod.ModInfo.McVersion != oldModValues.ModInfo.McVersion;
                     if (versionChanged || mcVersionChanged)
                     {
-                        CodeGenerationService.RegenerateScript(CodeGeneration.SourceCodeLocator.Hook(mcMod.ModInfo.Name, mcMod.Organization).ClassName, mcMod);
+                        Context.CodeGenerationService.RegenerateScript(CodeGeneration.SourceCodeLocator.Hook(mcMod.ModInfo.Name, mcMod.Organization).ClassName, mcMod);
                     }
                 }
                 ModHelper.ExportMcInfo(ModInfoSerializer, mcMod.ModInfo);
@@ -320,5 +299,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
             FileSystem.DeleteDirectory(tempDirPath, false);
             Log.Info($"Changed forge version for {mcMod.Name} to {mcMod.ForgeVersion.Name}");
         }
+
+        protected override void RegenerateCode() => throw new NotImplementedException();
     }
 }

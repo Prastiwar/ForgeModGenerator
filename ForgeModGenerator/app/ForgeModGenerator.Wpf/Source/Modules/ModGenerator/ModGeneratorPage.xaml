@@ -57,7 +57,7 @@
                                                         Content="{materialDesign:PackIcon Kind=Edit}"
                                                         Margin="5"
                                                         ToolTip="Edit mod info"
-                                                        Command="{Binding DataContext.EditModCommand, ElementName=ThisWindow}"
+                                                        Command="{Binding DataContext.EditItemCommand, ElementName=ThisWindow}"
                                                         CommandParameter="{Binding}" />
                                                 <Button x:Name="ShowModContainerButton"
                                                         Content="{materialDesign:PackIcon Kind=Folder}"
@@ -69,7 +69,7 @@
                                                         Content="{materialDesign:PackIcon Kind=Trash}"
                                                         Margin="5"
                                                         ToolTip="Remove Mod"
-                                                        Command="{Binding DataContext.RemoveModCommand, ElementName=ThisWindow}"
+                                                        Command="{Binding DataContext.RemoveItemCommand, ElementName=ThisWindow}"
                                                         CommandParameter="{Binding}" />
                                                 <TextBlock Text="{Binding ModInfo.Name}"
                                                            VerticalAlignment="Center"
