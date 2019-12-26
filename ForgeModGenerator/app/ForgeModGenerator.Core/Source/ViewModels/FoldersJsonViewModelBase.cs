@@ -46,7 +46,7 @@ namespace ForgeModGenerator.ViewModels
                 bool shouldFix = await DialogService.ShowMessage(questionMessage, "Conflict found", "Yes", "No", null).ConfigureAwait(true);
                 if (shouldFix)
                 {
-                    ForceJsonFileUpdate();
+                    RegenerateCode();
                 }
             }
             foreach (TFolder folder in deserializedFolders)
@@ -60,12 +60,11 @@ namespace ForgeModGenerator.ViewModels
         {
             Explorer.FileSynchronizer.AddNotReferencedFiles();
             CheckForUpdate();
-            ForceJsonFileUpdate();
+            RegenerateCode();
         }
 
         protected void CheckForUpdate() => IsFileUpdateAvailable = !IsJsonUpdated();
 
-        protected virtual void ForceJsonFileUpdate() => JsonUpdater.ForceJsonUpdate();
 
         protected virtual bool IsJsonUpdated()
         {
@@ -78,6 +77,6 @@ namespace ForgeModGenerator.ViewModels
 
         protected override void EditItem(TFile item) => EditorForm?.OpenItemEditor(item);
 
-        protected override void RegenerateCode() => ForceJsonFileUpdate();
+        protected override void RegenerateCode() => JsonUpdater.ForceJsonUpdate();
     }
 }

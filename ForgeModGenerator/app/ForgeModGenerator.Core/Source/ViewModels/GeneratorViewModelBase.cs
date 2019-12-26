@@ -25,6 +25,9 @@ namespace ForgeModGenerator.ViewModels
         private ICommand removeItemCommand;
         public ICommand RemoveItemCommand => removeItemCommand ?? (removeItemCommand = new DelegateCommand<TItem>(RemoveItem));
 
+        private ICommand openContainerCommand;
+        public ICommand OpenContainerCommand => openContainerCommand ?? (openContainerCommand = new DelegateCommand(() => System.Diagnostics.Process.Start(DirectoryRootPath)));
+
         protected string OnValidate(object sender, IEnumerable<TItem> instances, string propertyName) => Context.Validator.Validate((TItem)sender, instances, propertyName).Error;
 
         protected abstract void RemoveItem(TItem item);

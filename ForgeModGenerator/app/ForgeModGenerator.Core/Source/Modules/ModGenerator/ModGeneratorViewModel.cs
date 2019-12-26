@@ -151,6 +151,12 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
                 Log.Warning($"Selected mod is not valid. Reason: {validation}", true);
                 return;
             }
+            string newModPath = ModPaths.ModRootFolder(mcMod.ModInfo.Name);
+            if (Directory.Exists(newModPath))
+            {
+                Log.Warning($"{newModPath} already exists", true);
+                return;
+            }
             mcMod.ForgeVersion.UnZip(newModPath);
             RemoveDumpExample(mcMod);
 

@@ -23,9 +23,6 @@ namespace ForgeModGenerator.ViewModels
         private ICommand openModelEditorCommand;
         public ICommand OpenModelEditorCommand => openModelEditorCommand ?? (openModelEditorCommand = new DelegateCommand<ObservableCollection<TModel>>(CreateNewModel));
 
-        private ICommand openContainerCommand;
-        public ICommand OpenContainerCommand => openContainerCommand ?? (openContainerCommand = new DelegateCommand(() => System.Diagnostics.Process.Start(Path.GetDirectoryName(ScriptFilePath))));
-
         private ObservableCollection<TModel> modelsRepository;
         public ObservableCollection<TModel> ModelsRepository {
             get => modelsRepository;
