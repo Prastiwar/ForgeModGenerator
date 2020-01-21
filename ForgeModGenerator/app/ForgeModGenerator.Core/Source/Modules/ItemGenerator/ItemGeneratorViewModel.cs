@@ -6,11 +6,11 @@ using System.IO;
 namespace ForgeModGenerator.ItemGenerator.ViewModels
 {
     /// <summary> ItemGenerator Business ViewModel </summary>
-    public class ItemGeneratorViewModel : SimpleInitViewModelBase<Item>
+    public class ItemGeneratorViewModel : JavaInitViewModelBase<Item>
     {
         public ItemGeneratorViewModel(GeneratorContext<Item> context) : base(context) { }
 
-        protected override string ScriptFilePath => SourceCodeLocator.Items(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.Organization).FullPath;
+        protected override string FilePath => SourceCodeLocator.Items(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.Organization).FullPath;
 
         protected override Item ParseModelFromJavaField(string line)
         {

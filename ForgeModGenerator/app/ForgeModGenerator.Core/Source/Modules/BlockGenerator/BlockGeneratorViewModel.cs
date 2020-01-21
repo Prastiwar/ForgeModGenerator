@@ -8,11 +8,11 @@ using System.IO;
 namespace ForgeModGenerator.BlockGenerator.ViewModels
 {
     /// <summary> BlockGenerator Business ViewModel </summary>
-    public class BlockGeneratorViewModel : SimpleInitViewModelBase<Block>
+    public class BlockGeneratorViewModel : JavaInitViewModelBase<Block>
     {
         public BlockGeneratorViewModel(GeneratorContext<Block> context) : base(context) { }
 
-        protected override string ScriptFilePath => SourceCodeLocator.Blocks(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.Organization).FullPath;
+        protected override string FilePath => SourceCodeLocator.Blocks(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.Organization).FullPath;
 
         protected override void RemoveItem(Block item)
         {

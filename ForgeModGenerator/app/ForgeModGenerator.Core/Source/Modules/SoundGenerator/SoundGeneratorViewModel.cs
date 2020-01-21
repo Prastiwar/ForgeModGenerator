@@ -94,17 +94,18 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             return false;
         }
 
-        protected override void ForceJsonFileUpdate()
+        protected override void RegenerateCode() 
         {
-            base.ForceJsonFileUpdate();
+            base.RegenerateCode();
             McMod mcMod = SessionContext.SelectedMod;
             Context.CodeGenerationService.RegenerateInitScript(SourceCodeLocator.SoundEvents(mcMod.ModInfo.Name, mcMod.Organization).ClassName, mcMod, Explorer.Folders.Files);
         }
+
         protected override void OnItemEdited(object sender, ItemEditedEventArgs<Sound> args)
         {
             if (args.Result)
             {
-                ForceJsonFileUpdate();
+                RegenerateCode();
             }
             else
             {
@@ -157,10 +158,9 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
         protected string GetGetterName(string modelName) =>
             SourceCodeLocator.SoundEvents(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.Organization).ClassName + "." + modelName;
 
-
         private void OnFoldersCollectionChanged(object sender, FileChangedEventArgs<SoundEvent> e)
         {
-            ForceJsonFileUpdate();
+            RegenerateCode();
             CheckForUpdate();
             RaisePropertyChanged(nameof(HasEmptyFolders));
         }
@@ -171,7 +171,7 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
         {
             if (e.PropertyName == nameof(Sound.Name))
             {
-                ForceJsonFileUpdate();
+                RegenerateCode();
             }
         }
 
@@ -180,13 +180,13 @@ namespace ForgeModGenerator.SoundGenerator.ViewModels
             ValidateResult validateResult = SoundEventValidator.Validate((SoundEvent)sender, Explorer.Folders.Files);
             if (validateResult.IsValid)
             {
-                ForceJsonFileUpdate();
+                RegenerateCode();
             }
         }
 
         private void SoundEventSoundsChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            ForceJsonFileUpdate();
+            RegenerateCode();
             CheckForUpdate();
         }
     }

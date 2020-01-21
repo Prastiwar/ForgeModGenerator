@@ -1,5 +1,4 @@
 ﻿using ForgeModGenerator.Models;
-using ForgeModGenerator.Utility;
 using ForgeModGenerator.Validation;
 using Prism.Commands;
 using System;
@@ -18,7 +17,7 @@ namespace ForgeModGenerator.ViewModels
     {
         public SimpleInitViewModelBase(GeneratorContext<TModel> context) : base(context) { }
 
-        protected abstract string ScriptFilePath { get; }
+        protected abstract string FilePath { get; }
 
         private ICommand openModelEditorCommand;
         public ICommand OpenModelEditorCommand => openModelEditorCommand ?? (openModelEditorCommand = new DelegateCommand<ObservableCollection<TModel>>(CreateNewModel));
@@ -29,7 +28,7 @@ namespace ForgeModGenerator.ViewModels
             set => SetProperty(ref modelsRepository, value);
         }
 
-        public override string DirectoryRootPath => Path.GetDirectoryName(ScriptFilePath);
+        public override string DirectoryRootPath => Path.GetDirectoryName(FilePath);
 
         public override async Task<bool> Refresh()
         {
@@ -45,7 +44,7 @@ namespace ForgeModGenerator.ViewModels
                 {
                     ModelsRepository.Clear();
                 }
-                IEnumerable<TModel> foundModels = FindModelsFromScriptFile(ScriptFilePath);
+                IEnumerable<TModel> foundModels = FindModelsFromFile(FilePath);
                 await AddModelsAsync(foundModels).ConfigureAwait(false);
                 Context.Validator?.SetDefaultRepository(ModelsRepository);
                 IsLoading = false;
@@ -54,27 +53,6 @@ namespace ForgeModGenerator.ViewModels
             return false;
         }
 
-        /// <summary> Returns content from parantheses block => forString(content) </summary>
-        protected string GetParenthesesContentFor(string fromString, string forString, int startLookingForStringIndex = 0)
-        {
-            int startIndex = fromString.IndexOf(forString, startLookingForStringIndex);
-            if (startIndex < 0)
-            {
-                return "";
-            }
-            fromString = fromString.Substring(startIndex);
-            string content = fromString.GetParenthesesContent();
-            return content;
-        }
-
-        /// <summary> Returns content from parantheses block => forString(content) </summary>
-        protected string[] SplitParenthesesContentFor(string fromString, string forString, int startLookingForStringIndex = 0)
-        {
-            string content = GetParenthesesContentFor(fromString, forString, startLookingForStringIndex);
-            return content == null ? Array.Empty<string>() : content.SplitTrim(',');
-        }
-
-        protected abstract TModel ParseModelFromJavaField(string line);
         protected virtual TModel CreateNewEmptyModel()
         {
             TModel model = Activator.CreateInstance<TModel>();
@@ -91,52 +69,7 @@ namespace ForgeModGenerator.ViewModels
             }
         }
 
-        protected virtual IEnumerable<TModel> FindModelsFromScriptFile(string scriptFilePath)
-        {
-            if (!File.Exists(scriptFilePath))
-            {
-                return Enumerable.Empty<TModel>();
-            }
-            List<TModel> models = new List<TModel>(8);
-            IEnumerable<string> items = File.ReadLines(scriptFilePath).Where(x => x.Trim().StartsWith("public static final"));
-            bool firstIsArray = true;
-            foreach (string item in items)
-            {
-                if (!firstIsArray)
-                {
-                    string line = item.Trim();
-                    if (TryParseModelFromJavaField(line, out TModel model))
-                    {
-                        models.Add(model);
-                    }
-                    else
-                    {
-                        Log.Warning($"Couldn't parse model of type {typeof(TModel)} from java field line {line}");
-                    }
-                }
-                else
-                {
-                    firstIsArray = false;
-                    continue;
-                }
-            }
-            return models;
-        }
-
-        protected bool TryParseModelFromJavaField(string line, out TModel model)
-        {
-            try
-            {
-                model = ParseModelFromJavaField(line);
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex);
-                model = null;
-                return false;
-            }
-            return model != null;
-        }
+        protected abstract IEnumerable<TModel> FindModelsFromFile(string filePath);
 
         protected virtual void CreateNewModel(ObservableCollection<TModel> collection)
         {
@@ -172,7 +105,7 @@ namespace ForgeModGenerator.ViewModels
         protected override void RegenerateCode()
         {
             McMod mod = SessionContext.SelectedMod;
-            Context.CodeGenerationService.RegenerateInitScript(Path.GetFileNameWithoutExtension(ScriptFilePath), mod, ModelsRepository);
+            Context.CodeGenerationService.RegenerateInitScript(Path.GetFileNameWithoutExtension(FilePath), mod, ModelsRepository);
         }
     }
 }

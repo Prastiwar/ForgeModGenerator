@@ -5,11 +5,11 @@ using ForgeModGenerator.ViewModels;
 namespace ForgeModGenerator.MaterialGenerator.ViewModels
 {
     /// <summary> MaterialGenerator Business ViewModel </summary>
-    public class MaterialGeneratorViewModel : SimpleInitViewModelBase<Material>
+    public class MaterialGeneratorViewModel : JavaInitViewModelBase<Material>
     {
         public MaterialGeneratorViewModel(GeneratorContext<Material> context) : base(context) { }
 
-        protected override string ScriptFilePath => SourceCodeLocator.Materials(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.Organization).FullPath;
+        protected override string FilePath => SourceCodeLocator.Materials(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.Organization).FullPath;
 
         protected override Material ParseModelFromJavaField(string line)
         {
