@@ -14,7 +14,7 @@
     <Page.Resources>
         <DataTemplate x:Key="FolderTemplate">
             <StackPanel>
-                <controls:FolderExpanderControl x:Name="RecipeFolderExpanderControl"
+                <!--<controls:FolderExpanderControl x:Name="RecipeFolderExpanderControl"
                                                 Style="{StaticResource SingleFolderExpanderStyle}"
                                                 HeaderText="{Binding Path=Info.Name}"
                                                 Folder="{Binding}"
@@ -43,7 +43,7 @@
                             </StackPanel>
                         </DataTemplate>
                     </controls:FolderExpanderControl.FileItemTemplate>
-                </controls:FolderExpanderControl>
+                </controls:FolderExpanderControl>-->
             </StackPanel>
         </DataTemplate>
     </Page.Resources>

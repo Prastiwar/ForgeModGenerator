@@ -461,6 +461,9 @@
     <Compile Include="Source\Modules\RecipeGenerator\RecipesFactory.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\Validation\RecipeValidator.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundModelFormProvider.cs" />
+    <Compile Include="Source\Modules\TextureGenerator\TextureGeneratorPage.xaml.cs">
+      <DependentUpon>TextureGeneratorPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Source\Serialization\PreferenceDataSerializer.cs" />
     <Compile Include="Source\Serialization\JsonSerializer.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundEventsSerializer.cs" />
@@ -477,14 +480,12 @@
     <Compile Include="Source\Converters\IntToVisibilityConverter.cs" />
     <Compile Include="Source\Converters\InvertBooleanConverter.cs" />
     <Compile Include="Source\Controls\Button\NavButton.cs" />
-    <Compile Include="Source\FileSystem\WpfFoldersFactory.cs" />
     <Compile Include="Source\Modules\ModGenerator\Validation\McModValidator.cs" />
     <Compile Include="Source\Modules\SoundGenerator\Controls\SoundFolderListBox.cs" />
     <Compile Include="Source\Modules\SoundGenerator\ObservableSoundEvents.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundEventsFactory.cs" />
     <Compile Include="Source\Services\DialogService.cs" />
     <Compile Include="Source\Services\SnackbarService.cs" />
-    <Compile Include="Source\FileSystem\WpfObservableFolder.cs" />
     <Compile Include="Source\Utility\Extensions\ValidationExtensions.cs" />
     <Compile Include="Source\Modules\ApplicationModule\BugReporter.xaml.cs">
       <DependentUpon>BugReporter.xaml</DependentUpon>
@@ -532,9 +533,6 @@
     <Compile Include="Source\Validation\FullPathValidator.cs" />
     <Compile Include="Source\Validation\NotEmptyRule.cs" />
     <Compile Include="Source\Modules\SoundGenerator\Validation\SoundEventValidator.cs" />
-    <Compile Include="Source\Modules\TextureGenerator\TextureGeneratorPage.xaml.cs">
-      <DependentUpon>TextureGeneratorPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Source\Modules\RecipeGenerator\RecipeGeneratorPage.xaml.cs">
       <DependentUpon>RecipeGeneratorPage.xaml</DependentUpon>
     </Compile>
@@ -605,6 +603,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Source\Modules\RecipeGenerator\Controls\RecipeEditForm.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Modules\TextureGenerator\TextureGeneratorPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -704,10 +706,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Source\Modules\TextureGenerator\TextureGeneratorPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\SharedAssemblyInfo.cs">

@@ -3,7 +3,7 @@
                     xmlns:controls="clr-namespace:ForgeModGenerator.Controls"
                     xmlns:soundControls="clr-namespace:ForgeModGenerator.SoundGenerator.Controls"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
-    <Style TargetType="{x:Type controls:FolderExpanderControl}">
+    <!--<Style TargetType="{x:Type controls:FolderExpanderControl}">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type controls:FolderExpanderControl}">
@@ -286,5 +286,5 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>
+    </Style>-->
 </ResourceDictionary>

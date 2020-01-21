@@ -16,7 +16,7 @@
     <Page.Resources>
         <DataTemplate x:Key="FolderTemplate">
             <StackPanel>
-                <sControls:SoundFolderExpanderControl x:Name="SoundFolderExpanderControl"
+                <!--<sControls:SoundFolderExpanderControl x:Name="SoundFolderExpanderControl"
                                                       HeaderText="{Binding Path=Info.Name}"
                                                       Folder="{Binding}"
                                                       AllFolders="{Binding Path=FoldersSource, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
@@ -46,7 +46,7 @@
                             </StackPanel>
                         </DataTemplate>
                     </sControls:SoundFolderExpanderControl.FileItemTemplate>
-                </sControls:SoundFolderExpanderControl>
+                </sControls:SoundFolderExpanderControl>-->
             </StackPanel>
         </DataTemplate>
     </Page.Resources>

@@ -11,40 +11,6 @@
       mc:Ignorable="d"
       d:DesignHeight="450"
       d:DesignWidth="800">
-    <Page.Resources>
-        <DataTemplate x:Key="FolderTemplate">
-            <StackPanel>
-                <controls:FolderExpanderControl x:Name="TextureFolderExpanderControl"
-                                                HeaderText="{Binding Path=Info.Name}"
-                                                Folder="{Binding}"
-                                                AddFileCommand="{Binding Path=DataContext.AddFileCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
-                                                RemoveFileCommand="{Binding Path=DataContext.RemoveFileCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
-                                                RemoveFolderCommand="{Binding Path=DataContext.RemoveFolderCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
-                                                EditFileCommand="{Binding Path=DataContext.EditItemCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}">
-                    <controls:FolderExpanderControl.FileItemTemplate>
-                        <DataTemplate x:Name="FolderFileItemTemplate">
-                            <StackPanel Margin="5,5,5,10">
-                                <Image x:Name="TextureImage"
-                                       Tag="{Binding RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
-                                       Width="32"
-                                       Height="32">
-                                    <Image.ContextMenu>
-                                        <controls:FileContextMenu />
-                                    </Image.ContextMenu>
-                                    <Image.Source>
-                                        <BitmapImage UriSource="{Binding Info.FullName}"
-                                                     CacheOption="OnLoad" />
-                                    </Image.Source>
-                                </Image>
-                                <controls:SubmitTextBox x:Name="FileRenameTextBox"
-                                                        Style="{StaticResource FileRenameStyle}" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </controls:FolderExpanderControl.FileItemTemplate>
-                </controls:FolderExpanderControl>
-            </StackPanel>
-        </DataTemplate>
-    </Page.Resources>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding OnLoadedCommand}" />
@@ -60,14 +26,27 @@
                          Foreground="White"
                          Value="0"
                          IsIndeterminate="True" />
-            <controls:FolderListBox x:Name="FoldersListBox"
-                                    Grid.Row="1"
-                                    Visibility="{Binding IsLoading, Converter={StaticResource InvertedBoolToVisibility}}"
-                                    FoldersSource="{Binding Explorer.Folders.Files, Mode=OneWay}"
-                                    AddFolderCommand="{Binding AddFolderCommand}"
-                                    RootPath="{Binding DirectoryRootPath}"
-                                    ShowEmptyMessage="{Binding SessionContext.IsModSelected, Converter={StaticResource InvertBooleanConverter}}"
-                                    FolderTemplate="{StaticResource FolderTemplate}" />
+            <StackPanel HorizontalAlignment="Center"
+                        VerticalAlignment="Top"
+                        Margin="25">
+                <Label Content="Texture Generator"
+                       Foreground="DarkGray"
+                       HorizontalAlignment="Center"
+                       FontSize="25" />
+                <Label Content="Click below to manage textures available in your mod"
+                       Margin="15"
+                       Foreground="DarkGray"
+                       HorizontalAlignment="Center"
+                       FontSize="20" />
+                <Label Content="It will redirect you to file explorer"
+                       Margin="15"
+                       Foreground="DarkGray"
+                       HorizontalAlignment="Center"
+                       FontSize="20" />
+                <Button Margin="25"
+                        Content="Open textures container"
+                        Command="{Binding OpenTexturesCommand}" />
+            </StackPanel>
         </Grid>
     </materialDesign:DialogHost>
 </Page>

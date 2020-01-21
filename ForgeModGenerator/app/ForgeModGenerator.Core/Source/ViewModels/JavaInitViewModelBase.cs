@@ -12,7 +12,7 @@ namespace ForgeModGenerator.ViewModels
         where TModel : ObservableDirtyObject, IValidable
     {
         public JavaInitViewModelBase(GeneratorContext<TModel> context) : base(context) { }
-        
+
         /// <summary> Returns content from parantheses block => forString(content) </summary>
         protected string GetParenthesesContentFor(string fromString, string forString, int startLookingForStringIndex = 0)
         {

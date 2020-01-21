@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.IO;
 
 namespace ForgeModGenerator.Services
 {
@@ -12,14 +14,21 @@ namespace ForgeModGenerator.Services
 
         public bool NavigateTo(string name)
         {
-            regionManager.RequestNavigate(RegionName, name);
+            if (File.Exists(name))
+            {
+                Process.Start(Path.GetDirectoryName(name));
+            }
+            else if (Directory.Exists(name))
+            {
+                Process.Start(name);
+            }
+            else
+            {
+                regionManager.RequestNavigate(RegionName, name);
+            }
             return true;
         }
 
-        public bool NavigateTo(Uri uri)
-        {
-            regionManager.RequestNavigate(RegionName, uri);
-            return true;
-        }
+        public bool NavigateTo(Uri uri) => NavigateTo(uri.OriginalString);
     }
 }

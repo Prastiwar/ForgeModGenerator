@@ -7,8 +7,8 @@ using ForgeModGenerator.RecipeGenerator.Models;
 using ForgeModGenerator.Serialization;
 using ForgeModGenerator.Services;
 using ForgeModGenerator.SoundGenerator;
-using ForgeModGenerator.SoundGenerator.Models;
-using ForgeModGenerator.SoundGenerator.Serialization;
+//using ForgeModGenerator.SoundGenerator.Models;
+//using ForgeModGenerator.SoundGenerator.Serialization;
 using ForgeModGenerator.Validation;
 using ForgeModGenerator.ViewModels;
 using Microsoft.AppCenter;
@@ -224,18 +224,9 @@ namespace ForgeModGenerator
         {
             containerRegistry.Register(typeof(IJsonUpdaterFactory<>), typeof(JsonUpdaterFactory<>));
             containerRegistry.Register(typeof(IJsonUpdaterFactory<,>), typeof(CollectionJsonUpdaterFactory<,>));
-            containerRegistry.Register(typeof(IFoldersFactory<,>), typeof(WpfFoldersFactory<,>));
-            containerRegistry.Register(typeof(IFolderSynchronizerFactory<,>), typeof(FolderSynchronizerFactory<,>));
-            containerRegistry.Register(typeof(IFoldersExplorerFactory<,>), typeof(FoldersExplorerFactory<,>));
-            containerRegistry.Register(typeof(IFoldersFinder<,>), typeof(DefaultFoldersFinder<,>));
             containerRegistry.Register(typeof(IEditorFormFactory<>), typeof(ModelEditorFormFactory<>));
 
-            containerRegistry.Register<ISoundJsonUpdaterFactory, SoundJsonUpdaterFactory>();
-            containerRegistry.Register<IFoldersFactory<SoundEvent, Sound>, SoundEventsFactory>();
-            containerRegistry.Register<IFoldersFinder<SoundEvent, Sound>, SoundEventsFinder>();
-            containerRegistry.Register<IFolderSynchronizerFactory<SoundEvent, Sound>, SoundEventsSynchronizerFactory>();
-
-            containerRegistry.Register(typeof(IFoldersFactory<ObservableFolder<Recipe>, Recipe>), typeof(RecipesFactory));
+            //containerRegistry.Register<ISoundJsonUpdaterFactory, SoundJsonUpdaterFactory>();
         }
 
         private void RegisterServices(IContainerRegistry containerRegistry)

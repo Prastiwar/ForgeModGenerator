@@ -1,36 +1,40 @@
-﻿using ForgeModGenerator.ViewModels;
+﻿using ForgeModGenerator.Services;
+using ForgeModGenerator.ViewModels;
+using Prism.Commands;
+using System.Diagnostics;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace ForgeModGenerator.TextureGenerator.ViewModels
 {
-    /// <summary> TextureGenerator Business ViewModel </summary>
-    public class TextureGeneratorViewModel : FoldersWatcherViewModelBase<ObservableFolder<FileObject>, FileObject>
+    public class TextureGeneratorViewModel : ViewModelBase
     {
-        public TextureGeneratorViewModel(GeneratorContext<FileObject> context,
-                                         IFoldersExplorerFactory<ObservableFolder<FileObject>, FileObject> explorerFactory) 
-            : base(context, explorerFactory)
-        {
-            Explorer.OpenFileDialog.Filter = "Image (*.png) | *.png";
-            Explorer.AllowFileExtensions(".png");
-        }
+        public TextureGeneratorViewModel(ISessionContextService sessionContext) : base(sessionContext) { }
 
-        public override string DirectoryRootPath => SessionContext.SelectedMod != null ? ModPaths.TexturesFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid) : null;
+        private ICommand openTexturesCommand;
+        public ICommand OpenTexturesCommand => openTexturesCommand ?? (openTexturesCommand = new DelegateCommand(OpenTexturesContainer));
 
-        public override async Task<bool> Refresh()
+        public override Task<bool> Refresh()
         {
             if (CanRefresh())
             {
                 IsLoading = true;
-                Explorer.Folders.Clear();
-                await InitializeFoldersAsync(await Explorer.FileSynchronizer.Finder.FindFoldersAsync(DirectoryRootPath, true).ConfigureAwait(true)).ConfigureAwait(false);
-                Explorer.FileSynchronizer.RootPath = DirectoryRootPath;
-                Explorer.FileSynchronizer.SetEnableSynchronization(true);
+
+                // Do work
+
                 IsLoading = false;
-                return true;
+                return Task.FromResult(true);
             }
-            return false;
+            return Task.FromResult(false);
         }
 
-        protected override void RegenerateCode() { }
+        private void OpenTexturesContainer()
+        {
+            if (SessionContext.IsModSelected)
+            {
+                string path = ModPaths.TexturesFolder(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
+                Process.Start(path);
+            }
+        }
     }
 }

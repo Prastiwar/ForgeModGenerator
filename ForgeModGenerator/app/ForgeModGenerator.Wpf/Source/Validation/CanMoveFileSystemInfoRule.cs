@@ -68,10 +68,10 @@ namespace ForgeModGenerator.Validation
             {
                 path = fileSystemInfoPath.FullName;
             }
-            else if (value is FileSystemInfoReference fileSystemInfoRefPath)
-            {
-                path = fileSystemInfoRefPath.FullName;
-            }
+            //else if (value is FileSystemInfoReference fileSystemInfoRefPath)
+            //{
+            //    path = fileSystemInfoRefPath.FullName;
+            //}
             return ValidateFullPath(path);
         }
 
