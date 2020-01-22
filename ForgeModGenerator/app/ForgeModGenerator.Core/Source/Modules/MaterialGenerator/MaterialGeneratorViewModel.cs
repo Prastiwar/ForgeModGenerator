@@ -9,7 +9,7 @@ namespace ForgeModGenerator.MaterialGenerator.ViewModels
     {
         public MaterialGeneratorViewModel(GeneratorContext<Material> context) : base(context) { }
 
-        protected override string FilePath => SourceCodeLocator.Materials(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.Organization).FullPath;
+        protected override string InitFilePath => SourceCodeLocator.Materials(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.Organization).FullPath;
 
         protected override Material ParseModelFromJavaField(string line)
         {

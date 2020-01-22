@@ -148,6 +148,7 @@ namespace ForgeModGenerator
             bool IsValidatorRegistered = TryRegisterInterfaceForModel(containerRegistry, model, "Validator");
             bool IsFormProviderRegistered = TryRegisterClassForModel(containerRegistry, model, "ModelFormProvider");
             bool IsEditorFormFactoryRegistered = TryRegisterInterfaceForModel(containerRegistry, model, "EditorFormFactory");
+            bool IsGeneratorContextRegistered = TryRegisterClassForModel(containerRegistry, model, "GeneratorContext");
         }
 
         private bool TryRegisterClassForModel(IContainerRegistry containerRegistry, Type model, string name, Type defaultClassType = null)

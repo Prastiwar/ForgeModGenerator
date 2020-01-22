@@ -8,6 +8,7 @@ namespace ForgeModGenerator.CodeGeneration
         ClassLocator ScriptLocator { get; }
 
         void RegenerateScript();
+        void DeleteScript();
     }
 
     public interface IMultiScriptCodeGenerator : IScriptCodeGenerator

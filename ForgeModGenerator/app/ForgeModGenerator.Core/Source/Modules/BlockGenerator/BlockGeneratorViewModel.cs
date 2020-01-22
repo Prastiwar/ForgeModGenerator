@@ -12,7 +12,7 @@ namespace ForgeModGenerator.BlockGenerator.ViewModels
     {
         public BlockGeneratorViewModel(GeneratorContext<Block> context) : base(context) { }
 
-        protected override string FilePath => SourceCodeLocator.Blocks(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.Organization).FullPath;
+        protected override string InitFilePath => SourceCodeLocator.Blocks(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.Organization).FullPath;
 
         protected override void RemoveItem(Block item)
         {

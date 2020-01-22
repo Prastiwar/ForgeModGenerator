@@ -1,102 +1,62 @@
-﻿//using ForgeModGenerator.CodeGeneration;
-//using ForgeModGenerator.CommandGenerator.Models;
-//using ForgeModGenerator.Models;
-//using ForgeModGenerator.ViewModels;
-//using Prism.Commands;
-//using System.IO;
-//using System.Threading.Tasks;
-//using System.Windows.Input;
+﻿using ForgeModGenerator.CodeGeneration;
+using ForgeModGenerator.CommandGenerator.Models;
+using ForgeModGenerator.ViewModels;
+using System.ComponentModel;
+using System.IO;
 
-//namespace ForgeModGenerator.CommandGenerator.ViewModels
-//{
-//    /// <summary> CommandGenerator Business ViewModel </summary>
-//    public class CommandGeneratorViewModel : FoldersWatcherViewModelBase<ObservableFolder<Command>, Command>
-//    {
-//        public CommandGeneratorViewModel(GeneratorContext<Command> context,
-//                                        IFoldersExplorerFactory<ObservableFolder<Command>, Command> factory)
-//            : base(context, factory)
-//        {
-//            Explorer.OpenFileDialog.Filter = "Java file (*.java) | *.java";
-//            Explorer.AllowFileExtensions(".java");
-//            Explorer.FileSynchronizer.SyncFilter = NotifyFilter.File;
-//        }
+namespace ForgeModGenerator.CommandGenerator.ViewModels
+{
+    public class CommandGeneratorViewModel : FileInitViewModelBase<Command>
+    {
+        public CommandGeneratorViewModel(GeneratorContext<Command> context, ISynchronizeInvoke synchronizeInvoke) 
+            : base(context, synchronizeInvoke) => FileSearchPatterns = "*.java";
 
-//        public override string DirectoryRootPath => SessionContext.SelectedMod != null
-//            ? Path.GetDirectoryName(SourceCodeLocator.CustomCommand(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.Organization, "None").FullPath)
-//            : null;
+        protected override string InitFilePath
+            => SourceCodeLocator.Commands(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.Organization).FullPath;
 
-//        private ICommand openCommandEditor;
-//        public ICommand OpenCommandEditor => openCommandEditor ?? (openCommandEditor = new DelegateCommand<ObservableFolder<Command>>(CreateNewCommand));
+        public override string DirectoryRootPath => SessionContext.SelectedMod != null
+            ? Path.GetDirectoryName(SourceCodeLocator.CustomCommand(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.Organization, "None").FullPath)
+            : null;
 
-//        private string tempFilePath;
+        protected override Command ParseModel(string content)
+        {
+            Command command = new Command();
 
-//        public override async Task<bool> Refresh()
-//        {
-//            if (CanRefresh())
-//            {
-//                IsLoading = true;
-//                Explorer.Folders.Clear();
-//                await InitializeFoldersAsync(await Explorer.FileSynchronizer.Finder.FindFoldersAsync(DirectoryRootPath, true).ConfigureAwait(true)).ConfigureAwait(false);
-//                Explorer.FileSynchronizer.RootPath = DirectoryRootPath;
-//                Explorer.FileSynchronizer.SetEnableSynchronization(true);
-//                SubscribeFolderEvents(Explorer.Folders, new FileChangedEventArgs<ObservableFolder<Command>>(Explorer.Folders.Files, FileChange.Add));
-//                RegenerateCode();
-//                IsLoading = false;
-//                return true;
-//            }
-//            return false;
-//        }
+            string classKeyword = " class ";
+            int indexOfUsage = content.IndexOf(classKeyword);
+            if (indexOfUsage > -1)
+            {
+                int startIndex = indexOfUsage + classKeyword.Length;
+                int endIndex = content.IndexOf(' ', startIndex);
+                command.ClassName = content.Substring(startIndex, endIndex - startIndex);
+            }
+            command.Name = InitializeProperty<string>(content, "public String getName()");
+            command.Usage = InitializeProperty<string>(content, "public String getUsage(ICommandSender sender)");
+            command.PermissionLevel = InitializeProperty<int>(content, "public int getRequiredPermissionLevel()");
 
-//        private void CreateNewCommand(ObservableFolder<Command> folder)
-//        {
-//            tempFilePath = Path.GetTempFileName();
-//            Command newCommand = new Command(tempFilePath) {
-//                ClassName = "NewCommand",
-//                Name = "newcommand",
-//                Usage = "/newcommand",
-//                Permission = $"{SessionContext.SelectedMod.ModInfo.Name.ToLower()}.newcommand",
-//                PermissionLevel = 4
-//            };
-//            newCommand.IsDirty = false;
-//            newCommand.ValidateProperty += (sender, propertyName) => OnValidate(sender, folder.Files, propertyName);
-//            Context.Validator.SetDefaultRepository(folder.Files);
-//            EditorForm.OpenItemEditor(newCommand);
-//        }
+            return command;
+        }
 
-//        protected override void OnItemEdited(object sender, ItemEditedEventArgs<Command> e)
-//        {
-//            if (e.Result)
-//            {
-//                McMod mod = SessionContext.SelectedMod;
-//                Context.CodeGenerationService.CreateCustomScript(mod, e.ActualItem);
-//            }
-//            new FileInfo(tempFilePath).Delete();
-//        }
-
-//        protected void SubscribeFolderEvents(object sender, FileChangedEventArgs<ObservableFolder<Command>> e)
-//        {
-//            if (e.Change == FileChange.Add)
-//            {
-//                foreach (ObservableFolder<Command> folder in e.Files)
-//                {
-//                    folder.FilesChanged += OnFilesChanged;
-//                }
-//            }
-//            else if (e.Change == FileChange.Remove)
-//            {
-//                foreach (ObservableFolder<Command> folder in e.Files)
-//                {
-//                    folder.FilesChanged -= OnFilesChanged;
-//                }
-//            }
-//        }
-
-//        protected virtual void OnFilesChanged(object sender, FileChangedEventArgs<Command> e) => RegenerateCode();
-
-//        protected override void RegenerateCode()
-//        {
-//            McMod mod = SessionContext.SelectedMod;
-//            Context.CodeGenerationService.RegenerateInitScript(SourceCodeLocator.Commands(mod.ModInfo.Name, mod.Organization).ClassName, mod, Explorer.Folders.Files[0].Files);
-//        }
-//    }
-//}
+        private T InitializeProperty<T>(string content, string findString)
+        {
+            int indexOfUsage = content.IndexOf(findString);
+            if (indexOfUsage > -1)
+            {
+                string returnKeyword = "return ";
+                indexOfUsage = content.IndexOf(returnKeyword, indexOfUsage + findString.Length);
+                if (indexOfUsage > -1)
+                {
+                    int startIndex = indexOfUsage + returnKeyword.Length;
+                    int endIndex = content.IndexOf(';', startIndex);
+                    string value = content.Substring(startIndex, endIndex - startIndex);
+                    if (value[0] == '"')
+                    {
+                        value = value.Substring(1, value.Length - 2);
+                    }
+                    return (T)System.Convert.ChangeType(value, typeof(T));
+                }
+            }
+            return default;
+        }
+    }
+}

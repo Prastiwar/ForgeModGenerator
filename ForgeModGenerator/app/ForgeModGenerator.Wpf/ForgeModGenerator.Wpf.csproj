@@ -391,9 +391,6 @@
     <Compile Include="Source\Controls\ModelContextMenu.xaml.cs">
       <DependentUpon>ModelContextMenu.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Source\Controls\FileContextMenu.xaml.cs">
-      <DependentUpon>FileContextMenu.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Source\Controls\Proxy\SelectorDecorator.cs" />
     <Compile Include="Source\Common\SyncInvokeObject.cs" />
     <Compile Include="Source\Controls\Proxy\MultiBindingDecorator.cs" />
@@ -476,8 +473,8 @@
     <Compile Include="Source\Controls\Button\ScrollButton.cs" />
     <Compile Include="Source\Controls\SnackbarExtended.cs" />
     <Compile Include="Source\Converters\BoolValueConverter.cs" />
-    <Compile Include="Source\Converters\InvertIntToVisibilityConverter.cs" />
-    <Compile Include="Source\Converters\IntToVisibilityConverter.cs" />
+    <Compile Include="Source\Converters\ToVisibility\InvertIntToVisibilityConverter.cs" />
+    <Compile Include="Source\Converters\ToVisibility\IntToVisibilityConverter.cs" />
     <Compile Include="Source\Converters\InvertBooleanConverter.cs" />
     <Compile Include="Source\Controls\Button\NavButton.cs" />
     <Compile Include="Source\Modules\ModGenerator\Validation\McModValidator.cs" />
@@ -569,10 +566,6 @@
     <Page Include="Source\Controls\ModelContextMenu.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Source\Controls\FileContextMenu.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Source\Modules\ApplicationModule\BugReporter.xaml">
       <SubType>Designer</SubType>
@@ -781,6 +774,7 @@
   <ItemGroup>
     <Folder Include="Source\Modules\AchievementGenerator\Controls\" />
     <Folder Include="Source\Modules\AchievementGenerator\Validation\" />
+    <Folder Include="Source\Modules\CommandGenerator\Converters\" />
     <Folder Include="Source\Modules\ItemGenerator\Validation\" />
     <Folder Include="Source\Modules\MaterialGenerator\Validation\" />
   </ItemGroup>

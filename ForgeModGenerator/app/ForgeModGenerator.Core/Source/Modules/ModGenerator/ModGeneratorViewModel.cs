@@ -256,7 +256,8 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
                     bool mcVersionChanged = mcMod.ModInfo.McVersion != oldModValues.ModInfo.McVersion;
                     if (versionChanged || mcVersionChanged)
                     {
-                        Context.CodeGenerationService.RegenerateScript(CodeGeneration.SourceCodeLocator.Hook(mcMod.ModInfo.Name, mcMod.Organization).ClassName, mcMod);
+                        string className = CodeGeneration.SourceCodeLocator.Hook(mcMod.ModInfo.Name, mcMod.Organization).ClassName;
+                        Context.CodeGenerationService.GetScriptCodeGenerator(className, mcMod).RegenerateScript();
                     }
                 }
                 ModHelper.ExportMcInfo(ModInfoSerializer, mcMod.ModInfo);

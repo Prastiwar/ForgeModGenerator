@@ -66,6 +66,17 @@ namespace ForgeModGenerator.CodeGeneration
             }
         }
 
+        public void DeleteScript()
+        {
+            if (File.Exists(ScriptLocator.FullPath))
+            {
+                FileInfo scriptFileInfo = new FileInfo(ScriptLocator.FullPath) {
+                    IsReadOnly = false
+                };
+                scriptFileInfo.Delete();
+            }
+        }
+
         protected abstract CodeCompileUnit CreateTargetCodeUnit();
 
         #region Code expression and statements shorthands     

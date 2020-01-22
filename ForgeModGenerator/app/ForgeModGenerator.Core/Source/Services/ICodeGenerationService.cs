@@ -7,11 +7,9 @@ namespace ForgeModGenerator.Services
     public interface ICodeGenerationService
     {
         void RegenerateSourceCode(McMod mcMod);
-        void RegenerateScript<TScriptGenerator>(McMod mcMod) where TScriptGenerator : IScriptCodeGenerator;
-        void RegenerateScript(string className, McMod mcMod);
 
-        void CreateCustomScript<T>(McMod mcMod, T element);
-
-        void RegenerateInitScript<T>(string className, McMod mcMod, IEnumerable<T> repository);
+        IScriptCodeGenerator GetScriptCodeGenerator(string className, McMod mcMod);
+        IScriptCodeGenerator GetInitScriptCodeGenerator<T>(string className, McMod mcMod, IEnumerable<T> repository);
+        IScriptCodeGenerator GetCustomScriptCodeGenerator<T>(McMod mcMod, T element);
     }
 }

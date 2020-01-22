@@ -17,7 +17,7 @@ namespace ForgeModGenerator.ViewModels
     {
         public SimpleInitViewModelBase(GeneratorContext<TModel> context) : base(context) { }
 
-        protected abstract string FilePath { get; }
+        protected abstract string InitFilePath { get; }
 
         private ICommand openModelEditorCommand;
         public ICommand OpenModelEditorCommand => openModelEditorCommand ?? (openModelEditorCommand = new DelegateCommand<ObservableCollection<TModel>>(CreateNewModel));
@@ -28,7 +28,7 @@ namespace ForgeModGenerator.ViewModels
             set => SetProperty(ref modelsRepository, value);
         }
 
-        public override string DirectoryRootPath => Path.GetDirectoryName(FilePath);
+        public override string DirectoryRootPath => Path.GetDirectoryName(InitFilePath);
 
         public override async Task<bool> Refresh()
         {
@@ -44,7 +44,7 @@ namespace ForgeModGenerator.ViewModels
                 {
                     ModelsRepository.Clear();
                 }
-                IEnumerable<TModel> foundModels = FindModelsFromFile(FilePath);
+                IEnumerable<TModel> foundModels = FindModels();
                 await AddModelsAsync(foundModels).ConfigureAwait(false);
                 Context.Validator?.SetDefaultRepository(ModelsRepository);
                 IsLoading = false;
@@ -52,6 +52,10 @@ namespace ForgeModGenerator.ViewModels
             }
             return false;
         }
+
+        protected virtual IEnumerable<TModel> FindModels() => FindModelsFromPath(InitFilePath);
+
+        protected virtual IEnumerable<TModel> FindModelsFromPath(string path) => Enumerable.Empty<TModel>();
 
         protected virtual TModel CreateNewEmptyModel()
         {
@@ -68,8 +72,6 @@ namespace ForgeModGenerator.ViewModels
                 await Task.Delay(1).ConfigureAwait(true);
             }
         }
-
-        protected abstract IEnumerable<TModel> FindModelsFromFile(string filePath);
 
         protected virtual void CreateNewModel(ObservableCollection<TModel> collection)
         {
@@ -105,7 +107,7 @@ namespace ForgeModGenerator.ViewModels
         protected override void RegenerateCode()
         {
             McMod mod = SessionContext.SelectedMod;
-            Context.CodeGenerationService.RegenerateInitScript(Path.GetFileNameWithoutExtension(FilePath), mod, ModelsRepository);
+            Context.CodeGenerationService.GetInitScriptCodeGenerator(Path.GetFileNameWithoutExtension(InitFilePath), mod, ModelsRepository).RegenerateScript();
         }
     }
 }

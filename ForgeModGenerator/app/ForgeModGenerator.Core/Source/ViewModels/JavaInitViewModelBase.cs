@@ -8,6 +8,7 @@ using System.Linq;
 
 namespace ForgeModGenerator.ViewModels
 {
+    /// <summary> Inits TModel from java field from init class </summary>
     public abstract class JavaInitViewModelBase<TModel> : SimpleInitViewModelBase<TModel>
         where TModel : ObservableDirtyObject, IValidable
     {
@@ -35,14 +36,14 @@ namespace ForgeModGenerator.ViewModels
 
         protected abstract TModel ParseModelFromJavaField(string line);
 
-        protected override IEnumerable<TModel> FindModelsFromFile(string filePath)
+        protected override IEnumerable<TModel> FindModelsFromPath(string path)
         {
-            if (!File.Exists(filePath))
+            if (!File.Exists(path))
             {
                 return Enumerable.Empty<TModel>();
             }
             List<TModel> models = new List<TModel>(8);
-            IEnumerable<string> items = File.ReadLines(filePath).Where(x => x.Trim().StartsWith("public static final"));
+            IEnumerable<string> items = File.ReadLines(path).Where(x => x.Trim().StartsWith("public static final"));
             bool firstIsArray = true;
             foreach (string item in items)
             {

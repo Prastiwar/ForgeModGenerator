@@ -14,7 +14,7 @@
     <Page.Resources>
         <StackPanel x:Key="FolderTemplate">
             <!--<controls:FolderExpanderControl x:Name="BlockFolderExpanderControl"
-                                            Style="{StaticResource SingleModelFolderExpanderStyle}"
+                                            Style="{StaticResource SingleFolderExpanderStyle}"
                                             HeaderText="Blocks"
                                             Folder="{Binding Path=.}"
                                             ShowContainerCommand="{Binding Path=DataContext.OpenContainerCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"

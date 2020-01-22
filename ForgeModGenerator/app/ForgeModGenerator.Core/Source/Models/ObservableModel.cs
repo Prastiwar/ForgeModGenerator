@@ -7,6 +7,12 @@ namespace ForgeModGenerator.Models
 {
     public abstract class ObservableModel : ObservableDirtyObject, ICopiable, IDataErrorInfo, IValidable
     {
+        private string name;
+        public string Name {
+            get => name;
+            set => SetProperty(ref name, value);
+        }
+
         public abstract bool CopyValues(object fromCopy);
 
         public abstract object DeepClone();
