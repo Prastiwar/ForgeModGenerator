@@ -173,6 +173,22 @@ namespace ForgeModGenerator.ViewModels
             return models;
         }
 
+        protected override void OnItemEdited(object sender, ItemEditedEventArgs<TModel> e)
+        {
+            if (e.Result)
+            {
+                if (!ModelsRepository.Contains(e.ActualItem))
+                {
+                    ModelsRepository.Add(e.ActualItem);
+                }
+                else
+                {
+                    Context.CodeGenerationService.GetCustomScriptCodeGenerator(SessionContext.SelectedMod, e.CachedItem).DeleteScript();
+                }
+                RegenerateCode();
+            }
+        }
+
         protected override void RemoveItem(TModel item)
         {
             base.RemoveItem(item);
