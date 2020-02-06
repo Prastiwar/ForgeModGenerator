@@ -10,7 +10,7 @@ namespace ForgeModGenerator.ViewModels
 {
     /// <summary> Inits TModel from java field from init class </summary>
     public abstract class JavaInitViewModelBase<TModel> : SimpleInitViewModelBase<TModel>
-        where TModel : ObservableDirtyObject, IValidable
+        where TModel : ObservableDirtyObject, IValidable, ICopiable
     {
         public JavaInitViewModelBase(GeneratorContext<TModel> context) : base(context) { }
 

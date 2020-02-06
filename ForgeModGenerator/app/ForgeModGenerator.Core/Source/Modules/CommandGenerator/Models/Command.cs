@@ -10,12 +10,6 @@ namespace ForgeModGenerator.CommandGenerator.Models
             set => SetProperty(ref className, value);
         }
 
-        private string name;
-        public string Name {
-            get => name;
-            set => SetProperty(ref name, value);
-        }
-
         private string usage;
         public string Usage {
             get => usage;

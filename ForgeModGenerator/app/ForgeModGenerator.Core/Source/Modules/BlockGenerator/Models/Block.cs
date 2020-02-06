@@ -5,12 +5,6 @@ namespace ForgeModGenerator.BlockGenerator.Models
 {
     public class Block : ObservableModel
     {
-        private string name;
-        public string Name {
-            get => name;
-            set => SetProperty(ref name, value);
-        }
-
         private BlockType type;
         public BlockType Type {
             get => type;

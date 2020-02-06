@@ -67,7 +67,7 @@
                                                 </Button.ContextMenu>
                                             </Button>
                                             <Label x:Name="FileNameLabel"
-                                                   Content="{Binding ClassName}" />
+                                                   Content="{Binding ClassName, Mode=OneWay}" />
                                         </StackPanel>
                                     </DataTemplate>
                                 </controls:FolderExpanderControl.FileItemTemplate>

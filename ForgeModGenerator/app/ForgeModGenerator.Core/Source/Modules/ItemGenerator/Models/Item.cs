@@ -5,12 +5,6 @@ namespace ForgeModGenerator.ItemGenerator.Models
 {
     public class Item : ObservableModel
     {
-        private string name;
-        public string Name {
-            get => name;
-            set => SetProperty(ref name, value);
-        }
-
         private ItemType type;
         public ItemType Type {
             get => type;

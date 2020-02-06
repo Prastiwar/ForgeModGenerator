@@ -2,11 +2,8 @@
 using ForgeModGenerator.ApplicationModule.Views;
 using ForgeModGenerator.CodeGeneration;
 using ForgeModGenerator.Models;
-using ForgeModGenerator.RecipeGenerator;
-using ForgeModGenerator.RecipeGenerator.Models;
 using ForgeModGenerator.Serialization;
 using ForgeModGenerator.Services;
-using ForgeModGenerator.SoundGenerator;
 //using ForgeModGenerator.SoundGenerator.Models;
 //using ForgeModGenerator.SoundGenerator.Serialization;
 using ForgeModGenerator.Validation;
@@ -32,7 +29,7 @@ using Unity;
 
 namespace ForgeModGenerator
 {
-    public partial class App : PrismApplication
+    public partial class App : PrismApplication, IDisposable
     {
         public App()
         {
@@ -239,5 +236,28 @@ namespace ForgeModGenerator
             containerRegistry.Register<IPreferenceService, PreferenceService>();
             containerRegistry.Register<ICodeGenerationService, CodeGeneratorService>();
         }
+
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: dispose managed state (managed objects).
+                }
+                globalCache.Dispose();
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        #endregion
     }
 }

@@ -4,12 +4,6 @@ namespace ForgeModGenerator.MaterialGenerator.Models
 {
     public class Material : ObservableModel
     {
-        private string name;
-        public string Name {
-            get => name;
-            set => SetProperty(ref name, value);
-        }
-
         public override bool CopyValues(object fromCopy)
         {
             if (fromCopy is Material fromModel)

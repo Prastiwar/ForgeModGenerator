@@ -13,7 +13,7 @@ using System.Windows.Input;
 namespace ForgeModGenerator.ViewModels
 {
     public abstract class SimpleInitViewModelBase<TModel> : GeneratorViewModelBase<TModel>
-        where TModel : ObservableDirtyObject, IValidable
+        where TModel : ObservableDirtyObject, IValidable, ICopiable
     {
         public SimpleInitViewModelBase(GeneratorContext<TModel> context) : base(context) { }
 
@@ -86,6 +86,7 @@ namespace ForgeModGenerator.ViewModels
 
         protected override void OnItemEdited(object sender, ItemEditedEventArgs<TModel> e)
         {
+            base.OnItemEdited(sender, e);
             if (e.Result)
             {
                 if (!ModelsRepository.Contains(e.ActualItem))

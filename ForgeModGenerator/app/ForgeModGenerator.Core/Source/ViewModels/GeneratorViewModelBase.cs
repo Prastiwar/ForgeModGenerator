@@ -5,6 +5,7 @@ using System.Windows.Input;
 namespace ForgeModGenerator.ViewModels
 {
     public abstract class GeneratorViewModelBase<TItem> : ViewModelBase
+        where TItem : ICopiable
     {
         public GeneratorViewModelBase(GeneratorContext<TItem> context) : base(context.SessionContext)
         {
@@ -34,7 +35,13 @@ namespace ForgeModGenerator.ViewModels
 
         protected virtual void EditItem(TItem item) => EditorForm.OpenItemEditor(item);
 
-        protected virtual void OnItemEdited(object sender, ItemEditedEventArgs<TItem> e) { }
+        protected virtual void OnItemEdited(object sender, ItemEditedEventArgs<TItem> e)
+        {
+            if (!e.Result)
+            {
+                e.ActualItem.CopyValues(e.CachedItem);
+            }
+        }
 
         protected abstract void RegenerateCode();
     }

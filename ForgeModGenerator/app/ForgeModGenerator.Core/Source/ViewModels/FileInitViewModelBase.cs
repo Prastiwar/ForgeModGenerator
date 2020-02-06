@@ -5,42 +5,15 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace ForgeModGenerator.ViewModels
 {
     /// <summary> Inits TModel from file contents in folder path </summary>
-    public abstract class FileInitViewModelBase<TModel> : SimpleInitViewModelBase<TModel>
+    public abstract class FileInitViewModelBase<TModel> : ExplorerSynchronizingViewModelBase<TModel>
         where TModel : ObservableModel
     {
         public FileInitViewModelBase(GeneratorContext<TModel> context, ISynchronizeInvoke synchronizingObject)
-            : base(context) => this.synchronizingObject = synchronizingObject;
-
-        private readonly ISynchronizeInvoke synchronizingObject;
-
-        protected IFolderSynchronizer Synchronizer { get; private set; }
-
-        private string fileSearchPatterns;
-        protected string FileSearchPatterns {
-            get => fileSearchPatterns;
-            set => fileSearchPatterns = string.IsNullOrEmpty(value) ? "*" : value;
-        }
-
-        /// <summary> Creates Synchronizer instance if it's not already initialized or was disposed </summary>
-        protected void IntializeSynchronizer()
-        {
-            if (Synchronizer == null)
-            {
-                Synchronizer = new FolderSynchronizer(synchronizingObject, DirectoryRootPath, FileSearchPatterns) {
-                    SyncFilter = NotifyFilter.File,
-                    DisableSyncWhileSyncing = true
-                };
-                Synchronizer.SyncChangedFile += OnSyncChangedFile;
-                Synchronizer.SyncCreatedFile += OnSyncCreatedFile;
-                Synchronizer.SyncRemovedFile += OnSyncRemovedFile;
-                Synchronizer.SyncRenamedFile += OnSyncRenamedFile;
-            }
-        }
+            : base(context, synchronizingObject) { }
 
         protected int GetModelIndexByPath(string path)
             => ModelsRepository.FindIndex(model => model.Name.ToLower() == Path.GetFileNameWithoutExtension(path).ToLower());
@@ -52,84 +25,6 @@ namespace ForgeModGenerator.ViewModels
         {
             matchModel = GetModelByPath(path);
             return matchModel != null;
-        }
-
-        protected virtual void OnSyncRenamedFile(bool isDirectory, string oldPath, string newPath)
-        {
-            if (TryGetModelByPath(oldPath, out TModel oldModel))
-            {
-                string fileContent = File.ReadAllText(newPath);
-                if (TryParseModel(fileContent, out TModel newModel))
-                {
-                    ModelsRepository.Remove(oldModel);
-                    ModelsRepository.Add(newModel);
-                }
-                else
-                {
-                    Log.Warning($"Couldn't parse model of type {typeof(TModel)} from content {fileContent}");
-                }
-            }
-        }
-
-        protected virtual void OnSyncRemovedFile(bool isDirectory, string path)
-        {
-            if (TryGetModelByPath(path, out TModel model))
-            {
-                ModelsRepository.Remove(model);
-            }
-        }
-
-        protected virtual void OnSyncCreatedFile(bool isDirectory, string path)
-        {
-            string fileContent = File.ReadAllText(path);
-            if (TryParseModel(fileContent, out TModel model))
-            {
-                ModelsRepository.Add(model);
-            }
-            else
-            {
-                Log.Warning($"Couldn't parse model of type {typeof(TModel)} from content {fileContent}");
-            }
-        }
-
-        protected virtual void OnSyncChangedFile(bool isDirectory, string path)
-        {
-            if (TryGetModelByPath(path, out TModel oldModel))
-            {
-                string fileContent = File.ReadAllText(path);
-                if (TryParseModel(fileContent, out TModel newModel))
-                {
-                    ModelsRepository.Remove(oldModel);
-                    ModelsRepository.Add(newModel);
-                }
-                else
-                {
-                    Log.Warning($"Couldn't parse model of type {typeof(TModel)} from content {fileContent}");
-                }
-            }
-        }
-
-        public override async Task<bool> Refresh()
-        {
-            bool couldRefresh = await base.Refresh().ConfigureAwait(false);
-            if (couldRefresh)
-            {
-                IntializeSynchronizer();
-                Synchronizer.SetEnableSynchronization(true);
-                return true;
-            }
-            return false;
-        }
-
-        protected override void OnUnloaded()
-        {
-            Synchronizer.SetEnableSynchronization(false);
-            Synchronizer.SyncChangedFile -= OnSyncChangedFile;
-            Synchronizer.SyncCreatedFile -= OnSyncCreatedFile;
-            Synchronizer.SyncRemovedFile -= OnSyncRemovedFile;
-            Synchronizer.SyncRenamedFile -= OnSyncRenamedFile;
-            Synchronizer.Dispose();
-            Synchronizer = null;
         }
 
         protected override IEnumerable<TModel> FindModels() => FindModelsFromPath(DirectoryRootPath);
@@ -187,12 +82,71 @@ namespace ForgeModGenerator.ViewModels
                 }
                 RegenerateCode();
             }
+            else
+            {
+                e.ActualItem.CopyValues(e.CachedItem);
+            }
         }
 
         protected override void RemoveItem(TModel item)
         {
             base.RemoveItem(item);
             Context.CodeGenerationService.GetCustomScriptCodeGenerator(SessionContext.SelectedMod, item).DeleteScript();
+        }
+
+        protected override void OnSyncRenamedFile(bool isDirectory, string oldPath, string newPath)
+        {
+            if (TryGetModelByPath(oldPath, out TModel oldModel))
+            {
+                string fileContent = File.ReadAllText(newPath);
+                if (TryParseModel(fileContent, out TModel newModel))
+                {
+                    ModelsRepository.Remove(oldModel);
+                    ModelsRepository.Add(newModel);
+                }
+                else
+                {
+                    Log.Warning($"Couldn't parse model of type {typeof(TModel)} from content {fileContent}");
+                }
+            }
+        }
+
+        protected override void OnSyncRemovedFile(bool isDirectory, string path)
+        {
+            if (TryGetModelByPath(path, out TModel model))
+            {
+                ModelsRepository.Remove(model);
+            }
+        }
+
+        protected override void OnSyncCreatedFile(bool isDirectory, string path)
+        {
+            string fileContent = File.ReadAllText(path);
+            if (TryParseModel(fileContent, out TModel model))
+            {
+                ModelsRepository.Add(model);
+            }
+            else
+            {
+                Log.Warning($"Couldn't parse model of type {typeof(TModel)} from content {fileContent}");
+            }
+        }
+
+        protected override void OnSyncChangedFile(bool isDirectory, string path)
+        {
+            if (TryGetModelByPath(path, out TModel oldModel))
+            {
+                string fileContent = File.ReadAllText(path);
+                if (TryParseModel(fileContent, out TModel newModel))
+                {
+                    ModelsRepository.Remove(oldModel);
+                    ModelsRepository.Add(newModel);
+                }
+                else
+                {
+                    Log.Warning($"Couldn't parse model of type {typeof(TModel)} from content {fileContent}");
+                }
+            }
         }
     }
 }
