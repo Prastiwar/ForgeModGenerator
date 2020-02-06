@@ -108,13 +108,13 @@ namespace ForgeModGenerator.ItemGenerator.CodeGeneration
                 }
                 CodeMemberField field = NewFieldGlobal(baseObjectType, item.Name.ToUpper(), NewObject(newObjectType, arguments.ToArray()));
                 unit.Namespaces[0].Types[0].Members.Add(field);
-                string jsonPath = Path.Combine(ModPaths.ModelsItemFolder(McMod.ModInfo.Name, McMod.Modid), item.Name.ToLower() + ".json");
+                string jsonPath = Path.Combine(ModPaths.ModelsItemFolder(McMod.ModInfo.Name, McMod.ModInfo.Modid), item.Name.ToLower() + ".json");
                 string parent = item.Type == ItemType.Armor ? "generated" : "handheld";
                 string jsonText = $@"
 {{
     ""parent"": ""item/{parent}"",
     ""textures"": {{
-                    ""layer0"": ""{McMod.Modid}:{item.TextureName}""
+                    ""layer0"": ""{McMod.ModInfo.Modid}:{item.TextureName}""
     }}
 }}
 ";

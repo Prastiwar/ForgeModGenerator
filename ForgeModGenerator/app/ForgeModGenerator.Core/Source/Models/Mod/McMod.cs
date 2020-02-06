@@ -60,10 +60,10 @@ namespace ForgeModGenerator.Models
             set => SetProperty(ref launchSetup, value);
         }
 
-        /// <summary> Shorthand for ModInfo.Name (used also for WPF validation) </summary>
+        /// <summary> Shorthand for ModInfo.Name </summary>
         public string Name { get => ModInfo.Name; set => ModInfo.Name = value; }
 
-        /// <summary> Shorthand for ModInfo.Modid (used also for WPF validation) </summary>
+        /// <summary> Shorthand for ModInfo.Modid </summary>
         public string Modid { get => ModInfo.Modid; set => ModInfo.Modid = value; }
 
         public ValidateResult Validate()

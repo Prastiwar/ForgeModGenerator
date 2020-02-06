@@ -17,8 +17,8 @@ namespace ForgeModGenerator.BlockGenerator.ViewModels
         protected override void RemoveItem(Block item)
         {
             base.RemoveItem(item);
-            string blockstatePath =
-                Path.Combine(ModPaths.Blockstates(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.Modid), item.Name + ".json");
+            string blockstatesFolder = ModPaths.Blockstates(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.ModInfo.Modid);
+            string blockstatePath = Path.Combine(blockstatesFolder, item.Name + ".json");
             if (File.Exists(blockstatePath))
             {
                 File.Delete(blockstatePath);

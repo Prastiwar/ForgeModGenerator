@@ -45,7 +45,7 @@ namespace ForgeModGenerator.BlockGenerator.CodeGeneration
 
         private void CreateBlockstateJson(Block block)
         {
-            string jsonPath = Path.Combine(ModPaths.Blockstates(McMod.ModInfo.Name, McMod.Modid), block.Name.ToLower() + ".json");
+            string jsonPath = Path.Combine(ModPaths.Blockstates(McMod.ModInfo.Name, McMod.ModInfo.Modid), block.Name.ToLower() + ".json");
             string jsonText = $@"
 {{
     ""forge_marker"": 1,

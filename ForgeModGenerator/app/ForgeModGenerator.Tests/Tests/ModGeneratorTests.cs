@@ -158,8 +158,8 @@ namespace ForgeModGenerator.Tests
             Assert.IsNotNull(mcMod.ModInfo.Screenshots);
             Assert.IsNotNull(mcMod.ModInfo.Dependencies);
 
-            Assert.AreEqual(IntegratedUnitTests.TestModModid, mcMod.Modid);
-            Assert.AreEqual(IntegratedUnitTests.TestModName, mcMod.Name);
+            Assert.AreEqual(IntegratedUnitTests.TestModModid, mcMod.ModInfo.Modid);
+            Assert.AreEqual(IntegratedUnitTests.TestModName, mcMod.ModInfo.Name);
             Assert.AreEqual("testorg", mcMod.Organization);
             Assert.AreEqual(ModSide.ClientServer, mcMod.Side);
             Assert.AreEqual("This is example mod", mcMod.ModInfo.Description);

@@ -220,7 +220,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
                     if (!FileSystem.RenameDirectory(oldSourceCodePath, mcMod.ModInfo.Name.ToLower()))
                     {
                         DialogService.ShowMessage(StaticMessage.GetOperationFailedMessage(oldSourceCodePath), "Rename failed");
-                        mcMod.Name = oldModValues.Name;
+                        mcMod.ModInfo.Name = oldModValues.ModInfo.Name;
                     }
 
                     string oldNamePath = ModPaths.ModRootFolder(oldModValues.ModInfo.Name);
@@ -229,8 +229,8 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
                         DialogService.ShowMessage(StaticMessage.GetOperationFailedMessage(oldNamePath), "Rename failed");
                         string sourceCodeParentPath = new DirectoryInfo(oldSourceCodePath).Parent.FullName;
                         string newSourceCodePath = Path.Combine(sourceCodeParentPath, mcMod.ModInfo.Name.ToLower());
-                        FileSystem.RenameDirectory(newSourceCodePath, oldModValues.Name.ToLower());
-                        mcMod.Name = oldModValues.Name;
+                        FileSystem.RenameDirectory(newSourceCodePath, oldModValues.ModInfo.Name.ToLower());
+                        mcMod.ModInfo.Name = oldModValues.ModInfo.Name;
                     }
                 }
 
@@ -304,7 +304,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
             FileSystem.DeleteDirectory(Path.Combine(tempDirPath, "src"), false);
             FileSystem.MoveDirectoriesAndFiles(tempDirPath, modRoot);
             FileSystem.DeleteDirectory(tempDirPath, false);
-            Log.Info($"Changed forge version for {mcMod.Name} to {mcMod.ForgeVersion.Name}");
+            Log.Info($"Changed forge version for {mcMod.ModInfo.Name} to {mcMod.ForgeVersion.Name}");
         }
 
         protected override void RegenerateCode() => throw new NotImplementedException();
