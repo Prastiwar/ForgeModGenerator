@@ -17,7 +17,7 @@ namespace ForgeModGenerator
             }
             else
             {
-                FileWatcher = new FileSystemWatcherExtended(RootPath, Filters);
+                FileWatcher = new FileSystemWatcherExtended(rootPath, filters);
             }
             FileWatcher.IncludeSubdirectories = true;
             FileWatcher.AlwaysMonitorDirectoryChanges = true;

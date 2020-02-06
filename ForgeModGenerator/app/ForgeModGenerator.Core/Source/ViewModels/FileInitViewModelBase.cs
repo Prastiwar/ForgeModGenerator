@@ -94,19 +94,25 @@ namespace ForgeModGenerator.ViewModels
             Context.CodeGenerationService.GetCustomScriptCodeGenerator(SessionContext.SelectedMod, item).DeleteScript();
         }
 
+        protected bool AskUserPermission(string question)
+            => Context.DialogService.ShowMessage(question, "Decision", "Yes", "No", null).Result;
+
         protected override void OnSyncRenamedFile(bool isDirectory, string oldPath, string newPath)
         {
             if (TryGetModelByPath(oldPath, out TModel oldModel))
             {
-                string fileContent = File.ReadAllText(newPath);
-                if (TryParseModel(fileContent, out TModel newModel))
+                if (AskUserPermission($"Renamed file detected, should I update the model {model.Name}?"))
                 {
-                    ModelsRepository.Remove(oldModel);
-                    ModelsRepository.Add(newModel);
-                }
-                else
-                {
-                    Log.Warning($"Couldn't parse model of type {typeof(TModel)} from content {fileContent}");
+                    string fileContent = File.ReadAllText(newPath);
+                    if (TryParseModel(fileContent, out TModel newModel))
+                    {
+                        ModelsRepository.Remove(oldModel);
+                        ModelsRepository.Add(newModel);
+                    }
+                    else
+                    {
+                        Log.Warning($"Couldn't parse model of type {typeof(TModel)} from content {fileContent}");
+                    }
                 }
             }
         }
@@ -115,20 +121,26 @@ namespace ForgeModGenerator.ViewModels
         {
             if (TryGetModelByPath(path, out TModel model))
             {
-                ModelsRepository.Remove(model);
+                if (AskUserPermission($"Deleted file detected, should I remove model {model.Name}?"))
+                {
+                    ModelsRepository.Remove(model);
+                }
             }
         }
 
         protected override void OnSyncCreatedFile(bool isDirectory, string path)
         {
-            string fileContent = File.ReadAllText(path);
-            if (TryParseModel(fileContent, out TModel model))
+            if (AskUserPermission($"New file detected, should I parse it and add new model?"))
             {
-                ModelsRepository.Add(model);
-            }
-            else
-            {
-                Log.Warning($"Couldn't parse model of type {typeof(TModel)} from content {fileContent}");
+                string fileContent = File.ReadAllText(path);
+                if (TryParseModel(fileContent, out TModel model))
+                {
+                    ModelsRepository.Add(model);
+                }
+                else
+                {
+                    Log.Warning($"Couldn't parse model of type {typeof(TModel)} from content {fileContent}");
+                }
             }
         }
 
@@ -136,15 +148,18 @@ namespace ForgeModGenerator.ViewModels
         {
             if (TryGetModelByPath(path, out TModel oldModel))
             {
-                string fileContent = File.ReadAllText(path);
-                if (TryParseModel(fileContent, out TModel newModel))
+                if (AskUserPermission($"Change in file detected, should I update model {oldModel.Name}?"))
                 {
-                    ModelsRepository.Remove(oldModel);
-                    ModelsRepository.Add(newModel);
-                }
-                else
-                {
-                    Log.Warning($"Couldn't parse model of type {typeof(TModel)} from content {fileContent}");
+                    string fileContent = File.ReadAllText(path);
+                    if (TryParseModel(fileContent, out TModel newModel))
+                    {
+                        ModelsRepository.Remove(oldModel);
+                        ModelsRepository.Add(newModel);
+                    }
+                    else
+                    {
+                        Log.Warning($"Couldn't parse model of type {typeof(TModel)} from content {fileContent}");
+                    }
                 }
             }
         }

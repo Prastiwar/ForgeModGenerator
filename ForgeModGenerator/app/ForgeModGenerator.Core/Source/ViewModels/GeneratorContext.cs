@@ -9,13 +9,15 @@ namespace ForgeModGenerator.ViewModels
                                 IUniqueValidator<TItem> validator,
                                 ICodeGenerationService codeGenerationService,
                                 IEditorFormFactory<TItem> editorFormFactory,
-                                IFileSystem fileSystem)
+                                IFileSystem fileSystem,
+                                IDialogService dialogService)
         {
             SessionContext = sessionContext;
             Validator = validator;
             CodeGenerationService = codeGenerationService;
             EditorFormFactory = editorFormFactory;
             FileSystem = fileSystem;
+            DialogService = dialogService;
         }
 
         public ISessionContextService SessionContext { get; }
@@ -23,5 +25,6 @@ namespace ForgeModGenerator.ViewModels
         public ICodeGenerationService CodeGenerationService { get; }
         public IEditorFormFactory<TItem> EditorFormFactory { get; }
         public IFileSystem FileSystem { get; }
+        public IDialogService DialogService { get; }
     }
 }
