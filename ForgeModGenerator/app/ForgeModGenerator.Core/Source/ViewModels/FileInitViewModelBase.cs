@@ -1,5 +1,4 @@
 ﻿using ForgeModGenerator.Models;
-using ForgeModGenerator.Utility;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,42 +8,13 @@ using System.Linq;
 namespace ForgeModGenerator.ViewModels
 {
     /// <summary> Inits TModel from file contents in folder path </summary>
-    public abstract class FileInitViewModelBase<TModel> : ExplorerSynchronizingViewModelBase<TModel>
+    public abstract class FileInitViewModelBase<TModel> : ExplorerSyncInitViewModelBase<TModel>
         where TModel : ObservableModel
     {
         public FileInitViewModelBase(GeneratorContext<TModel> context, ISynchronizeInvoke synchronizingObject)
             : base(context, synchronizingObject) { }
 
-        protected int GetModelIndexByPath(string path)
-            => ModelsRepository.FindIndex(model => model.Name.ToLower() == Path.GetFileNameWithoutExtension(path).ToLower());
-
-        protected TModel GetModelByPath(string path)
-            => ModelsRepository.FirstOrDefault(model => model.Name.ToLower() == Path.GetFileNameWithoutExtension(path).ToLower());
-
-        protected bool TryGetModelByPath(string path, out TModel matchModel)
-        {
-            matchModel = GetModelByPath(path);
-            return matchModel != null;
-        }
-
         protected override IEnumerable<TModel> FindModels() => FindModelsFromPath(DirectoryRootPath);
-
-        protected abstract TModel ParseModel(string content);
-
-        protected bool TryParseModel(string content, out TModel model)
-        {
-            try
-            {
-                model = ParseModel(content);
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex);
-                model = null;
-                return false;
-            }
-            return model != null;
-        }
 
         protected override IEnumerable<TModel> FindModelsFromPath(string path)
         {
@@ -94,43 +64,16 @@ namespace ForgeModGenerator.ViewModels
             Context.CodeGenerationService.GetCustomScriptCodeGenerator(SessionContext.SelectedMod, item).DeleteScript();
         }
 
-        protected bool AskUserPermission(string question)
-            => Context.DialogService.ShowMessage(question, "Decision", "Yes", "No", null).Result;
+        protected override TModel GetModelByPath(string path)
+            => ModelsRepository.FirstOrDefault(model => model.Name.ToLower() == Path.GetFileNameWithoutExtension(path).ToLower());
 
-        protected override void OnSyncRenamedFile(bool isDirectory, string oldPath, string newPath)
-        {
-            if (TryGetModelByPath(oldPath, out TModel oldModel))
-            {
-                if (AskUserPermission($"Renamed file detected, should I update the model {model.Name}?"))
-                {
-                    string fileContent = File.ReadAllText(newPath);
-                    if (TryParseModel(fileContent, out TModel newModel))
-                    {
-                        ModelsRepository.Remove(oldModel);
-                        ModelsRepository.Add(newModel);
-                    }
-                    else
-                    {
-                        Log.Warning($"Couldn't parse model of type {typeof(TModel)} from content {fileContent}");
-                    }
-                }
-            }
-        }
+        protected override void SyncRenamedFile(TModel oldModel, string newPath) => SyncChangedFile(oldModel, newPath);
 
-        protected override void OnSyncRemovedFile(bool isDirectory, string path)
-        {
-            if (TryGetModelByPath(path, out TModel model))
-            {
-                if (AskUserPermission($"Deleted file detected, should I remove model {model.Name}?"))
-                {
-                    ModelsRepository.Remove(model);
-                }
-            }
-        }
+        protected override void SyncRemovedFile(TModel model) => RemoveItem(model);
 
-        protected override void OnSyncCreatedFile(bool isDirectory, string path)
+        protected override void SyncCreatedFile(bool isDirectory, string path)
         {
-            if (AskUserPermission($"New file detected, should I parse it and add new model?"))
+            if (AskForUserPermission($"New file detected, should I parse it and add new model?"))
             {
                 string fileContent = File.ReadAllText(path);
                 if (TryParseModel(fileContent, out TModel model))
@@ -144,24 +87,35 @@ namespace ForgeModGenerator.ViewModels
             }
         }
 
-        protected override void OnSyncChangedFile(bool isDirectory, string path)
+        protected override void SyncChangedFile(TModel oldModel, string path)
         {
-            if (TryGetModelByPath(path, out TModel oldModel))
+            string fileContent = File.ReadAllText(path);
+            if (TryParseModel(fileContent, out TModel newModel))
             {
-                if (AskUserPermission($"Change in file detected, should I update model {oldModel.Name}?"))
-                {
-                    string fileContent = File.ReadAllText(path);
-                    if (TryParseModel(fileContent, out TModel newModel))
-                    {
-                        ModelsRepository.Remove(oldModel);
-                        ModelsRepository.Add(newModel);
-                    }
-                    else
-                    {
-                        Log.Warning($"Couldn't parse model of type {typeof(TModel)} from content {fileContent}");
-                    }
-                }
+                ModelsRepository.Remove(oldModel);
+                ModelsRepository.Add(newModel);
+            }
+            else
+            {
+                Log.Warning($"Couldn't parse model of type {typeof(TModel)} from content {fileContent}");
             }
         }
+
+        protected bool TryParseModel(string content, out TModel model)
+        {
+            try
+            {
+                model = ParseModel(content);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex);
+                model = null;
+                return false;
+            }
+            return model != null;
+        }
+
+        protected abstract TModel ParseModel(string content);
     }
 }
