@@ -15,7 +15,12 @@ namespace ForgeModGenerator.Models
 
         public abstract bool CopyValues(object fromCopy);
 
-        public abstract object DeepClone();
+        public virtual object DeepClone()
+        {
+            ObservableModel model = (ObservableModel)Activator.CreateInstance(GetType(), true);
+            model.CopyValues(this);
+            return model;
+        }
 
         public virtual object Clone() => MemberwiseClone();
 

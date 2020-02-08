@@ -11,42 +11,6 @@
       mc:Ignorable="d"
       d:DesignHeight="450"
       d:DesignWidth="800">
-    <Page.Resources>
-        <DataTemplate x:Key="FolderTemplate">
-            <StackPanel>
-                <!--<controls:FolderExpanderControl x:Name="RecipeFolderExpanderControl"
-                                                Style="{StaticResource SingleFolderExpanderStyle}"
-                                                HeaderText="{Binding Path=Info.Name}"
-                                                Folder="{Binding}"
-                                                AddFileCommand="{Binding Path=DataContext.OpenRecipeEditorCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
-                                                RemoveFileCommand="{Binding Path=DataContext.RemoveFileCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}"
-                                                EditFileCommand="{Binding Path=DataContext.EditItemCommand, RelativeSource={RelativeSource AncestorType=controls:FolderListBox}}">
-                    <controls:FolderExpanderControl.FileItemTemplate>
-                        <DataTemplate x:Name="FolderFileItemTemplate">
-                            <StackPanel Margin="5,5,5,10">
-                                <Button x:Name="FileButton"
-                                        Tag="{Binding RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
-                                        Width="32"
-                                        Height="32"
-                                        Padding="0"
-                                        Background="CornflowerBlue"
-                                        BorderBrush="Black"
-                                        Command="{Binding FileClickCommand, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
-                                        CommandParameter="{Binding}">
-                                    <materialDesign:PackIcon Kind="File" />
-                                    <Button.ContextMenu>
-                                        <controls:FileContextMenu />
-                                    </Button.ContextMenu>
-                                </Button>
-                                <Label x:Name="FileRenameTextBox"
-                                       Content="{Binding Info.NameWithoutExtension, Mode=OneTime}" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </controls:FolderExpanderControl.FileItemTemplate>
-                </controls:FolderExpanderControl>-->
-            </StackPanel>
-        </DataTemplate>
-    </Page.Resources>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding OnLoadedCommand}" />
@@ -62,13 +26,56 @@
                          Foreground="White"
                          Value="0"
                          IsIndeterminate="True" />
-            <controls:FolderListBox x:Name="FoldersListBox"
-                                    Grid.Row="1"
-                                    Style="{StaticResource RecipeFolderListBoxStyle}"
-                                    Visibility="{Binding IsLoading, Converter={StaticResource InvertedBoolToVisibility}}"
-                                    FoldersSource="{Binding Explorer.Folders.Files, Mode=OneWay}"
-                                    ShowEmptyMessage="{Binding SessionContext.IsModSelected, Converter={StaticResource InvertBooleanConverter}}"
-                                    FolderTemplate="{StaticResource FolderTemplate}" />
+            <Label x:Name="EmptyFolderLabel"
+                   Grid.Row="1"
+                   Content="Select mod"
+                   Foreground="DarkGray"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   FontSize="50"
+                   Visibility="{Binding Path=SessionContext.IsModSelected, Converter={StaticResource InvertedBoolToVisibility}}" />
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          Grid.Row="1">
+                <StackPanel>
+                    <materialDesign:Card Background="#FF535353"
+                                         Margin="10">
+                        <StackPanel>
+                            <controls:FolderExpanderControl x:Name="RecipeFolderExpanderControl"
+                                                            Style="{StaticResource SingleFolderExpanderStyle}"
+                                                            HeaderText="Recipes"
+                                                            Folder="{Binding Path=ModelsRepository}"
+                                                            AddFileCommand="{Binding Path=OpenModelEditorCommand}"
+                                                            RemoveFileCommand="{Binding Path=RemoveItemCommand}"
+                                                            EditFileCommand="{Binding Path=EditItemCommand}"
+                                                            ShowContainerCommand="{Binding Path=OpenContainerCommand}"
+                                                            IsEnabled="True">
+                                <controls:FolderExpanderControl.FileItemTemplate>
+                                    <DataTemplate x:Name="FolderFileItemTemplate">
+                                        <StackPanel Margin="5,5,5,10">
+                                            <Button x:Name="FileButton"
+                                                    Tag="{Binding RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
+                                                    Width="32"
+                                                    Height="32"
+                                                    Padding="0"
+                                                    Background="CornflowerBlue"
+                                                    BorderBrush="Black"
+                                                    Command="{Binding FileClickCommand, RelativeSource={RelativeSource AncestorType=controls:FolderExpanderControl}}"
+                                                    CommandParameter="{Binding}">
+                                                <materialDesign:PackIcon Kind="File" />
+                                                <Button.ContextMenu>
+                                                    <controls:ModelContextMenu />
+                                                </Button.ContextMenu>
+                                            </Button>
+                                            <Label x:Name="FileNameLabel"
+                                                   Content="{Binding Name, Mode=OneWay}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </controls:FolderExpanderControl.FileItemTemplate>
+                            </controls:FolderExpanderControl>
+                        </StackPanel>
+                    </materialDesign:Card>
+                </StackPanel>
+            </ScrollViewer>
         </Grid>
     </materialDesign:DialogHost>
 </Page>

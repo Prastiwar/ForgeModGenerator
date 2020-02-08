@@ -43,6 +43,6 @@ namespace ForgeModGenerator.ViewModels
             }
         }
 
-        protected abstract void RegenerateCode();
+        protected abstract void RegenerateCode(TItem item);
     }
 }

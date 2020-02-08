@@ -9,12 +9,12 @@ namespace ForgeModGenerator.CommandGenerator.Validation
     {
         public CommandValidator(IEnumerable<Command> repository) : base(repository)
         {
-            RuleFor(x => x.Name).NotEmpty().WithMessage("Name cannot be empty")
-                                .Must(IsUnique).WithMessage("This name already exists")
-                                .Matches(ValidateHelper.NameMatch).WithMessage(ValidateHelper.NameMatchError);
             RuleFor(x => x.ClassName).NotEmpty().WithMessage("ClassName cannot be empty")
                                      .Must(IsUnique).WithMessage("This ClassName already exists")
-                                     .Matches(ValidateHelper.NameMatch).WithMessage(ValidateHelper.NameMatchError);
+                                .Matches(ValidateHelper.NameMatch).WithMessage(ValidateHelper.NameMatchError);
+            RuleFor(x => x.Name).NotEmpty().WithMessage("Name cannot be empty")
+                                .Must(IsUnique).WithMessage("This name already exists")
+                                     .Matches("[A-z]{2,20}$").WithMessage("Length limit is 2-20 and only letters are acceptable");
         }
     }
 }

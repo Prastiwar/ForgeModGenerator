@@ -162,7 +162,7 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
 
             string assetsPath = ModPaths.AssetsFolder(mcMod.ModInfo.Name, mcMod.ModInfo.Modid);
             IOHelper.GenerateFolders(assetsPath, assetsFolerToGenerate);
-            Context.CodeGenerationService.RegenerateSourceCode(mcMod);
+            RegenerateCode(mcMod);
 
             mcMod.WorkspaceSetup.Setup(mcMod);
             ModHelper.ExportMcInfo(ModInfoSerializer, mcMod.ModInfo);
@@ -307,6 +307,6 @@ namespace ForgeModGenerator.ModGenerator.ViewModels
             Log.Info($"Changed forge version for {mcMod.ModInfo.Name} to {mcMod.ForgeVersion.Name}");
         }
 
-        protected override void RegenerateCode() => throw new NotImplementedException();
+        protected override void RegenerateCode(McMod item) => Context.CodeGenerationService.RegenerateSourceCode(item);
     }
 }

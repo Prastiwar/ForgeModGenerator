@@ -1,7 +1,7 @@
 ﻿using ForgeModGenerator.RecipeGenerator.Models;
 using System.Collections.ObjectModel;
 
-namespace ForgeModGenerator.Core.RecipeGenerator
+namespace ForgeModGenerator.RecipeGenerator
 {
     public class RecipeKeyCollection : ObservableCollection<RecipeKey>
     {

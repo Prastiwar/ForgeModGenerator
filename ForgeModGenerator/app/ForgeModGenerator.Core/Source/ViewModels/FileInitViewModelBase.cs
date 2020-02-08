@@ -28,6 +28,7 @@ namespace ForgeModGenerator.ViewModels
                 string fileContent = File.ReadAllText(filePath);
                 if (TryParseModel(fileContent, out TModel model))
                 {
+                    model.ValidateProperty += ValidateModel;
                     models.Add(model);
                 }
                 else
@@ -48,9 +49,9 @@ namespace ForgeModGenerator.ViewModels
                 }
                 else
                 {
-                    Context.CodeGenerationService.GetCustomScriptCodeGenerator(SessionContext.SelectedMod, e.CachedItem).DeleteScript();
+                    DoWithoutSync(() => Context.CodeGenerationService.GetCustomScriptCodeGenerator(SessionContext.SelectedMod, e.CachedItem)?.DeleteScript());
                 }
-                RegenerateCode();
+                RegenerateCode(e.ActualItem);
             }
             else
             {
@@ -58,14 +59,8 @@ namespace ForgeModGenerator.ViewModels
             }
         }
 
-        protected override void RemoveItem(TModel item)
-        {
-            base.RemoveItem(item);
-            Context.CodeGenerationService.GetCustomScriptCodeGenerator(SessionContext.SelectedMod, item).DeleteScript();
-        }
-
         protected override TModel GetModelByPath(string path)
-            => ModelsRepository.FirstOrDefault(model => model.Name.ToLower() == Path.GetFileNameWithoutExtension(path).ToLower());
+            => ModelsRepository.FirstOrDefault(model => string.Compare(model.Name, Path.GetFileNameWithoutExtension(path), true) == 0);
 
         protected override void SyncRenamedFile(TModel oldModel, string newPath) => SyncChangedFile(oldModel, newPath);
 

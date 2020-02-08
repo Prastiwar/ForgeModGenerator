@@ -28,24 +28,10 @@ namespace ForgeModGenerator.CommandGenerator.Models
             set => SetProperty(ref permissionLevel, value);
         }
 
-        public override object DeepClone()
-        {
-            Command command = new Command() {
-                ClassName = ClassName,
-                Name = Name,
-                Usage = Usage,
-                Permission = Permission,
-                PermissionLevel = PermissionLevel
-            };
-            command.IsDirty = false;
-            return command;
-        }
-
         public override bool CopyValues(object fromCopy)
         {
             if (fromCopy is Command command)
             {
-                ClassName = command.ClassName;
                 Name = command.Name;
                 Usage = command.Usage;
                 Permission = command.Permission;

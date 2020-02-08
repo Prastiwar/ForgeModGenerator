@@ -1,4 +1,5 @@
-﻿using ForgeModGenerator.Models;
+﻿using ForgeModGenerator.CodeGeneration;
+using ForgeModGenerator.Models;
 using ForgeModGenerator.Validation;
 using Prism.Commands;
 using System;
@@ -80,7 +81,12 @@ namespace ForgeModGenerator.ViewModels
             EditorForm.OpenItemEditor(newModel);
         }
 
-        protected override void RemoveItem(TModel item) => ModelsRepository.Remove(item);
+        protected override void RemoveItem(TModel item)
+        {
+            ModelsRepository.Remove(item);
+            Context.CodeGenerationService.GetCustomScriptCodeGenerator(SessionContext.SelectedMod, item)?.DeleteScript();
+            RegenerateInitScript();
+        }
 
         protected string ValidateModel(object sender, string propertyName) => Context.Validator?.Validate((TModel)sender, ModelsRepository, propertyName).Error;
 
@@ -93,22 +99,45 @@ namespace ForgeModGenerator.ViewModels
                 {
                     ModelsRepository.Add(e.ActualItem);
                 }
-                RegenerateCode();
+                else
+                {
+                    Context.CodeGenerationService.GetCustomScriptCodeGenerator(SessionContext.SelectedMod, e.CachedItem)?.DeleteScript();
+                }
+                RegenerateCode(e.ActualItem);
             }
         }
 
-        protected virtual void OnModelsRepositoryChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.Action.HasFlag(NotifyCollectionChangedAction.Remove))
-            {
-                RegenerateCode();
-            }
-        }
+        protected virtual void OnModelsRepositoryChanged(object sender, NotifyCollectionChangedEventArgs e) { }
 
-        protected override void RegenerateCode()
+        protected override void RegenerateCode(TModel item)
         {
             McMod mod = SessionContext.SelectedMod;
-            Context.CodeGenerationService.GetInitScriptCodeGenerator(Path.GetFileNameWithoutExtension(InitFilePath), mod, ModelsRepository).RegenerateScript();
+            if (item != null)
+            {
+                Context.CodeGenerationService.GetCustomScriptCodeGenerator(mod, item)?.RegenerateScript();
+            }
+            RegenerateInitScript();
+        }
+
+        protected virtual void RegenerateCodeBatched(IEnumerable<TModel> models)
+        {
+            McMod mod = SessionContext.SelectedMod;
+            if (models != null)
+            {
+                foreach (TModel item in models)
+                {
+                    Context.CodeGenerationService.GetCustomScriptCodeGenerator(mod, item)?.RegenerateScript();
+                }
+            }
+            RegenerateInitScript();
+        }
+
+        protected void RegenerateInitScript()
+        {
+            string initClassName = Path.GetFileNameWithoutExtension(InitFilePath);
+            IScriptCodeGenerator initScriptGenerator
+                = Context.CodeGenerationService.GetInitScriptCodeGenerator(initClassName, SessionContext.SelectedMod, ModelsRepository);
+            initScriptGenerator.RegenerateScript();
         }
     }
 }

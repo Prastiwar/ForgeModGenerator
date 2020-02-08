@@ -455,7 +455,6 @@
     <Compile Include="Source\Modules\RecipeGenerator\RecipeModelFormProvider.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\Converters\RecipeListConverters.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\RecipeSerializer.cs" />
-    <Compile Include="Source\Modules\RecipeGenerator\RecipesFactory.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\Validation\RecipeValidator.cs" />
     <Compile Include="Source\Modules\SoundGenerator\SoundModelFormProvider.cs" />
     <Compile Include="Source\Modules\TextureGenerator\TextureGeneratorPage.xaml.cs">
@@ -774,7 +773,6 @@
   <ItemGroup>
     <Folder Include="Source\Modules\AchievementGenerator\Controls\" />
     <Folder Include="Source\Modules\AchievementGenerator\Validation\" />
-    <Folder Include="Source\Modules\CommandGenerator\Converters\" />
     <Folder Include="Source\Modules\ItemGenerator\Validation\" />
     <Folder Include="Source\Modules\MaterialGenerator\Validation\" />
   </ItemGroup>

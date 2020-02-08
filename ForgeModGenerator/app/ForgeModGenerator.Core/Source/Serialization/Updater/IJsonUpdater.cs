@@ -4,22 +4,29 @@ namespace ForgeModGenerator.Serialization
 {
     public interface IJsonUpdater
     {
-        string Path { get; set; }
-        bool PrettyPrint { get; set; }
+        object Target { get; }
+        string Path { get; }
+        bool PrettyPrint { get; }
 
-        string Serialize(bool prettyPrint);
-
-        void SetTarget(object target);
-        void ForceJsonUpdate();
-        void ForceJsonUpdateAsync();
+        IJsonUpdater SetTarget(object item);
+        IJsonUpdater SetPath(string path);
+        IJsonUpdater SetPrettyPrint(bool prettyPrint);
 
         bool IsValidToSerialize();
         bool IsUpdateAvailable();
+
+        string Serialize();
+        object DeserializeObject();
+        object DeserializeObjectFromContent(string content);
+
+        void ForceJsonUpdate();
+        void ForceJsonUpdateAsync();
     }
 
     public interface IJsonUpdater<T> : IJsonUpdater
     {
-        void SetTarget(T target);
+        T DeserializeFromContent(string content);
+        T Deserialize();
     }
 
     public interface IJsonUpdater<TCollection, TItem> : IJsonUpdater<TCollection>

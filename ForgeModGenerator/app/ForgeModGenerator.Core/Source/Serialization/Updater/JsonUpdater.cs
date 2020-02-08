@@ -8,40 +8,51 @@ namespace ForgeModGenerator.Serialization
     /// <summary> Base class to synchronize T target with json file </summary>
     public class JsonUpdater<T> : IJsonUpdater<T>
     {
-        public JsonUpdater(ISerializer<T> serializer, T target, string jsonPath)
+        public JsonUpdater(ISerializer<T> serializer) => Serializer = serializer;
+
+        public JsonUpdater(ISerializer<T> serializer, T target, string jsonPath) : this(serializer)
         {
-            Serializer = serializer;
             Target = target;
             Path = jsonPath;
         }
 
-        public string Path { get; set; }
+        public object Target { get; private set; }
 
-        public bool PrettyPrint { get; set; }
+        public string Path { get; private set; }
 
-        protected T Target { get; set; }
+        public bool PrettyPrint { get; private set; }
 
-        protected ISerializer<T> Serializer { get; }
+        internal ISerializer<T> Serializer { get; }
 
-        public void SetTarget(T target) => Target = target;
+        public IJsonUpdater<T> SetTarget(T target)
+        {
+            Target = target;
+            return this;
+        }
 
-        void IJsonUpdater.SetTarget(object target) => SetTarget((T)target);
+        public IJsonUpdater SetPath(string path)
+        {
+            Path = path;
+            return this;
+        }
 
-        protected string GetJsonFromFile() => File.ReadAllText(Path);
+        public IJsonUpdater SetPrettyPrint(bool prettyPrint)
+        {
+            PrettyPrint = prettyPrint;
+            return this;
+        }
 
-        protected async Task OverwriteJsonAsync(string json) => await IOHelper.WriteAllTextAsync(Path, json).ConfigureAwait(false);
+        public T Deserialize() => Serializer.Deserialize(GetJsonFromFile());
 
-        protected void OverwriteJson(string json) => File.WriteAllText(Path, json);
+        public T DeserializeFromContent(string content) => Serializer.Deserialize(content);
 
-        public string Serialize(bool prettyPrint) => Serializer.Serialize(Target, prettyPrint);
-
-        public virtual bool IsValidToSerialize() => true;
+        public string Serialize() => Serializer.Serialize((T)Target, PrettyPrint);
 
         public async void ForceJsonUpdateAsync()
         {
             if (IsValidToSerialize())
             {
-                string serializedContent = Serialize(PrettyPrint);
+                string serializedContent = Serialize();
                 await OverwriteJsonAsync(serializedContent).ConfigureAwait(false);
             }
         }
@@ -50,7 +61,7 @@ namespace ForgeModGenerator.Serialization
         {
             if (IsValidToSerialize())
             {
-                string serializedContent = Serialize(PrettyPrint);
+                string serializedContent = Serialize();
                 OverwriteJson(serializedContent);
             }
         }
@@ -59,13 +70,9 @@ namespace ForgeModGenerator.Serialization
         {
             try
             {
-                string newJson = Serialize(PrettyPrint);
-                string savedJson = GetJsonFromFile();
-                if (newJson == savedJson)
-                {
-                    newJson = Serialize(!PrettyPrint);
-                }
-                return newJson == savedJson;
+                string newJson = Serialize().RemoveAllSpaces();
+                string savedJson = GetJsonFromFile().RemoveAllSpaces();
+                return string.Compare(newJson, savedJson, true) != 0;
             }
             catch (Exception)
             {
@@ -77,12 +84,8 @@ namespace ForgeModGenerator.Serialization
         {
             try
             {
-                string json = GetJsonFromFile();
-                string itemJson = Serialize(PrettyPrint);
-                if (json.Contains(itemJson))
-                {
-                    itemJson = Serialize(!PrettyPrint);
-                }
+                string json = GetJsonFromFile().RemoveAllSpaces();
+                string itemJson = Serializer.Serialize(item, !PrettyPrint).RemoveAllSpaces();
                 return json.Contains(itemJson);
             }
             catch (Exception)
@@ -90,5 +93,17 @@ namespace ForgeModGenerator.Serialization
                 return false;
             }
         }
+
+        public virtual bool IsValidToSerialize() => true;
+
+        protected string GetJsonFromFile() => File.Exists(Path) ? File.ReadAllText(Path) : "";
+
+        protected async Task OverwriteJsonAsync(string json) => await IOHelper.WriteAllTextAsync(Path, json).ConfigureAwait(false);
+
+        protected void OverwriteJson(string json) => File.WriteAllText(Path, json);
+
+        IJsonUpdater IJsonUpdater.SetTarget(object target) => SetTarget((T)target);
+        object IJsonUpdater.DeserializeObject() => Deserialize();
+        object IJsonUpdater.DeserializeObjectFromContent(string content) => DeserializeFromContent(content);
     }
 }

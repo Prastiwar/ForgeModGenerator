@@ -1,15 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace ForgeModGenerator.Utility
 {
     public static class PrimitiveExtensions
     {
         private static readonly StringBuilder output = new StringBuilder(32);
+        private static readonly Regex spaceRemover = new Regex(@"\s+", RegexOptions.Compiled);
 
         /// <summary> Removes character on the end of text. Useful in decimals string </summary>
         public static string RemoveEnding(this string text) => char.IsDigit(text[text.Length - 1]) ? text : text.Remove(text.Length - 1, 1);
+
+        public static string RemoveAllSpaces(this string text) => spaceRemover.Replace(text, string.Empty);
 
         public static string Replace(this string text, string oldString, string newString, int count)
         {

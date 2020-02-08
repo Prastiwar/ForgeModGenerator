@@ -3,12 +3,13 @@ using ForgeModGenerator.CommandGenerator.Models;
 using ForgeModGenerator.ViewModels;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 
 namespace ForgeModGenerator.CommandGenerator.ViewModels
 {
     public class CommandGeneratorViewModel : FileInitViewModelBase<Command>
     {
-        public CommandGeneratorViewModel(GeneratorContext<Command> context, ISynchronizeInvoke synchronizeInvoke) 
+        public CommandGeneratorViewModel(GeneratorContext<Command> context, ISynchronizeInvoke synchronizeInvoke)
             : base(context, synchronizeInvoke) => FileSearchPatterns = "*.java";
 
         protected override string InitFilePath
@@ -17,6 +18,9 @@ namespace ForgeModGenerator.CommandGenerator.ViewModels
         public override string DirectoryRootPath => SessionContext.SelectedMod != null
             ? Path.GetDirectoryName(SourceCodeLocator.CustomCommand(SessionContext.SelectedMod.ModInfo.Name, SessionContext.SelectedMod.Organization, "None").FullPath)
             : null;
+
+        protected override Command GetModelByPath(string path)
+            => ModelsRepository.FirstOrDefault(model => string.Compare(model.ClassName, Path.GetFileNameWithoutExtension(path), true) == 0);
 
         protected override Command ParseModel(string content)
         {

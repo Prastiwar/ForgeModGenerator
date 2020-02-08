@@ -27,8 +27,6 @@ namespace ForgeModGenerator.CommandGenerator.CodeGeneration
                 CodeMethodInvokeExpression register = NewMethodInvokeVar("event", "registerServerCommand", NewObject(GetElementName(element)));
                 registerAll.Statements.Add(register);
                 package.Imports.Add(NewImport(SourceCodeLocator.CustomCommand(Modname, Organization, element.ClassName).ImportFullName));
-                CustomCommandCodeGenerator customCommandGenerator = new CustomCommandCodeGenerator(McMod, element);
-                customCommandGenerator.RegenerateScript();
             }
             clas.Members.Add(registerAll);
             return NewCodeUnit(package);

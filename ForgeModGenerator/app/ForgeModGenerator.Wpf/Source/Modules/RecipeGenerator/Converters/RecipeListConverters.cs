@@ -1,5 +1,4 @@
 ﻿using ForgeModGenerator.Converters;
-using ForgeModGenerator.Core.RecipeGenerator;
 using ForgeModGenerator.RecipeGenerator.Models;
 using System.Collections.ObjectModel;
 

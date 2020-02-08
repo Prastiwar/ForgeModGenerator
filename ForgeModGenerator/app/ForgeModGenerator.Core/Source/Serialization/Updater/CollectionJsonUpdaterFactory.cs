@@ -9,6 +9,6 @@ namespace ForgeModGenerator.Serialization
 
         private readonly ISerializer<TCollection, TItem> serializer;
 
-        public IJsonUpdater<TCollection, TItem> Create() => new CollectionJsonUpdater<TCollection, TItem>(serializer, default, null);
+        public IJsonUpdater<TCollection, TItem> Create() => new CollectionJsonUpdater<TCollection, TItem>(serializer);
     }
 }

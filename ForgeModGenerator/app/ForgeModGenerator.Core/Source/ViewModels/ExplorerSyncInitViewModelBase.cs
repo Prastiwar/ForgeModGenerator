@@ -1,4 +1,6 @@
 ﻿using ForgeModGenerator.Models;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
 
@@ -26,22 +28,6 @@ namespace ForgeModGenerator.ViewModels
         protected bool AskForUserPermission(string question)
             => IgnoreUserPermission ? true : Context.DialogService.ShowMessage(question, "Decision", "Apply", "Cancel", null).Result;
 
-        /// <summary> Creates Synchronizer instance if it's not already initialized or was disposed </summary>
-        protected void IntializeSynchronizer()
-        {
-            if (Synchronizer == null)
-            {
-                Synchronizer = new FolderSynchronizer(synchronizingObject, DirectoryRootPath, FileSearchPatterns) {
-                    SyncFilter = NotifyFilter.File,
-                    DisableSyncWhileSyncing = true
-                };
-                Synchronizer.SyncChangedFile += OnSyncChangedFile;
-                Synchronizer.SyncCreatedFile += OnSyncCreatedFile;
-                Synchronizer.SyncRemovedFile += OnSyncRemovedFile;
-                Synchronizer.SyncRenamedFile += OnSyncRenamedFile;
-            }
-        }
-
         public override async Task<bool> Refresh()
         {
             bool couldRefresh = await base.Refresh().ConfigureAwait(false);
@@ -63,6 +49,34 @@ namespace ForgeModGenerator.ViewModels
             Synchronizer.SyncRenamedFile -= OnSyncRenamedFile;
             Synchronizer.Dispose();
             Synchronizer = null;
+        }
+
+        protected override void RegenerateCode(TModel item) => DoWithoutSync(() => base.RegenerateCode(item));
+
+        protected override void RegenerateCodeBatched(IEnumerable<TModel> models) => DoWithoutSync(() => base.RegenerateCodeBatched(models));
+
+        /// <summary> Creates Synchronizer instance if it's not already initialized or was disposed </summary>
+        protected void IntializeSynchronizer()
+        {
+            if (Synchronizer == null)
+            {
+                Synchronizer = new FolderSynchronizer(synchronizingObject, DirectoryRootPath, FileSearchPatterns) {
+                    SyncFilter = NotifyFilter.File,
+                    DisableSyncWhileSyncing = true
+                };
+                Synchronizer.SyncChangedFile += OnSyncChangedFile;
+                Synchronizer.SyncCreatedFile += OnSyncCreatedFile;
+                Synchronizer.SyncRemovedFile += OnSyncRemovedFile;
+                Synchronizer.SyncRenamedFile += OnSyncRenamedFile;
+            }
+        }
+
+        protected void DoWithoutSync(Action action)
+        {
+            bool wasSyncing = Synchronizer.IsEnabled;
+            Synchronizer.SetEnableSynchronization(false);
+            action();
+            Synchronizer.SetEnableSynchronization(wasSyncing);
         }
 
         protected virtual void OnSyncRenamedFile(bool isDirectory, string oldPath, string newPath)

@@ -6,6 +6,6 @@
 
         private readonly ISerializer<T> serializer;
 
-        public IJsonUpdater<T> Create() => new JsonUpdater<T>(serializer, default, null);
+        public IJsonUpdater<T> Create() => new JsonUpdater<T>(serializer);
     }
 }
