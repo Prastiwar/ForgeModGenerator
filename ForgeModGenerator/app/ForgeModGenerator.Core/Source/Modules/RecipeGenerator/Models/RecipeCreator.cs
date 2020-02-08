@@ -7,6 +7,38 @@ namespace ForgeModGenerator.RecipeGenerator.Models
     public class RecipeCreator : Recipe
     {
         public RecipeCreator() => Initialize();
+        public RecipeCreator(Recipe recipe)
+        {
+            Initialize();
+            Name = recipe.Name;
+            Group = recipe.Group;
+            if (recipe is ShapedRecipe shaped)
+            {
+                Keys = shaped.Keys?.DeepCollectionClone<RecipeKeyCollection, RecipeKey>();
+                Result = new RecipeResult {
+                    Count = shaped.Result.Count,
+                    Item = shaped.Result.Item
+                };
+                Array.Copy(shaped.Pattern, Pattern, shaped.Pattern.Length);
+            }
+            else if (recipe is SmeltingRecipe smelting)
+            {
+                Ingredients = smelting.Ingredients?.DeepCollectionClone<ObservableCollection<Ingredient>, Ingredient>();
+                Result = new RecipeResult {
+                    Count = smelting.Result.Count,
+                    Item = smelting.Result.Item
+                };
+            }
+            else if (recipe is ShapelessRecipe shapeless)
+            {
+                Ingredients = shapeless.Ingredients?.DeepCollectionClone<ObservableCollection<Ingredient>, Ingredient>();
+                Result = new RecipeResult {
+                    Count = shapeless.Result.Count,
+                    Item = shapeless.Result.Item
+                };
+            }
+            RecipeType = recipe.GetType();
+        }
 
         private void Initialize()
         {
@@ -52,6 +84,48 @@ namespace ForgeModGenerator.RecipeGenerator.Models
         public float Experience {
             get => experience;
             set => SetProperty(ref experience, value);
+        }
+
+        public override object DeepClone()
+        {
+            RecipeCreator creator = new RecipeCreator {
+                Ingredients = Ingredients.DeepCollectionClone<ObservableCollection<Ingredient>, Ingredient>(),
+                Keys = Keys.DeepCollectionClone<RecipeKeyCollection, RecipeKey>(),
+                Result = new RecipeResult {
+                    Count = Result.Count,
+                    Item = Result.Item
+                }
+            };
+            Array.Copy(Pattern, creator.Pattern, Pattern.Length);
+            return creator;
+        }
+
+        public override bool CopyValues(object fromCopy)
+        {
+            if (fromCopy is Recipe recipe)
+            {
+                if (fromCopy is ShapedRecipe shapedRecipe)
+                {
+                    Array.Copy(shapedRecipe.Pattern, Pattern, Pattern.Length);
+                    Keys = shapedRecipe.Keys;
+                    Result = shapedRecipe.Result;
+                }
+                else if (fromCopy is SmeltingRecipe smeltingRecipe)
+                {
+                    Ingredients = smeltingRecipe.Ingredients;
+                    Result = smeltingRecipe.Result;
+                    CookingTime = smeltingRecipe.CookingTime;
+                    Experience = smeltingRecipe.Experience;
+                }
+                else if (fromCopy is ShapelessRecipe shapelessRecipe)
+                {
+                    Ingredients = shapelessRecipe.Ingredients;
+                    Result = shapelessRecipe.Result;
+                }
+                base.CopyValues(fromCopy);
+                return true;
+            }
+            return false;
         }
 
         public T Create<T>() where T : Recipe => Create(typeof(T)) as T;

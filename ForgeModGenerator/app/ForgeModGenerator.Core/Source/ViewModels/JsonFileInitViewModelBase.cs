@@ -17,8 +17,6 @@ namespace ForgeModGenerator.ViewModels
 
         protected override TModel ParseModel(string content) => JsonUpdater.DeserializeFromContent(content);
 
-        protected override void EditItem(TModel item) => base.EditItem(item);
-
         protected abstract string GetModelFullPath(TModel model);
 
         protected override void OnItemEdited(object sender, ItemEditedEventArgs<TModel> e)
@@ -40,6 +38,7 @@ namespace ForgeModGenerator.ViewModels
                 e.ActualItem.CopyValues(e.CachedItem);
             }
         }
+
         protected override void RegenerateCode(TModel item)
         {
             McMod mod = SessionContext.SelectedMod;
