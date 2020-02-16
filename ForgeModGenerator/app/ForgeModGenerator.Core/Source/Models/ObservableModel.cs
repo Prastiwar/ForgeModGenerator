@@ -13,7 +13,28 @@ namespace ForgeModGenerator.Models
             set => SetProperty(ref name, value);
         }
 
-        public abstract bool CopyValues(object fromCopy);
+        public virtual bool CopyValues(object fromCopy)
+        {
+            if (!GetType().IsAssignableFrom(fromCopy.GetType()))
+            {
+                return false;
+            }
+            try
+            {
+                PropertyInfo[] props = GetType().GetProperties();
+                foreach (PropertyInfo prop in props)
+                {
+                    prop.SetValue(this, fromCopy.GetType().GetProperty(prop.Name).GetValue(fromCopy));
+                }
+                SetValidateProperty(fromCopy as ObservableModel);
+                IsDirty = false;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
 
         public virtual object DeepClone()
         {

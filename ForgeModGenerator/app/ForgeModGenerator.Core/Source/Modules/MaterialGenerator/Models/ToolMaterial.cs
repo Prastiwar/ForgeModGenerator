@@ -25,26 +25,5 @@
             get => attackDamage;
             set => SetProperty(ref attackDamage, value);
         }
-
-        public override object DeepClone()
-        {
-            ToolMaterial material = new ToolMaterial();
-            material.CopyValues(this);
-            return material;
-        }
-
-        public override bool CopyValues(object fromCopy)
-        {
-            base.CopyValues(fromCopy);
-            if (fromCopy is ToolMaterial material)
-            {
-                HarvestLevel = material.HarvestLevel;
-                MaxUses = material.MaxUses;
-                Efficiency = material.Efficiency;
-                AttackDamage = material.AttackDamage;
-                return true;
-            }
-            return false;
-        }
     }
 }

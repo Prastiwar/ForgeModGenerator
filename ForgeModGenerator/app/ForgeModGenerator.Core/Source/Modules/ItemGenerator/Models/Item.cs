@@ -46,27 +46,5 @@ namespace ForgeModGenerator.ItemGenerator.Models
             get => material;
             set => SetProperty(ref material, value);
         }
-
-        public override bool CopyValues(object fromCopy)
-        {
-            if (fromCopy is Item fromModel)
-            {
-                Name = fromModel.Name;
-                Type = fromModel.Type;
-                ArmorType = fromModel.ArmorType;
-                TextureName = fromModel.TextureName;
-                StackSize = fromModel.StackSize;
-                Material = fromModel.Material;
-                return true;
-            }
-            return false;
-        }
-
-        public override object DeepClone()
-        {
-            Item item = new Item();
-            item.CopyValues(this);
-            return item;
-        }
     }
 }

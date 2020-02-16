@@ -1,4 +1,4 @@
-- [x] I've read [cotributing file](https://github.com/Prastiwar/RepositoryTemplate/tree/master/.github/CONTRIBUTING.md).
+- [x] I've read [cotributing file](https://github.com/Prastiwar/ForgeModGenerator/tree/master/.github/CONTRIBUTING.md).
 - [ ] Code is documented properly
 - [ ] It's tested and it works
 ### Describe what've you done and why, clearly and concisely (also fill checklist)

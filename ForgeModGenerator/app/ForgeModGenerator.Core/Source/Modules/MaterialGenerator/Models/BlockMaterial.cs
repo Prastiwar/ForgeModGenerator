@@ -61,32 +61,5 @@
             get => mobilityFlag;
             set => SetProperty(ref mobilityFlag, value);
         }
-
-        public override object DeepClone()
-        {
-            BlockMaterial material = new BlockMaterial();
-            material.CopyValues(this);
-            return material;
-        }
-
-        public override bool CopyValues(object fromCopy)
-        {
-            base.CopyValues(fromCopy);
-            if (fromCopy is BlockMaterial material)
-            {
-                IsLiquid = material.IsLiquid;
-                IsSolid = material.IsSolid;
-                BlocksLight = material.BlocksLight;
-                BlocksMovement = material.BlocksMovement;
-                IsTranslucent = material.IsTranslucent;
-                RequiresNoTool = material.RequiresNoTool;
-                CanBurn = material.CanBurn;
-                IsReplaceable = material.IsReplaceable;
-                IsAdventureModeExempt = material.IsAdventureModeExempt;
-                MobilityFlag = material.MobilityFlag;
-                return true;
-            }
-            return false;
-        }
     }
 }

@@ -76,34 +76,5 @@ namespace ForgeModGenerator.BlockGenerator.Models
             get => dropItem;
             set => SetProperty(ref dropItem, value);
         }
-
-        public override bool CopyValues(object fromCopy)
-        {
-            if (fromCopy is Block fromModel)
-            {
-                Name = fromModel.Name;
-                Type = fromModel.Type;
-                MaterialType = fromModel.MaterialType;
-                TextureName = fromModel.TextureName;
-                InventoryTextureName = fromModel.InventoryTextureName;
-                LightLevel = fromModel.LightLevel;
-                Hardness = fromModel.Hardness;
-                Resistance = fromModel.Resistance;
-                ShouldMakeCollision = fromModel.ShouldMakeCollision;
-                HarvestLevelTool = fromModel.HarvestLevelTool;
-                HarvestLevel = fromModel.HarvestLevel;
-                SoundType = fromModel.SoundType;
-                DropItem = fromModel.DropItem;
-                return true;
-            }
-            return false;
-        }
-
-        public override object DeepClone()
-        {
-            Block block = new Block();
-            block.CopyValues(this);
-            return block;
-        }
     }
 }

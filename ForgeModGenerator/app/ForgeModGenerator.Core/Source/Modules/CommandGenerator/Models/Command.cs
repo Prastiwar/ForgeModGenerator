@@ -27,20 +27,5 @@ namespace ForgeModGenerator.CommandGenerator.Models
             get => permissionLevel;
             set => SetProperty(ref permissionLevel, value);
         }
-
-        public override bool CopyValues(object fromCopy)
-        {
-            if (fromCopy is Command command)
-            {
-                Name = command.Name;
-                Usage = command.Usage;
-                Permission = command.Permission;
-                PermissionLevel = command.PermissionLevel;
-                SetValidateProperty(command);
-                IsDirty = false;
-                return true;
-            }
-            return false;
-        }
     }
 }

@@ -4,7 +4,7 @@ about: Create a report to help us fix a bug
 
 ---
 
-- [x] I've read [cotributing file](https://github.com/Prastiwar/RepositoryTemplate/tree/master/.github/CONTRIBUTING.md).
+- [x] I've read [cotributing file](https://github.com/Prastiwar/ForgeModGenerator/tree/master/.github/CONTRIBUTING.md).
 ### **Clear and concise description of bug**
 
 ### **Error information(log)**
@@ -17,7 +17,7 @@ about: Create a report to help us fix a bug
 
 ### **Additional context**
 
-### **Evironment**
+### **Environment**
 
 |OS|Processor|Graphic Card|RAM|Other|
 | --- | --- | --- | --- | --- |
