@@ -38,6 +38,8 @@ namespace ForgeModGenerator.RecipeGenerator.Models
                 };
             }
             RecipeType = recipe.GetType();
+            cachedCreatedRecipe = recipe;
+            IsDirty = false;
         }
 
         private void Initialize()
@@ -47,6 +49,8 @@ namespace ForgeModGenerator.RecipeGenerator.Models
             Ingredients = new ObservableCollection<Ingredient>();
             Result = new RecipeResult();
         }
+
+        private Recipe cachedCreatedRecipe;
 
         private Type recipeType;
         public Type RecipeType {
@@ -102,11 +106,11 @@ namespace ForgeModGenerator.RecipeGenerator.Models
 
         public override bool CopyValues(object fromCopy)
         {
-            if (fromCopy is Recipe recipe)
+            if (fromCopy is Recipe)
             {
                 if (fromCopy is ShapedRecipe shapedRecipe)
                 {
-                    Array.Copy(shapedRecipe.Pattern, Pattern, Pattern.Length);
+                    Array.Copy(shapedRecipe.Pattern, Pattern, shapedRecipe.Pattern.Length);
                     Keys = shapedRecipe.Keys;
                     Result = shapedRecipe.Result;
                 }
@@ -121,6 +125,15 @@ namespace ForgeModGenerator.RecipeGenerator.Models
                 {
                     Ingredients = shapelessRecipe.Ingredients;
                     Result = shapelessRecipe.Result;
+                }
+                else if (fromCopy is RecipeCreator creator)
+                {
+                    Array.Copy(creator.Pattern, Pattern, creator.Pattern.Length);
+                    Keys = creator.Keys;
+                    Ingredients = creator.Ingredients;
+                    Result = creator.Result;
+                    CookingTime = creator.CookingTime;
+                    Experience = creator.Experience;
                 }
                 base.CopyValues(fromCopy);
                 return true;
@@ -138,6 +151,10 @@ namespace ForgeModGenerator.RecipeGenerator.Models
             {
                 return null;
             }
+            if (!IsDirty && cachedCreatedRecipe != null)
+            {
+                return cachedCreatedRecipe;
+            }
             if (type.IsAssignableFrom(typeof(ShapedRecipe)))
             {
                 ShapedRecipe recipe = new ShapedRecipe() {
@@ -151,6 +168,7 @@ namespace ForgeModGenerator.RecipeGenerator.Models
                     IsDirty = false
                 };
                 Array.Copy(Pattern, recipe.Pattern, Pattern.Length);
+                cachedCreatedRecipe = recipe;
                 return recipe;
             }
             else if (type.IsAssignableFrom(typeof(ShapelessRecipe)))
@@ -165,6 +183,7 @@ namespace ForgeModGenerator.RecipeGenerator.Models
                     Ingredients = Ingredients,
                     IsDirty = false
                 };
+                cachedCreatedRecipe = recipe;
                 return recipe;
             }
             else if (type.IsAssignableFrom(typeof(SmeltingRecipe)))
@@ -181,12 +200,10 @@ namespace ForgeModGenerator.RecipeGenerator.Models
                     Ingredients = Ingredients,
                     IsDirty = false
                 };
+                cachedCreatedRecipe = recipe;
                 return recipe;
             }
-            else
-            {
-                return null;
-            }
+            throw new NotSupportedException($"Type of {type} is not supported by this creator");
         }
     }
 }

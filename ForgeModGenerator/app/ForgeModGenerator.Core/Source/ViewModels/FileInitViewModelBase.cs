@@ -43,15 +43,18 @@ namespace ForgeModGenerator.ViewModels
         {
             if (e.Result)
             {
+                bool wasSynchronizing = Synchronizer.IsEnabled;
+                Synchronizer.SetEnableSynchronization(false);
                 if (!ModelsRepository.Contains(e.ActualItem))
                 {
                     ModelsRepository.Add(e.ActualItem);
                 }
                 else
                 {
-                    DoWithoutSync(() => Context.CodeGenerationService.GetCustomScriptCodeGenerator(SessionContext.SelectedMod, e.CachedItem)?.DeleteScript());
+                    Context.CodeGenerationService.GetCustomScriptCodeGenerator(SessionContext.SelectedMod, e.CachedItem)?.DeleteScript();
                 }
                 RegenerateCode(e.ActualItem);
+                Synchronizer.SetEnableSynchronization(wasSynchronizing);
             }
             else
             {

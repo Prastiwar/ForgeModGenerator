@@ -62,6 +62,7 @@ namespace ForgeModGenerator.ViewModels
         {
             TModel model = Activator.CreateInstance<TModel>();
             model.ValidateProperty += ValidateModel;
+            model.IsDirty = false;
             return model;
         }
 
@@ -77,7 +78,6 @@ namespace ForgeModGenerator.ViewModels
         protected virtual void CreateNewModel(ObservableCollection<TModel> collection)
         {
             TModel newModel = CreateNewEmptyModel();
-            newModel.IsDirty = false;
             EditorForm.OpenItemEditor(newModel);
         }
 
@@ -88,7 +88,8 @@ namespace ForgeModGenerator.ViewModels
             RegenerateInitScript();
         }
 
-        protected string ValidateModel(object sender, string propertyName) => Context.Validator?.Validate((TModel)sender, ModelsRepository, propertyName).Error;
+        protected virtual string ValidateModel(object sender, string propertyName)
+            => Context.Validator?.Validate((TModel)sender, ModelsRepository, propertyName).Error;
 
         protected override void OnItemEdited(object sender, ItemEditedEventArgs<TModel> e)
         {

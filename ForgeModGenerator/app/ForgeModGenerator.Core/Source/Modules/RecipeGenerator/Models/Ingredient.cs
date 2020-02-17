@@ -13,9 +13,9 @@
         public string Tag { get; set; }
 
         public object Clone() => MemberwiseClone();
-        public object DeepClone() => new Ingredient(Item, Tag);
+        public virtual object DeepClone() => new Ingredient(Item, Tag);
 
-        public bool CopyValues(object fromCopy)
+        public virtual bool CopyValues(object fromCopy)
         {
             if (fromCopy is Ingredient ingredient)
             {

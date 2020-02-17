@@ -11,7 +11,11 @@ namespace ForgeModGenerator.RecipeGenerator.Controls
 {
     public partial class RecipeEditForm : UserControl, IUIElement
     {
-        public RecipeEditForm() => InitializeComponent();
+        public RecipeEditForm()
+        {
+            InitializeComponent();
+            RecipeTypeComboBox.SelectedIndex = 0;
+        }
 
         public static readonly DependencyProperty RecipeTypesProperty =
             DependencyProperty.Register("RecipeTypes", typeof(IEnumerable<Type>), typeof(RecipeEditForm), new PropertyMetadata(Enumerable.Empty<Type>()));
@@ -102,7 +106,7 @@ namespace ForgeModGenerator.RecipeGenerator.Controls
         {
             ComboBox box = (ComboBox)sender;
             RecipeKey selectedItem = (RecipeKey)e.AddedItems[0];
-            RecipeCreator recipe = (RecipeCreator)box.DataContext;
+            dynamic recipe = box.DataContext;
             int patternIndex = (int)char.GetNumericValue((string)box.Tag, 0);
             int charIndex = (int)char.GetNumericValue((string)box.Tag, 1);
             char[] chars = recipe.Pattern[patternIndex].ToCharArray();
@@ -117,7 +121,7 @@ namespace ForgeModGenerator.RecipeGenerator.Controls
             bool changed = await StaticCommands.ShowMCItemList(button, (string)DialogHost.Identifier, form).ConfigureAwait(true);
             if (changed)
             {
-                RecipeCreator recipe = (RecipeCreator)button.DataContext;
+                dynamic recipe = button.DataContext;
                 recipe.Result.Item = form.SelectedLocator.Name;
             }
         }
@@ -129,29 +133,31 @@ namespace ForgeModGenerator.RecipeGenerator.Controls
             bool changed = await StaticCommands.ShowMCItemList(button, (string)DialogHost.Identifier, form).ConfigureAwait(true);
             if (changed)
             {
-                UpdatePattern((RecipeCreator)button.DataContext, (string)button.Tag, form.SelectedLocator.Name);
+                UpdatePattern((Recipe)button.DataContext, (string)button.Tag, form.SelectedLocator.Name);
             }
         }
 
-        private void UpdatePattern(RecipeCreator recipe, string tag, string locatorName)
+        private void UpdatePattern(Recipe recipe, string tag, string locatorName)
         {
+            dynamic recipeDynamic = recipe;
             int patternIndex = (int)char.GetNumericValue(tag, 0);
             int charIndex = (int)char.GetNumericValue(tag, 1);
-            char[] chars = recipe.Pattern[patternIndex].ToCharArray();
+            char[] chars = recipeDynamic.Pattern[patternIndex].ToCharArray();
             chars[charIndex] = FindOrCreateKey(recipe, locatorName);
-            recipe.Pattern[patternIndex] = new string(chars);
+            recipeDynamic.Pattern[patternIndex] = new string(chars);
         }
 
-        private char FindOrCreateKey(RecipeCreator recipe, string name)
+        private char FindOrCreateKey(Recipe recipe, string name)
         {
-            foreach (RecipeKey key in recipe.Keys)
+            dynamic recipeDynamic = recipe;
+            foreach (RecipeKey key in recipeDynamic.Keys)
             {
                 if (key.Item == name)
                 {
                     return key.Key;
                 }
             }
-            return recipe.Keys.AddNew(name).Key;
+            return recipeDynamic.Keys.AddNew(name).Key;
         }
     }
 }

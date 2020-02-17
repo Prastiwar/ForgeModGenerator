@@ -23,6 +23,8 @@ namespace ForgeModGenerator.ViewModels
         {
             if (e.Result)
             {
+                bool wasSynchronizing = Synchronizer.IsEnabled;
+                Synchronizer.SetEnableSynchronization(false);
                 if (!ModelsRepository.Contains(e.ActualItem))
                 {
                     ModelsRepository.Add(e.ActualItem);
@@ -32,6 +34,7 @@ namespace ForgeModGenerator.ViewModels
                     Context.FileSystem.DeleteFile(GetModelFullPath(e.CachedItem), true);
                 }
                 RegenerateCode(e.ActualItem);
+                Synchronizer.SetEnableSynchronization(wasSynchronizing);
             }
             else
             {
