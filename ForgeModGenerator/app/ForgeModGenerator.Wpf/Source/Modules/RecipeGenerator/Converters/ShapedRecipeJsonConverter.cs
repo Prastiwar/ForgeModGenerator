@@ -23,7 +23,7 @@ namespace ForgeModGenerator.RecipeGenerator.Converters
             if (item.TryGetValue("pattern", out JToken pattern))
             {
                 string[] patternArray = pattern.ToObject<string[]>();
-                Array.Copy(patternArray, recipe.Pattern, patternArray.Length);
+                recipe.Pattern.Set(patternArray);
             }
             if (item.TryGetValue("keys", out JToken keys))
             {
@@ -47,7 +47,7 @@ namespace ForgeModGenerator.RecipeGenerator.Converters
                 { nameof(ShapedRecipe.Type).ToLower(), value.Type },
                 { nameof(ShapedRecipe.Name).ToLower(), value.Name },
                 { nameof(ShapedRecipe.Group).ToLower(), value.Group ?? "" },
-                { nameof(ShapedRecipe.Pattern).ToLower(), JArray.FromObject(value.Pattern, serializer) },
+                { nameof(ShapedRecipe.Pattern).ToLower(), JArray.FromObject(value.Pattern.GetPattern(), serializer) },
                 { nameof(ShapedRecipe.Keys).ToLower(), JArray.FromObject(value.Keys, serializer) },
                 { nameof(ShapedRecipe.Result).ToLower(), JObject.FromObject(value.Result, serializer) },
             };

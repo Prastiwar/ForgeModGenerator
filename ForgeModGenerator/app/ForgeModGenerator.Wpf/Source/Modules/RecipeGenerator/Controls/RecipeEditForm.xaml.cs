@@ -113,37 +113,40 @@ namespace ForgeModGenerator.RecipeGenerator.Controls
             recipe.Pattern[patternIndex] = new string(chars);
         }
 
-        private async void SlotResult_Click(object sender, RoutedEventArgs e)
+        private async void ResultSlotClick(object sender, RoutedEventArgs e)
         {
             Button button = (Button)sender;
-            ItemListForm form = new ItemListForm();
-            bool changed = await StaticCommands.ShowMCItemList(button, (string)DialogHost.Identifier, form).ConfigureAwait(true);
-            if (changed)
+            if (button.DataContext is Recipe recipe)
             {
-                dynamic recipe = button.DataContext;
-                recipe.Result.Item = form.SelectedLocator.Name;
+                ItemListForm form = new ItemListForm();
+                bool changed = await StaticCommands.ShowMCItemList(button, (string)DialogHost.Identifier, form).ConfigureAwait(true);
+                if (changed)
+                {
+                    recipe.Result.Item = form.SelectedLocator.Name;
+                }
             }
         }
 
-        private async void Slot_Click(object sender, RoutedEventArgs e)
+        private async void ShapedSlotClick(object sender, RoutedEventArgs e)
         {
             Button button = (Button)sender;
-            ItemListForm form = new ItemListForm();
-            bool changed = await StaticCommands.ShowMCItemList(button, (string)DialogHost.Identifier, form).ConfigureAwait(true);
-            if (changed)
+            if (button.DataContext is ShapedRecipe recipe)
             {
-                UpdatePattern((Recipe)button.DataContext, (string)button.Tag, form.SelectedLocator.Name);
+                ItemListForm form = new ItemListForm();
+                bool changed = await StaticCommands.ShowMCItemList(button, (string)DialogHost.Identifier, form).ConfigureAwait(true);
+                if (changed)
+                {
+                    UpdatePattern(recipe, (string)button.Tag, form.SelectedLocator.Name);
+                }
             }
         }
 
-        private void UpdatePattern(Recipe recipe, string tag, string locatorName)
+        private void UpdatePattern(ShapedRecipe recipe, string tag, string locatorName)
         {
-            dynamic recipeDynamic = recipe;
             int patternIndex = (int)char.GetNumericValue(tag, 0);
             int charIndex = (int)char.GetNumericValue(tag, 1);
-            char[] chars = recipeDynamic.Pattern[patternIndex].ToCharArray();
-            chars[charIndex] = FindOrCreateKey(recipe, locatorName);
-            recipeDynamic.Pattern[patternIndex] = new string(chars);
+            char nextChar = FindOrCreateKey(recipe, locatorName);
+            recipe.Pattern.Set(patternIndex, charIndex, nextChar);
         }
 
         private char FindOrCreateKey(Recipe recipe, string name)
@@ -218,20 +221,19 @@ namespace ForgeModGenerator.RecipeGenerator.Controls
             }
             if (DataContext is ShapedRecipe shaped)
             {
-                bool shouldUpdatePattern = shaped.Pattern.Any(x => !string.IsNullOrEmpty(x.Trim()));
-                if (shouldUpdatePattern)
+                if (shaped.Pattern.IsEmpty)
                 {
                     // TODO: Get all possible locators not only defaults
                     MCItemLocator[] locators = MCItemLocator.GetAllMinecraftItems();
-                    SetItemButtonImage(FirstSlot, shaped.Pattern[0][0]);
-                    SetItemButtonImage(SecondSlot, shaped.Pattern[0][1]);
-                    SetItemButtonImage(ThirdSlot, shaped.Pattern[0][2]);
-                    SetItemButtonImage(FourthSlot, shaped.Pattern[1][0]);
-                    SetItemButtonImage(FifthSlot, shaped.Pattern[1][1]);
-                    SetItemButtonImage(SixthSlot, shaped.Pattern[1][2]);
-                    SetItemButtonImage(SeventhSlot, shaped.Pattern[2][0]);
-                    SetItemButtonImage(EightSlot, shaped.Pattern[2][1]);
-                    SetItemButtonImage(NinethSlot, shaped.Pattern[2][2]);
+                    SetItemButtonImage(FirstSlot, shaped.Pattern.GetKey(0, 0));
+                    SetItemButtonImage(SecondSlot, shaped.Pattern.GetKey(0, 1));
+                    SetItemButtonImage(ThirdSlot, shaped.Pattern.GetKey(0, 2));
+                    SetItemButtonImage(FourthSlot, shaped.Pattern.GetKey(1, 0));
+                    SetItemButtonImage(FifthSlot, shaped.Pattern.GetKey(1, 1));
+                    SetItemButtonImage(SixthSlot, shaped.Pattern.GetKey(1, 2));
+                    SetItemButtonImage(SeventhSlot, shaped.Pattern.GetKey(2, 0));
+                    SetItemButtonImage(EightSlot, shaped.Pattern.GetKey(2, 1));
+                    SetItemButtonImage(NinethSlot, shaped.Pattern.GetKey(2, 2));
                     void SetItemButtonImage(ContentControl control, char key)
                     {
                         int i = shaped.Keys.FindIndex(x => x.Key == key);

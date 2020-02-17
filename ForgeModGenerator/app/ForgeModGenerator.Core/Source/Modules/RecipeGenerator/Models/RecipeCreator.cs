@@ -19,7 +19,7 @@ namespace ForgeModGenerator.RecipeGenerator.Models
             if (recipe is ShapedRecipe shaped)
             {
                 Keys = shaped.Keys?.DeepCollectionClone<RecipeKeyCollection, RecipeKey>();
-                Array.Copy(shaped.Pattern, Pattern, shaped.Pattern.Length);
+                Pattern.Set(shaped.Pattern);
             }
             else if (recipe is SmeltingRecipe smelting)
             {
@@ -52,7 +52,7 @@ namespace ForgeModGenerator.RecipeGenerator.Models
             set => SetProperty(ref recipeType, value);
         }
 
-        public string[] Pattern { get; } = new string[3] { "   ", "   ", "   " };
+        public ShapedPattern Pattern { get; }
 
         private RecipeKeyCollection keys;
         public RecipeKeyCollection Keys {
@@ -94,7 +94,7 @@ namespace ForgeModGenerator.RecipeGenerator.Models
                     Item = Result.Item
                 }
             };
-            Array.Copy(Pattern, creator.Pattern, Pattern.Length);
+            creator.Pattern.Set(Pattern);
             return creator;
         }
 
@@ -104,7 +104,7 @@ namespace ForgeModGenerator.RecipeGenerator.Models
             {
                 if (fromCopy is ShapedRecipe shapedRecipe)
                 {
-                    Array.Copy(shapedRecipe.Pattern, Pattern, shapedRecipe.Pattern.Length);
+                    Pattern.Set(shapedRecipe.Pattern);
                     Keys = shapedRecipe.Keys;
                 }
                 else if (fromCopy is SmeltingRecipe smeltingRecipe)
@@ -119,7 +119,7 @@ namespace ForgeModGenerator.RecipeGenerator.Models
                 }
                 else if (fromCopy is RecipeCreator creator)
                 {
-                    Array.Copy(creator.Pattern, Pattern, creator.Pattern.Length);
+                    Pattern.Set(creator.Pattern);
                     Keys = creator.Keys;
                     Ingredients = creator.Ingredients;
                     CookingTime = creator.CookingTime;
@@ -157,7 +157,7 @@ namespace ForgeModGenerator.RecipeGenerator.Models
                     },
                     IsDirty = false
                 };
-                Array.Copy(Pattern, recipe.Pattern, Pattern.Length);
+                recipe.Pattern.Set(Pattern);
                 cachedCreatedRecipe = recipe;
                 return recipe;
             }
