@@ -5,19 +5,9 @@ namespace ForgeModGenerator.RecipeGenerator.Models
 {
     public class SmeltingRecipe : Recipe
     {
-        public SmeltingRecipe()
-        {
-            Ingredients = new ObservableCollection<Ingredient>();
-            Result = new RecipeResult();
-        }
+        public SmeltingRecipe() : base() => Ingredients = new ObservableCollection<Ingredient>();
 
         public override string Type => "smelting";
-
-        private RecipeResult result;
-        public RecipeResult Result {
-            get => result;
-            set => SetProperty(ref result, value);
-        }
 
         private ObservableCollection<Ingredient> ingredients;
         public ObservableCollection<Ingredient> Ingredients {
@@ -40,6 +30,8 @@ namespace ForgeModGenerator.RecipeGenerator.Models
         public override object DeepClone()
         {
             SmeltingRecipe recipe = (SmeltingRecipe)base.DeepClone();
+            CookingTime = recipe.CookingTime;
+            Experience = recipe.Experience;
             recipe.Ingredients = Ingredients.DeepCollectionClone<ObservableCollection<Ingredient>, Ingredient>();
             recipe.Result = new RecipeResult {
                 Count = Result.Count,
@@ -54,7 +46,6 @@ namespace ForgeModGenerator.RecipeGenerator.Models
             if (fromCopy is SmeltingRecipe recipe)
             {
                 Ingredients = recipe.Ingredients;
-                Result = recipe.Result;
                 CookingTime = recipe.CookingTime;
                 Experience = recipe.Experience;
                 return base.CopyValues(fromCopy);

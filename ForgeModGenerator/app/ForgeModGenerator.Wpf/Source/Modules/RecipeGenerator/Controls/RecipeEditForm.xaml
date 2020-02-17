@@ -8,6 +8,7 @@
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:mahapp="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:local="clr-namespace:ForgeModGenerator.RecipeGenerator.Controls"
+             LayoutUpdated="UserControl_LayoutUpdated"
              mc:Ignorable="d"
              MinWidth="500"
              d:DesignHeight="450"

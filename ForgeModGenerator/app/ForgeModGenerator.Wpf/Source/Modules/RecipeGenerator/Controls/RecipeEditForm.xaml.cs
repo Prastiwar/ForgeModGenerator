@@ -1,21 +1,20 @@
 ﻿using ForgeModGenerator.Controls;
+using ForgeModGenerator.Core;
 using ForgeModGenerator.RecipeGenerator.Models;
 using ForgeModGenerator.Utility;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace ForgeModGenerator.RecipeGenerator.Controls
 {
     public partial class RecipeEditForm : UserControl, IUIElement
     {
-        public RecipeEditForm()
-        {
-            InitializeComponent();
-            RecipeTypeComboBox.SelectedIndex = 0;
-        }
+        public RecipeEditForm() => InitializeComponent();
 
         public static readonly DependencyProperty RecipeTypesProperty =
             DependencyProperty.Register("RecipeTypes", typeof(IEnumerable<Type>), typeof(RecipeEditForm), new PropertyMetadata(Enumerable.Empty<Type>()));
@@ -158,6 +157,107 @@ namespace ForgeModGenerator.RecipeGenerator.Controls
                 }
             }
             return recipeDynamic.Keys.AddNew(name).Key;
+        }
+
+        private ListBox GetListBoxFromIngredientList(EditableIngredientList list)
+        {
+            ListBox listBox = null;
+            foreach (Visual visual in list.EnumerateChildren())
+            {
+                if (visual is Border border)
+                {
+                    if (border.Child is Grid grid)
+                    {
+                        foreach (object gridChild in grid.Children)
+                        {
+                            if (gridChild is ListBox foundListBox)
+                            {
+                                listBox = foundListBox;
+                            }
+                        }
+                    }
+                }
+            }
+            return listBox;
+        }
+
+        private void RefreshIngredientsList(EditableIngredientList list)
+        {
+            ListBox listBox = GetListBoxFromIngredientList(list);
+            if (listBox != null)
+            {
+                ObservableCollection<Ingredient> ingredients = list.ItemsSource;
+                // TODO: Get all possible locators not only defaults
+                MCItemLocator[] locators = MCItemLocator.GetAllMinecraftItems();
+                for (int i = 0; i < listBox.Items.Count; i++)
+                {
+                    DependencyObject container = listBox.ItemContainerGenerator.ContainerFromIndex(i);
+                    ListBoxItem item = container as ListBoxItem;
+                    ContentControl button = WPFHelper.GetDescendantFromName(item, "ItemButton") as ContentControl;
+                    string itemName = ingredients[i].Item;
+                    MCItemLocator locator = locators.FirstOrDefault(x => string.Compare(x.Name, itemName, true) == 0);
+                    StaticCommands.SetItemButtonImage(button, locator);
+                    i++;
+                }
+            }
+        }
+
+        private void UserControl_LayoutUpdated(object sender, EventArgs e)
+        {
+            if (DataContext is Recipe recipe)
+            {
+                RecipeTypeComboBox.SelectedValue = recipe.GetType();
+                bool shouldUpdateResult = !string.IsNullOrEmpty(recipe.Result.Item);
+                if (shouldUpdateResult)
+                {
+                    // TODO: Get all possible locators not only defaults
+                    MCItemLocator[] locators = MCItemLocator.GetAllMinecraftItems();
+                    MCItemLocator locator = locators.FirstOrDefault(x => string.Compare(x.Name, recipe.Result.Item, true) == 0);
+                    StaticCommands.SetItemButtonImage(ResultItemButton, locator);
+                }
+            }
+            if (DataContext is ShapedRecipe shaped)
+            {
+                bool shouldUpdatePattern = shaped.Pattern.Any(x => !string.IsNullOrEmpty(x.Trim()));
+                if (shouldUpdatePattern)
+                {
+                    // TODO: Get all possible locators not only defaults
+                    MCItemLocator[] locators = MCItemLocator.GetAllMinecraftItems();
+                    SetItemButtonImage(FirstSlot, shaped.Pattern[0][0]);
+                    SetItemButtonImage(SecondSlot, shaped.Pattern[0][1]);
+                    SetItemButtonImage(ThirdSlot, shaped.Pattern[0][2]);
+                    SetItemButtonImage(FourthSlot, shaped.Pattern[1][0]);
+                    SetItemButtonImage(FifthSlot, shaped.Pattern[1][1]);
+                    SetItemButtonImage(SixthSlot, shaped.Pattern[1][2]);
+                    SetItemButtonImage(SeventhSlot, shaped.Pattern[2][0]);
+                    SetItemButtonImage(EightSlot, shaped.Pattern[2][1]);
+                    SetItemButtonImage(NinethSlot, shaped.Pattern[2][2]);
+                    void SetItemButtonImage(ContentControl control, char key)
+                    {
+                        int i = shaped.Keys.FindIndex(x => x.Key == key);
+                        if (i > -1)
+                        {
+                            StaticCommands.SetItemButtonImage(control, locators.FirstOrDefault(x => string.Compare(x.Name, shaped.Keys[i].Item, true) == 0));
+                        }
+                    }
+                }
+            }
+            else if (DataContext is SmeltingRecipe smelting)
+            {
+                bool shouldUpdateIngredients = smelting.Ingredients.Any(x => !string.IsNullOrEmpty(x.Item));
+                if (shouldUpdateIngredients)
+                {
+                    RefreshIngredientsList(IngredientsListBox);
+                }
+            }
+            else if (DataContext is ShapelessRecipe shapeless)
+            {
+                bool shouldUpdateIngredients = shapeless.Ingredients.Any(x => !string.IsNullOrEmpty(x.Item));
+                if (shouldUpdateIngredients)
+                {
+                    RefreshIngredientsList(IngredientsListBox);
+                }
+            }
         }
     }
 }

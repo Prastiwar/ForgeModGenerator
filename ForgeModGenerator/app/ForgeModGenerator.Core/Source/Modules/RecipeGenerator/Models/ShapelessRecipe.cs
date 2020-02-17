@@ -5,11 +5,7 @@ namespace ForgeModGenerator.RecipeGenerator.Models
 {
     public class ShapelessRecipe : Recipe
     {
-        public ShapelessRecipe()
-        {
-            Ingredients = new ObservableCollection<Ingredient>();
-            Result = new RecipeResult();
-        }
+        public ShapelessRecipe() : base() => Ingredients = new ObservableCollection<Ingredient>();
 
         public override string Type => "crafting_shapeless";
 
@@ -17,12 +13,6 @@ namespace ForgeModGenerator.RecipeGenerator.Models
         public ObservableCollection<Ingredient> Ingredients {
             get => ingredients;
             set => SetProperty(ref ingredients, value);
-        }
-
-        private RecipeResult result;
-        public RecipeResult Result {
-            get => result;
-            set => SetProperty(ref result, value);
         }
 
         public override object DeepClone()
@@ -42,7 +32,6 @@ namespace ForgeModGenerator.RecipeGenerator.Models
             if (fromCopy is ShapelessRecipe recipe)
             {
                 Ingredients = recipe.Ingredients;
-                Result = recipe.Result;
                 return base.CopyValues(fromCopy);
             }
             return false;

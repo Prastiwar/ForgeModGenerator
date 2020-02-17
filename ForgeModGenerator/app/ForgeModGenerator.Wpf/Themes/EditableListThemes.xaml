@@ -182,7 +182,7 @@
                                                          HorizontalAlignment="Center"
                                                          VerticalAlignment="Center" />
                             </Button>
-                            <ListBox x:Name="KeysListBox"
+                            <ListBox x:Name="IngredientsListBox"
                                      Grid.Column="1"
                                      ItemsSource="{Binding Path=ItemsSource, RelativeSource={RelativeSource AncestorType=recipeControls:EditableIngredientList}, Mode=TwoWay, ValidatesOnDataErrors=True}"
                                      FontSize="11"
@@ -190,7 +190,7 @@
                                      MinHeight="25">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
-                                        <Grid x:Name="KeyTemplateGrid">
+                                        <Grid x:Name="IngredientTemplateGrid">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto" />
                                                 <ColumnDefinition Width="*" />
@@ -215,7 +215,8 @@
                                                                          HorizontalAlignment="Center"
                                                                          VerticalAlignment="Center" />
                                             </Button>
-                                            <Grid Grid.Column="1">
+                                            <Grid x:Name="IngredientInfoGrid"
+                                                  Grid.Column="1">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="*" />
                                                     <ColumnDefinition Width="*" />

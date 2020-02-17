@@ -1,9 +1,11 @@
 ﻿using Prism.Commands;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace ForgeModGenerator.Controls
 {
@@ -72,5 +74,13 @@ namespace ForgeModGenerator.Controls
 
         protected virtual void DefaultAdd(ObservableCollection<T> collection) => collection.Add(DefaultItem);
         protected virtual void DefaultRemove(Tuple<ObservableCollection<T>, T> param) => param.Item1.Remove(param.Item2);
+
+        public IEnumerable<Visual> EnumerateChildren()
+        {
+            for (int i = 0; i < VisualChildrenCount; i++)
+            {
+                yield return GetVisualChild(i);
+            }
+        }
     }
 }

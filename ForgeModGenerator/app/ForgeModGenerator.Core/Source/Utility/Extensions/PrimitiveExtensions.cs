@@ -10,6 +10,13 @@ namespace ForgeModGenerator.Utility
         private static readonly StringBuilder output = new StringBuilder(32);
         private static readonly Regex spaceRemover = new Regex(@"\s+", RegexOptions.Compiled);
 
+        public static string SetCharAt(this string text, int index, char character)
+        {
+            char[] chars = text.ToCharArray();
+            chars[index] = character;
+            return new string(chars);
+        }
+
         /// <summary> Removes character on the end of text. Useful in decimals string </summary>
         public static string RemoveEnding(this string text) => char.IsDigit(text[text.Length - 1]) ? text : text.Remove(text.Length - 1, 1);
 

@@ -39,7 +39,7 @@ namespace ForgeModGenerator.Models
         public virtual object DeepClone()
         {
             ObservableModel model = (ObservableModel)Activator.CreateInstance(GetType(), true);
-            model.CopyValues(this);
+            model.CopyValues(this); // TODO: deep clone all variables instead coping it
             return model;
         }
 

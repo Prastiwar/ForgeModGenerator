@@ -15,9 +15,7 @@ namespace ForgeModGenerator.Core
         }
 
         public string Name { get; }
-
         public string ImageFilePath { get; }
-
 
         public bool Equals(MCItemLocator other) => Name == other.Name;
         public override bool Equals(object obj) => obj is MCItemLocator item && Equals(item);

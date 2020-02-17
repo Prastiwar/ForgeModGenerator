@@ -12,30 +12,24 @@ namespace ForgeModGenerator.RecipeGenerator.Models
             Initialize();
             Name = recipe.Name;
             Group = recipe.Group;
+            Result = new RecipeResult {
+                Count = recipe.Result.Count,
+                Item = recipe.Result.Item
+            };
             if (recipe is ShapedRecipe shaped)
             {
                 Keys = shaped.Keys?.DeepCollectionClone<RecipeKeyCollection, RecipeKey>();
-                Result = new RecipeResult {
-                    Count = shaped.Result.Count,
-                    Item = shaped.Result.Item
-                };
                 Array.Copy(shaped.Pattern, Pattern, shaped.Pattern.Length);
             }
             else if (recipe is SmeltingRecipe smelting)
             {
                 Ingredients = smelting.Ingredients?.DeepCollectionClone<ObservableCollection<Ingredient>, Ingredient>();
-                Result = new RecipeResult {
-                    Count = smelting.Result.Count,
-                    Item = smelting.Result.Item
-                };
+                CookingTime = smelting.CookingTime;
+                Experience = smelting.Experience;
             }
             else if (recipe is ShapelessRecipe shapeless)
             {
                 Ingredients = shapeless.Ingredients?.DeepCollectionClone<ObservableCollection<Ingredient>, Ingredient>();
-                Result = new RecipeResult {
-                    Count = shapeless.Result.Count,
-                    Item = shapeless.Result.Item
-                };
             }
             RecipeType = recipe.GetType();
             cachedCreatedRecipe = recipe;
@@ -112,26 +106,22 @@ namespace ForgeModGenerator.RecipeGenerator.Models
                 {
                     Array.Copy(shapedRecipe.Pattern, Pattern, shapedRecipe.Pattern.Length);
                     Keys = shapedRecipe.Keys;
-                    Result = shapedRecipe.Result;
                 }
                 else if (fromCopy is SmeltingRecipe smeltingRecipe)
                 {
                     Ingredients = smeltingRecipe.Ingredients;
-                    Result = smeltingRecipe.Result;
                     CookingTime = smeltingRecipe.CookingTime;
                     Experience = smeltingRecipe.Experience;
                 }
                 else if (fromCopy is ShapelessRecipe shapelessRecipe)
                 {
                     Ingredients = shapelessRecipe.Ingredients;
-                    Result = shapelessRecipe.Result;
                 }
                 else if (fromCopy is RecipeCreator creator)
                 {
                     Array.Copy(creator.Pattern, Pattern, creator.Pattern.Length);
                     Keys = creator.Keys;
                     Ingredients = creator.Ingredients;
-                    Result = creator.Result;
                     CookingTime = creator.CookingTime;
                     Experience = creator.Experience;
                 }
