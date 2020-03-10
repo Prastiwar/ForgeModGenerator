@@ -8,7 +8,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 
 namespace ForgeModGenerator.RecipeGenerator.Controls
 {
@@ -49,13 +48,13 @@ namespace ForgeModGenerator.RecipeGenerator.Controls
 
             bool shouldCollapseShapeless = type != typeof(ShapelessRecipe);
             IngredientsTextBlock.Visibility = shouldCollapseSmelting && shouldCollapseShapeless ? Visibility.Collapsed : Visibility.Visible;
-            IngredientsListBox.Visibility = shouldCollapseSmelting && shouldCollapseShapeless ? Visibility.Collapsed : Visibility.Visible;
+            EditableIngredientListBox.Visibility = shouldCollapseSmelting && shouldCollapseShapeless ? Visibility.Collapsed : Visibility.Visible;
 
             int lastIngredientsLengthLimit = IngredientsLengthLimit;
             IngredientsLengthLimit = !shouldCollapseSmelting ? int.MaxValue : 9;
             if (lastIngredientsLengthLimit != IngredientsLengthLimit)
             {
-                if (IngredientsListBox.ItemsSource == null)
+                if (EditableIngredientListBox.ItemsSource == null)
                 {
                     return;
                 }
@@ -67,13 +66,13 @@ namespace ForgeModGenerator.RecipeGenerator.Controls
         {
             if (isSmeltingCollapsed)
             {
-                if (IngredientsListBox.ItemsSource.Count > IngredientsLengthLimit)
+                if (EditableIngredientListBox.ItemsSource.Count > IngredientsLengthLimit)
                 {
                     // Fit ItemsSource to length limit. Cache removed items
-                    for (int i = IngredientsListBox.ItemsSource.Count - 1; i >= IngredientsLengthLimit; i--)
+                    for (int i = EditableIngredientListBox.ItemsSource.Count - 1; i >= IngredientsLengthLimit; i--)
                     {
-                        cachedIngredients.Add(IngredientsListBox.ItemsSource[i]);
-                        IngredientsListBox.ItemsSource.RemoveAt(i);
+                        cachedIngredients.Add(EditableIngredientListBox.ItemsSource[i]);
+                        EditableIngredientListBox.ItemsSource.RemoveAt(i);
                     }
                 }
             }
@@ -82,7 +81,7 @@ namespace ForgeModGenerator.RecipeGenerator.Controls
                 // Add cached ingredients back to ItemsSource
                 for (int i = cachedIngredients.Count - 1; i >= 0; i--)
                 {
-                    IngredientsListBox.ItemsSource.Add(cachedIngredients[i]);
+                    EditableIngredientListBox.ItemsSource.Add(cachedIngredients[i]);
                     cachedIngredients.RemoveAt(i);
                 }
             }
@@ -155,23 +154,8 @@ namespace ForgeModGenerator.RecipeGenerator.Controls
 
         private ListBox GetListBoxFromIngredientList(EditableIngredientList list)
         {
-            ListBox listBox = null;
-            foreach (Visual visual in list.EnumerateChildren())
-            {
-                if (visual is Border border)
-                {
-                    if (border.Child is Grid grid)
-                    {
-                        foreach (object gridChild in grid.Children)
-                        {
-                            if (gridChild is ListBox foundListBox)
-                            {
-                                listBox = foundListBox;
-                            }
-                        }
-                    }
-                }
-            }
+            FrameworkElement content = list.Template.LoadContent() as FrameworkElement;
+            ListBox listBox = content.FindName("IngredientsListBox") as ListBox;
             return listBox;
         }
 
@@ -239,7 +223,7 @@ namespace ForgeModGenerator.RecipeGenerator.Controls
                 bool shouldUpdateIngredients = smelting.Ingredients.Any(x => !string.IsNullOrEmpty(x.Item));
                 if (shouldUpdateIngredients)
                 {
-                    RefreshIngredientsList(IngredientsListBox);
+                    RefreshIngredientsList(EditableIngredientListBox);
                 }
             }
             else if (DataContext is ShapelessRecipe shapeless)
@@ -247,7 +231,7 @@ namespace ForgeModGenerator.RecipeGenerator.Controls
                 bool shouldUpdateIngredients = shapeless.Ingredients.Any(x => !string.IsNullOrEmpty(x.Item));
                 if (shouldUpdateIngredients)
                 {
-                    RefreshIngredientsList(IngredientsListBox);
+                    RefreshIngredientsList(EditableIngredientListBox);
                 }
             }
         }

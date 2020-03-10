@@ -290,7 +290,7 @@
                                    FontWeight="Bold"
                                    Margin="3,0,3,0"
                                    VerticalAlignment="Center" />
-                        <local:EditableIngredientList x:Name="IngredientsListBox"
+                        <local:EditableIngredientList x:Name="EditableIngredientListBox"
                                                       LengthLimit="{Binding IngredientsLengthLimit, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:RecipeEditForm}}"
                                                       HorizontalAlignment="Stretch"
                                                       ItemsSource="{Binding Ingredients, ValidatesOnDataErrors=True}"

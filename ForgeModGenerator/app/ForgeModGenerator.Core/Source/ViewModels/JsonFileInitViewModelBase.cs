@@ -21,6 +21,14 @@ namespace ForgeModGenerator.ViewModels
 
         protected abstract string GetModelFullPath(TModel model);
 
+        protected override void RemoveItem(TModel item)
+        {
+            ModelsRepository.Remove(item);
+            Context.CodeGenerationService.GetCustomScriptCodeGenerator(SessionContext.SelectedMod, item)?.DeleteScript();
+            Context.FileSystem.DeleteFile(GetModelFullPath(item), true);
+            RegenerateInitScript();
+        }
+
         protected override void OnItemEdited(object sender, ItemEditedEventArgs<TModel> e)
         {
             if (e.Result)
