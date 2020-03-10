@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
 using ForgeModGenerator.RecipeGenerator.Models;
 using ForgeModGenerator.Validation;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -16,24 +15,18 @@ namespace ForgeModGenerator.RecipeGenerator.Validation
 
             string emptyResultItemMsg = "Result Item cannot be empty";
             string emptyIngredientsMsg = "Ingredients cannot be empty";
-            Func<Type, bool> hasResultProperty = type => type == typeof(ShapelessRecipe) || type == typeof(SmeltingRecipe) || type == typeof(ShapedRecipe);
 
-            RuleFor(x => ((RecipeCreator)x).Ingredients).Must(NotEmptyIngredients).WithMessage(emptyIngredientsMsg)
-                                                        .When(x => x is RecipeCreator creator && (creator.RecipeType == typeof(ShapelessRecipe) || creator.RecipeType == typeof(SmeltingRecipe)));
-            RuleFor(x => ((RecipeCreator)x).Result.Item).NotEmpty().WithMessage(emptyResultItemMsg)
-                                                         .When(x => x is RecipeCreator creator && hasResultProperty(creator.RecipeType));
-
-            RuleFor(x => ((ShapelessRecipe)x).Ingredients).Must(NotEmptyIngredients).WithMessage(emptyIngredientsMsg)
+            RuleFor(x => (x as ShapelessRecipe).Ingredients).Must(NotEmptyIngredients).WithMessage(emptyIngredientsMsg)
                                                           .When(x => x is ShapelessRecipe);
-            RuleFor(x => ((ShapelessRecipe)x).Result.Item).NotEmpty().WithMessage(emptyResultItemMsg)
+            RuleFor(x => (x as ShapelessRecipe).Result.Item).NotEmpty().WithMessage(emptyResultItemMsg)
                                                          .When(x => x is ShapelessRecipe);
 
-            RuleFor(x => ((SmeltingRecipe)x).Ingredients).Must(NotEmptyIngredients).WithMessage(emptyIngredientsMsg)
+            RuleFor(x => (x as SmeltingRecipe).Ingredients).Must(NotEmptyIngredients).WithMessage(emptyIngredientsMsg)
                                                          .When(x => x is SmeltingRecipe);
-            RuleFor(x => ((SmeltingRecipe)x).Result.Item).NotEmpty().WithMessage(emptyResultItemMsg)
+            RuleFor(x => (x as SmeltingRecipe).Result.Item).NotEmpty().WithMessage(emptyResultItemMsg)
                                                          .When(x => x is SmeltingRecipe);
 
-            RuleFor(x => ((ShapedRecipe)x).Result.Item).NotEmpty().WithMessage(emptyResultItemMsg)
+            RuleFor(x => (x as ShapedRecipe).Result.Item).NotEmpty().WithMessage(emptyResultItemMsg)
                                                          .When(x => x is ShapedRecipe);
         }
 

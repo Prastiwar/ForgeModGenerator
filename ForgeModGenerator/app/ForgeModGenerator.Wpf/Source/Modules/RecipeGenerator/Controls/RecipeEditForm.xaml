@@ -8,7 +8,6 @@
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:mahapp="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:local="clr-namespace:ForgeModGenerator.RecipeGenerator.Controls"
-             LayoutUpdated="UserControl_LayoutUpdated"
              mc:Ignorable="d"
              MinWidth="500"
              d:DesignHeight="450"
@@ -19,20 +18,6 @@
                                    Identifier="RecipeHost">
             <ScrollViewer>
                 <StackPanel>
-                    <ComboBox x:Name="RecipeTypeComboBox"
-                              SelectedItem="{Binding Path=RecipeType}"
-                              ItemsSource="{Binding Path=RecipeTypes, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:RecipeEditForm}}"
-                              SelectionChanged="RecipeTypeComboBox_SelectionChanged"
-                              DisplayMemberPath="Name"
-                              Background="#FF404040"
-                              Foreground="#FFE8E8E8"
-                              BorderBrush="Wheat"
-                              HorizontalAlignment="Left"
-                              VerticalAlignment="Center"
-                              HorizontalContentAlignment="Center"
-                              Width="220"
-                              FontSize="11"
-                              materialDesign:HintAssist.Hint="Select Recipe Type" />
                     <Border BorderThickness="0.7"
                             BorderBrush="Black">
                         <Grid Background="GhostWhite">

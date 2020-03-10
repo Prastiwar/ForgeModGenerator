@@ -32,19 +32,22 @@ namespace ForgeModGenerator.RecipeGenerator.Controls
 
         private readonly List<Ingredient> cachedIngredients = new List<Ingredient>();
 
-        public void SetDataContext(object context) => DataContext = context;
-
-        private void RecipeTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        public void SetDataContext(object context)
         {
-            Type newType = (Type)e.AddedItems[0];
+            DataContext = context;
+            UpdateRecipeLayout(DataContext.GetType());
+            UpdateSlots();
+        }
 
-            bool shouldCollapseSmelting = newType != typeof(SmeltingRecipe);
+        private void UpdateRecipeLayout(Type type)
+        {
+            bool shouldCollapseSmelting = type != typeof(SmeltingRecipe);
             SetSmeltingVisibility(shouldCollapseSmelting);
 
-            bool shouldCollapseShaped = newType != typeof(ShapedRecipe);
+            bool shouldCollapseShaped = type != typeof(ShapedRecipe);
             SetShapedVisibility(shouldCollapseShaped);
 
-            bool shouldCollapseShapeless = newType != typeof(ShapelessRecipe);
+            bool shouldCollapseShapeless = type != typeof(ShapelessRecipe);
             IngredientsTextBlock.Visibility = shouldCollapseSmelting && shouldCollapseShapeless ? Visibility.Collapsed : Visibility.Visible;
             IngredientsListBox.Visibility = shouldCollapseSmelting && shouldCollapseShapeless ? Visibility.Collapsed : Visibility.Visible;
 
@@ -99,18 +102,6 @@ namespace ForgeModGenerator.RecipeGenerator.Controls
             ExperienceNumeric.Visibility = visibility;
             CookingTimeTextBlock.Visibility = visibility;
             CookingTimeNumeric.Visibility = visibility;
-        }
-
-        private void FirstComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            ComboBox box = (ComboBox)sender;
-            RecipeKey selectedItem = (RecipeKey)e.AddedItems[0];
-            dynamic recipe = box.DataContext;
-            int patternIndex = (int)char.GetNumericValue((string)box.Tag, 0);
-            int charIndex = (int)char.GetNumericValue((string)box.Tag, 1);
-            char[] chars = recipe.Pattern[patternIndex].ToCharArray();
-            chars[charIndex] = selectedItem.Key;
-            recipe.Pattern[patternIndex] = new string(chars);
         }
 
         private async void ResultSlotClick(object sender, RoutedEventArgs e)
@@ -205,11 +196,10 @@ namespace ForgeModGenerator.RecipeGenerator.Controls
             }
         }
 
-        private void UserControl_LayoutUpdated(object sender, EventArgs e)
+        private void UpdateSlots()
         {
             if (DataContext is Recipe recipe)
             {
-                RecipeTypeComboBox.SelectedValue = recipe.GetType();
                 bool shouldUpdateResult = !string.IsNullOrEmpty(recipe.Result.Item);
                 if (shouldUpdateResult)
                 {

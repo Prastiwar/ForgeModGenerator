@@ -4,4 +4,9 @@
     {
         public abstract IUIElement GetUIElement();
     }
+
+    public abstract class ModelChoiceFormProvider<TModel> : IUIChoiceProvider
+    {
+        public abstract IUIChoice GetUIChoice();
+    }
 }

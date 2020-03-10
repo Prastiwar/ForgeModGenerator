@@ -445,6 +445,9 @@
     <Compile Include="Source\Controls\ItemListForm.xaml.cs">
       <DependentUpon>ItemListForm.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Source\Controls\ChooseInstanceForm.xaml.cs">
+      <DependentUpon>ChooseInstanceForm.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Source\Modules\RecipeGenerator\Controls\RecipeEditForm.xaml.cs">
       <DependentUpon>RecipeEditForm.xaml</DependentUpon>
     </Compile>
@@ -452,6 +455,7 @@
     <Compile Include="Source\Modules\RecipeGenerator\Converters\ShapedRecipeJsonConverter.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\Converters\ShapelessRecipeJsonConverter.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\Converters\SmeltingRecipeJsonConverter.cs" />
+    <Compile Include="Source\Modules\RecipeGenerator\RecipeChoiceFormProvider.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\RecipeModelFormProvider.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\Converters\RecipeListConverters.cs" />
     <Compile Include="Source\Modules\RecipeGenerator\RecipeSerializer.cs" />
@@ -591,6 +595,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Source\Modules\MaterialGenerator\MaterialGeneratorPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Source\Controls\ChooseInstanceForm.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

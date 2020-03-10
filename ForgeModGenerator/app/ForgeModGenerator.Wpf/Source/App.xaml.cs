@@ -85,6 +85,7 @@ namespace ForgeModGenerator
             containerRegistry.Register(typeof(IUniqueValidator<>), typeof(GenericUniqueValidator<>));
             containerRegistry.Register(typeof(GeneratorContext<>), typeof(GeneratorContext<>));
             containerRegistry.Register(typeof(ModelFormProvider<>), typeof(NoneModelFormProvider<>));
+            containerRegistry.Register(typeof(ModelChoiceFormProvider<>), typeof(NoneChoiceFormProvider<>));
 
             RegisterModels(containerRegistry);
 
@@ -141,11 +142,13 @@ namespace ForgeModGenerator
 
         private void RegisterModel(IContainerRegistry containerRegistry, Type model)
         {
-            bool IsSerializerRegistered = TryRegisterInterfaceForModel(containerRegistry, model, "Serializer");
-            bool IsValidatorRegistered = TryRegisterInterfaceForModel(containerRegistry, model, "Validator");
-            bool IsFormProviderRegistered = TryRegisterClassForModel(containerRegistry, model, "ModelFormProvider");
-            bool IsEditorFormFactoryRegistered = TryRegisterInterfaceForModel(containerRegistry, model, "EditorFormFactory");
-            bool IsGeneratorContextRegistered = TryRegisterClassForModel(containerRegistry, model, "GeneratorContext");
+            bool isSerializerRegistered = TryRegisterInterfaceForModel(containerRegistry, model, "Serializer");
+            bool isValidatorRegistered = TryRegisterInterfaceForModel(containerRegistry, model, "Validator");
+            bool isFormProviderRegistered = TryRegisterClassForModel(containerRegistry, model, "ModelFormProvider");
+            bool isChoiceFormProviderRegistered = TryRegisterClassForModel(containerRegistry, model, "ChoiceFormProvider");
+            bool isChoiceFormFactoryRegistered = TryRegisterClassForModel(containerRegistry, model, "ChoiceFormFactory");
+            bool isEditorFormFactoryRegistered = TryRegisterInterfaceForModel(containerRegistry, model, "EditorFormFactory");
+            bool isGeneratorContextRegistered = TryRegisterClassForModel(containerRegistry, model, "GeneratorContext");
         }
 
         private bool TryRegisterClassForModel(IContainerRegistry containerRegistry, Type model, string name, Type defaultClassType = null)
@@ -223,7 +226,7 @@ namespace ForgeModGenerator
             containerRegistry.Register(typeof(IJsonUpdaterFactory<>), typeof(JsonUpdaterFactory<>));
             containerRegistry.Register(typeof(IJsonUpdaterFactory<,>), typeof(CollectionJsonUpdaterFactory<,>));
             containerRegistry.Register(typeof(IEditorFormFactory<>), typeof(ModelEditorFormFactory<>));
-
+            containerRegistry.Register(typeof(IChoiceFormFactory<>), typeof(ModelChoiceFormFactory<>));
             //containerRegistry.Register<ISoundJsonUpdaterFactory, SoundJsonUpdaterFactory>();
         }
 

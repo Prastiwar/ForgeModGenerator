@@ -2,14 +2,9 @@
 
 namespace ForgeModGenerator.Serialization
 {
-    public interface IJsonUpdaterFactory<T>
-    {
-        IJsonUpdater<T> Create();
-    }
+    public interface IJsonUpdaterFactory<T> : ISimpleFactory<IJsonUpdater<T>> { }
 
-    public interface IJsonUpdaterFactory<TCollection, TItem>
+    public interface IJsonUpdaterFactory<TCollection, TItem> : ISimpleFactory<IJsonUpdater<TCollection, TItem>>
         where TCollection : IEnumerable<TItem>
-    {
-        IJsonUpdater<TCollection, TItem> Create();
-    }
+    { }
 }

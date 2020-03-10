@@ -10,7 +10,9 @@ namespace ForgeModGenerator.ViewModels
     public abstract class JsonFileInitViewModelBase<TModel> : FileInitViewModelBase<TModel>
         where TModel : ObservableModel
     {
-        public JsonFileInitViewModelBase(GeneratorContext<TModel> context, ISynchronizeInvoke synchronizingObject, IJsonUpdaterFactory<TModel> jsonUpdaterFactory)
+        public JsonFileInitViewModelBase(GeneratorContext<TModel> context,
+                                         ISynchronizeInvoke synchronizingObject,
+                                         IJsonUpdaterFactory<TModel> jsonUpdaterFactory)
             : base(context, synchronizingObject) => JsonUpdater = jsonUpdaterFactory.Create();
 
         protected IJsonUpdater<TModel> JsonUpdater { get; }

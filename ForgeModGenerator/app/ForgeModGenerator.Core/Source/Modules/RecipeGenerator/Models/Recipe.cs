@@ -32,6 +32,7 @@ namespace ForgeModGenerator.RecipeGenerator.Models
                 Group = recipe.Group;
                 Result = recipe.Result;
                 IsDirty = false;
+                SetValidateProperty(recipe);
                 return true;
             }
             return false;

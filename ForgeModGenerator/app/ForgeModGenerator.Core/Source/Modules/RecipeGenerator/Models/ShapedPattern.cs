@@ -6,6 +6,10 @@ namespace ForgeModGenerator.RecipeGenerator.Models
 {
     public class ShapedPattern
     {
+        public ShapedPattern() { }
+
+        public ShapedPattern(string[] pattern) => Set(pattern);
+
         protected string[] CharPattern { get; } = new string[3] { "   ", "   ", "   " };
 
         public bool IsEmpty => CharPattern.Any(x => !string.IsNullOrEmpty(x.Trim()));
