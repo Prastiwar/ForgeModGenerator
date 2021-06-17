@@ -17,6 +17,8 @@
 
 ## Development Status
 
+- Work on this project is **suspended**. Application was made for easy and fast mod development at 1.12 version. Since then, Forge is rapidly changing in very unstable way. So I'm not able to maintain this repository in just spare time to keep up with changes.
+
 - [x] Block Generator
 
   - [x] Create block json files
